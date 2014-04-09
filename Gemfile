@@ -40,7 +40,6 @@ gem 'sass-rails', '~> 4.0.0'
 gem 'compass-rails'
 gem 'compass'
 gem 'foundation-rails'
-gem 'debugger', group: [:development, :test]
 gem 'devise'
 gem 'better_errors'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'

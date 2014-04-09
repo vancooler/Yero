@@ -1,0 +1,9 @@
+//= depend_on_asset "Gotham/Gotham-Medium.otf"
+//= depend_on_asset "Gotham/Gotham-Light.otf"
+//= depend_on_asset "Gotham/Gotham-Thin.otf"
+
+@import "compass/css3";
+
+@include font-face("GothamMedium", font-files("Gotham/Gotham-Medium.otf"));
+@include font-face("GothamLight", font-files("Gotham/Gotham-Light.otf"));
+@include font-face("GothamThin", font-files("Gotham/Gotham-Thin.otf"));
