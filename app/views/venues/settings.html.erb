@@ -1,0 +1,59 @@
+<%= render "sidebar", current: "settings" %>
+<div class="content">
+  <h1>Settings</h1>
+  <div class="details">
+    <%= form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+      <%= devise_error_messages! %>
+
+      <div class="form-field row">
+        <div class="large-12 columns">
+          <%= f.label :name %>
+          <%= f.text_field :name, autofocus: true, required: true %>
+        </div>
+      </div>
+
+      <div class="form-field row">
+        <div class="large-12 columns">
+          <%= f.label :email %>
+          <%= f.email_field :email, required: true %>
+        </div>
+      </div>
+
+      <div class="form-field row">
+        <div class="large-12 columns">
+          <%= f.label :password %>
+          <%= f.password_field :password, autocomplete: "off", :placeholder => "at least 6 characeters", required: true %>
+          <%= f.password_field :password_confirmation, autocomplete: "off", :placeholder => "password confirmation", required: true %>
+        </div>
+      </div>
+
+      <div class="form-field row">
+        <div class="large-12 columns">
+          <%= f.label :address_line_one, "Address", required: true %>
+        </div>
+        <div class="large-12 columns">
+          <%= f.text_field :address_line_one, :placeholder => "Street Address", required: true %>
+        </div>
+        <div class="large-8 columns">
+          <%= f.text_field :city, :placeholder => "City", required: true %>
+        </div>
+        <div class="large-4 columns">
+          <%= f.text_field :state, :placeholder => "State/Province", required: true %>
+        </div>
+
+        <div class="large-12 columns">
+          <%= f.text_field :country, :placeholder => "Country", required: true %>
+        </div>
+        <div class="large-12 columns">
+          <%= f.text_field :zipcode, :placeholder => "Zip/Postal Code", required: true %>
+        </div>
+      </div>
+
+      <div class="row submit">
+        <div class="large-12 columns">
+          <%= f.submit "Sign up", class: "button" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -12,9 +12,31 @@
   </head>
 
   <body>
-    <p class="notice"><%= notice %></p>
-    <p class="alert"><%= alert %></p>
+    <div class="contain-togrid sticky">
+      <nav class="top-bar" data-topbar data-options="sticky_on: large">
+        <ul class="title-area">
+          <li class="name">
+            <h1><a href="#">WHISPR</a></h1>
+          </li>
+          <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+        </ul>
+
+        <section class="top-bar-section">
+          <!-- Right Nav Section -->
+          <ul class="right">
+            <% if current_venue %>
+              <li class="active"><%= link_to "sign out", destroy_venue_session_path, :method => "DELETE" %></li>
+            <% else %>
+              <li class="active"><%= link_to "sign in", new_venue_session_path %></li>
+            <% end %>
+          </ul>
+        </section>
+      </nav>
+    </div>
+
     <%= yield %>
     <%= javascript_include_tag "application" %>
+    <%= yield :javascript_library %>
+    <%= yield :javascript_inline %>
   </body>
 </html>

@@ -1,0 +1,81 @@
+<%= render "venues/sidebar", current: "settings" %>
+<div class="content">
+  <h1>Settings</h1>
+  <div class="details">
+    <div class="auth-box settings">
+
+      <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
+        <%= devise_error_messages! %>
+
+        <div class="form-field row">
+          <div class="large-12 columns">
+            <%= f.label :name %>
+            <%= f.text_field :name, :placeholder => "Venue Name", autofocus: true, required: true %>
+          </div>
+          <div class="large-12 columns">
+            <%= f.text_field :phone, :placeholder => "Phone Number" %>
+          </div>
+          <div class="large-6 columns">
+            <div class="row collapse">
+              <div class="small-6 columns">
+                <span class="prefix">Age Req</span>
+              </div>
+              <div class="small-6 columns">
+                <%= f.number_field :age_requirement, :placeholder => "18", required: true %>
+              </div>
+            </div>
+          </div>
+          <div class="large-6 columns">
+            <%= f.text_field :dress_code, :placeholder => "Dress Code", required: true %>
+          </div>
+        </div>
+
+        <div class="form-field row">
+          <div class="large-12 columns">
+            <%= f.label :email %>
+            <%= f.email_field :email, required: true %>
+          </div>
+        </div>
+
+        <div class="form-field row">
+          <div class="large-12 columns">
+            <%= f.label :password, "Password" %>
+            <%= f.password_field :password, autocomplete: "off", :placeholder => "New Password  (leave blank if you don't want it changed)" %>
+            <%= f.password_field :password_confirmation, autocomplete: "off", :placeholder => "New Passowrd Confirmation" %>
+            <%= f.password_field :current_password, autocomplete: "off", :placeholder => "Current Password" %>
+          </div>
+        </div>
+
+        <div class="form-field row">
+          <div class="large-12 columns">
+            <%= f.label :address_line_one, "Address", required: true %>
+          </div>
+          <div class="large-12 columns">
+            <%= f.text_field :address_line_one, :placeholder => "Street Address", required: true %>
+          </div>
+          <div class="large-8 columns">
+            <%= f.text_field :city, :placeholder => "City", required: true %>
+          </div>
+          <div class="large-4 columns">
+            <%= f.text_field :state, :placeholder => "State/Province", required: true %>
+          </div>
+
+          <div class="large-12 columns">
+            <%= f.text_field :country, :placeholder => "Country", required: true %>
+          </div>
+          <div class="large-12 columns">
+            <%= f.text_field :zipcode, :placeholder => "Zip/Postal Code", required: true %>
+          </div>
+        </div>
+
+        <div class="row submit">
+          <div class="large-12 columns">
+            <%= f.submit "Update Settings", class: "button" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+

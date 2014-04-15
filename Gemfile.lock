@@ -163,7 +163,7 @@ DEPENDENCIES
   compass
   compass-rails
   debugger
-  devise
+  devise (~> 3.2.4)
   foundation-rails
   jbuilder (~> 2.0)
   jquery-rails

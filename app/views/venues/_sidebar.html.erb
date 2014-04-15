@@ -1,0 +1,23 @@
+<div class="sidebar">
+  <div class="item <%= "#{'active' if current == 'dashboard'}" %>">
+    <%= link_to "Dashboard", venue_root_path %>
+  </div>
+  <div class="item <%= "#{'active' if current == 'nightly'}" %>">
+    <%= link_to "Nightly Info", venue_nightly_path %>
+  </div>
+  <div class="item">
+    <%= link_to "Promotions" %>
+  </div>
+  <div class="item">
+    <%= link_to "Drink lottery" %>
+  </div>
+  <div class="item <%= "#{'active' if current == 'settings'}" %>">
+    <%= link_to "Settings", edit_venue_registration_path %>
+  </div>
+</div>
+
+<style>
+  body {
+    background-color: #fafafa;
+  }
+</style>

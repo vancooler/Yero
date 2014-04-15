@@ -1,4 +1,13 @@
 Rails.application.routes.draw do
+
+  devise_for :venues, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
+
+  devise_scope :venues do
+    get 'dashboard', to: 'venues#dashboard', as: :venue_root
+    get 'nightly', to: 'venues#nightly', as: :venue_nightly
+    # get 'settings', to: 'venues#settings', as: :venue_settings
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
