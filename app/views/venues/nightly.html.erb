@@ -2,54 +2,31 @@
 <div class="content nightly">
   <h1>nightly info</h1>
   <div class="night-box create">
-    <a class="inner">
+    <%= link_to venue_tonightly_path, class: "inner" do %>
       NIGHTLY INFO FOR TONIGHT
-    </a>
+    <% end %>
   </div>
-  <div class="night-box">
-    <a class="inner">
-
-      <div class="corner">
-        <%= image_tag "night-ppl.png" %>
-        <span>253</span>
-        <%= image_tag "night-pencil.png" %>
-      </div>
-      <h2>monday</h2>
-      <p class="date">April 14, 2014</p>
-      <div class="row collapse detail">
-        <div class="large-4 columns">
-          <span class="val girl">54</span>%
+  <% @nightlies.each do |n| %>
+    <div class="night-box">
+      <div class="inner">
+        <div class="corner">
+          <span><%= n.boy_count + n.girl_count %></span>
+          <%= image_tag "night-ppl.png" %>
         </div>
-        <div class="large-4 columns">
-          <span class="val boy">46</span>%
-        </div>
-        <div class="large-4 columns">
-          <span class="val">14</span>min
-        </div>
-      </div>
-    </a>
-  </div>
-
-  <div class="night-box">
-    <a class="inner">
-      <div class="corner">
-        <%= image_tag "night-ppl.png" %>
-        <span>365</span>
-        <%= image_tag "night-pencil.png" %>
-      </div>
-      <h2>SUNDAY</h2>
-      <p class="date">April 13, 2014</p>
-      <div class="row collapse detail">
-        <div class="large-4 columns">
-          <span class="val girl">52</span>%
-        </div>
-        <div class="large-4 columns">
-          <span class="val boy">48</span>%
-        </div>
-        <div class="large-4 columns">
-          <span class="val">21</span>min
+        <h2><%= n.created_at.strftime("%A") %></h2>
+        <p class="date"><%= n.created_at.strftime("%B %e, %Y") %></p>
+        <div class="row collapse detail">
+          <div class="large-4 columns">
+            <span class="val girl"><%= ((n.girl_count.to_f / (n.boy_count + n.girl_count))*100).round %></span>%
+          </div>
+          <div class="large-4 columns">
+            <span class="val boy"><%= ((n.boy_count.to_f / (n.boy_count + n.girl_count))*100).round %></span>%
+          </div>
+          <div class="large-4 columns">
+            <span class="val"><%= n.regular_wait_time %></span>min
+          </div>
         </div>
       </div>
-    </a>
-  </div>
+    </div>
+  <% end %>
 </div>

@@ -1,6 +1,10 @@
 class VenuesController < ApplicationController
 
-  before_action :authenticate_venue!, only: [:tonightly]
+  before_action :authenticate_venue!, only: [:tonightly, :nightly]
+
+  def nightly
+    @nightlies = current_venue.nightlies.order("created_at DESC")
+  end
 
   def tonightly
     nightly = Nightly.today_or_create(current_venue)
@@ -8,11 +12,9 @@ class VenuesController < ApplicationController
   end
 
   def list
-
     venues = Venue.all
 
     if params[:after]
-
       new_list = []
 
       venues.each do |v|

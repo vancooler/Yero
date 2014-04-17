@@ -4,9 +4,9 @@
 
 <div class="container nightly-wrap">
   <div class="title">
-    <h1>WEDNESDAY</h1>
+    <h1><%= @nightly.created_at.strftime("%A") %></h1>
     <p>
-      April 4, 2014
+      <%= @nightly.created_at.strftime("%B %e, %Y") %>
     </p>
   </div>
 
