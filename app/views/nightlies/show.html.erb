@@ -1,0 +1,175 @@
+<% content_for :javascript_library do %>
+  <%=  javascript_include_tag "jquery.mobile.min" %>
+<% end %>
+
+<div class="container nightly-wrap">
+  <div class="title">
+    <h1>WEDNESDAY</h1>
+    <p>
+      April 4, 2014
+    </p>
+  </div>
+
+  <div class="set">
+    <h2>
+      Guest Wait Time
+      <div class="status" id="guest-status">
+        <%= image_tag "icons/ajax-loader.gif", class: "load" %>
+        <%= image_tag "icons/check.png", class: "check hidden" %>
+      </div>
+    </h2>
+    <div class="ui-field-contain">
+      <select name="select-native-1" id="guest">
+        <option value="0">No wait time</option>
+        <option value="15">10 minutes</option>
+        <option value="20">20 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+        <option value="60">60+ minutes</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="set">
+    <h2>
+      Regular Wait Time
+      <div class="status" id="reg-status">
+        <%= image_tag "icons/ajax-loader.gif", class: "load" %>
+        <%= image_tag "icons/check.png", class: "check hidden" %>
+      </div>
+    </h2>
+    <div class="ui-field-contain">
+      <select name="select-native-1" id="reg">
+        <option value="0">No wait time</option>
+        <option value="15">10 minutes</option>
+        <option value="20">20 minutes</option>
+        <option value="30">30 minutes</option>
+        <option value="45">45 minutes</option>
+        <option value="60">60+ minutes</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="set row counter">
+    <h2>
+      Counter
+      <div class="status" id="gender-status">
+        <%= image_tag "icons/ajax-loader.gif", class: "load" %>
+        <%= image_tag "icons/check.png", class: "check hidden" %>
+      </div>
+      <span class="total">
+        <span id="total-ppl"></span><%= image_tag "night-ppl.png" %>
+      </span>
+    </h2>
+    <div class="gender girl small-6 columns" data-gender="girl">
+      <div>add</div>
+      <%= image_tag "icons/girl.png" %>
+      <p>0%</p>
+    </div>
+    <div class="gender boy small-6 columns" data-gender="boy">
+      <div>add</div>
+      <%= image_tag "icons/boy.png" %>
+      <p>0%</p>
+    </div>
+  </div>
+</div>
+
+<% content_for :javascript_inline do %>
+  <script>
+    var venue_id = <%= @nightly.id %>;
+
+    function update_genders(data) {
+      var total = data.girl_count + data.boy_count;
+      $total = $('#total-ppl');
+      $total.text(total);
+
+      $boy = $('.boy');
+      $girl = $('.girl');
+
+      if ( data.girl_count != 0 && data.boy_count != 0 ) {
+        $boy.children('p').text(Math.round(data.boy_count/total*100)+'%');
+        $girl.children('p').text(Math.round(data.girl_count/total*100)+'%');
+      }
+      else {
+        $boy.children('p').text('0%');
+        $girl.children('p').text('0%');
+      }
+    }
+
+    $.ajax({
+      type: 'GET',
+      url: '/api/nightly/get/'+venue_id,
+      success: function(response) {
+        console.log(response);
+        if (response.data) {
+          var data = response.data;
+          var loader = $('.status');
+          loader.children('.check').removeClass('hidden');
+          loader.children('.load').addClass('hidden');
+
+          $guest = $('#guest');
+          $guest.children('option[value=' + data.guest_wait_time + ']').attr('selected', 'selected');
+          $guest.selectmenu('refresh');
+
+          $regular = $('#reg');
+          $regular.children('option[value=' + data.regular_wait_time + ']').attr('selected', 'selected');
+          $regular.selectmenu('refresh');
+
+          update_genders(data);
+        }
+      }
+    });
+
+    $('#guest').on('change', function() {
+      var loader = $('#'+$(this).attr('id')+'-status');
+      loader.children('.check').addClass('hidden');
+      loader.children('.load').removeClass('hidden');
+      $.ajax({
+        type: 'POST',
+        url: '/api/nightly/update_guest',
+        data: {id: venue_id, time: this.value},
+        success: function(response) {
+          if (response.success) {
+            loader.children('.check').removeClass('hidden');
+            loader.children('.load').addClass('hidden');
+          }
+        }
+      });
+    });
+
+    $('#reg').on('change', function() {
+      var loader = $('#'+$(this).attr('id')+'-status');
+      loader.children('.check').addClass('hidden');
+      loader.children('.load').removeClass('hidden');
+      $.ajax({
+        type: 'POST',
+        url: '/api/nightly/update_regular',
+        data: {id: venue_id, time: this.value},
+        success: function(response) {
+          if (response.success) {
+            loader.children('.check').removeClass('hidden');
+            loader.children('.load').addClass('hidden');
+          }
+        }
+      });
+    });
+
+    $('.gender').on('click', function() {
+      var loader = $('#gender-status');
+      loader.children('.check').addClass('hidden');
+      loader.children('.load').removeClass('hidden');
+      $.ajax({
+        type: 'POST',
+        url: '/api/nightly/increase/' + $(this).attr('data-gender'),
+        data: {id: venue_id},
+        success: function(response) {
+          if (response.success) {
+            update_genders(response.data);
+            loader.children('.check').removeClass('hidden');
+            loader.children('.load').addClass('hidden');
+          }
+        }
+      });
+    });
+  </script>
+<% end %>

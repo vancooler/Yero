@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140409203529) do
+ActiveRecord::Schema.define(version: 20140415235322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -21,6 +21,17 @@ ActiveRecord::Schema.define(version: 20140409203529) do
     t.integer "day",        null: false
     t.time    "open_time",  null: false
     t.time    "close_time", null: false
+  end
+
+  create_table "nightlies", force: true do |t|
+    t.integer  "venue_id",                      null: false
+    t.integer  "girl_count",        default: 0
+    t.integer  "boy_count",         default: 0
+    t.integer  "guest_wait_time",   default: 0
+    t.integer  "regular_wait_time", default: 0
+    t.integer  "current_fill",      default: 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "venues", force: true do |t|
@@ -50,4 +61,5 @@ ActiveRecord::Schema.define(version: 20140409203529) do
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree
   add_index "venues", ["reset_password_token"], name: "index_venues_on_reset_password_token", unique: true, using: :btree
+
 end

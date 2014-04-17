@@ -6,6 +6,14 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'venues#dashboard', as: :venue_root
     get 'nightly', to: 'venues#nightly', as: :venue_nightly
     # get 'settings', to: 'venues#settings', as: :venue_settings
+
+    get 'nightly/tonight', to: 'venues#tonightly', as: :venue_tonightly
+    get 'nightly/:id', to: 'nightlies#show', as: :show_nightly
+    post 'api/nightly/update_guest', to: 'nightlies#update_guest', as: :update_guest_nightly
+    post 'api/nightly/update_regular', to: 'nightlies#update_regular', as: :update_regular_nightly
+    post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count
+
+    get 'api/nightly/get/:id', to: 'nightlies#get', as: :get_nightly
   end
 
   # The priority is based upon order of creation: first created -> highest priority.

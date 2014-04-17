@@ -129,10 +129,10 @@ label {
         font-size: 60px;
         font-family: "GothamLight";
         &.girl {
-          color: #ff98b5;
+          color: $girl;
         }
         &.boy {
-          color: #45beff;
+          color: $boy;
         }
       }
     }
@@ -261,5 +261,85 @@ label {
     font-family: "GothamMedium";
     @include text-shadow(0 2px 0 white);
     letter-spacing: 1px;
+  }
+}
+
+.girl {
+  color: $girl;
+}
+
+.boy {
+  color: $boy;
+}
+
+.nightly-wrap {
+  padding: 30px;
+  margin: 0 auto;
+  max-width: 450px;
+  .title {
+    h1 {
+      margin-bottom: 0;
+    }
+    p {
+      margin-bottom: 0;
+    }
+  }
+  .counter {
+    h2 {
+      position: relative;
+      .total {
+        position: absolute;
+        right: 0;
+        opacity: 0.5;
+        img {
+          height: 1.2rem;
+        }
+      }
+    }
+  }
+  .set {
+    margin-top: 30px;
+    h2 {
+      margin-bottom: 5px;
+      line-height: 1em;
+      font-size: 1rem;
+      color: #555;
+      .status {
+        @include inline-block;
+        img {
+          height: 1.2rem;
+          &.hidden {
+            display: none;
+          }
+        }
+      }
+    }
+    .gender {
+      text-align: center;
+      border: 1px solid #aaa;
+      background-color: #f6f6f6;
+      margin-top: 10px;
+      @include box-shadow(0 2px 0 #aaa);
+      @include border-top-left-radius(3px);
+      @include border-bottom-left-radius(3px);
+      &:last-child {
+        border-left: none;
+        @include border-top-left-radius(0);
+        @include border-bottom-left-radius(0);
+        @include border-top-right-radius(3px);
+        @include border-bottom-right-radius(3px);
+      }
+      img {
+        margin: 15px 0;
+      }
+      div {
+        text-transform: uppercase;
+        margin-top: 20px;
+        color: #ddd;
+        @include text-shadow(0 2px 0 white);
+        font-size: 25px;
+        font-family: "GothamMedium";
+      }
+    }
   }
 }

@@ -3,4 +3,5 @@ class Venue < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   has_many :business_hours
+  has_many :nightlies
 end

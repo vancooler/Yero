@@ -17,4 +17,18 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:sign_up) << [:name, :address_line_one, :city, :state, :country, :zipcode, :phone, :age_requirement, :dress_code]
     devise_parameter_sanitizer.for(:account_update) << [:name, :address_line_one, :city, :state, :country, :zipcode, :phone, :age_requirement, :dress_code]
   end
+
+  def success(data)
+    {
+      success: true,
+      data: data
+    }
+  end
+
+  def error(message)
+    {
+      success: false,
+      message: message
+    }
+  end
 end
