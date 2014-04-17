@@ -8,7 +8,21 @@ class VenuesController < ApplicationController
   end
 
   def list
+
     venues = Venue.all
+
+    if params[:after]
+
+      new_list = []
+
+      venues.each do |v|
+        if v.tonightly.updated_at > Time.at(params[:after].to_i)
+          new_list << v
+        end
+      end
+
+      venues = new_list
+    end
 
     data = Jbuilder.encode do |json|
       json.array! venues do |v|
