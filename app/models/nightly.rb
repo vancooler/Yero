@@ -6,4 +6,16 @@ class Nightly < ActiveRecord::Base
       return true
     end
   end
+
+  def self.today_or_create(venue)
+    nightly = venue.nightlies.order('created_at DESC').first
+
+    if !nightly || !nightly.is_for_today
+      nightly = Nightly.new
+      nightly.venue = venue
+      nightly.save!
+    end
+
+    nightly
+  end
 end

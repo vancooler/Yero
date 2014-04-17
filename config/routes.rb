@@ -14,6 +14,8 @@ Rails.application.routes.draw do
     post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count
 
     get 'api/nightly/get/:id', to: 'nightlies#get', as: :get_nightly
+
+    get 'api/venues/list', to: 'venues#list', as: :venue_list
   end
 
   # The priority is based upon order of creation: first created -> highest priority.
