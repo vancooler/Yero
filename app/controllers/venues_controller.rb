@@ -1,6 +1,7 @@
 class VenuesController < ApplicationController
 
   before_action :authenticate_venue!, only: [:tonightly, :nightly]
+  before_action :authenticate_api, only: [:list]
 
   def nightly
     @nightlies = current_venue.nightlies.order("created_at DESC")
@@ -10,6 +11,8 @@ class VenuesController < ApplicationController
     nightly = Nightly.today_or_create(current_venue)
     redirect_to show_nightly_path(nightly.id)
   end
+
+  # API
 
   def list
     venues = Venue.all

@@ -1,6 +1,7 @@
 class NightliesController < ApplicationController
 
-  before_action :authenticate_venue!
+  before_action :authenticate_venue!, except: [:get]
+  before_action :authenticate_api, only: [:get]
 
   def show
     @nightly = current_venue.nightlies.find(params[:id])
