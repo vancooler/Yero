@@ -39,10 +39,10 @@ ActiveRecord::Schema.define(version: 20140417232628) do
   end
 
   create_table "users", force: true do |t|
-    t.string   "email",               default: "", null: false
+    t.string   "email",                            null: false
     t.date     "birthday",                         null: false
     t.string   "first_name",                       null: false
-    t.string   "last_initial",                     null: false
+    t.string   "last_initial",        default: "", null: false
     t.string   "gender",                           null: false
     t.string   "key",                              null: false
     t.datetime "last_activity"

@@ -12,4 +12,20 @@ class User < ActiveRecord::Base
       break random_token unless Api.exists?(key: random_token)
     end
   end
+
+  def to_json(with_key)
+    data = Jbuilder.encode do |json|
+      json.birthday birthday
+      json.first_name first_name
+      json.last_initial last_initial
+      json.gender gender
+      json.avatar
+
+      if with_key
+        json.key = key
+      end
+    end
+
+    JSON.parse(data)
+  end
 end

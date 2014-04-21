@@ -11,6 +11,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def authenticate_api
+
+  end
+
   protected
 
   def configure_permitted_parameters

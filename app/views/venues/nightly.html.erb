@@ -17,8 +17,7 @@
         <p class="date"><%= n.created_at.strftime("%B %e, %Y") %></p>
         <div class="row collapse detail">
           <div class="large-4 columns">
-            <span class="val girl">
-              <% if n.boy_count > 0 || n.girl_count > 0 %>
+            <span class="val girl"><% if n.boy_count > 0 || n.girl_count > 0 %>
                 <%= ((n.girl_count.to_f / (n.boy_count + n.girl_count))*100).round %>
               <% else %>
                 0
@@ -35,7 +34,7 @@
             </span>%
           </div>
           <div class="large-4 columns">
-            <span class="val"><%= n.regular_wait_time %></span>min
+            <span class="val"><%= n.regular_wait_time %> </span> min
           </div>
         </div>
       </div>
