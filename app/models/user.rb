@@ -23,7 +23,7 @@ class User < ActiveRecord::Base
       json.avatar avatar.thumb.url
 
       if with_key
-        json.key = key
+        json.key key
       end
     end
 
