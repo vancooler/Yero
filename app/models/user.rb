@@ -20,7 +20,7 @@ class User < ActiveRecord::Base
       json.first_name first_name
       json.last_initial last_initial
       json.gender gender
-      json.avatar
+      json.avatar avatar.thumb.url
 
       if with_key
         json.key = key
