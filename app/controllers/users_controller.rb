@@ -1,12 +1,9 @@
-class UsersControlelr < ApplicationController
-  before_action :authenticate_api, except: [:sign_up, :sign_in]
+class UsersController < ApplicationController
+  before_action :authenticate_api, except: [:sign_up]
+  skip_before_filter  :verify_authenticity_token
 
   # API
-  def sign_in
-
-  end
-
-  def sign_out
+  def update
 
   end
 
@@ -15,15 +12,15 @@ class UsersControlelr < ApplicationController
 
     if user.valid?
       user.save!
-      render json: success(user.to_json)
+      render json: success(user.to_json(true))
     else
-
+      render json: error(JSON.parse(user.errors.messages.to_json))
     end
   end
 
   private
 
   def sign_up_params
-    params.require(:user).permit(:email, :birthday, :first_name, :gender, :avatar)
+    params.require(:user).permit(:email, :birthday, :first_name, :gender, :avatar, :last_initial)
   end
 end

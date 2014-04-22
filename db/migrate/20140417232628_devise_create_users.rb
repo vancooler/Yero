@@ -7,6 +7,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :last_initial,       null: false, default: ""
       t.string :gender,             null: false
       t.string :key,                null: false
+      t.string :avatar
 
       t.datetime :last_activity
       t.timestamps
@@ -14,7 +15,5 @@ class DeviseCreateUsers < ActiveRecord::Migration
 
     add_index :users, :email,                unique: true
     add_index :users, :key,                  unique: true
-
-    add_attachment :users, :avatar
   end
 end

@@ -12,7 +12,9 @@ class ApplicationController < ActionController::Base
   end
 
   def authenticate_api
-
+    unless User.find_by_key(params[:key])
+      error("You must authenticate with an API Key")
+    end
   end
 
   protected

@@ -43,5 +43,7 @@ gem 'foundation-rails'
 gem 'devise', '~> 3.2.4'
 gem 'better_errors'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
-gem "paperclip", "~> 4.1"
-gem 'aws-sdk'
+gem "carrierwave"
+gem "fog", "~> 1.3.1"
+gem 'mini_magick', '~> 3.7.0'
+gem 'rmagick'

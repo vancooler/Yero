@@ -20,6 +20,5 @@ Rails.application.routes.draw do
   get 'api/nightly/get/:id', to: 'nightlies#get', as: :get_nightly
   get 'api/venues/list', to: 'venues#list', as: :venue_list
   post 'api/users/signup', to: 'users#sign_up'
-  post 'api/users/signin', to: 'users#sign_in'
-  delete 'api/users/signout', to: 'users#sign_out'
+  post 'api/users/update', to: 'users#update'
 end
