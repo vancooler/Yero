@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
   # :confirmable, :lockable, :timeoutable and :omniauthable
   mount_uploader :avatar, AvatarUploader
   before_create :create_key
+  before_save   :update_activity
 
   validates :email, uniqueness: true
   validates :email, :birthday, :first_name, :last_initial, :gender, presence: true
@@ -20,7 +21,10 @@ class User < ActiveRecord::Base
       json.first_name first_name
       json.last_initial last_initial
       json.gender gender
-      json.avatar avatar.thumb.url
+
+      if avatar
+        json.avatar avatar.thumb.url
+      end
 
       if with_key
         json.key key
@@ -28,5 +32,9 @@ class User < ActiveRecord::Base
     end
 
     JSON.parse(data)
+  end
+
+  def update_activity
+    self.last_activity = Time.now
   end
 end

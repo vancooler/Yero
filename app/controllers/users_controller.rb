@@ -18,6 +18,18 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_settings
+    user = User.find(params[:id])
+    user.assign_attributes(sign_up_params)
+
+    if user.valid?
+      user.save!
+      render json: success(user.to_json(true))
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+  end
+
   private
 
   def sign_up_params
