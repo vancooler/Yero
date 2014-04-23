@@ -24,7 +24,7 @@ class UsersController < ApplicationController
 
     if user.valid?
       user.save!
-      render json: success(user.to_json(true))
+      render json: success(user.to_json(false))
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
