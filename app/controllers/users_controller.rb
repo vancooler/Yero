@@ -3,9 +3,6 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   # API
-  def update
-
-  end
 
   def sign_up
     user = User.new(sign_up_params)
@@ -19,7 +16,7 @@ class UsersController < ApplicationController
   end
 
   def update_settings
-    user = User.find(params[:id])
+    user = User.find_by_key(params[:key])
     user.assign_attributes(sign_up_params)
 
     if user.valid?
