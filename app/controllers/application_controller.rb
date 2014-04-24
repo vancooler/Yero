@@ -17,6 +17,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def current_user
+    User.find_by_key(params[:key])
+  end
+
   protected
 
   def configure_permitted_parameters

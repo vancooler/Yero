@@ -11,13 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140417232628) do
+ActiveRecord::Schema.define(version: 20140424214443) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "apis", force: true do |t|
     t.string "key"
+  end
+
+  create_table "bars", force: true do |t|
+    t.integer "beacon_id",                              null: false
+    t.integer "room_id",                                null: false
+    t.boolean "open",                   default: false, null: false
+    t.integer "current_serving_number", default: 0,     null: false
+    t.integer "current_ticket_number",  default: 0,     null: false
+  end
+
+  create_table "beacons", force: true do |t|
+    t.integer "room_id",   null: false
+    t.string  "key",       null: false
+    t.string  "name"
+    t.string  "room_type"
   end
 
   create_table "business_hours", force: true do |t|
@@ -36,6 +51,30 @@ ActiveRecord::Schema.define(version: 20140417232628) do
     t.integer  "current_fill",      default: 0
     t.datetime "created_at"
     t.datetime "updated_at"
+  end
+
+  create_table "participants", force: true do |t|
+    t.integer  "room_id",                                       null: false
+    t.integer  "user_id",                                       null: false
+    t.datetime "last_activity", default: '2014-04-24 21:01:32', null: false
+    t.datetime "enter_time",    default: '2014-04-24 21:01:32', null: false
+  end
+
+  create_table "rooms", force: true do |t|
+    t.integer "venue_id", null: false
+  end
+
+  create_table "ticket", force: true do |t|
+    t.integer "bar_id",        null: false
+    t.integer "user_id",       null: false
+    t.integer "ticket_number", null: false
+  end
+
+  create_table "traffics", force: true do |t|
+    t.integer "room_id",   null: false
+    t.integer "beacon_id", null: false
+    t.integer "user_id",   null: false
+    t.string  "location",  null: false
   end
 
   create_table "users", force: true do |t|

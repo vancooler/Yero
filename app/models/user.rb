@@ -1,6 +1,8 @@
 class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
+
+  has_many :traffics
+  has_one  :participant
+
   mount_uploader :avatar, AvatarUploader
   before_create :create_key
   before_save   :update_activity
@@ -8,6 +10,7 @@ class User < ActiveRecord::Base
   validates :email, uniqueness: true
   validates :email, :birthday, :first_name, :last_initial, :gender, presence: true
 
+  # create a unique key for API usagebefore create
   def create_key
     self.key = loop do
       random_token = SecureRandom.urlsafe_base64(nil, false)
@@ -34,6 +37,7 @@ class User < ActiveRecord::Base
     JSON.parse(data)
   end
 
+  # keeps track of the latest activity of a user
   def update_activity
     self.last_activity = Time.now
   end
