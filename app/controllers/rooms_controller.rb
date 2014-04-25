@@ -22,6 +22,13 @@ class RoomsController < ApplicationController
   end
 
   def user_leave
+    p = Participant.find_by_user_id(current_user.id)
 
+    if p
+      p.delete
+      render json: success(nil)
+    else
+      render json: error("Participant does not exist")
+    end
   end
 end
