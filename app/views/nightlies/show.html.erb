@@ -1,13 +1,14 @@
 <% content_for :javascript_library do %>
-  <%=  javascript_include_tag "jquery.mobile.min" %>
+  <%=  javascript_include_tag "jquery.mobile.custom.min" %>
 <% end %>
 
-<div class="container nightly-wrap">
+<div class="container nightly-wrap" data-dom-cache="false">
   <div class="title">
     <h1><%= @nightly.created_at.strftime("%A") %></h1>
     <p>
       <%= @nightly.created_at.strftime("%B %e, %Y") %>
     </p>
+    <%= link_to "Back to Dashboard", venue_root_path %>
   </div>
 
   <div class="set">
@@ -79,6 +80,8 @@
 <% content_for :javascript_inline do %>
   <script>
     var venue_id = <%= @nightly.id %>;
+
+    $('select').selectmenu();
 
     function update_genders(data) {
       var total = data.girl_count + data.boy_count;

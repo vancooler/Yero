@@ -345,11 +345,15 @@ label {
   margin: 0 auto;
   max-width: 450px;
   .title {
+    position: relative;
+    a {
+
+    }
     h1 {
       margin-bottom: 0;
     }
     p {
-      margin-bottom: 0;
+      margin-bottom: 5px;
     }
   }
   .counter {
