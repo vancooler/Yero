@@ -27,6 +27,14 @@ class UsersController < ApplicationController
     end
   end
 
+  def update_apn
+    user = User.find_by_key(params[:key])
+    user.apn_token = params[:token]
+    user.save
+
+    render json: success(user.to_json(false))
+  end
+
   private
 
   def sign_up_params

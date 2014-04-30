@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   get 'api/venues/list', to: 'venues#list', as: :venue_list
   post 'api/users/signup', to: 'users#sign_up'
   post 'api/users/update', to: 'users#update_settings'
+  post 'api/users/update-apn', to: 'users#update_apn'
 
   # Venue/Beacon API
   post 'api/room/enter', to: 'rooms#user_enter'
