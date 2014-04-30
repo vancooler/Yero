@@ -4,7 +4,8 @@ class Lotto < ActiveRecord::Migration
       t.integer     :user_id,               null: false
       t.string      :message,               null: false
       t.integer     :venue_id,              null: false
-
+      t.boolean     :claimed,               default: false
+      t.string      :winner_id,             null: false
       t.timestamps
     end
   end

@@ -108,9 +108,11 @@ ActiveRecord::Schema.define(version: 20140429205213) do
   add_index "venues", ["reset_password_token"], name: "index_venues_on_reset_password_token", unique: true, using: :btree
 
   create_table "winners", force: true do |t|
-    t.integer  "user_id",    null: false
-    t.string   "message",    null: false
-    t.integer  "venue_id",   null: false
+    t.integer  "user_id",                    null: false
+    t.string   "message",                    null: false
+    t.integer  "venue_id",                   null: false
+    t.boolean  "claimed",    default: false
+    t.string   "winner_id",                  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end

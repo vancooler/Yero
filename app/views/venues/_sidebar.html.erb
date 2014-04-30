@@ -8,8 +8,8 @@
   <div class="item">
     <%= link_to "Promotions" %>
   </div>
-  <div class="item">
-    <%= link_to "Drink lottery" %>
+  <div class="item <%= "#{'active' if current == 'drink-lotto'}" %>">
+    <%= link_to "Drink lottery", lotto_dash_path %>
   </div>
   <div class="item <%= "#{'active' if current == 'settings'}" %>">
     <%= link_to "Settings", edit_venue_registration_path %>

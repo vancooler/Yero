@@ -5,15 +5,17 @@
   </div>
 
   <% if @participants.size > 0 %>
-    <div class="big-button">
-      <div class="ppl-counter">
-        <%= @participants.size %>
-        <%= image_tag "night-ppl.png" %>
+    <%= link_to pick_winner_path do %>
+      <div class="big-button">
+        <div class="ppl-counter">
+          <%= @participants.size %>
+          <%= image_tag "night-ppl.png" %>
+        </div>
+        <%= image_tag "icons/drink.png" %>
+        <h2>select winner</h2>
+        <p>1 winner will be chosen</p>
       </div>
-      <%= image_tag "icons/drink.png" %>
-      <h2>select winner</h2>
-      <p>1 winner will be chosen</p>
-    </div>
+    <% end %>
   <% else %>
     <div class="no-parts">
       <h2>0 users</h2>

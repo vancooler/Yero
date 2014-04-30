@@ -9,6 +9,9 @@ Rails.application.routes.draw do
     get 'nightly/tonight', to: 'venues#tonightly', as: :venue_tonightly
     get 'nightly/:id', to: 'nightlies#show', as: :show_nightly
     get 'lottery', to: 'venues#lottery', as: :lotto
+    get 'venue/pick-winner', to: 'venues#pick_winner', as: :pick_winner
+    get 'lottery-dashboard', to: 'venues#lottery_dash', as: :lotto_dash
+    post 'claim-drink/:winner_id', to: 'venues#claim_drink', as: :claim_drink
 
     # Venue API
     post 'api/nightly/update_guest', to: 'nightlies#update_guest', as: :update_guest_nightly

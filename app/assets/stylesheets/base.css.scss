@@ -434,6 +434,82 @@ label {
   }
 }
 
+.no-winners {
+  margin: 30px;
+  padding: 30px;
+  background-color: #FFF;
+  border: 1px solid #AAA;
+  width: 400px;
+  text-align: center;
+  h4 {
+    margin-bottom: 0;
+    margin-top: 0;
+  }
+}
+
+.drink-lotto {
+  .winner {
+    width: 500px;
+    border: 1px solid #ccc;
+    background-color: white;
+    display: table;
+    padding: 30px;
+    margin-top: 40px;
+    margin-left: 40px;
+    @include box-shadow(0 3px 0 #ccc);
+    @include border-radius(5px);
+    .winner-id, .details {
+      float: left;
+    }
+    .winner-id {
+      font-size: 33px;
+      font-family: "GothamMedium";
+      border-right: 1px dashed #aaa;
+      margin-right: 30px;
+      padding-right: 30px;
+      letter-spacing: 2px;
+      span {
+        color: #ddd;
+      }
+      .action {
+        a {
+          background-color: #0078a0;
+          color: white;
+          @include border-radius(5px);
+          padding: 5px 10px;
+          text-align: center;
+          font-size: 15px;
+          display: block;
+          margin-top: 10px;
+        }
+      }
+    }
+    .user {
+      dispaly: table;
+      .avatar, .details {
+        float: left;
+      }
+      .avatar {
+        margin-right: 20px;
+        img {
+          height: 64px;
+        }
+      }
+      h3 {
+        margin-top: 2px;
+        margin-bottom: 3px;
+        font-family: "GothamBook";
+        color: #555;
+        font-size: 20px;
+      }
+      p {
+        margin-bottom: 0;
+        color: #aaa;
+      }
+    }
+  }
+}
+
 .nightly-wrap {
   padding: 30px;
   margin: 0 auto;

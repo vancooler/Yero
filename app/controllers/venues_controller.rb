@@ -1,6 +1,6 @@
 class VenuesController < ApplicationController
 
-  before_action :authenticate_venue!, only: [:tonightly, :nightly]
+  before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list]
 
   def nightly
@@ -15,6 +15,36 @@ class VenuesController < ApplicationController
   def lottery
     @winners = current_venue.winners.order("created_at DESC").first(5)
     @participants = current_venue.participants.all
+  end
+
+  def pick_winner
+    participants = current_venue.participants.all
+
+    if participants.size > 0
+      recipient = participants.sample
+      winner = Winner.new
+      winner.user = recipient.user
+      winner.message = "You've won a free drink under $10!  Go to any bar to claim your drink.  Winner ID: #{}"
+      winner.venue = recipient.room.venue
+      winner.save
+    end
+
+    redirect_to lotto_path
+  end
+
+  def lottery_dash
+    @winners = current_venue.winners.where(claimed: false).order("created_at ASC").all
+  end
+
+  def claim_drink
+    winner = current_venue.winners.where(winner_id: params[:winner_id]).first
+
+    if winner
+      winner.claimed = true
+      winner.save
+    end
+
+    redirect_to lotto_dash_path
   end
 
   # API

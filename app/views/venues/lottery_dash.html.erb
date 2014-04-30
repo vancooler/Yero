@@ -1,0 +1,32 @@
+<%= render "sidebar", current: "drink-lotto" %>
+<div class="content drink-lotto">
+  <h1>drinks</h1>
+  <% if @winners.size == 0 %>
+    <div class="no-winners">
+      <h4>no winners</h4>
+    </div>
+  <% end %>
+  <% @winners.each do |w| %>
+    <div class="winner">
+      <div class="winner-id">
+        <span>#</span><%= w.winner_id %>
+        <div class="action">
+          <%= link_to "CLAIM", claim_drink_path(winner_id: w.winner_id), method: "POST" %>
+        </div>
+      </div>
+      <div class="user">
+        <div class="avatar">
+          <%= image_tag w.user.avatar.thumb.url %>
+        </div>
+        <div class="details">
+          <h3 class="name">
+            <%= w.user.first_name + " " + w.user.last_initial %>
+          </h3>
+          <p>
+            <%= time_ago_in_words(w.created_at) %> ago
+          </p>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
