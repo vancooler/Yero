@@ -1,6 +1,7 @@
 class User < ActiveRecord::Base
 
   has_many :traffics
+  has_many :winners
   has_one  :participant
 
   mount_uploader :avatar, AvatarUploader

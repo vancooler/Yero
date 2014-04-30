@@ -12,6 +12,11 @@ class VenuesController < ApplicationController
     redirect_to show_nightly_path(nightly.id)
   end
 
+  def lottery
+    @winners = current_venue.winners.order("created_at DESC").first(5)
+    @participants = current_venue.participants.all
+  end
+
   # API
 
   def list

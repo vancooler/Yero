@@ -2,11 +2,11 @@
 <div class="content">
   <h1>dashboard</h1>
   <div class="mobile-buttons">
-    <a>
+    <%= link_to lotto_path do %>
       <div><%= image_tag "icons/lotto.png" %></div>
       Drink Lottery         <br/>
       <p>give free drinks</p>
-    </a>
+    <% end %>
     <%= link_to venue_tonightly_path do %>
       <div><%= image_tag "icons/nightly.png" %></div>
       Nightly Counter

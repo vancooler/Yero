@@ -11,21 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140424214443) do
+ActiveRecord::Schema.define(version: 20140429205213) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "apis", force: true do |t|
     t.string "key"
-  end
-
-  create_table "bars", force: true do |t|
-    t.integer "beacon_id",                              null: false
-    t.integer "room_id",                                null: false
-    t.boolean "open",                   default: false, null: false
-    t.integer "current_serving_number", default: 0,     null: false
-    t.integer "current_ticket_number",  default: 0,     null: false
   end
 
   create_table "beacons", force: true do |t|
@@ -62,12 +54,6 @@ ActiveRecord::Schema.define(version: 20140424214443) do
 
   create_table "rooms", force: true do |t|
     t.integer "venue_id", null: false
-  end
-
-  create_table "ticket", force: true do |t|
-    t.integer "bar_id",        null: false
-    t.integer "user_id",       null: false
-    t.integer "ticket_number", null: false
   end
 
   create_table "traffics", force: true do |t|
@@ -120,5 +106,13 @@ ActiveRecord::Schema.define(version: 20140424214443) do
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree
   add_index "venues", ["reset_password_token"], name: "index_venues_on_reset_password_token", unique: true, using: :btree
+
+  create_table "winners", force: true do |t|
+    t.integer  "user_id",    null: false
+    t.string   "message",    null: false
+    t.integer  "venue_id",   null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
 end

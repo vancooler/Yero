@@ -1,0 +1,38 @@
+<div class="container nightly-wrap lotto">
+  <div class="title">
+    <h1>drink lottery</h1>
+    <%= link_to "Back to Dashboard", venue_root_path %>
+  </div>
+
+  <% if @participants.size > 0 %>
+    <div class="big-button">
+      <div class="ppl-counter">
+        <%= @participants.size %>
+        <%= image_tag "night-ppl.png" %>
+      </div>
+      <%= image_tag "icons/drink.png" %>
+      <h2>select winner</h2>
+      <p>1 winner will be chosen</p>
+    </div>
+  <% else %>
+    <div class="no-parts">
+      <h2>0 users</h2>
+      <p>nobody in bluetooth range</p>
+    </div>
+  <% end %>
+
+  <div class="recent">
+    <h3>recent winners</h3>
+    <% @winners.each do |w| %>
+      <div class="winner">
+        <div class="avatar">
+          <%= image_tag w.user.avatar.thumb.url %>
+        </div>
+        <div class="content">
+          <div class="name"><%= w.user.first_name + " " + w.user.last_initial %></div>
+          <p><%= time_ago_in_words(w.created_at) %> ago</p>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -8,6 +8,9 @@ Rails.application.routes.draw do
 
     get 'nightly/tonight', to: 'venues#tonightly', as: :venue_tonightly
     get 'nightly/:id', to: 'nightlies#show', as: :show_nightly
+    get 'lottery', to: 'venues#lottery', as: :lotto
+
+    # Venue API
     post 'api/nightly/update_guest', to: 'nightlies#update_guest', as: :update_guest_nightly
     post 'api/nightly/update_regular', to: 'nightlies#update_regular', as: :update_regular_nightly
     post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count

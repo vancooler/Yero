@@ -340,6 +340,100 @@ label {
   color: $boy;
 }
 
+.big-button {
+  background-color: #f6f6f6;
+  border: 1px solid #888;
+  @include box-shadow(0 2px 0 #888);
+  @include border-radius(5px);
+  padding: 40px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lotto {
+  .big-button {
+    margin-top: 40px;
+    position: relative;
+    img {
+      opacity: 0.6;
+      margin-bottom: 30px;
+    }
+    h2 {
+      @include text-shadow(0 2px 0 white);
+      margin-bottom: 5px;
+    }
+    p {
+      color: #888;
+      margin-bottom: 0;
+    }
+    .ppl-counter {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-family: "GothamMedium";
+      color: #888;
+      img {
+        height: 17px;
+        margin-bottom: 0;
+        position: relative;
+        top: -1px;
+      }
+    }
+  }
+  .recent {
+    margin-top: 30px;
+    h3 {
+      color: #aaa;
+      font-family: "GothamBook";
+    }
+    .winner {
+      display: table;
+      width: 100%;
+      margin-bottom: 25px;
+      .avatar {
+        float: left;
+        margin-right: 15px;
+        img {
+          height: 50px;
+        }
+      }
+      .content {
+        float: left;
+        padding-top: 6px;
+        .name {
+          margin-bottom: 1px;
+          font-family: "GothamMedium";
+          color: #555;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          font-size: 20px;
+        }
+        p {
+          color: #aaa;
+          margin-bottom: 0;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+.no-parts {
+  border: 1px dashed #aaa;
+  text-align: center;
+  padding: 30px;
+  text-transform: uppercase;
+  margin-top: 30px;
+  @include border-radius(5px);
+  h2 {
+    margin-top: 30px;
+    margin-bottom: 10px;
+  }
+  p {
+    color: #999;
+  }
+}
+
 .nightly-wrap {
   padding: 30px;
   margin: 0 auto;

@@ -5,6 +5,8 @@ class Venue < ActiveRecord::Base
   has_many :business_hours
   has_many :nightlies
   has_many :rooms
+  has_many :winners
+  has_many :participants, through: :rooms
 
   def tonightly
     Nightly.today_or_create(self)
