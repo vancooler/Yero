@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   post 'api/users/signup', to: 'users#sign_up'
   post 'api/users/update', to: 'users#update_settings'
   post 'api/users/update-apn', to: 'users#update_apn'
+  get 'api/lottery/show', to: 'users#get_lotto'
 
   # Venue/Beacon API
   post 'api/room/enter', to: 'rooms#user_enter'

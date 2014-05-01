@@ -35,6 +35,16 @@ class UsersController < ApplicationController
     render json: success(user.to_json(false))
   end
 
+  def get_lotto
+    winnings = User.find_by_key(params[:key]).winners.all
+
+    data = Jbuilder.encode do |json|
+      json.winnings winnings, :message, :created_at, :winner_id, :claimed
+    end
+
+    render json: success(JSON.parse(data))
+  end
+
   private
 
   def sign_up_params

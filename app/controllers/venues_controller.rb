@@ -24,7 +24,7 @@ class VenuesController < ApplicationController
       recipient = participants.sample
       winner = Winner.new
       winner.user = recipient.user
-      winner.message = "You've won a free drink under $10!  Go to any bar to claim your drink.  Winner ID: #{}"
+      winner.message = "You've won a free drink under $10!  Go to any bar to claim your drink."
       winner.venue = recipient.room.venue
       winner.save
 

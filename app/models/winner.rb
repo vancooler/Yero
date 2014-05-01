@@ -15,4 +15,12 @@ class Winner < ActiveRecord::Base
   def send_notification
 
   end
+
+  def to_json
+    data = Jbuilder.encode do |json|
+      json.birthday birthday
+    end
+
+    JSON.parse(data)
+  end
 end
