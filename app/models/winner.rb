@@ -11,4 +11,8 @@ class Winner < ActiveRecord::Base
       break random_token unless Winner.exists?(winner_id: random_token)
     end
   end
+
+  def send_notification
+
+  end
 end

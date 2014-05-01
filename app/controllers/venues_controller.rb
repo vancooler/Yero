@@ -27,6 +27,8 @@ class VenuesController < ApplicationController
       winner.message = "You've won a free drink under $10!  Go to any bar to claim your drink.  Winner ID: #{}"
       winner.venue = recipient.room.venue
       winner.save
+
+      winner.send_notification
     end
 
     redirect_to lotto_path
