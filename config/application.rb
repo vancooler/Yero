@@ -28,5 +28,7 @@ module PurpleOctopus
         ENV[key.to_s] = value
       end if File.exists?(env_file)
     end
+
+    AWS.config(access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'], region: 'us-east-1')
   end
 end

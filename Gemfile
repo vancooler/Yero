@@ -48,3 +48,4 @@ gem "fog", "~> 1.3.1"
 gem 'mini_magick', '~> 3.7.0'
 gem 'rmagick'
 gem 'houston'
+gem 'aws-sdk'

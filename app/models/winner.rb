@@ -13,7 +13,20 @@ class Winner < ActiveRecord::Base
   end
 
   def send_notification
+    if Rails.env.development?
+      apn = Houston::Client.development
+    else
+      apn = Houston::Client.production
+    end
 
+    apn.certificate = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/cert.pem'].read
+
+    token = self.user.apn_token
+
+    notification = Houston::Notification.new(device: token)
+    notification.alert = "You won a free drink!"
+
+    apn.push(notification)
   end
 
   def to_json
