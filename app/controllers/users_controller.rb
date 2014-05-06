@@ -35,6 +35,11 @@ class UsersController < ApplicationController
     render json: success(user.to_json(false))
   end
 
+  def get_profile
+    user = User.find_by_key(params[:key])
+    render json: success(user.to_json(false))
+  end
+
   def get_lotto
     winnings = User.find_by_key(params[:key]).winners.all
 

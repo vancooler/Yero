@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   # User API
   get 'api/nightly/get/:id', to: 'nightlies#get', as: :get_nightly
   get 'api/venues/list', to: 'venues#list', as: :venue_list
+  get 'api/profile', to: 'users#get_profile'
   post 'api/users/signup', to: 'users#sign_up'
   post 'api/users/update', to: 'users#update_settings'
   post 'api/users/update-apn', to: 'users#update_apn'
