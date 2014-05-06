@@ -67,9 +67,15 @@ class VenuesController < ApplicationController
     end
 
     data = Jbuilder.encode do |json|
+
+      images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
+
       json.array! venues do |v|
         json.name v.name
         json.address v.address_line_one
+        json.images do
+          json.array! images
+        end
 
         json.nightly do
           nightly = Nightly.today_or_create(v)
