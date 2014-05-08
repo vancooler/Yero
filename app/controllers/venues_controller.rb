@@ -1,7 +1,7 @@
 class VenuesController < ApplicationController
 
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
-  before_action :authenticate_api, only: [:list]
+  before_action :authenticate_api, only: [:list, :people]
 
   def nightly
     @nightlies = current_venue.nightlies.order("created_at DESC")
@@ -73,6 +73,8 @@ class VenuesController < ApplicationController
       json.array! venues do |v|
         json.name v.name
         json.address v.address_line_one
+        json.city v.city
+        json.state v.state
         json.images do
           json.array! images
         end
@@ -84,6 +86,24 @@ class VenuesController < ApplicationController
           json.guest_wait_time nightly.guest_wait_time
           json.regular_wait_time nightly.regular_wait_time
         end
+      end
+    end
+
+    render json: {
+      list: JSON.parse(data)
+    }
+  end
+
+  # Returns all the current people in the venue which the curent user is in
+  def people
+    participants = current_user.participant.room.venue.participants.all.reject { |p| p.user.id == current_user.id }
+    data = Jbuilder.encode do |json|
+      json.array! participants do |p|
+        json.name p.user.first_name + " " + p.user.last_initial
+        json.image p.user.avatar.thumb.url
+        json.gender p.user.gender
+        json.age p.user.age
+        json.id p.user.id
       end
     end
 

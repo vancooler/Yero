@@ -2,6 +2,7 @@ class User < ActiveRecord::Base
 
   has_many :traffics
   has_many :winners
+  has_many :pokes
   has_one  :participant
 
   mount_uploader :avatar, AvatarUploader
@@ -17,6 +18,12 @@ class User < ActiveRecord::Base
       random_token = SecureRandom.urlsafe_base64(nil, false)
       break random_token unless User.exists?(key: random_token)
     end
+  end
+
+  def age
+    dob = self.birthday
+    now = Time.now.utc.to_date
+    now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
   def to_json(with_key)

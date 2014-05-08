@@ -50,6 +50,16 @@ class UsersController < ApplicationController
     render json: success(JSON.parse(data))
   end
 
+  def poke
+    pokee = User.find(params[:user_id])
+    p = Poke.new
+    p.poker = current_user
+    p.pokee = pokee
+    p.save
+
+    render json: success(nil)
+  end
+
   private
 
   def sign_up_params
