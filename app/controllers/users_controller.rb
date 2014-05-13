@@ -52,12 +52,21 @@ class UsersController < ApplicationController
 
   def poke
     pokee = User.find(params[:user_id])
-    p = Poke.new
-    p.poker = current_user
-    p.pokee = pokee
-    p.save
 
-    render json: success(nil)
+    if pokee
+      p = Poke.where(pokee: pokee, poker: current_user).first
+
+      unless p
+        p = Poke.new
+        p.poker = current_user
+        p.pokee = pokee
+        p.save
+      end
+
+      render json: success(nil)
+    else
+      render json: error("User does no exist")
+    end
   end
 
   private

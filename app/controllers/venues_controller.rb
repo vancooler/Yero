@@ -75,6 +75,8 @@ class VenuesController < ApplicationController
         json.address v.address_line_one
         json.city v.city
         json.state v.state
+        json.longitude v.longitude
+        json.latitude v.latitude
         json.images do
           json.array! images
         end
