@@ -78,6 +78,7 @@ class VenuesController < ApplicationController
         json.state v.state
         json.longitude v.longitude
         json.latitude v.latitude
+        json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
         json.images do
           json.array! images
         end
