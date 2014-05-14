@@ -71,6 +71,7 @@ class VenuesController < ApplicationController
       images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
 
       json.array! venues do |v|
+        json.id v.id
         json.name v.name
         json.address v.address_line_one
         json.city v.city

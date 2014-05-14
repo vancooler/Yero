@@ -69,6 +69,37 @@ class UsersController < ApplicationController
     end
   end
 
+  def add_favourite_venue
+    user = User.find_by_key(params[:key])
+    venue = Venue.find(params[:venue_id])
+    if user && venue && !user.favourite_venues.where(venue: venue).first
+      fav = FavouriteVenue.new
+      fav.user = user
+      fav.venue = venue
+      fav.save
+
+      render json: success(nil)
+    else
+      render json: error("Error, user/venue does exist or venue is already a favourite of the user")
+    end
+  end
+
+  def remove_favourite_venue
+    user = User.find_by_key(params[:key])
+    venue = Venue.find(params[:venue_id])
+
+    if user && venue
+      fav = user.favourite_venues.where(venue: venue).first
+      if fav
+        fav.destroy
+
+        render json: success(nil)
+      end
+    else
+      render json: error("Error, user/venue does not exist or venue is not a favourite of the user")
+    end
+  end
+
   private
 
   def sign_up_params

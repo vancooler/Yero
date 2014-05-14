@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140513225555) do
+ActiveRecord::Schema.define(version: 20140514000051) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,11 @@ ActiveRecord::Schema.define(version: 20140513225555) do
     t.integer "day",        null: false
     t.time    "open_time",  null: false
     t.time    "close_time", null: false
+  end
+
+  create_table "favourite_venues", force: true do |t|
+    t.integer "user_id"
+    t.integer "venue_id"
   end
 
   create_table "nightlies", force: true do |t|

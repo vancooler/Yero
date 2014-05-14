@@ -7,11 +7,11 @@ class Venue < ActiveRecord::Base
   has_many :rooms
   has_many :winners
   has_many :participants, through: :rooms
+  has_many :favourited_users, class_name: "FavouriteVenue"
+  has_many :users, through: :favourite_venues
 
   geocoded_by :address
   after_validation :geocode
-
-  # before_create :get_loc
 
   def tonightly
     Nightly.today_or_create(self)
@@ -30,15 +30,5 @@ class Venue < ActiveRecord::Base
 
   def address
     [self.address_line_one, self.city, self.state, self.country].compact.join(', ')
-  end
-
-  def get_loc
-    require 'geocoder'
-
-    loc = Geocoder.coordinates(address)
-    if loc
-      self.latitude = loc[0]
-      self.longitude = loc[1]
-    end
   end
 end

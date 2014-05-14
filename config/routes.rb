@@ -31,6 +31,8 @@ Rails.application.routes.draw do
   post 'api/users/update-apn', to: 'users#update_apn'
   get 'api/lottery/show', to: 'users#get_lotto'
   post 'api/users/poke', to: 'users#poke'
+  post 'api/users/add_favourite_venue', to: 'users#add_favourite_venue'
+  post 'api/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
 
   # Venue/Beacon API
   post 'api/room/enter', to: 'rooms#user_enter'
