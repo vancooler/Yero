@@ -1,13 +1,14 @@
 class User < ActiveRecord::Base
-
   has_many :traffics
   has_many :winners
   has_many :pokes
   has_many :favourite_venues
   has_many :venues, through: :favourite_venues
+  has_many :user_avatars
+  accepts_nested_attributes_for :user_avatars
   has_one  :participant
 
-  mount_uploader :avatar, AvatarUploader
+  # mount_uploader :avatar, AvatarUploader
   before_create :create_key
   before_save   :update_activity
 
@@ -35,8 +36,14 @@ class User < ActiveRecord::Base
       json.last_initial last_initial
       json.gender gender
 
-      if avatar
-        json.avatar avatar.thumb.url
+      json.avatars do
+        avatars = self.user_avatars.all
+
+        json.array! avatars do |a|
+          json.avatar a.avatar.thumb.url
+          json.default a.default
+          json.avatar_id a.id
+        end
       end
 
       if with_key

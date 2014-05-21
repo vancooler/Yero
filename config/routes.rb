@@ -33,6 +33,10 @@ Rails.application.routes.draw do
   post 'api/users/poke', to: 'users#poke'
   post 'api/users/add_favourite_venue', to: 'users#add_favourite_venue'
   post 'api/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
+  post 'api/users/avatar/add', to: 'users#add_avatar'
+  post 'api/users/avatar/remove_avatar', to: 'users#remove_avatar'
+  post 'api/users/avatar/update_image', to: 'users#update_image'
+  post 'api/users/avatar/make_default', to: 'users#make_default'
 
   # Venue/Beacon API
   post 'api/room/enter', to: 'rooms#user_enter'
