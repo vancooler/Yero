@@ -72,14 +72,14 @@ class UsersController < ApplicationController
 
     if user.user_avatars.all.size == 1
       render json: error("Cannot remove image, user must have at least 1 image")
-    end
-
-    avatar = user.user_avatars.find(params[:avatar_id])
-    if avatar && avatar.destroy
-      user.user_avatars.first.update_attribute(:default, true)
-      render json: success(user.to_json(false))
     else
-      render json: error("Avatar does not exist")
+      avatar = user.user_avatars.find(params[:avatar_id])
+      if avatar && avatar.destroy
+        user.user_avatars.first.update_attribute(:default, true)
+        render json: success(user.to_json(false))
+      else
+        render json: error("Avatar does not exist")
+      end
     end
   end
 
