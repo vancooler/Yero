@@ -9,6 +9,7 @@ class UsersController < ApplicationController
 
     if user.valid?
       user.save!
+      user.create_layer_account
       user.user_avatars.first.update_attribute(:default, true)
       render json: success(user.to_json(true))
     else

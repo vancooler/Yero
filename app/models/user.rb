@@ -23,6 +23,32 @@ class User < ActiveRecord::Base
     end
   end
 
+  def create_layer_account
+    cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
+    key = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.key'].read
+
+    require "net/https"
+    require "uri"
+    require "json"
+
+    uri = URI "https://api-beta.layer.com/users"
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = true
+    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    http.key = OpenSSL::PKey::RSA.new(key)
+    http.cert = OpenSSL::X509::Certificate.new(cert)
+
+    request = Net::HTTP::Post.new(uri.request_uri)
+
+    data = [{ "id" => self.id, "access_token" => self.key }].to_json
+    request.body = data
+    request["Content-Type"] = "application/json"
+
+    response = http.request(request)
+    self.layer_id = JSON.parse(response.body)["users"][0]["layer_id"]
+    save
+  end
+
   def age
     dob = self.birthday
     now = Time.now.utc.to_date
@@ -31,10 +57,12 @@ class User < ActiveRecord::Base
 
   def to_json(with_key)
     data = Jbuilder.encode do |json|
+      json.id id
       json.birthday birthday
       json.first_name first_name
       json.last_initial last_initial
       json.gender gender
+      json.layer_id layer_id
 
       json.avatars do
         avatars = self.user_avatars.all

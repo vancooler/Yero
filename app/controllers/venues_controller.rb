@@ -108,6 +108,7 @@ class VenuesController < ApplicationController
         json.gender p.user.gender
         json.age p.user.age
         json.id p.user.id
+        json.layer_id p.user.layer_id
       end
     end
 
