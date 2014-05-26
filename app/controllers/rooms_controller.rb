@@ -8,6 +8,7 @@ class RoomsController < ApplicationController
 
     if room
       if p
+        p.room = room
         p.last_activity = Time.now
         p.enter_time = Time.now
         p.save!

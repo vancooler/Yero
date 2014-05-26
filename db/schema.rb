@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140523211916) do
+ActiveRecord::Schema.define(version: 20140526221411) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -101,6 +101,14 @@ ActiveRecord::Schema.define(version: 20140523211916) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
 
+  create_table "venue_networks", force: true do |t|
+    t.string   "city"
+    t.integer  "area"
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "venues", force: true do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
@@ -126,6 +134,7 @@ ActiveRecord::Schema.define(version: 20140523211916) do
     t.datetime "updated_at"
     t.float    "longitude"
     t.float    "latitude"
+    t.integer  "venue_network_id"
   end
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree

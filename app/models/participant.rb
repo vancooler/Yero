@@ -9,6 +9,10 @@ class Participant < ActiveRecord::Base
     self.last_activity = Time.now
   end
 
+  def venue_network
+    self.room.venue.venue_network
+  end
+
   def self.enter_room(room, user)
     p = Participant.new
     p.room = room
