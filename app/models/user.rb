@@ -23,6 +23,16 @@ class User < ActiveRecord::Base
     end
   end
 
+  def venue_network
+    if self.participant
+      self.participant.room.venue.venue_network
+    end
+  end
+
+  def default_avatar
+    self.user_avatars.where(default: true).first
+  end
+
   def create_layer_account
     cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
     key = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.key'].read

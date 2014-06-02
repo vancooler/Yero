@@ -100,20 +100,24 @@ class VenuesController < ApplicationController
 
   # Returns all the current people in the venue which the curent user is in
   def people
-    participants = current_user.participant.room.venue.participants.all.reject { |p| p.user.id == current_user.id }
-    data = Jbuilder.encode do |json|
-      json.array! participants do |p|
-        json.name p.user.first_name + " " + p.user.last_initial
-        json.image p.user.avatar.thumb.url
-        json.gender p.user.gender
-        json.age p.user.age
-        json.id p.user.id
-        json.layer_id p.user.layer_id
+    if current_user.participant
+      participants = current_user.venue_network.participants.all.reject { |p| p.user.id == current_user.id }
+      data = Jbuilder.encode do |json|
+        json.array! participants do |p|
+          json.name p.user.first_name + " " + p.user.last_initial
+          json.image p.user.default_avatar.avatar.thumb.url
+          json.gender p.user.gender
+          json.age p.user.age
+          json.id p.user.id
+          json.layer_id p.user.layer_id
+        end
       end
-    end
 
-    render json: {
-      list: JSON.parse(data)
-    }
+      render json: {
+        list: JSON.parse(data)
+      }
+    else
+      render error("Current user not in a Venue")
+    end
   end
 end

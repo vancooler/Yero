@@ -28,7 +28,7 @@
     <% @winners.each do |w| %>
       <div class="winner">
         <div class="avatar">
-          <%= image_tag w.user.avatar.thumb.url %>
+          <%= image_tag w.user.default_avatar.avatar.thumb.url %>
         </div>
         <div class="content">
           <div class="name"><%= w.user.first_name + " " + w.user.last_initial %></div>

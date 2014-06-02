@@ -4,7 +4,7 @@ class RoomsController < ApplicationController
 
   def user_enter
     room = Beacon.find_by_key(params[:beacon_key]).room
-    p = Participant.where(room: room, user: current_user).first
+    p = Participant.where(user: current_user).first
 
     if room
       if p
