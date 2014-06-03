@@ -8,3 +8,7 @@ default: &default
 development:
   <<: *default
   database: purpleoctopus
+
+test:
+  <<: *default
+  database: purpleoctopus_test

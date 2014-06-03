@@ -13,7 +13,7 @@ class User < ActiveRecord::Base
   before_save   :update_activity
 
   validates :email, uniqueness: true
-  validates :email, :birthday, :first_name, :last_initial, :gender, presence: true
+  validates :email, :birthday, :first_name, :gender, presence: true
 
   # create a unique key for API usagebefore create
   def create_key
@@ -70,7 +70,6 @@ class User < ActiveRecord::Base
       json.id id
       json.birthday birthday
       json.first_name first_name
-      json.last_initial last_initial
       json.gender gender
       json.layer_id layer_id
 

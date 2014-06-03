@@ -104,7 +104,7 @@ class VenuesController < ApplicationController
       participants = current_user.venue_network.participants.all.reject { |p| p.user.id == current_user.id }
       data = Jbuilder.encode do |json|
         json.array! participants do |p|
-          json.name p.user.first_name + " " + p.user.last_initial
+          json.name p.user.first_name
           json.image p.user.default_avatar.avatar.thumb.url
           json.gender p.user.gender
           json.age p.user.age
