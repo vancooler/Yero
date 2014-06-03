@@ -8,7 +8,6 @@ class Venue < ActiveRecord::Base
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
-  has_many :users, through: :favourite_venues
   belongs_to :venue_network
 
   geocoded_by :address
