@@ -101,7 +101,8 @@ class VenuesController < ApplicationController
   # Returns all the current people in the venue which the curent user is in
   def people
     if current_user.participant
-      participants = current_user.venue_network.participants.all.reject { |p| p.user.id == current_user.id }
+      #participants = current_user.venue_network.participants.all.reject { |p| p.user.id == current_user.id }
+      participants = Participant.all
       data = Jbuilder.encode do |json|
         json.array! participants do |p|
           json.name p.user.first_name
