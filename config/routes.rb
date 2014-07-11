@@ -33,6 +33,8 @@ Rails.application.routes.draw do
   post 'api/users/update-apn', to: 'users#update_apn'
   get 'api/lottery/show', to: 'users#get_lotto'
   post 'api/users/poke', to: 'users#poke'
+  get 'api/users/get_pokes', to: 'users#get_pokes'
+  get 'api/users/favourite_venues', to: 'users#favourite_venues'
   post 'api/users/add_favourite_venue', to: 'users#add_favourite_venue'
   post 'api/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
   post 'api/users/avatar/add', to: 'users#add_avatar'

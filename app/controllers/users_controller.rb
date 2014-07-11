@@ -157,9 +157,75 @@ class UsersController < ApplicationController
     end
   end
 
+  def favourite_venues
+    user = User.find_by_key(params[:key])
+
+    favourites = user.favourite_venues
+
+    data = Jbuilder.encode do |json|
+      images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
+
+      json.array! favourites do |f|
+
+        v = f.venue
+
+        json.id v.id
+        json.name v.name
+        json.address v.address_line_one
+        json.city v.city
+        json.state v.state
+        json.longitude v.longitude
+        json.latitude v.latitude
+        json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
+        json.images do
+          json.array! images
+        end
+
+        json.nightly do
+          nightly = Nightly.today_or_create(v)
+          json.boy_count nightly.boy_count
+          json.girl_count nightly.girl_count
+          json.guest_wait_time nightly.guest_wait_time
+          json.regular_wait_time nightly.regular_wait_time
+        end
+      end
+    end
+
+    render json: {
+      list: JSON.parse(data)
+    }
+  end
+
+  def get_pokes
+    user = User.find_by_key(params[:key])
+
+    pokes = Poke.where(pokee: user).all
+
+    data = Jbuilder.encode do |json|
+      json.array! pokes do |p|
+
+        json.id = p.id
+
+        json.poker do
+          poker = p.poker
+
+          json.id poker.id
+          json.first_name poker.first_name
+          json.avatar poker.default_avatar.avatar.thumb.url
+        end
+
+        json.timestamp p.poked_at
+      end
+    end
+
+    render json: {
+      list: JSON.parse(data)
+    }
+  end
+
   private
 
   def sign_up_params
-    params.require(:user).permit(:email, :birthday, :first_name, :gender, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :first_name, :gender, user_avatars_attributes: [:avatar])
   end
 end

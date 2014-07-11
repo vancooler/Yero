@@ -1,7 +1,7 @@
 class User < ActiveRecord::Base
   has_many :traffics
   has_many :winners
-  has_many :pokes
+  has_many :pokes, foreign_key: "pokee_id"
   has_many :favourite_venues
   has_many :venues, through: :favourite_venues
   has_many :user_avatars

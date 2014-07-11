@@ -67,7 +67,6 @@ class VenuesController < ApplicationController
     end
 
     data = Jbuilder.encode do |json|
-
       images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
 
       json.array! venues do |v|
