@@ -13,6 +13,7 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
     unless User.find_by_key(params[:key])
       render json: error("You must authenticate with an API Key")
@@ -29,6 +30,8 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.for(:sign_up) << [:name, :address_line_one, :city, :state, :country, :zipcode, :phone, :age_requirement, :dress_code]
     devise_parameter_sanitizer.for(:account_update) << [:name, :address_line_one, :city, :state, :country, :zipcode, :phone, :age_requirement, :dress_code]
   end
+
+  # Easy way to send back success/failed API calls
 
   def success(data)
     {

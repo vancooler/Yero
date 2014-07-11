@@ -10,6 +10,7 @@ class Venue < ActiveRecord::Base
   has_many :favourited_users, class_name: "FavouriteVenue"
   belongs_to :venue_network
 
+  # Address is geocoded so it can be returned to the iOS client
   geocoded_by :address
   after_validation :geocode
 

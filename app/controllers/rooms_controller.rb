@@ -2,6 +2,8 @@ class RoomsController < ApplicationController
   before_action :authenticate_api
   skip_before_filter  :verify_authenticity_token
 
+  # When a user enters a room, we need to create a new participant.
+  # Participants tell us who is in what Venue/Venue Network
   def user_enter
     room = Beacon.find_by_key(params[:beacon_key]).room
     p = Participant.where(user: current_user).first

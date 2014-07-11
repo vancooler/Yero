@@ -51,6 +51,8 @@ class VenuesController < ApplicationController
 
   # API
 
+  # List of venues
+  # TODO Refactor out the JSON builder into venue.rb
   def list
     venues = Venue.all
 
@@ -98,6 +100,7 @@ class VenuesController < ApplicationController
   end
 
   # Returns all the current people in the venue which the curent user is in
+  # TODO refactor out the JSON data into participant.rb
   def people
     if current_user.participant
       #participants = current_user.venue_network.participants.all.reject { |p| p.user.id == current_user.id }

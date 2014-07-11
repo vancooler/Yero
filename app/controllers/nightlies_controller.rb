@@ -1,5 +1,8 @@
 class NightliesController < ApplicationController
 
+  # This controller is for the backend dashboard for the Venue owners.
+  # They are able to change the wait times/other live info for their venue for a particular day
+
   before_action :authenticate_venue!, except: [:get]
 
   def show

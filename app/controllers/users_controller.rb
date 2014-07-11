@@ -29,6 +29,8 @@ class UsersController < ApplicationController
     end
   end
 
+  # Make a new default avatar
+  # TODO Rename this crap
   def make_default
     user = User.find_by_key(params[:key])
     avatar = user.user_avatars.find(params[:avatar_id])
@@ -157,6 +159,8 @@ class UsersController < ApplicationController
     end
   end
 
+  # A list of the user's favourite venues
+  # TODO refactor out the JSON data builder to venue.rb
   def favourite_venues
     user = User.find_by_key(params[:key])
 
@@ -196,6 +200,8 @@ class UsersController < ApplicationController
     }
   end
 
+  # Get all the chat requests sent to the user
+  # TODO refactor out the JSON builder into poke.rb
   def get_pokes
     user = User.find_by_key(params[:key])
 

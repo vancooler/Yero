@@ -1,4 +1,5 @@
 class UserAvatar < ActiveRecord::Base
+  # A User has 1..n images
 
   belongs_to :user
 

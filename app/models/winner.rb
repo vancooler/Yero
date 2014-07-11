@@ -1,10 +1,15 @@
 class Winner < ActiveRecord::Base
+  # A winner is a generic model for a User who has won something
+  # Could be drinks, food, etc
+
   belongs_to :user
   belongs_to :venue
 
   before_create :create_key
 
-  # create a unique key for API usagebefore create
+  # Create a unique key for API usage before create.
+  # The unique key will allow users to claim them when
+  # showing the venue this key
   def create_key
     self.winner_id = loop do
       random_token = rand.to_s[2..6]
@@ -12,7 +17,14 @@ class Winner < ActiveRecord::Base
     end
   end
 
+  # TODO Create a claim_key method
+  # def claim_key
+  # end
+
+  # Send a notification to the use through APNS
   def send_notification
+
+    # TODO this seems hacky
     if Rails.env.development?
       apn = Houston::Client.development
     else
