@@ -1,4 +1,4 @@
-class VenueNetwork < ActiveRecord::Migration
+class VenueNetworks < ActiveRecord::Migration
   def change
     create_table :venue_networks do |t|
       t.string     :city
