@@ -86,14 +86,14 @@ ActiveRecord::Schema.define(version: 20140602222134) do
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-07-30 19:42:14', null: false
-    t.datetime "enter_time",    default: '2014-07-30 19:42:14', null: false
+    t.datetime "last_activity", default: '2014-07-30 22:35:18', null: false
+    t.datetime "enter_time",    default: '2014-07-30 22:35:18', null: false
   end
 
   create_table "pokes", force: true do |t|
     t.integer  "poker_id"
     t.integer  "pokee_id"
-    t.datetime "poked_at", default: '2014-07-30 19:42:14'
+    t.datetime "poked_at", default: '2014-07-30 22:35:18'
     t.boolean  "viewed",   default: false
   end
 
