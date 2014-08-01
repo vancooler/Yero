@@ -12,7 +12,6 @@ class User < ActiveRecord::Base
   before_create :create_key
   before_save   :update_activity
 
-  validates :email, uniqueness: true
   validates :birthday, :first_name, :gender, presence: true
 
   # create a unique key for API usagebefore create

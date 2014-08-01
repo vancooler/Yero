@@ -8,13 +8,11 @@ namespace :db do
   task seed: :environment do
     # rough sample data
     user = User.create!(
-        email: 'lyosha85+sample_user@gmail.com',
         birthday: Time.now - 28.years,
         first_name: 'Alex',
         gender:'Male'
       )
     user2 = User.create!(
-        email: 'user@example.com',
         birthday: Time.now - 28.years,
         first_name: 'Lyosha',
         gender:'Male'
