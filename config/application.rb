@@ -30,5 +30,15 @@ module PurpleOctopus
     end
 
     AWS.config(access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'], region: 'us-east-1')
+    
+    # set rspec as the default test framework when generating controllers
+    config.generators do |g|
+      g.test_framework :rspec, fixture: true
+      g.fixture_replacement :factory_girl, dir: 'spec/factories' 
+
+      g.view_specs false
+      g.helper_specs false
+    end
+    
   end
 end

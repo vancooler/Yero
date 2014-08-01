@@ -54,10 +54,12 @@ gem 'activeadmin', github: 'gregbell/active_admin'
 
 
 group :development, :test do
+  gem 'minitest'
   gem 'rspec-rails', '2.13.1'
+  gem 'factory_girl_rails'
 end
 
 group :test do
   gem 'selenium-webdriver', '2.35.1'
-  gem 'capybara', '2.1.0'
+  gem 'capybara', git: 'https://github.com/jnicklas/capybara.git'
 end

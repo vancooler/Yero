@@ -42,4 +42,12 @@ RSpec.configure do |config|
 
   # Include capybara dsl in tests
   config.include Capybara::DSL
+
+  # Include Capybara helpers
+  Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
+
+  # Disable the old-style object.should syntax.
+  config.expect_with :rspec do |c|
+    c.syntax = :expect
+  end
 end

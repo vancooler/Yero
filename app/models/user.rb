@@ -56,6 +56,7 @@ class User < ActiveRecord::Base
 
     response = http.request(request)
     self.layer_id = JSON.parse(response.body)["users"][0]["layer_id"]
+    
     save
   end
 
