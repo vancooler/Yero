@@ -59,9 +59,9 @@ class VenuesController < ApplicationController
     if params[:after]
       new_list = []
 
-      venues.each do |v|
-        if v.tonightly.updated_at > Time.at(params[:after].to_i)
-          new_list << v
+      venues.each do |venue|
+        if venue.tonightly.updated_at > Time.at(params[:after].to_i)
+          new_list << venue
         end
       end
 
@@ -94,9 +94,10 @@ class VenuesController < ApplicationController
       end
     end
 
-    render json: {
-      list: JSON.parse(data)
-    }
+    # render json: {
+    #   list: JSON.parse(data)
+    # }
+    render json: success(JSON.parse data)
   end
 
   # Returns all the current people in the venue which the curent user is in
@@ -123,4 +124,5 @@ class VenuesController < ApplicationController
       render error("Current user not in a Venue")
     end
   end
+
 end

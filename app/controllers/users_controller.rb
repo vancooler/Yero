@@ -5,14 +5,11 @@ class UsersController < ApplicationController
   # API
 
   def sign_up
-    user = User.new(sign_up_params)
+    
+    user_registration = UserRegistration.new(sign_up_params)
+    user = user_registration.user
 
-    if user.valid?
-      user.save!
-      # user.create_layer_account
-      # user.user_avatars.first.update_attribute(:default, true)
-      # TODO refactor avatars to a separate class
-      # TODO bring back this code after the chat is working. 
+    if user_registration.create
       render json: success(user.to_json(true))
     else
       render json: error(JSON.parse(user.errors.messages.to_json))

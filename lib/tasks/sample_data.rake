@@ -10,31 +10,39 @@ namespace :db do
     user = User.create!(
         birthday: Time.now - 28.years,
         first_name: 'Alex',
-        gender:'Male'
+        gender:'Male',
+        key: loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
       )
     user2 = User.create!(
         birthday: Time.now - 28.years,
         first_name: 'Lyosha',
-        gender:'Male'
+        gender:'Male',
+        key: loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
     )
 
     Poke.create(pokee: user2, poker: user)
     Poke.create(pokee: user, poker: user2)
     
 
-    user.venues.create!(
-        name:'Republic',
-        password: 'subway11',
-        password_confirmation: 'subway11',
-        email: 'lyosha85+yero_sample_venue@gmail.com'
-      )
     network = VenueNetwork.create(
         city: "Vancouver",
         area: 2,
         name: "Vancouver Night Life"
       )
-    venue = user.venues.first
-    network.venues << venue
+
+    user.venues.create!(
+        name:'Republic',
+        password: 'subway11',
+        password_confirmation: 'subway11',
+        email: 'lyosha85+yero_sample_venue@gmail.com',
+        venue_network_id: VenueNetwork.first.id
+      )
 
     beacons = [
         {name: "Bar - Downstairs", key: "1"},
@@ -46,7 +54,7 @@ namespace :db do
         {name: "Line Area", key: "7"},
         {name: "Smoking Area", key: "8"},
       ]
-
+    venue = Venue.last
     4.times do 
       room = venue.rooms.create!
       2.times {room.beacons << Beacon.new(beacons.pop)}

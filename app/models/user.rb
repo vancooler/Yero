@@ -9,18 +9,9 @@ class User < ActiveRecord::Base
   has_one  :participant
 
   # mount_uploader :avatar, AvatarUploader
-  before_create :create_key
   before_save   :update_activity
 
   validates :birthday, :first_name, :gender, presence: true
-
-  # create a unique key for API usagebefore create
-  def create_key
-    self.key = loop do
-      random_token = SecureRandom.urlsafe_base64(nil, false)
-      break random_token unless User.exists?(key: random_token)
-    end
-  end
 
   def venue_network
     if self.participant
@@ -30,33 +21,6 @@ class User < ActiveRecord::Base
 
   def default_avatar
     self.user_avatars.where(default: true).first
-  end
-
-  def create_layer_account
-    cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
-    key = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.key'].read
-
-    require "net/https"
-    require "uri"
-    require "json"
-
-    uri = URI "https://api-beta.layer.com/users"
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    http.key = OpenSSL::PKey::RSA.new(key)
-    http.cert = OpenSSL::X509::Certificate.new(cert)
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-
-    data = [{ "id" => self.id, "access_token" => self.key }].to_json
-    request.body = data
-    request["Content-Type"] = "application/json"
-
-    response = http.request(request)
-    self.layer_id = JSON.parse(response.body)["users"][0]["layer_id"]
-    
-    save
   end
 
   def age

@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.1.1'
+ruby '2.1.2'
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '4.1.0'
@@ -30,9 +30,6 @@ gem 'sdoc', '~> 0.4.0',          group: :doc
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
-# Use debugger
-gem 'debugger', group: [:development, :test]
-
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin]
 
@@ -51,12 +48,23 @@ gem 'houston'
 gem 'aws-sdk'
 gem 'geocoder'
 gem 'activeadmin', github: 'gregbell/active_admin'
+gem 'sidekiq'
+# gem 'carrierwave_direct'
+gem 'carrierwave_backgrounder'
 
+#layer gem
+gem 'jwt'
+
+group :development do 
+  gem 'rest-client'
+end
 
 group :development, :test do
   gem 'minitest'
   gem 'rspec-rails', '2.13.1'
   gem 'factory_girl_rails'
+  # Use debugger
+  # gem 'debugger'
 end
 
 group :test do
