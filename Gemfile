@@ -55,6 +55,8 @@ gem 'carrierwave_backgrounder'
 #layer gem
 gem 'jwt'
 
+gem 'rails_12factor', group: :production
+
 group :development do 
   gem 'rest-client'
 end

@@ -1,12 +1,12 @@
 require 'spec_helper'
-API_TEST_URL = "http://purpleoctopus-staging.herokuapp.com"
+
 describe 'API' do
 
   describe "Registration (/api/v1/users/signup)" do
     before do
       @user_count = User.count
       # @base_url = 'http://4635554.ngrok.com'
-      @base_url = API_TEST_URL
+      @base_url = API_TEST_BASE_URL
       @signup_url = @base_url+'/api/v1/users/signup'
       @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
       @response =  RestClient.post( @signup_url,
@@ -41,7 +41,7 @@ describe 'API' do
   describe "Existing user uploads another avatar(/api/v1/users/avatar/add)" do
     before do
       @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
-      @add_avatar_url = "#{API_TEST_URL}/api/v1/users/avatar/add"
+      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
       @user = User.last
       @initial_avatar_count = @user.user_avatars.count
       @response =  RestClient.post( @add_avatar_url,
@@ -65,10 +65,10 @@ describe 'API' do
 
   describe "Client removes avatar from profile (/api/users/avatar/remove_avatar)" do
     before do
-      @remove_avatar_path = "#{API_TEST_URL}/api_v1_users_avatar_remove_avatar"
-      @add_avatar_url = "#{API_TEST_URL}/api/v1/users/avatar/add"
+      @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
+      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
       @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
-      @add_avatar_url = "#{API_TEST_URL}/api/v1/users/avatar/add"
+      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
       @user = User.last
       @response =  RestClient.post( @add_avatar_url,
                 {
@@ -88,7 +88,7 @@ describe 'API' do
     end
     describe "Should not be able to remove the last avatar" do
       before do
-        @remove_avatar_path = "#{API_TEST_URL}/api_v1_users_avatar_remove_avatar"
+        @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
         @user = User.last
         @user.user_avatars.each do |avatar|
           @response =  RestClient.post( @remove_avatar_path,
@@ -127,7 +127,7 @@ describe 'API' do
       @venue = @room.venue
 
       #emulate sending request from phone of entering a beacon
-      @response = RestClient.post( "#{API_TEST_URL}/api/v1/room/enter",
+      @response = RestClient.post( "#{API_TEST_BASE_URL}/api/v1/room/enter",
                           {
                             key: @user.key,
                             beacon_key: @beacon.key
@@ -152,14 +152,14 @@ describe 'API' do
       @room = Room.last
       @beacon = @room.beacons.last
       @venue = @room.venue
-      RestClient.post( "#{API_TEST_URL}/api/v1/room/enter",
+      RestClient.post( "#{API_TEST_BASE_URL}/api/v1/room/enter",
                           {
                             key: @user.key,
                             beacon_key: @beacon.key
                           }
                         )
 
-      @response = RestClient.post( "#{API_TEST_URL}/api/v1/room/leave",
+      @response = RestClient.post( "#{API_TEST_BASE_URL}/api/v1/room/leave",
                           {
                             key: @user.key,
                             beacon_key: @beacon.key
@@ -177,7 +177,7 @@ describe 'API' do
   describe "Server gets a request for the venue list (/api/venues/list)" do
     before do
       @user = User.last
-      @response = RestClient.get( "#{API_TEST_URL}/api/v1/venues/list",
+      @response = RestClient.get( "#{API_TEST_BASE_URL}/api/v1/venues/list",
                             params:{
                               key: @user.key
                             }
