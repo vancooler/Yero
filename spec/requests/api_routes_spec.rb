@@ -5,7 +5,8 @@ describe 'API' do
   describe "Registration (/api/v1/users/signup)" do
     before do
       @user_count = User.count
-      @base_url = 'http://localhost:3000/'
+      # @base_url = 'http://4635554.ngrok.com'
+      @base_url = 'http://purpleoctopus-staging.herokuapp.com'
       @signup_url = @base_url+'/api/v1/users/signup'
       @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
       @response =  RestClient.post( @signup_url,

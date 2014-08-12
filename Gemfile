@@ -71,3 +71,5 @@ group :test do
   gem 'selenium-webdriver', '2.35.1'
   gem 'capybara', git: 'https://github.com/jnicklas/capybara.git'
 end
+
+gem 'thin'
