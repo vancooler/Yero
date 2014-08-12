@@ -74,4 +74,4 @@ group :test do
   gem 'capybara', git: 'https://github.com/jnicklas/capybara.git'
 end
 
-# gem 'thin'
+gem 'unicorn'
