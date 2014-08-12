@@ -5,12 +5,14 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
+
     room = Beacon.find_by(key: params[:beacon_key]).room
 
     participant = Participant.where(user: current_user).where(room_id: room.id).first
 
     if room
       if participant
+        participant.temperature = params[:temperature]
         participant.room = room
         participant.last_activity = Time.now
         participant.enter_time = Time.now
