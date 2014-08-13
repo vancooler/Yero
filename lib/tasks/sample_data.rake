@@ -35,14 +35,21 @@ namespace :db do
         area: 2,
         name: "Vancouver Night Life"
       )
+    10.times do |n|
+      [user,user2].sample.venues.create!(
+          name:"Venue #{n}",
+          password: 'subway11',
+          password_confirmation: 'subway11',
+          email: 'lyosha85+yero_sample_venue@gmail.com',
+          venue_network_id: VenueNetwork.first.id,
+          age_requirement: '19+',
+          dress_code: ['Formal','Casual','Semi-Formal','No Dress Code'].sample,
+          address_line_one: "Unit #{[55,66,77,88,99].sample}",
+          address_line_two: "#{[12,32,44,22,77,86,123].sample} Granville Street"
 
-    user.venues.create!(
-        name:'Republic',
-        password: 'subway11',
-        password_confirmation: 'subway11',
-        email: 'lyosha85+yero_sample_venue@gmail.com',
-        venue_network_id: VenueNetwork.first.id
-      )
+
+        )
+    end
 
     beacons = [
         {name: "Bar - Downstairs", key: "1"},

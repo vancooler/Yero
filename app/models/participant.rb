@@ -13,10 +13,11 @@ class Participant < ActiveRecord::Base
     self.room.venue.venue_network
   end
 
-  def self.enter_room(room, user)
+  def self.enter_room(room, user, temperature)
     p = Participant.new
     p.room = room
     p.user = user
+    p.temperature = temperature
     p.save!
     return p
   end

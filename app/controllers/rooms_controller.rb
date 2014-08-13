@@ -5,26 +5,30 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
+    beacon = Beacon.find_by(key: params[:beacon_key])
+    temperature = params[:temperature]
 
-    room = Beacon.find_by(key: params[:beacon_key]).room
+      if beacon
+            room = beacon.room
+            if room
+              participant = Participant.where(user: current_user).where(room_id: room.id).first
+              if participant
+                participant.temperature = temperature
+                participant.room = room
+                participant.last_activity = Time.now
+                participant.enter_time = Time.now
+                participant.save!
+              else
+                Participant.enter_room(room, current_user, temperature)
+              end
 
-    participant = Participant.where(user: current_user).where(room_id: room.id).first
-
-    if room
-      if participant
-        participant.temperature = params[:temperature]
-        participant.room = room
-        participant.last_activity = Time.now
-        participant.enter_time = Time.now
-        participant.save!
+              render json: success(room.venue.to_json)
+            else
+              render json: error("Room does not exist")
+            end
       else
-        Participant.enter_room(room, current_user)
+        render json: error("Beacon not found")
       end
-
-      render json: success(room.venue.to_json)
-    else
-      render json: error("Room does not exist")
-    end
   end
 
   def user_leave

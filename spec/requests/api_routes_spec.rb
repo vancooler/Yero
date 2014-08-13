@@ -130,7 +130,8 @@ describe 'API' do
       @response = RestClient.post( "#{API_TEST_BASE_URL}/api/v1/room/enter",
                           {
                             key: @user.key,
-                            beacon_key: @beacon.key
+                            beacon_key: @beacon.key,
+                            temperature: ((10...40).to_a).sample
                           }
                         )
 
