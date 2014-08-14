@@ -5,8 +5,10 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
-    beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
-    activity_item = ActivityItem.new(current_user, beacon, "Enter")
+    beacon = Beacon.find_or_create_by(key: params[:beacon_key].to_i) 
+    # beacon.temperatures.create(celsius: params[:temperature].to_i)
+    activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
+
     if activity_item.create
       render json: success(beacon.to_json)
     else
@@ -38,13 +40,21 @@ class RoomsController < ApplicationController
   end
 
   def user_leave
-    participant = Participant.find_by_user_id(current_user.id)
-
-    if participant
-      participant.delete
-      render json: success(nil)
+    beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
+    activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
+    if activity_item.create
+      render json: success(beacon.to_json)
     else
-      render json: error("Participant does not exist")
+      render json: error("Could not log leaving.")
     end
+
+    # participant = Participant.find_by_user_id(current_user.id)
+
+    # if participant
+    #   participant.delete
+    #   render json: success(nil)
+    # else
+    #   render json: error("Participant does not exist")
+    # end
   end
 end

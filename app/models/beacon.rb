@@ -1,6 +1,6 @@
 class Beacon < ActiveRecord::Base
   # A beacon has a unique ID
-
+  has_many :temperatures
   belongs_to :room
 
   before_save :default_room

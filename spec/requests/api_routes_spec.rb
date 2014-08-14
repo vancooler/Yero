@@ -120,10 +120,11 @@ describe 'API' do
 
   describe "YJ Test" do
 
- @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com",
+ # @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/enter",
+ @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
                           {
                             key: "2NihILTlrZ7idzwOzg3TRA",
-                            beacon_key: "YJ-01-Vancouver-005AFT",
+                            beacon_key: "bacon-beacon",
                             temperature: ((10...40).to_a).sample
                           }
                         )

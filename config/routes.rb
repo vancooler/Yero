@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/avatar/remove_avatar',   to: 'users#remove_avatar'
   post 'api/v1/users/avatar/update_image',    to: 'users#update_image'
   post 'api/v1/users/avatar/make_default',    to: 'users#make_default'
-
+  get  'api/v1/last_activity/:key',           to: 'activities#show'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
