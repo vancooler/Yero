@@ -21,7 +21,8 @@ class AvatarUploader < CarrierWave::Uploader::Base
   end
 
   # Process files as they are uploaded:
-  process :resize_to_fill => [400, 400]
+  # W320xH240 for profile photo
+  process :resize_to_fill => [320, 240]
   #
   # def scale(width, height)
   #   # do something
@@ -29,8 +30,14 @@ class AvatarUploader < CarrierWave::Uploader::Base
 
   # Create different versions of your uploaded files:
   version :thumb do
-     process :resize_to_fit => [100, 100]
+     process :resize_to_fit => [98, 98]
   end
+  # 98
+  # 46
+  
+  # avatgar chat
+  # avatar me
+  # avatar people
 
   # Add a white list of extensions which are allowed to be uploaded.
   # For images you might use something like this:
