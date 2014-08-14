@@ -14,6 +14,10 @@ class User < ActiveRecord::Base
 
   validates :birthday, :first_name, :gender, presence: true
 
+  def last_activity
+    self.activities.last
+  end
+
   def venue_network
     if self.participant
       self.participant.room.venue.venue_network
