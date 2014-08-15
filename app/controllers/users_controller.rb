@@ -3,9 +3,18 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   # API
+  def index
+    @users = User.active
+    @users = @users.where(gender: "M") if params[:gender] == "M"
+    @users = @users.where(gender: "F") if params[:gender] == "F"
+    @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
+    @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
+    @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
+
+    render json: @users
+  end
 
   def sign_up
-    
     user_registration = UserRegistration.new(sign_up_params)
     user = user_registration.user
 
@@ -90,7 +99,7 @@ class UsersController < ApplicationController
     user.apn_token = params[:token]
     user.save
 
-    render json: success(user.to_json(false))
+    render json: success() #
   end
 
   def get_profile

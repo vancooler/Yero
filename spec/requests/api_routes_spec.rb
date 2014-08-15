@@ -120,12 +120,21 @@ describe 'API' do
 
   describe "YJ Test" do
 
- # @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/enter",
- @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
+ # @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
+ @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/enter",
+                          {
+                            key: "_OUMSy4dmSXTugIk9-HVWg",
+                            beacon_key: "YJ-02-Vancouver-039MNB",
+                            temperature: "23"
+                          }
+                        )
+
+  # @response = RestClient.post( "http://localhost:3000/api/v1/room/leave",
+  @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/leave",
                           {
                             key: "2NihILTlrZ7idzwOzg3TRA",
                             beacon_key: "bacon-beacon",
-                            temperature: ((10...40).to_a).sample
+                            # temperature: ((10...40).to_a).sample
                           }
                         )
   end
@@ -234,6 +243,22 @@ describe 'API' do
     end
   end
 
+  describe "Client sends the server gps location to calculate distance between users" do
+    before do
+      @user = User.last
+      Geocoder.coordinates("25 Main St, Cooperstown, NY")
+      @user_locations_count = @user.locations.count
+      @response = RestClient.post( "#{API_TEST_BASE_URL}/api/v1/user/locations/new",
+                              key: @user.key,
+                              latitude: Geocoder.coordinates("Republic, Vancouver")[0],
+                              longitude: Geocoder.coordinates("Republic, Vancouver")[1]
+                          )
+    end
+    it "should create a location for the user" do
+      expect(@user.locations.count).to be == (@user_locations_count + 1)
+    end
+  end
+
   # describe "Lottery" do
   #   before do
   #     # create venue accounts
@@ -305,3 +330,4 @@ end
 
 
 # api/history/[resource, data]^
+

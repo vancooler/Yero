@@ -8,6 +8,7 @@ class User < ActiveRecord::Base
   accepts_nested_attributes_for :user_avatars
   has_one  :participant
   has_many :activities
+  has_many :locations
 
   # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity

@@ -41,11 +41,14 @@ Rails.application.routes.draw do
   post 'api/v1/users/avatar/remove_avatar',   to: 'users#remove_avatar'
   post 'api/v1/users/avatar/update_image',    to: 'users#update_image'
   post 'api/v1/users/avatar/make_default',    to: 'users#make_default'
-  post  'api/v1/last_activity_for',          to: 'activities#show'
+  get  'api/v1/venues/people', to: 'venues#people'
+  
+  post 'api/v1/last_activity_for',          to: 'activities#show'
+  post 'api/v1/users', to: 'users#index'
+  post 'api/v1/user/locations/new', to: 'locations#create'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
-  get  'api/v1/venues/people', to: 'venues#people'
 
   # Api Test Routes
   # get 'test/beacons'
