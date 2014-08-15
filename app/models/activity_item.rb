@@ -1,7 +1,7 @@
 class ActivityItem
   def initialize(user, trackable, action = params[:action])
     @user_id = user.id
-    @tackable = trackable
+    @trackable = trackable
     @action = action
   end
   def create
