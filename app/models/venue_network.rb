@@ -14,6 +14,6 @@ class VenueNetwork < ActiveRecord::Base
 
   has_many :venues
   has_many :participants, through: :venues
-  validates_presence_of :city, :area, :name
+  # validates_presence_of :city, :area, :name  #cant use this for automated beacon initialization
   validates_uniqueness_of :name
 end

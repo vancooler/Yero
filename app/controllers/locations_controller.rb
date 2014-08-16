@@ -13,6 +13,12 @@ class LocationsController < ApplicationController
     else
       render json: error("Invalid request.")
     end
-
+  end
+  def show
+    if current_user && current_user.location.any?
+      render json: current_user.location.last
+    else
+      render json: error("User or Location cannot be found.")
+    end
   end
 end

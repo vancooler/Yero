@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
   post 'api/v1/user/locations/new', to: 'locations#create'
+  post 'api/v1/user/locations/show', to: 'locations#show'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
