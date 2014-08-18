@@ -1,0 +1,2 @@
+module TempNotificationsControllerHelper
+end

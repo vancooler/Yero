@@ -5,8 +5,12 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
-    beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
-    beacon.temperatures.create(celsius: params[:temperature].to_i)
+    beacon = Beacon.find_by(key: params[:beacon_key])
+    if beacon.blank?
+      beacon = BeaconInitialization.new(params[:beacon_key])
+      beacon.create
+    end
+    beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
     activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
 
     if activity_item.create

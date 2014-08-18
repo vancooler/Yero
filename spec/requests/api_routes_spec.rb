@@ -259,6 +259,49 @@ describe 'API' do
     end
   end
 
+  describe "Request a list of people in a venue" do
+    before do
+      # initialize 3 beacons for the same venue
+      beacons = []
+      %w[Vancouver_Republic_bar-downstairs_01_001CFG 
+         Vancouver_Republic_bar-downstairs_02_002EZY 
+         Vancouver_Republic_bar-upstairs_01_001KEK].each do |beacon|
+          beacon = BeaconInitialization.new(beacon)
+          beacon = beacon.create
+          beacons << beacon
+      end
+
+      @venue = Venue.last
+
+      # enter and exit a bunch of users
+      User.all.each do |user|
+        #enter user
+         @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
+                          {
+                            key: user.key,
+                            beacon_key: beacons.sample.key,
+                            temperature: "24"
+                          }
+                        )
+        if [true,false].sample
+          # Exit half of the users
+           @response = RestClient.post( "http://localhost:3000/api/v1/room/leave",
+                  {
+                    key: user.key,
+                    beacon_key: beacons.sample.key,
+                    temperature: "24"
+                  }
+                )
+        end
+      end #User.all.each..
+      # RestClient.post("#{API_TEST_BASE_URL}api/v1/users",
+      RestClient.post("http://localhost:3000/api/v1/users",
+        key: User.last.key,
+        venue_id: Venue.last.id
+        )
+    end
+  end
+
   # describe "Lottery" do
   #   before do
   #     # create venue accounts

@@ -7,13 +7,34 @@ class User < ActiveRecord::Base
   has_many :user_avatars
   accepts_nested_attributes_for :user_avatars
   has_one  :participant
-  has_many :activities
+  has_many :activities, dependent: :destroy
   has_many :locations
 
   # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity
 
   validates :birthday, :first_name, :gender, presence: true
+
+  def self.in_venue_now(venue_id)
+    venue_activities = Activity.at_venue_tonight(venue_id)
+    active_user_id = []
+
+    activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
+    activities_grouped_by_user_ids.each do |id_activity|
+      ordered_user_activity = id_activity[1].sort_by!{|t| t[:created_at]}
+      if ordered_user_activity.last.action == "Enter Beacon"
+        qualified = true
+      elsif ordered_user_activity.last.action == "Exit Beacon"
+        qualified = true
+      # todo
+      # elsif exit && before timeout && entered
+      else
+        qualified = false
+      end
+      active_user_id << id_activity[0] if qualified
+    end
+    where(id: active_user_id)
+  end
 
   def last_activity
     self.activities.last

@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  
+  #temporary routes for YJ to test out notification functionality
+  get 'temp_notifications_controller/new', as: 'new_notification'
+  get 'temp_notifications_controller/create', as: 'send_notification'
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   devise_for :venues, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }

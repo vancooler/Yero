@@ -4,14 +4,20 @@ class UsersController < ApplicationController
 
   # API
   def index
-    @users = User.active
-    @users = @users.where(gender: "M") if params[:gender] == "M"
-    @users = @users.where(gender: "F") if params[:gender] == "F"
-    @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
-    @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
-    @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
+    # @users = User.active
+    # @users = @users.where(gender: "M") if params[:gender] == "M"
+    # @users = @users.where(gender: "F") if params[:gender] == "F"
+    # @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
+    # @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
+    # @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
 
-    render json: @users
+    users = Jbuilder.encode do |json|
+      json.array! User.in_venue_now(params[:venue_id]) do |user|
+        json.id user.id
+      end
+    end
+
+    render json: users
   end
 
   def sign_up

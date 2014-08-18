@@ -4,7 +4,7 @@ class BeaconInitialization
     # Examples:
     # Vancouver_Aubar_Dance_01_123123
     # Vancouver_Republic_bar-upstairs_01_001CFG
-    
+
     beacon_relations_array = beacon_name.split("_")
     @venue_network_name = beacon_relations_array[0]
     @venue_name = beacon_relations_array[1]
@@ -16,20 +16,24 @@ class BeaconInitialization
       venue = create_venue(@venue_name, network.id)
       room = create_room(@room_name, venue.id)
       beacon = create_beacon(@beacon_key, room.id)
+      beacon
   end
 
-
+#TODO : Sanitize the parameters for the active record calls below
   private
     def create_network(network_name)
       VenueNetwork.find_or_create_by(name: network_name)
     end
     def create_venue(venue_name, network_id)
       venue = Venue.find_by(name: venue_name, venue_network_id: network_id) || Venue.new
-      venue.venue_network_id = network_id
-      venue.email = "hello+#{venue_name}@yero.co"
-      venue.password = "whispr111"
-      venue.password_confirmation = "whispr111"
-      venue.save!
+      if venue.new_record?
+        venue.name = venue_name
+        venue.venue_network_id = network_id
+        venue.email = "hello+#{venue_name}@yero.co"
+        venue.password = "whispr111"
+        venue.password_confirmation = "whispr111"
+        venue.save!
+      end
       venue
     end
     def create_room(room_name, venue_id)
