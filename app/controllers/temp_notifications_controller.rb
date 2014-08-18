@@ -1,4 +1,4 @@
-class TempNotificationsControllerController < ApplicationController
+class TempNotificationsController < ApplicationController
   def new
 
   end
