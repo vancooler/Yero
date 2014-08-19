@@ -15,36 +15,50 @@ class User < ActiveRecord::Base
 
   validates :birthday, :first_name, :gender, presence: true
 
+
+  def main_avatar
+    user_avatars.find_by(default: true) 
+  end
+
+  def secondary_avatars
+    user_avatars.where.not(default: true) 
+  end
+
   def current_venue
-    Acitivity.for_user(self.id).todays_activities.with_beacons.last
+    return nil unless self.has_activity_today?
+    activity = Activity.for_user(self.id).on_current_day.with_beacons.last
     if activity.action == "Enter Beacon"
-      activity.beacon.room.venue
+      activity.trackable.room.venue
     else
       nil
     end
   end
+  def has_activity_today?
+    self.activities.on_current_day.count > 0
+  end
+  def fellow_participants
+    current_venue = self.current_venue
+    return nil if (current_venue == nil || self.activities.count == 0)
 
-  def self.in_venue_now_for_user(user_key)
-    venue_activities = Activity.at_venue_tonight(venue_id)
-    active_user_id = []
+    venue_activities = Activity.at_venue_tonight(current_venue.id)
+    active_users_id = []
 
     activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
-    # activities_grouped_by_user_ids = activities_grouped_by_user_ids.delete(User.find_by(user_key: user_key).id).delete
+    activities_grouped_by_user_ids.delete(self.id) #remove current_user id from the list
     activities_grouped_by_user_ids.each do |id_activity|
       ordered_user_activity = id_activity[1].sort_by!{|t| t[:created_at]}
       if ordered_user_activity.last.action == "Enter Beacon"
         qualified = true
       elsif ordered_user_activity.last.action == "Exit Beacon"
-        qualified = true
+        qualified = false
       # todo
-      # elsif exit && before timeout && entered
-      #elsif if the current user is not in venue
+      # elsif exit && before timeout 
       else
         qualified = false
       end
-      active_user_id << id_activity[0] if qualified
+      active_users_id << id_activity[0] if qualified
     end
-    where(id: active_user_id)
+    User.where(id: active_users_id)
   end
 
   def last_activity
