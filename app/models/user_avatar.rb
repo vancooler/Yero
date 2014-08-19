@@ -6,6 +6,9 @@ class UserAvatar < ActiveRecord::Base
 
   mount_uploader :avatar, AvatarUploader
 
+  scope :default, -> { find_by(default: true) }
+  scope :secondary_avatars, -> { where(default: true) }
+
   def update_image(image)
     self.avatar = image
     save!
