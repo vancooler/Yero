@@ -295,10 +295,18 @@ describe 'API' do
         end
       end #User.all.each..
       # RestClient.post("#{API_TEST_BASE_URL}api/v1/users",
-      RestClient.post("http://localhost:3000/api/v1/users",
-        key: User.last.key,
+      # RestClient.post("http://localhost:3000/api/v1/users",
+      # RestClient.post("http://localhost:3000/api/v1/users",
+      #   key: User.last.key,
+      #   venue_id: Venue.last.id
+      #   )
+      RestClient.post("http://purpleoctopus-staging.herokuapp.com/api/v1/users",
+        key: "sDWN0YLdHmz-9vILcJuKow",
         venue_id: Venue.last.id
         )
+    end
+    it "Should return a list of users" do
+
     end
   end
 

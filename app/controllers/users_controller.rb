@@ -29,7 +29,7 @@ class UsersController < ApplicationController
         json.apn_token      user.apn_token
         json.layer_id       user.layer_id
 
-        json.main_avatar            user.user_avatars.default.present? ? user.user_avatars.default.url : nil
+        json.main_avatar            user.user_avatars.default.present? ? user.user_avatars.default.avatar.url : nil
         # json.main_avatar_processed  user.user_avatars.default.url
 
         # json.secondary_avatars 
