@@ -15,11 +15,21 @@ class User < ActiveRecord::Base
 
   validates :birthday, :first_name, :gender, presence: true
 
-  def self.in_venue_now(venue_id)
+  def current_venue
+    Acitivity.for_user(self.id).todays_activities.with_beacons.last
+    if activity.action == "Enter Beacon"
+      activity.beacon.room.venue
+    else
+      nil
+    end
+  end
+
+  def self.in_venue_now_for_user(user_key)
     venue_activities = Activity.at_venue_tonight(venue_id)
     active_user_id = []
 
     activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
+    # activities_grouped_by_user_ids = activities_grouped_by_user_ids.delete(User.find_by(user_key: user_key).id).delete
     activities_grouped_by_user_ids.each do |id_activity|
       ordered_user_activity = id_activity[1].sort_by!{|t| t[:created_at]}
       if ordered_user_activity.last.action == "Enter Beacon"
@@ -28,6 +38,7 @@ class User < ActiveRecord::Base
         qualified = true
       # todo
       # elsif exit && before timeout && entered
+      #elsif if the current user is not in venue
       else
         qualified = false
       end

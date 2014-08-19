@@ -4,6 +4,10 @@ class Activity < ActiveRecord::Base
   validates_presence_of :user
   after_save :set_since_1970
 
+  scope :todays_activities, -> { where("created_at >= :start_date AND created_at <= :end_date", start_date: Time.now.beginning_of_day, end_date: Time.now.end_of_day) }
+  scope :with_beacons, -> { where(trackable_type: "Beacon") }
+  scope :for_user, ->(user_id) { where(:user_id => user_id)}
+
   # TODO: scope time once clarified
   def self.at_venue_tonight(venue_id)
     venue = Venue.find(venue_id)
@@ -27,7 +31,7 @@ class Activity < ActiveRecord::Base
       []
     end
   end
- 
+
   private
     def set_since_1970
       if self.since_1970.blank?

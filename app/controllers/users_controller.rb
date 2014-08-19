@@ -13,8 +13,11 @@ class UsersController < ApplicationController
 
     users = Jbuilder.encode do |json|
       json.array! User.in_venue_now(params[:venue_id]) do |user|
-        # next if user.user_avatars.empty?
-        # next if user.user_avatars.default.empty?
+        next unless user.user_avatars.present?
+        next unless user.user_avatars.main.present?
+        # next if user.user_avatars.first
+        
+        json.main_avatar            user.user_avatars.main.present? ? user.user_avatars.main.avatar.url : nil
         
         json.id             user.id
         json.first_name     user.first_name
@@ -29,8 +32,7 @@ class UsersController < ApplicationController
         json.apn_token      user.apn_token
         json.layer_id       user.layer_id
 
-        json.main_avatar            user.user_avatars.default.present? ? user.user_avatars.default.avatar.url : nil
-        # json.main_avatar_processed  user.user_avatars.default.url
+        # json.main_avatar_processed  user.user_avatars.main.url
 
         # json.secondary_avatars 
         json.latitude       user.locations.present? ? user.locations.last.latitude  : nil
