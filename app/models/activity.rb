@@ -1,6 +1,6 @@
 class Activity < ActiveRecord::Base
   belongs_to :user
-  belongs_to :trackable, polymorphic: true, dependent:
+  belongs_to :trackable, polymorphic: true
   validates_presence_of :user
   after_save :set_since_1970
 

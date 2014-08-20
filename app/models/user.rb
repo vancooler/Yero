@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   has_many :locations
   has_one :read_notification
 
+  reverse_geocoded_by :latitude, :longitude
+
   # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity
 
@@ -60,6 +62,14 @@ class User < ActiveRecord::Base
       active_users_id << id_activity[0] if qualified
     end
     User.where(id: active_users_id)
+  end
+  def fellow_participants_sorted #by distance then by activity
+    results = self.fellow_participants
+    results_with_location = results.where.not(latitude:nil, longitude:nil)
+    results_with_no_location = results - results_with_location
+    results = results.near("#{self.latitude} #{self.longitude}", :order=> :distance)
+
+    sorted_results = results_with_location + results_with_no_location
   end
 
   def last_activity
