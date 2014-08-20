@@ -4,7 +4,7 @@ class Venue < ActiveRecord::Base
 
   has_many :business_hours, dependant: :destroy
   has_many :nightlies
-  has_many :rooms, dependant: :destroy
+  has_many :rooms, dependent: :destroy
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
