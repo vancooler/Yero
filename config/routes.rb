@@ -57,7 +57,7 @@ Rails.application.routes.draw do
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
-
+  post 'api/v1/users/read_notification_update', to: 'users#read_notification_update'
   # Api Test Routes
   # get 'test/beacons'
   # get 'test/venues'

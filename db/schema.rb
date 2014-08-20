@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140815235552) do
+ActiveRecord::Schema.define(version: 20140820191300) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -120,6 +120,15 @@ ActiveRecord::Schema.define(version: 20140815235552) do
     t.datetime "poked_at", default: '2014-07-30 22:35:18'
     t.boolean  "viewed",   default: false
   end
+
+  create_table "read_notifications", force: true do |t|
+    t.integer  "user_id"
+    t.boolean  "before_sending_whisper_notification"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
 
   create_table "rooms", force: true do |t|
     t.integer "venue_id"

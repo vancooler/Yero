@@ -264,6 +264,19 @@ class UsersController < ApplicationController
     }
   end
 
+  def read_notification_update
+    if current_user.read_notification.nil?
+      read_notification = ReadNotification.create(user: current_user)
+    else
+      read_notification = current_user.read_notification
+    end
+    if read_notification.update(before_sending_whisper_notification:true)
+      render json: success
+    else
+      render json: error("could not update read notification")
+    end
+  end
+
   private
 
   def sign_up_params
