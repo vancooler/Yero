@@ -1,9 +1,7 @@
 class Beacon < ActiveRecord::Base
   # A beacon has a unique ID
-  # The beacon name identifies the City_venue_room_#_code
-  # Example: Vancouver-Aubar-Dance-01-123123 
 
-  has_many :temperatures
+  has_many :temperatures, dependent: :destroy
   belongs_to :room
 
   before_save :default_room

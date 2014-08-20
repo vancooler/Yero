@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_one  :participant
   has_many :activities, dependent: :destroy
   has_many :locations
+  has_one :read_notification
 
   # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity
@@ -17,11 +18,11 @@ class User < ActiveRecord::Base
 
 
   def main_avatar
-    user_avatars.find_by(default: true) 
+    user_avatars.find_by(default: true)
   end
 
   def secondary_avatars
-    user_avatars.where.not(default: true) 
+    user_avatars.where.not(default: true)
   end
 
   def current_venue

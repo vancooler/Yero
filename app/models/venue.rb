@@ -2,9 +2,9 @@ class Venue < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :business_hours
+  has_many :business_hours, dependant: :destroy
   has_many :nightlies
-  has_many :rooms
+  has_many :rooms, dependant: :destroy
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
