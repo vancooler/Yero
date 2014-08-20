@@ -9,6 +9,14 @@ class Activity < ActiveRecord::Base
   scope :for_user, ->(user_id) { where(:user_id => user_id)}
 
   # TODO: scope time once clarified
+  def self.at_all_venues_tonight
+    activity = []
+    Venue.all.each do |venue|
+      activity << Activity.at_venue_tonight(venue.id)
+    end
+    activity.flatten
+  end
+
   def self.at_venue_tonight(venue_id)
     venue = Venue.find(venue_id)
     if venue

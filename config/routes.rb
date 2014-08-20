@@ -3,6 +3,8 @@ Rails.application.routes.draw do
   #temporary routes for YJ to test out notification functionality
   get 'temp_notifications/new', as: 'new_notification'
   get 'temp_notifications/create', as: 'send_notification'
+  get 'temp_beacon/enter_random_users', as: 'enter_users'
+  get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
