@@ -2,7 +2,7 @@ class Venue < ActiveRecord::Base
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
 
-  has_many :business_hours, dependant: :destroy
+  has_many :business_hours, dependent: :destroy
   has_many :nightlies
   has_many :rooms, dependent: :destroy
   has_many :winners
