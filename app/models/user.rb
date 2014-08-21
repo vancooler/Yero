@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
 
   validates :birthday, :first_name, :gender, presence: true
 
+  scope :sort_by_last_active, -> { 
+    where.not(last_active: nil).
+    order("last_active desc") 
+  }
 
   def main_avatar
     user_avatars.find_by(default: true)
@@ -67,8 +71,8 @@ class User < ActiveRecord::Base
     results = self.fellow_participants
     results_with_location = results.where.not(latitude:nil, longitude:nil)
     results_with_no_location = results - results_with_location
-    results = results.near("#{self.latitude} #{self.longitude}", :order=> :distance)
-
+    results = results.near(self, 50, unit: :km).sort_by_last_active
+    results_with_no_location = results_with_no_location.
     sorted_results = results_with_location + results_with_no_location
   end
 
