@@ -39,6 +39,7 @@ gem 'compass'
 gem 'foundation-rails'
 gem 'devise', '~> 3.2.4'
 gem 'better_errors'
+gem 'binding_of_caller'
 gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem "carrierwave"
 gem "fog", "~> 1.3.1"
