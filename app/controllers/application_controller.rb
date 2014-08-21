@@ -34,10 +34,10 @@ class ApplicationController < ActionController::Base
 
   # Easy way to send back success/failed API calls
 
-  def success(data = nil)
+  def success(data = nil, data_symbol_name="data")
     response = {
-      success: true,
-      data: data
+      succes: true,
+      data_symbol_name.to_sym => data
     }
     # if data.present?
     #   response.merge!({ data: data})

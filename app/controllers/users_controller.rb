@@ -36,9 +36,11 @@ class UsersController < ApplicationController
         # json.secondary_avatars 
         json.latitude       user.locations.present? ? user.locations.last.latitude  : nil
         json.longitude      user.locations.present? ? user.locations.last.longitude : nil
+
       end
     end
-    render json: success(JSON.parse(users).delete_if(&:empty?))
+    users = users.delete_if(&:empty?) unless users.blank?
+    render json: success(JSON.parse(users), "users")
   end
 
   def sign_up
