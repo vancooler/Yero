@@ -21,7 +21,7 @@ class UsersController < ApplicationController
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
-        json.last_active    user.last_activity
+        json.since_1970     user.last_activity.since_1970
         json.birthday       user.birthday
         json.gender         user.gender
 
@@ -39,8 +39,8 @@ class UsersController < ApplicationController
 
       end
     end
-    users = users.delete_if(&:empty?) unless users.blank?
-    render json: success(JSON.parse(users), "users")
+    users = JSON.parse(users).delete_if(&:empty?)
+    render json: success(users, "users")
   end
 
   def sign_up
