@@ -76,4 +76,4 @@ group :test do
 end
 
 gem 'unicorn'
-gem 'newrelic_rpm'
+# gem 'newrelic_rpm'
