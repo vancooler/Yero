@@ -16,8 +16,10 @@ class UsersController < ApplicationController
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first
-        json.main_avatar            user.main_avatar.present? ? user.main_avatar.avatar.url : nil
-        
+        json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+
+        json.before_sending_whisper_notification user.read_notification.present? ? user.read_notification.before_sending_whisper_notification : nil
+
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
