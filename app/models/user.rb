@@ -9,7 +9,7 @@ class User < ActiveRecord::Base
   has_one  :participant
   has_many :activities, dependent: :destroy
   has_many :locations
-  has_one :read_notification
+  has_one :read_notification, dependent: :destroy
 
   reverse_geocoded_by :latitude, :longitude
 

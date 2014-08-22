@@ -1,8 +1,6 @@
 Rails.application.routes.draw do
   
   #temporary routes for YJ to test out notification functionality
-  get 'temp_notifications/new', as: 'new_notification'
-  get 'temp_notifications/create', as: 'send_notification'
   get 'temp_beacon/enter_random_users', as: 'enter_users'
   get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
@@ -54,10 +52,12 @@ Rails.application.routes.draw do
   post 'api/v1/users', to: 'users#index'
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
+  resources :whispers, only: [:new, :create]
+  post 'api/v1/whisper/create', to: 'whispers#api_create'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
-  post 'api/v1/users/read_notification_update', to: 'users#read_notification_update'
+  # post 'api/v1/users/read_notification_update', to: 'users#read_notification_update'
   # Api Test Routes
   # get 'test/beacons'
   # get 'test/venues'

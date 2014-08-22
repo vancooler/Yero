@@ -1,0 +1,8 @@
+<%= form_for(@whisper) do |f| %>
+    <%= label :origin_user_id, "Whisper Origin User" %>
+    <%= f.label :target_id, "Select to who send the whisper from:" %>
+    <%= f.collection_select :target_id, User.all, :id, :key %>
+    <p>it will be sent to: <%= "id: #{@origin_user.apn_token} key:#{@origin_user.key} apn:#{@origin_user.apn_token}" %>. </p>
+    <%= f.hidden_field :origin_id, value: @origin_user.id %>
+    <%= f.submit %>
+<% end %>
