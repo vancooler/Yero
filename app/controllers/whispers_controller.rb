@@ -19,9 +19,15 @@ class WhispersController < ApplicationController
   end
   def api_create
     @whisper = Whisper.new(origin_id: current_user.id, target_id: params[:target_id])
-    read_notification = current_user.read_notification || current_user.read_notification.new
+    if read_notification = current_user.read_notification
+    else
+      read_notification = ReadNotification.new
+      read_notification.user = current_user
+    end
+
     read_notification.before_sending_whisper_notification = true
     read_notification.save
+    
     if @whisper.save
       render json: success(@whisper.to_json)
     else
