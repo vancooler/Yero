@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140801202315) do
+ActiveRecord::Schema.define(version: 20140822192928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,6 +30,19 @@ ActiveRecord::Schema.define(version: 20140801202315) do
   add_index "active_admin_comments", ["author_type", "author_id"], name: "index_active_admin_comments_on_author_type_and_author_id", using: :btree
   add_index "active_admin_comments", ["namespace"], name: "index_active_admin_comments_on_namespace", using: :btree
   add_index "active_admin_comments", ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource_type_and_resource_id", using: :btree
+
+  create_table "activities", force: true do |t|
+    t.integer  "user_id"
+    t.string   "action"
+    t.integer  "trackable_id"
+    t.string   "trackable_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.integer  "since_1970"
+  end
+
+  add_index "activities", ["trackable_id", "trackable_type"], name: "index_activities_on_trackable_id_and_trackable_type", using: :btree
+  add_index "activities", ["user_id"], name: "index_activities_on_user_id", using: :btree
 
   create_table "admin_users", force: true do |t|
     t.string   "email",                  default: "", null: false
@@ -72,6 +85,16 @@ ActiveRecord::Schema.define(version: 20140801202315) do
     t.integer "venue_id"
   end
 
+  create_table "locations", force: true do |t|
+    t.float    "latitude"
+    t.float    "longitude"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "locations", ["user_id"], name: "index_locations_on_user_id", using: :btree
+
   create_table "nightlies", force: true do |t|
     t.integer  "venue_id",                      null: false
     t.integer  "girl_count",        default: 0
@@ -88,6 +111,7 @@ ActiveRecord::Schema.define(version: 20140801202315) do
     t.integer  "user_id",                                       null: false
     t.datetime "last_activity", default: '2014-07-30 22:35:18', null: false
     t.datetime "enter_time",    default: '2014-07-30 22:35:18', null: false
+    t.integer  "temperature"
   end
 
   create_table "pokes", force: true do |t|
@@ -97,9 +121,28 @@ ActiveRecord::Schema.define(version: 20140801202315) do
     t.boolean  "viewed",   default: false
   end
 
-  create_table "rooms", force: true do |t|
-    t.integer "venue_id", null: false
+  create_table "read_notifications", force: true do |t|
+    t.integer  "user_id"
+    t.boolean  "before_sending_whisper_notification"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
+
+  add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
+
+  create_table "rooms", force: true do |t|
+    t.integer "venue_id"
+    t.string  "name"
+  end
+
+  create_table "temperatures", force: true do |t|
+    t.integer  "beacon_id"
+    t.integer  "celsius"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "temperatures", ["beacon_id"], name: "index_temperatures_on_beacon_id", using: :btree
 
   create_table "traffics", force: true do |t|
     t.integer "room_id",   null: false
@@ -111,9 +154,12 @@ ActiveRecord::Schema.define(version: 20140801202315) do
   create_table "user_avatars", force: true do |t|
     t.integer  "user_id"
     t.string   "avatar"
-    t.boolean  "default",    default: false
+    t.boolean  "default",           default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "processing"
+    t.boolean  "image_processed"
+    t.boolean  "avatar_processing"
   end
 
   create_table "users", force: true do |t|
@@ -126,6 +172,9 @@ ActiveRecord::Schema.define(version: 20140801202315) do
     t.datetime "updated_at"
     t.string   "apn_token"
     t.string   "layer_id"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.datetime "last_active"
   end
 
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
@@ -168,6 +217,18 @@ ActiveRecord::Schema.define(version: 20140801202315) do
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree
   add_index "venues", ["reset_password_token"], name: "index_venues_on_reset_password_token", unique: true, using: :btree
+
+  create_table "whispers", force: true do |t|
+    t.integer  "origin_id"
+    t.integer  "target_id"
+    t.boolean  "viewed",     default: false
+    t.boolean  "accepted",   default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "whispers", ["origin_id"], name: "index_whispers_on_origin_id", using: :btree
+  add_index "whispers", ["target_id"], name: "index_whispers_on_target_id", using: :btree
 
   create_table "winners", force: true do |t|
     t.integer  "user_id",                    null: false

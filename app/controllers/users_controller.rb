@@ -3,16 +3,57 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   # API
+  def index
+    # @users = User.active
+    # @users = @users.where(gender: "M") if params[:gender] == "M"
+    # @users = @users.where(gender: "F") if params[:gender] == "F"
+    # @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
+    # @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
+    # @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
+
+    users = Jbuilder.encode do |json|
+      json.array! current_user.fellow_participants do |user|
+        next unless user.user_avatars.present?
+        next unless user.main_avatar.present?
+        # next if user.user_avatars.first
+        json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+
+        if Whisper.where(origin_id: current_user.id, target_id: user).present?
+          json.whisper_sent true
+        else
+          json.whisper_sent false
+        end
+
+        json.id             user.id
+        json.first_name     user.first_name
+        json.key            user.key
+        json.since_1970     user.last_activity.since_1970
+        json.birthday       user.birthday
+        json.gender         user.gender
+
+        json.created_at     user.created_at
+        json.updated_at     user.updated_at
+
+        json.apn_token      user.apn_token
+        json.layer_id       user.layer_id
+
+        # json.main_avatar_processed  user.user_avatars.main.url
+
+        # json.secondary_avatars 
+        json.latitude       user.locations.present? ? user.locations.last.latitude  : nil
+        json.longitude      user.locations.present? ? user.locations.last.longitude : nil
+
+      end
+    end
+    users = JSON.parse(users).delete_if(&:empty?)
+    render json: success(users, "users")
+  end
 
   def sign_up
-    user = User.new(sign_up_params)
+    user_registration = UserRegistration.new(sign_up_params)
+    user = user_registration.user
 
-    if user.valid?
-      user.save!
-      # user.create_layer_account
-      # user.user_avatars.first.update_attribute(:default, true)
-      # TODO refactor avatars to a separate class
-      # TODO bring back this code after the chat is working. 
+    if user_registration.create
       render json: success(user.to_json(true))
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
@@ -93,7 +134,7 @@ class UsersController < ApplicationController
     user.apn_token = params[:token]
     user.save
 
-    render json: success(user.to_json(false))
+    render json: success() #
   end
 
   def get_profile
@@ -231,9 +272,22 @@ class UsersController < ApplicationController
     }
   end
 
+  # def read_notification_update
+  #   if current_user.read_notification.nil?
+  #     read_notification = ReadNotification.create(user: current_user)
+  #   else
+  #     read_notification = current_user.read_notification
+  #   end
+  #   if read_notification.update(before_sending_whisper_notification:true)
+  #     render json: success
+  #   else
+  #     render json: error("could not update read notification")
+  #   end
+  # end
+
   private
 
   def sign_up_params
-    params.require(:user).permit(:email, :birthday, :first_name, :gender, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :first_name, :gender, user_avatars_attributes: [:avatar])
   end
 end

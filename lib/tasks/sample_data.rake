@@ -8,35 +8,48 @@ namespace :db do
   task seed: :environment do
     # rough sample data
     user = User.create!(
-        email: 'lyosha85+sample_user@gmail.com',
         birthday: Time.now - 28.years,
         first_name: 'Alex',
-        gender:'Male'
+        gender:'Male',
+        key: loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
       )
     user2 = User.create!(
-        email: 'user@example.com',
         birthday: Time.now - 28.years,
         first_name: 'Lyosha',
-        gender:'Male'
+        gender:'Male',
+        key: loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
     )
 
     Poke.create(pokee: user2, poker: user)
     Poke.create(pokee: user, poker: user2)
     
 
-    user.venues.create!(
-        name:'Republic',
-        password: 'subway11',
-        password_confirmation: 'subway11',
-        email: 'lyosha85+yero_sample_venue@gmail.com'
-      )
     network = VenueNetwork.create(
         city: "Vancouver",
         area: 2,
         name: "Vancouver Night Life"
       )
-    venue = user.venues.first
-    network.venues << venue
+    10.times do |n|
+      [user,user2].sample.venues.create!(
+          name:"Venue #{n}",
+          password: 'subway11',
+          password_confirmation: 'subway11',
+          email: 'lyosha85+yero_sample_venue@gmail.com',
+          venue_network_id: VenueNetwork.first.id,
+          age_requirement: '19+',
+          dress_code: ['Formal','Casual','Semi-Formal','No Dress Code'].sample,
+          address_line_one: "Unit #{[55,66,77,88,99].sample}",
+          address_line_two: "#{[12,32,44,22,77,86,123].sample} Granville Street"
+
+
+        )
+    end
 
     beacons = [
         {name: "Bar - Downstairs", key: "1"},
@@ -48,7 +61,7 @@ namespace :db do
         {name: "Line Area", key: "7"},
         {name: "Smoking Area", key: "8"},
       ]
-
+    venue = Venue.last
     4.times do 
       room = venue.rooms.create!
       2.times {room.beacons << Beacon.new(beacons.pop)}

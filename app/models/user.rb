@@ -7,20 +7,77 @@ class User < ActiveRecord::Base
   has_many :user_avatars
   accepts_nested_attributes_for :user_avatars
   has_one  :participant
+  has_many :activities, dependent: :destroy
+  has_many :locations
+  has_one :read_notification, dependent: :destroy
+
+  reverse_geocoded_by :latitude, :longitude
 
   # mount_uploader :avatar, AvatarUploader
-  before_create :create_key
   before_save   :update_activity
 
-  validates :email, uniqueness: true
-  validates :email, :birthday, :first_name, :gender, presence: true
+  validates :birthday, :first_name, :gender, presence: true
 
-  # create a unique key for API usagebefore create
-  def create_key
-    self.key = loop do
-      random_token = SecureRandom.urlsafe_base64(nil, false)
-      break random_token unless User.exists?(key: random_token)
+  scope :sort_by_last_active, -> { 
+    where.not(last_active: nil).
+    order("last_active desc") 
+  }
+
+  def main_avatar
+    user_avatars.find_by(default: true)
+  end
+
+  def secondary_avatars
+    user_avatars.where.not(default: true)
+  end
+
+  def current_venue
+    return nil unless self.has_activity_today?
+    activity = Activity.for_user(self.id).on_current_day.with_beacons.last
+    if activity.action == "Enter Beacon"
+      activity.trackable.room.venue
+    else
+      nil
     end
+  end
+  def has_activity_today?
+    self.activities.on_current_day.count > 0
+  end
+  def fellow_participants
+    current_venue = self.current_venue
+    return nil if (current_venue == nil || self.activities.count == 0)
+
+    venue_activities = Activity.at_venue_tonight(current_venue.id)
+    active_users_id = []
+
+    activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
+    activities_grouped_by_user_ids.delete(self.id) #remove current_user id from the list
+    activities_grouped_by_user_ids.each do |id_activity|
+      ordered_user_activity = id_activity[1].sort_by!{|t| t[:created_at]}
+      if ordered_user_activity.last.action == "Enter Beacon"
+        qualified = true
+      elsif ordered_user_activity.last.action == "Exit Beacon"
+        qualified = false
+      # todo
+      # elsif exit && before timeout 
+      else
+        qualified = false
+      end
+      active_users_id << id_activity[0] if qualified
+    end
+    User.where(id: active_users_id)
+  end
+  def fellow_participants_sorted #by distance then by activity
+    results = self.fellow_participants
+    results_with_location = results.where.not(latitude:nil, longitude:nil)
+    results_with_no_location = results - results_with_location
+    results = results.near(self, 50, unit: :km).sort_by_last_active
+    results_with_no_location = results_with_no_location.
+    sorted_results = results_with_location + results_with_no_location
+  end
+
+  def last_activity
+    self.activities.last
   end
 
   def venue_network
@@ -31,33 +88,6 @@ class User < ActiveRecord::Base
 
   def default_avatar
     self.user_avatars.where(default: true).first
-  end
-
-  def create_layer_account
-    cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
-    key = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.key'].read
-
-    require "net/https"
-    require "uri"
-    require "json"
-
-    uri = URI "https://api-beta.layer.com/users"
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-    http.key = OpenSSL::PKey::RSA.new(key)
-    http.cert = OpenSSL::X509::Certificate.new(cert)
-
-    request = Net::HTTP::Post.new(uri.request_uri)
-
-    data = [{ "id" => self.id, "access_token" => self.key }].to_json
-    request.body = data
-    request["Content-Type"] = "application/json"
-
-    response = http.request(request)
-    self.layer_id = JSON.parse(response.body)["users"][0]["layer_id"]
-    
-    save
   end
 
   def age

@@ -1,0 +1,6 @@
+<%= form_tag("/temp_notifications/create", method: "post") do %>
+    <%= label :origin_user_id, "Whisper Origin User" %>
+    <%#= collection_select :origin_user_id, @users, :key %>
+    <%#= options_from_collection_for_select(User.all, :id, :first_name) %>
+    <%= collection_select(:origin_user_id, :city_id, City.all, :id, :name) %>
+<% end %>

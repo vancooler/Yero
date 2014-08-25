@@ -5,33 +5,60 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
-    room = Beacon.find_by_key(params[:beacon_key]).room
-    p = Participant.where(user: current_user).first
-
-    if room
-      if p
-        p.room = room
-        p.last_activity = Time.now
-        p.enter_time = Time.now
-        p.save!
-      else
-        Participant.enter_room(room, current_user)
-      end
-
-      render json: success(room.venue.to_json)
-    else
-      render json: error("Room does not exist")
+    beacon = Beacon.find_by(key: params[:beacon_key])
+    if beacon.blank?
+      beacon = BeaconInitialization.new(params[:beacon_key])
+      beacon.create
     end
+    beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
+    activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
+
+    if activity_item.create
+      render json: success
+    else
+      render json: error("Could not log entry.")
+    end
+    # temperature = params[:temperature]
+    #   if beacon
+    #         activity_item.create
+    #         room = beacon.room
+    #         if room
+    #           participant = Participant.where(user: current_user).where(room_id: room.id).first
+    #           if participant
+    #             participant.temperature = temperature
+    #             participant.room = room
+    #             participant.last_activity = Time.now
+    #             participant.enter_time = Time.now
+    #             participant.save!
+    #           else
+    #             Participant.enter_room(room, current_user, temperature)
+    #           end
+
+    #           render json: success(room.venue.to_json)
+    #         else
+    #           render json: error("Room does not exist")
+    #         end
+    #   else
+    #     render json: error("Beacon does not exist")
+    #   end
   end
 
   def user_leave
-    p = Participant.find_by_user_id(current_user.id)
-
-    if p
-      p.delete
-      render json: success(nil)
+    beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
+    activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
+    if activity_item.create
+      render json: success(beacon.to_json)
     else
-      render json: error("Participant does not exist")
+      render json: error("Could not log leaving.")
     end
+
+    # participant = Participant.find_by_user_id(current_user.id)
+
+    # if participant
+    #   participant.delete
+    #   render json: success(nil)
+    # else
+    #   render json: error("Participant does not exist")
+    # end
   end
 end
