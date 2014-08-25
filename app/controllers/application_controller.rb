@@ -36,7 +36,7 @@ class ApplicationController < ActionController::Base
 
   def success(data = nil, data_symbol_name="data")
     response = {
-      succes: true,
+      success: true,
       data_symbol_name.to_sym => data
     }
     # if data.present?
