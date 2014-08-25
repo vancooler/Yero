@@ -29,6 +29,7 @@ class UserAvatar < ActiveRecord::Base
     end
 
     def max_number_of_avatars
+      return unless user_id_changed?
       maximum_number_of_avatars = 3
       unless self.user.user_avatars.size < maximum_number_of_avatars
         errors.add :base, "You cannot have more than #{maximum_number_of_avatars} avatars."
