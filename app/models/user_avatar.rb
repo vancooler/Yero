@@ -1,9 +1,9 @@
 class UserAvatar < ActiveRecord::Base
-  # A User has 1..n images
   after_save :set_default_avatar_if_only_one_avatar_present
+  before_destroy :validate_min_number_of_avatars, :validate_cant_delete_default_avatar
   belongs_to :user
   
-  validate :validate_max_avatars_have_not_been_reached
+  validate :max_number_of_avatars
 
   mount_uploader :avatar, AvatarUploader
 
@@ -23,13 +23,30 @@ class UserAvatar < ActiveRecord::Base
   private
 
     def set_default_avatar_if_only_one_avatar_present
-      return if (self.user.user_avatars.count >= 1 || self.default == true)
-      self.update(default: true)
+      return if (self.user.user_avatars.count > 1 || self.default == true)
+      self.default = true
+      self.save
     end
 
-    def validate_max_avatars_have_not_been_reached
+    def max_number_of_avatars
       maximum_number_of_avatars = 3
-      return unless user_id_changed? # nothing to validate
-      errors.add_to_base("You cannot have more than #{maximum_number_of_avatars} avatars.") unless self.user.user_avatars.size < maximum_number_of_avatars
+      unless self.user.user_avatars.size < maximum_number_of_avatars
+        errors.add :base, "You cannot have more than #{maximum_number_of_avatars} avatars."
+        return false
+      end
+    end
+
+    def validate_min_number_of_avatars
+      minimum_number_of_avatars = 1
+      unless self.user.user_avatars.size > minimum_number_of_avatars
+        errors.add :base, "You cannot have less than #{minimum_number_of_avatars} avatars."
+        return false
+      end
+    end
+
+    def validate_cant_delete_default_avatar
+      return unless self.default == true
+      errors.add :base, "You cannot delete the default avatar."
+      return false
     end
 end
