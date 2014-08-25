@@ -1,8 +1,9 @@
 class UserAvatar < ActiveRecord::Base
   # A User has 1..n images
-  before_save :set_default_avatar_if_only_one_avatar_present
-
+  after_save :set_default_avatar_if_only_one_avatar_present
   belongs_to :user
+  
+  validate :validate_max_avatars_have_not_been_reached
 
   mount_uploader :avatar, AvatarUploader
 
@@ -11,14 +12,24 @@ class UserAvatar < ActiveRecord::Base
     save!
   end
 
-  private
-
   def set_as_default
-    self.user.avatars{|avatar| avatar.update(default: false)}
+    UserAvatar.where(user_id: self.user_id, default: true).each do |avatar|
+      avatar.default = false
+      avatar.save
+    end
     self.update(default: true)
   end
 
-  def set_default_avatar_if_only_one_avatar_present
-    self.default = true if self.user.user_avatars.count <= 1
-  end
+  private
+
+    def set_default_avatar_if_only_one_avatar_present
+      return if (self.user.user_avatars.count >= 1 || self.default == true)
+      self.update(default: true)
+    end
+
+    def validate_max_avatars_have_not_been_reached
+      maximum_number_of_avatars = 3
+      return unless user_id_changed? # nothing to validate
+      errors.add_to_base("You cannot have more than #{maximum_number_of_avatars} avatars.") unless self.user.user_avatars.size < maximum_number_of_avatars
+    end
 end
