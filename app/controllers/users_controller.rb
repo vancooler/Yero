@@ -24,6 +24,8 @@ class UsersController < ApplicationController
           json.whisper_sent false
         end
 
+        json.badge          current_user.same_venue_as?(user.id)
+
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
@@ -72,36 +74,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # Make a new default avatar
-  # TODO Rename this crap
-  def make_default
-    user = User.find_by_key(params[:key])
-    avatar = user.user_avatars.find(params[:avatar_id])
-    old_default = user.user_avatars.where(default: true).first
-
-    if avatar && avatar != old_default
-      user.user_avatars.where(default: true).first.update_attribute(:default, false)
-      avatar.update_attribute(:default, true)
-
-      render json: success(user.to_json(false))
-    else
-      render json: error("Avatar does not exist or image is already default")
-    end
-  end
-
-  def add_avatar
-    user = User.find_by_key(params[:key])
-    avatar = UserAvatar.new
-    avatar.user = user
-    avatar.avatar = params[:avatar]
-
-    if avatar.save
-      render json: success(user.to_json(false))
-    else
-      render json: error("Invalid image")
-    end
-  end
-
   def update_image
     user = User.find_by_key(params[:key])
     avatar = user.user_avatars.find(params[:avatar_id])
@@ -110,22 +82,6 @@ class UsersController < ApplicationController
       render json: success(user.to_json(false))
     else
       render json: error("Invalid image")
-    end
-  end
-
-  def remove_avatar
-    user = User.find_by_key(params[:key])
-
-    if user.user_avatars.all.size == 1
-      render json: error("Cannot remove image, user must have at least 1 image")
-    else
-      avatar = user.user_avatars.find(params[:avatar_id])
-      if avatar && avatar.destroy
-        user.user_avatars.first.update_attribute(:default, true)
-        render json: success(user.to_json(false))
-      else
-        render json: error("Avatar does not exist")
-      end
     end
   end
 
