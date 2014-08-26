@@ -27,10 +27,6 @@ class User < ActiveRecord::Base
     user_avatars.find_by(default: true)
   end
 
-  def show
-    render json: success(current_user)
-  end
-
   def same_venue_as?(user_id)
     if fellow_participant = User.find(user_id)
       

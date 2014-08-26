@@ -2,6 +2,10 @@ class UsersController < ApplicationController
   before_action :authenticate_api, except: [:sign_up]
   skip_before_filter  :verify_authenticity_token
 
+  def show
+    render json: success(current_user)
+  end
+
   # API
   def index
     # @users = User.active
