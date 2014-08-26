@@ -29,9 +29,15 @@ class User < ActiveRecord::Base
 
   def same_venue_as?(user_id)
     if fellow_participant = User.find(user_id)
+      
+      fellow_participant_venue = fellow_participant.current_venue
+      self_venue = self.current_venue
+
+      return false if fellow_participant_venue.nil? || self_venue.nil?
+
       self.current_venue.id == fellow_participant.current_venue.id
     else
-      nil
+      false
     end
   end
 
