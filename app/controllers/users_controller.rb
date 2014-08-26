@@ -51,6 +51,14 @@ class UsersController < ApplicationController
     render json: success(users, "users")
   end
 
+  def update_profile
+    if current_user.update(introduction_1: params[:introduction_1], introduction_2: params[:introduction_2])
+      render json: success(user)
+    else
+      render json: error(user.errors)
+    end
+  end
+
   def sign_up
     user_registration = UserRegistration.new(sign_up_params)
     user = user_registration.user
