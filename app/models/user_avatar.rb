@@ -17,7 +17,8 @@ class UserAvatar < ActiveRecord::Base
       avatar.default = false
       avatar.save
     end
-    self.update(default: true)
+    self.default= true
+    self.save
   end
 
   private
