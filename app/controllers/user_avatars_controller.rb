@@ -20,7 +20,7 @@ class UserAvatarsController < ApplicationController
     avatar.avatar = params[:avatar]
 
     if avatar.save
-      render json: success(user.to_json(false))
+      render json: success(current_user.to_json(false))
     else
       render json: error(avatar.errors)
     end

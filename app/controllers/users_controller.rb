@@ -16,7 +16,15 @@ class UsersController < ApplicationController
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first
-        json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+        # json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+        json.avatars do |avatars|
+          main_avatar   =  user.user_avatars.find_by(default:true)
+          other_avatars =  user.user_avatars.where.not(default:true)
+
+          avatars.avatar_0     main_avatar.avatar.url
+          avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
+          avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
+        end
 
         if Whisper.where(origin_id: current_user.id, target_id: user).present?
           json.whisper_sent true
@@ -24,7 +32,7 @@ class UsersController < ApplicationController
           json.whisper_sent false
         end
 
-        json.badge          current_user.same_venue_as?(user.id)
+        json.same_venue_badge          current_user.same_venue_as?(user.id)
 
         json.id             user.id
         json.first_name     user.first_name
