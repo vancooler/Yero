@@ -20,6 +20,7 @@ class UserRegistration
       end
     end
     def create_layer_account
+      @user.layer_id = "pending"
       # @user.layer_id = "Not Available"
       # cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
       # key = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.key'].read
