@@ -18,11 +18,11 @@ class UsersController < ApplicationController
       latitude:current_user.latitude,
       longitude:current_user.longitude,
       avatars: {
-        avatar_0: current_user.main_avatar.url,
-        avatar_1: current_user.secondary_avatars.first,
-        avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last : " ",
+        avatar_0: current_user.main_avatar.avatar.url,
+        avatar_1: current_user.secondary_avatars.first.avatar.url,
+        avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : " ",
       }
-    }.to_json
+    }
 
     render json: success(user)
   end
