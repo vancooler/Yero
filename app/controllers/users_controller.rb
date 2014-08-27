@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       longitude:current_user.longitude,
       avatars: {
         avatar_0: current_user.main_avatar.avatar.url,
-        avatar_1: current_user.secondary_avatars.first.avatar.url,
+        avatar_1: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : " ",
         avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : " ",
       }
     }
