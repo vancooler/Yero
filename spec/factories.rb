@@ -10,6 +10,13 @@ FactoryGirl.define do
         break random_token unless User.exists?(key: random_token)
       end
     }
+    factory :user_with_avatars do
+      after_create do |user|
+        create(:user_avatar, user: user)
+        create(:user_avatar, user: user)
+        create(:user_avatar, user: user)
+      end
+    end
   end
   
   factory :venue do
@@ -28,6 +35,11 @@ FactoryGirl.define do
   factory :room do
 
   end
+
+  factory :user_avatar do
+
+  end
+
   factory :venue_network do
     sequence(:area) {|n| n}
     city 'Vancouver'

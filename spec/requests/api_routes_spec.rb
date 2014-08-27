@@ -1,47 +1,102 @@
 require 'spec_helper'
+# require 'sidekiq/testing'
+# Sidekiq::Testing.disable!
 
 describe 'API' do
 
   describe "Registration (/api/v1/users/signup)" do
     before do
+      
+      base_url = API_TEST_BASE_URL
+      signup_url = base_url+'/api/v1/users/signup'
+      avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
+      
       @user_count = User.count
-      # @base_url = 'http://4635554.ngrok.com'
-      @base_url = API_TEST_BASE_URL
-      @signup_url = @base_url+'/api/v1/users/signup'
-      @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
-      @response =  RestClient.post( @signup_url,
-                            {
-                              :user => {
-                                :first_name => 'Maria',
-                                :gender => 'F',
-                                :birthday => Date.today - 20.years,
-                                :user_avatars_attributes =>{
-                                  "0"=> {:avatar=> File.new(@avatar_path, 'rb')}
+      @response = ""
+      begin
+        @response =  RestClient.post( signup_url,
+                              {
+                                :user => {
+                                  :first_name => 'Maria',
+                                  :gender => 'F',
+                                  :birthday => Date.today - 20.years,
+                                  :user_avatars_attributes =>{
+                                    "0"=> {:avatar=> File.new(avatar_path, 'rb')}
+                                  }
                                 }
                               }
-                            }
-                          )
+                            )
+        sleep 90
+      rescue
+
+      end
     end
 
+    
+    # it "Should have a response code of 200" do
+    #   expect(@response.code).to be == 200
+    # end
+    it "Should create a user from a post request." do
+      expect(User.count).to be == @user_count + 1
+    end
+    # it "Should make a user with have an avatar." do
+    #   expect(User.last.user_avatars.count).to be == 1
+    # end
+    # it "Should have an avatar with the default set to true" do
+    #   expect(User.last.user_avatars.last.default).to be == true
+    # end
+  end
+  describe "User uploads a new avatar" do
+    before do
+      # @user = User.last
+      avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
+      @response = RestClient.post("#{API_TEST_BASE_URL}/api/v1/avatar/create",
+          {
+            # key: @user.key,
+            key: "N1ntA0ThKKCP2xboviw3Gw",
+            avatar: File.new(avatar_path, 'rb')
+          }
+        )
+    end
+  end
+  describe "User changes his default avatar" do
+    before do
+      # @user = UserRegistration.new(first_name: "Bob", gender: "male", birthday:Time.now - 22.years)
+      # @user = @user.create
+      @user = User.last
+      
+      3.times {avatar = @user.user_avatars.create; avatar.save}
+      
+      @default_avatar = @user.user_avatars.find_by(default:true)
+      @default_avatar_id = @default_avatar.id
+
+      @other_avatars = @user.user_avatars.where.not(default:true)
+      @new_default_id = @other_avatars.first.id
+      @response = RestClient.post("#{API_TEST_BASE_URL}/api/v1/avatar/set_default",
+          {
+            key: @user.key,
+            avatar_id: @new_default_id
+          }
+        )
+    end
     
     it "Should have a response code of 200" do
       expect(@response.code).to be == 200
     end
-    it "Should create a user from a post request." do
-      expect(User.count).to be == @user_count + 1
+    it "Should have only 1 default avatar" do
+      expect(@user.user_avatars.where(default:true).count).to be == 1
     end
-    it "Should make a user with have an avatar." do
-      expect(User.last.user_avatars.count).to be == 1
+    it "Should have the old default avatar set to false" do
+      expect(@user.user_avatars.find_by(id: @default_avatar_id).default).to be == false
     end
-    it "Should have an avatar with the default set to true" do
-      expect(User.last.user_avatars.last.default).to be == true
+    it "Should have the new default set to true" do
+      expect(UserAvatar.find(@new_default_id).reload.default).to be == true
     end
   end
-
   describe "Existing user uploads another avatar(/api/v1/users/avatar/add)" do
     before do
       @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
-      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
+      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/avatar/create"
       @user = User.last
       @initial_avatar_count = @user.user_avatars.count
       @response =  RestClient.post( @add_avatar_url,
@@ -63,81 +118,81 @@ describe 'API' do
     end
   end
 
-  describe "Client removes avatar from profile (/api/users/avatar/remove_avatar)" do
-    before do
-      @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
-      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
-      @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
-      @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
-      @user = User.last
-      @response =  RestClient.post( @add_avatar_url,
-                {
-                  key: @user.key,
-                  avatar: File.new(@avatar_path, 'rb')
-                }
-              )
-      @response =  RestClient.post( @add_avatar_url,
-                {
-                  key: @user.key,
-                  avatar: File.new(@avatar_path, 'rb')
-                }
-              )
-      @initial_avatar_count = @user.user_avatars.count
-      @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
+  # describe "Client removes avatar from profile (/api/users/avatar/remove_avatar)" do
+  #   before do
+  #     @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
+  #     @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
+  #     @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
+  #     @add_avatar_url = "#{API_TEST_BASE_URL}/api/v1/users/avatar/add"
+  #     @user = User.last
+  #     @response =  RestClient.post( @add_avatar_url,
+  #               {
+  #                 key: @user.key,
+  #                 avatar: File.new(@avatar_path, 'rb')
+  #               }
+  #             )
+  #     @response =  RestClient.post( @add_avatar_url,
+  #               {
+  #                 key: @user.key,
+  #                 avatar: File.new(@avatar_path, 'rb')
+  #               }
+  #             )
+  #     @initial_avatar_count = @user.user_avatars.count
+  #     @avatar_path = '/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'
 
-    end
-    describe "Should not be able to remove the last avatar" do
-      before do
-        @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
-        @user = User.last
-        @user.user_avatars.each do |avatar|
-          @response =  RestClient.post( @remove_avatar_path,
-                              {
-                                key: @user.key,
-                                avatar_id: avatar.id
-                              }
-                            )
-        end
-        it "Should return an error" do
-          expect(JSON.parse(@response)["success"]).to be == "false"
-        end
-        it "The user should have 1 avatar left" do
+  #   end
+  #   describe "Should not be able to remove the last avatar" do
+  #     before do
+  #       @remove_avatar_path = "#{API_TEST_BASE_URL}/api_v1_users_avatar_remove_avatar"
+  #       @user = User.last
+  #       @user.user_avatars.each do |avatar|
+  #         @response =  RestClient.post( @remove_avatar_path,
+  #                             {
+  #                               key: @user.key,
+  #                               avatar_id: avatar.id
+  #                             }
+  #                           )
+  #       end
+  #       it "Should return an error" do
+  #         expect(JSON.parse(@response)["success"]).to be == "false"
+  #       end
+  #       it "The user should have 1 avatar left" do
 
-        end
-        it "the user's avatar should be default" do
-          expect(JSON.parse(@user.user_avatars.count)).to be == 1
-        end
-      end
+  #       end
+  #       it "the user's avatar should be default" do
+  #         expect(JSON.parse(@user.user_avatars.count)).to be == 1
+  #       end
+  #     end
 
-    end
-    it "Should be able to remove the first avatar, and that automatically sets the last avatar to default" do
+  #   end
+  #   it "Should be able to remove the first avatar, and that automatically sets the last avatar to default" do
 
-    end
-    it "Should not be able to remove the last avatar" do
+  #   end
+  #   it "Should not be able to remove the last avatar" do
 
-    end
-  end
+  #   end
+  # end
 
-  describe "YJ Test" do
+  # describe "YJ Test" do
 
- # @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
- @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/enter",
-                          {
-                            key: "_OUMSy4dmSXTugIk9-HVWg",
-                            beacon_key: "YJ-02-Vancouver-039MNB",
-                            temperature: "23"
-                          }
-                        )
+  #  # @response = RestClient.post( "http://localhost:3000/api/v1/room/enter",
+  #  @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/enter",
+  #                           {
+  #                             key: "_OUMSy4dmSXTugIk9-HVWg",
+  #                             beacon_key: "YJ-02-Vancouver-039MNB",
+  #                             temperature: "23"
+  #                           }
+  #                         )
 
-  # @response = RestClient.post( "http://localhost:3000/api/v1/room/leave",
-  @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/leave",
-                          {
-                            key: "2NihILTlrZ7idzwOzg3TRA",
-                            beacon_key: "bacon-beacon",
-                            # temperature: ((10...40).to_a).sample
-                          }
-                        )
-  end
+  #   # @response = RestClient.post( "http://localhost:3000/api/v1/room/leave",
+  #   @response = RestClient.post( "http://purpleoctopus-staging.herokuapp.com/api/v1/room/leave",
+  #                           {
+  #                             key: "2NihILTlrZ7idzwOzg3TRA",
+  #                             beacon_key: "bacon-beacon",
+  #                             # temperature: ((10...40).to_a).sample
+  #                           }
+  #                         )
+  # end
 
   describe "Server gets a notification of a client enters a beacon (/api/room/enter)" do
 
