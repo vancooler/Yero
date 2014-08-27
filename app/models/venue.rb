@@ -1,6 +1,4 @@
 class Venue < ActiveRecord::Base
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
 
   has_many :business_hours, dependent: :destroy
   has_many :nightlies
@@ -8,6 +6,7 @@ class Venue < ActiveRecord::Base
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
+  belongs_to :web_user
   belongs_to :venue_network
 
   # Address is geocoded so it can be returned to the iOS client

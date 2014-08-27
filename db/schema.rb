@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140822192928) do
+ActiveRecord::Schema.define(version: 20140827224122) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -163,10 +163,10 @@ ActiveRecord::Schema.define(version: 20140822192928) do
   end
 
   create_table "users", force: true do |t|
-    t.date     "birthday",      null: false
-    t.string   "first_name",    null: false
-    t.string   "gender",        null: false
-    t.string   "key",           null: false
+    t.date     "birthday",       null: false
+    t.string   "first_name",     null: false
+    t.string   "gender",         null: false
+    t.string   "key",            null: false
     t.datetime "last_activity"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -175,6 +175,8 @@ ActiveRecord::Schema.define(version: 20140822192928) do
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "last_active"
+    t.string   "introduction_1"
+    t.string   "introduction_2"
   end
 
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
@@ -213,10 +215,43 @@ ActiveRecord::Schema.define(version: 20140822192928) do
     t.float    "longitude"
     t.float    "latitude"
     t.integer  "venue_network_id"
+    t.integer  "web_user_id"
   end
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree
   add_index "venues", ["reset_password_token"], name: "index_venues_on_reset_password_token", unique: true, using: :btree
+  add_index "venues", ["web_user_id"], name: "index_venues_on_web_user_id", using: :btree
+
+  create_table "web_users", force: true do |t|
+    t.integer  "venue_id"
+    t.string   "first_name"
+    t.string   "last_name"
+    t.string   "business_name"
+    t.string   "address_line_1"
+    t.string   "address_line_2"
+    t.string   "city"
+    t.string   "state"
+    t.string   "country"
+    t.string   "zipcode"
+    t.string   "business_phone"
+    t.string   "cell_phone"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",          default: 0,  null: false
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+  end
+
+  add_index "web_users", ["email"], name: "index_web_users_on_email", unique: true, using: :btree
+  add_index "web_users", ["reset_password_token"], name: "index_web_users_on_reset_password_token", unique: true, using: :btree
+  add_index "web_users", ["venue_id"], name: "index_web_users_on_venue_id", using: :btree
 
   create_table "whispers", force: true do |t|
     t.integer  "origin_id"

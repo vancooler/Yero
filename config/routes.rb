@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   
+  devise_for :web_users
   #temporary routes for YJ to test out notification functionality
   get 'temp_beacon/enter_random_users', as: 'enter_users'
   get 'temp_beacon/exit_active_users', as: 'exit_active_users'
