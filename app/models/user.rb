@@ -27,6 +27,20 @@ class User < ActiveRecord::Base
     user_avatars.find_by(default: true)
   end
 
+  def same_venue_as?(user_id)
+    if fellow_participant = User.find(user_id)
+      
+      fellow_participant_venue = fellow_participant.current_venue
+      self_venue = self.current_venue
+
+      return false if fellow_participant_venue.nil? || self_venue.nil?
+
+      self.current_venue.id == fellow_participant.current_venue.id
+    else
+      false
+    end
+  end
+
   def secondary_avatars
     user_avatars.where.not(default: true)
   end
@@ -44,10 +58,16 @@ class User < ActiveRecord::Base
     self.activities.on_current_day.count > 0
   end
   def fellow_participants
-    current_venue = self.current_venue
-    return nil if (current_venue == nil || self.activities.count == 0)
+    # current_venue = self.current_venue
+    return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
 
-    venue_activities = Activity.at_venue_tonight(current_venue.id)
+    venue_activities = []
+
+    Venue.all.each do |venue|
+      venue_activities << Activity.at_venue_tonight(venue.id)
+    end
+    venue_activities.flatten!
+    
     active_users_id = []
 
     activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
@@ -67,6 +87,7 @@ class User < ActiveRecord::Base
     end
     User.where(id: active_users_id)
   end
+
   def fellow_participants_sorted #by distance then by activity
     results = self.fellow_participants
     results_with_location = results.where.not(latitude:nil, longitude:nil)

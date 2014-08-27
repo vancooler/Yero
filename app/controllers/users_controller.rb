@@ -2,6 +2,33 @@ class UsersController < ApplicationController
   before_action :authenticate_api, except: [:sign_up]
   skip_before_filter  :verify_authenticity_token
 
+  def show
+    # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
+    user = {
+      id: current_user.id,
+      first_name: current_user.first_name,
+      introduction_1: current_user.introduction_1,
+      introduction_2: current_user.introduction_2,
+      key: current_user.key,
+      since_1970: current_user.last_activity.since_1970,
+      birthday: current_user.birthday,
+      gender: current_user.gender,
+      created_at: current_user.created_at,
+      updated_at: current_user.updated_at,
+      apn_token: current_user.apn_token,
+      layer_id: current_user.layer_id,
+      latitude:current_user.latitude,
+      longitude:current_user.longitude,
+      avatars: {
+        avatar_0: current_user.main_avatar.avatar.url,
+        avatar_1: current_user.secondary_avatars.first.avatar.url,
+        avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : " ",
+      }
+    }
+
+    render json: success(user)
+  end
+
   # API
   def index
     # @users = User.active
@@ -16,13 +43,23 @@ class UsersController < ApplicationController
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first
-        json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+        # json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
+        json.avatars do |avatars|
+          main_avatar   =  user.user_avatars.find_by(default:true)
+          other_avatars =  user.user_avatars.where.not(default:true)
+
+          avatars.avatar_0     main_avatar.avatar.url
+          avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
+          avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
+        end
 
         if Whisper.where(origin_id: current_user.id, target_id: user).present?
           json.whisper_sent true
         else
           json.whisper_sent false
         end
+
+        json.same_venue_badge          current_user.same_venue_as?(user.id)
 
         json.id             user.id
         json.first_name     user.first_name
@@ -49,6 +86,14 @@ class UsersController < ApplicationController
     render json: success(users, "users")
   end
 
+  def update_profile
+    if current_user.update(introduction_1: params[:introduction_1], introduction_2: params[:introduction_2])
+      render json: success(user)
+    else
+      render json: error(user.errors)
+    end
+  end
+
   def sign_up
     user_registration = UserRegistration.new(sign_up_params)
     user = user_registration.user
@@ -72,36 +117,6 @@ class UsersController < ApplicationController
     end
   end
 
-  # Make a new default avatar
-  # TODO Rename this crap
-  def make_default
-    user = User.find_by_key(params[:key])
-    avatar = user.user_avatars.find(params[:avatar_id])
-    old_default = user.user_avatars.where(default: true).first
-
-    if avatar && avatar != old_default
-      user.user_avatars.where(default: true).first.update_attribute(:default, false)
-      avatar.update_attribute(:default, true)
-
-      render json: success(user.to_json(false))
-    else
-      render json: error("Avatar does not exist or image is already default")
-    end
-  end
-
-  def add_avatar
-    user = User.find_by_key(params[:key])
-    avatar = UserAvatar.new
-    avatar.user = user
-    avatar.avatar = params[:avatar]
-
-    if avatar.save
-      render json: success(user.to_json(false))
-    else
-      render json: error("Invalid image")
-    end
-  end
-
   def update_image
     user = User.find_by_key(params[:key])
     avatar = user.user_avatars.find(params[:avatar_id])
@@ -110,22 +125,6 @@ class UsersController < ApplicationController
       render json: success(user.to_json(false))
     else
       render json: error("Invalid image")
-    end
-  end
-
-  def remove_avatar
-    user = User.find_by_key(params[:key])
-
-    if user.user_avatars.all.size == 1
-      render json: error("Cannot remove image, user must have at least 1 image")
-    else
-      avatar = user.user_avatars.find(params[:avatar_id])
-      if avatar && avatar.destroy
-        user.user_avatars.first.update_attribute(:default, true)
-        render json: success(user.to_json(false))
-      else
-        render json: error("Avatar does not exist")
-      end
     end
   end
 

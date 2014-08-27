@@ -53,4 +53,10 @@ RSpec.configure do |config|
   config.expect_with :rspec do |c|
     c.syntax = :expect
   end
+
+  # Make sure jobs dont linger between tests for sidekiq
+  # config.before(:each) do
+  #   Sidekiq::Worker.clear_all
+  # end
+
 end

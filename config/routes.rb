@@ -42,11 +42,13 @@ Rails.application.routes.draw do
   get  'api/v1/users/favourite_venues',       to: 'users#favourite_venues'
   post 'api/v1/users/add_favourite_venue',    to: 'users#add_favourite_venue'
   post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
-  post 'api/v1/users/avatar/add',             to: 'users#add_avatar'
-  post 'api/v1/users/avatar/remove_avatar',   to: 'users#remove_avatar'
-  post 'api/v1/users/avatar/update_image',    to: 'users#update_image'
-  post 'api/v1/users/avatar/make_default',    to: 'users#make_default'
   get  'api/v1/venues/people', to: 'venues#people'
+  
+  post 'api/v1/avatar/create',             to: 'user_avatars#create'
+  post 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
+  post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
+  post 'api/v1/user/update_profile',       to: 'users#update_profile'
+  post 'api/v1/user/show',                 to: 'users#show'
   
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
