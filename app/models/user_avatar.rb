@@ -2,6 +2,8 @@ class UserAvatar < ActiveRecord::Base
   after_save :set_default_avatar_if_only_one_avatar_present
   before_destroy :validate_min_number_of_avatars, :validate_cant_delete_default_avatar
   belongs_to :user
+  scope :main_avatar, -> {find_by(default:true)}
+  scope :secondary_avatars, -> {where.not(default:true)}
   
   validate :max_number_of_avatars
 

@@ -3,7 +3,28 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def show
-    render json: success(current_user)
+    # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
+    user = {
+      id: current_user.id,
+      first_name: current_user.first_name,
+      key: current_user.key,
+      since_1970: current_user.last_activity.since_1970,
+      birthday: current_user.birthday,
+      gender: current_user.gender,
+      created_at: current_user.created_at,
+      updated_at: current_user.updated_at,
+      apn_token: current_user.apn_token,
+      layer_id: current_user.layer_id,
+      latitude:current_user.latitude,
+      longitude:current_user.longitude,
+      avatars: {
+        avatar_0: current_user.main_avatar.url,
+        avatar_1: current_user.secondary_avatars.first,
+        avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last : " ",
+      }
+    }.to_json
+
+    render json: success(user)
   end
 
   # API
