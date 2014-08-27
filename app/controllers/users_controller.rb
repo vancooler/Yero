@@ -7,6 +7,8 @@ class UsersController < ApplicationController
     user = {
       id: current_user.id,
       first_name: current_user.first_name,
+      introduction_1: current_user.introduction_1,
+      introduction_2: current_user.introduction_2,
       key: current_user.key,
       since_1970: current_user.last_activity.since_1970,
       birthday: current_user.birthday,
