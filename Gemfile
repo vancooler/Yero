@@ -76,3 +76,6 @@ end
 
 gem 'unicorn'
 # gem 'newrelic_rpm'
+
+# for easier migration seeding & debugging
+gem 'migration_data'
