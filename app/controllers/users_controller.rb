@@ -88,9 +88,9 @@ class UsersController < ApplicationController
 
   def update_profile
     if current_user.update(introduction_1: params[:introduction_1], introduction_2: params[:introduction_2])
-      render json: success(user)
+      render json: success(current_user)
     else
-      render json: error(user.errors)
+      render json: error(current_user.errors)
     end
   end
 
