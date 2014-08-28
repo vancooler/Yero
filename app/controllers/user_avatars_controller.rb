@@ -20,6 +20,7 @@ class UserAvatarsController < ApplicationController
     avatar.avatar = params[:avatar]
 
     if avatar.save
+      avatar.set_as_default if params[:default] == true
       render json: success(current_user.to_json(false))
     else
       render json: error(avatar.errors)
