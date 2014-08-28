@@ -6,6 +6,6 @@ class WebUser < ActiveRecord::Base
   has_many :venues
 
   validates_presence_of :first_name, :last_name, :business_name,
-    :address_line_one, :city, :state, :country, :zipcode, 
+    :address_line_1, :city, :state, :country, :zipcode, 
     :business_phone
 end

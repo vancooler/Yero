@@ -11,16 +11,15 @@ class CreateVenues < ActiveRecord::Migration
       t.string   :country
       t.string   :zipcode
       t.string   :phone
-
       t.string   :dress_code
       t.integer  :age_requirement
-      
-      t.integer  :venue_type_id, index: true
+      t.integer  :venue_type_id
 
       t.timestamps
     end
 
     add_index :venues, :email,                unique: true
+    add_index :venues, :venue_type_id
 
     create_table(:business_hours) do |t|
       t.integer :venue_id,      null: false
