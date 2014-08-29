@@ -4,7 +4,8 @@ class WhispersController < ApplicationController
 
   def new
     @whisper = Whisper.new
-    @origin_user = User.find_by(apn_token: "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>")
+    # @origin_user = User.find_by(apn_token: "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>")
+    @origin_user = User.find_by(apn_token: "12bc56a79a8859aa12c86fb5712debac3199a4af48e7fc1479bd1289805dfbf3")
   end
 
   def create
