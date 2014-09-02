@@ -48,7 +48,6 @@ gem 'rmagick'
 gem 'houston'
 gem 'aws-sdk'
 gem 'geocoder'
-gem 'activeadmin', github: 'gregbell/active_admin'
 gem 'sidekiq'
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
@@ -77,3 +76,6 @@ end
 
 gem 'unicorn'
 # gem 'newrelic_rpm'
+
+# for easier migration seeding & debugging
+gem 'migration_data'

@@ -1,12 +1,6 @@
-class DeviseCreateAdminUsers < ActiveRecord::Migration
-  def migrate(direction)
-    super
-    # Create a default user
-    AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if direction == :up
-  end
-
-  def change
-    create_table(:admin_users) do |t|
+class AddDeviseToWebUsers < ActiveRecord::Migration
+  def self.up
+    change_table(:web_users) do |t|
       ## Database authenticatable
       t.string :email,              null: false, default: ""
       t.string :encrypted_password, null: false, default: ""
@@ -37,12 +31,19 @@ class DeviseCreateAdminUsers < ActiveRecord::Migration
       # t.datetime :locked_at
 
 
-      t.timestamps
+      # Uncomment below if timestamps were not included in your original model.
+      # t.timestamps
     end
 
-    add_index :admin_users, :email,                unique: true
-    add_index :admin_users, :reset_password_token, unique: true
-    # add_index :admin_users, :confirmation_token,   unique: true
-    # add_index :admin_users, :unlock_token,         unique: true
+    add_index :web_users, :email,                unique: true
+    add_index :web_users, :reset_password_token, unique: true
+    # add_index :web_users, :confirmation_token,   unique: true
+    # add_index :web_users, :unlock_token,         unique: true
+  end
+
+  def self.down
+    # By default, we don't want to make any assumption about how to roll back a migration when your
+    # model already existed. Please edit below which fields you would like to remove in this migration.
+    raise ActiveRecord::IrreversibleMigration
   end
 end

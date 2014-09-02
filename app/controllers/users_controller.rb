@@ -10,7 +10,7 @@ class UsersController < ApplicationController
       introduction_1: current_user.introduction_1,
       introduction_2: current_user.introduction_2,
       key: current_user.key,
-      since_1970: current_user.last_activity.since_1970,
+      since_1970: current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
       birthday: current_user.birthday,
       gender: current_user.gender,
       created_at: current_user.created_at,
@@ -21,7 +21,7 @@ class UsersController < ApplicationController
       longitude:current_user.longitude,
       avatars: {
         avatar_0: current_user.main_avatar.avatar.url,
-        avatar_1: current_user.secondary_avatars.first.avatar.url,
+        avatar_1: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : " ",
         avatar_2: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : " ",
       }
     }
@@ -88,9 +88,9 @@ class UsersController < ApplicationController
 
   def update_profile
     if current_user.update(introduction_1: params[:introduction_1], introduction_2: params[:introduction_2])
-      render json: success(user)
+      render json: success(current_user)
     else
-      render json: error(user.errors)
+      render json: error(current_user.errors)
     end
   end
 

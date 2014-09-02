@@ -1,14 +1,11 @@
 Rails.application.routes.draw do
   
+  devise_for :web_users, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   #temporary routes for YJ to test out notification functionality
   get 'temp_beacon/enter_random_users', as: 'enter_users'
   get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
-  devise_for :venues, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
-
-  devise_scope :venues do
+  devise_scope :web_users do
     get 'dashboard', to: 'venues#dashboard', as: :venue_root
     get 'nightly', to: 'venues#nightly', as: :venue_nightly
     # get 'settings', to: 'venues#settings', as: :venue_settings
