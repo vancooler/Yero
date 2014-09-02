@@ -1,14 +1,17 @@
 default: &default
+  encoding: UTF-8
   adapter: postgresql
   pool: 5
   timeout: 5000
-  username: postgres
-  password: carina
+  host: localhost
+  username: yero
+  password: yero
+  port: 5432
 
 development:
   <<: *default
-  database: purpleoctopus
+  database: yero_development
 
 test:
   <<: *default
-  database: purpleoctopus
+  database: yero_test
