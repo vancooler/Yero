@@ -7,7 +7,7 @@ namespace :db do
 
   task seed: :environment do
     # rough sample data
-    user = User.create!(
+    User.create!(
         birthday: Time.now - 28.years,
         first_name: 'Alex',
         gender:'Male',
@@ -16,7 +16,7 @@ namespace :db do
           break random_token unless User.exists?(key: random_token)
         end
       )
-    user2 = User.create!(
+    User.create!(
         birthday: Time.now - 28.years,
         first_name: 'Lyosha',
         gender:'Male',
@@ -26,21 +26,38 @@ namespace :db do
         end
     )
 
-    Poke.create(pokee: user2, poker: user)
-    Poke.create(pokee: user, poker: user2)
-    
-
     network = VenueNetwork.create(
         city: "Vancouver",
         area: 2,
         name: "Vancouver Night Life"
       )
+    web_user = WebUser.create!(
+      first_name: "Bobby",
+      last_name: "T",
+      email: "hello+#{("abcd".."wxyz").to_a.sample}@yero.co",
+      password: "foobar11",
+      password_confirmation:"foobar11",
+      business_name:"Bobby's Night Clubs",
+      address_line_1: "123 Granville Street",
+      city: "Vancouver",
+      state: "BC",
+      country:"Canada",
+      zipcode:"V7S1A1",
+      business_phone:"6046000000"
+    )
+
+    VenueType.create!(name:"Test")
+
     10.times do |n|
-      [user,user2].sample.venues.create!(
+      web_user.venues.create!(
           name:"Venue #{n}",
-          password: 'subway11',
-          password_confirmation: 'subway11',
-          email: 'lyosha85+yero_sample_venue@gmail.com',
+          email: "lyosha85+#{n}_#{("abcd".."wxyz").to_a.sample
+}@gmail.com",
+          city: "Vancouver",
+          country: "Canada",
+          state: "BC",
+          zipcode:"v7s1a1",
+          venue_type_id: VenueType.all.sample.id,
           venue_network_id: VenueNetwork.first.id,
           age_requirement: '19+',
           dress_code: ['Formal','Casual','Semi-Formal','No Dress Code'].sample,

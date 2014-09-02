@@ -1,6 +1,4 @@
 class Venue < ActiveRecord::Base
-  devise :database_authenticatable, :registerable,
-         :recoverable, :rememberable, :trackable, :validatable
 
   has_many :business_hours, dependent: :destroy
   has_many :nightlies
@@ -8,13 +6,16 @@ class Venue < ActiveRecord::Base
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
+  belongs_to :web_user
   belongs_to :venue_network
+  belongs_to :venue_type
 
   # Address is geocoded so it can be returned to the iOS client
   geocoded_by :address
   after_validation :geocode
 
-  validates_presence_of :venue_network, :city, :state, :country, :email, :name, :address_line_one, :zipcode
+  validates_presence_of :venue_network, :city, :state, :country,
+    :email, :name, :address_line_one, :zipcode, :venue_type
 
   def tonightly
     Nightly.today_or_create(self)
