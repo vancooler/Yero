@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140822192928) do
+ActiveRecord::Schema.define(version: 20140826201809) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,21 +109,21 @@ ActiveRecord::Schema.define(version: 20140822192928) do
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-07-30 22:35:18', null: false
-    t.datetime "enter_time",    default: '2014-07-30 22:35:18', null: false
+    t.datetime "last_activity", default: '2014-09-02 17:49:11', null: false
+    t.datetime "enter_time",    default: '2014-09-02 17:49:11', null: false
     t.integer  "temperature"
   end
 
   create_table "pokes", force: true do |t|
     t.integer  "poker_id"
     t.integer  "pokee_id"
-    t.datetime "poked_at", default: '2014-07-30 22:35:18'
+    t.datetime "poked_at", default: '2014-09-02 17:49:11'
     t.boolean  "viewed",   default: false
   end
 
   create_table "read_notifications", force: true do |t|
     t.integer  "user_id"
-    t.boolean  "before_sending_whisper_notification"
+    t.boolean  "before_sending_whisper_notification", default: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -163,10 +163,10 @@ ActiveRecord::Schema.define(version: 20140822192928) do
   end
 
   create_table "users", force: true do |t|
-    t.date     "birthday",      null: false
-    t.string   "first_name",    null: false
-    t.string   "gender",        null: false
-    t.string   "key",           null: false
+    t.date     "birthday",                     null: false
+    t.string   "first_name",                   null: false
+    t.string   "gender",                       null: false
+    t.string   "key",                          null: false
     t.datetime "last_activity"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -175,6 +175,8 @@ ActiveRecord::Schema.define(version: 20140822192928) do
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "last_active"
+    t.string   "introduction_1", default: " "
+    t.string   "introduction_2", default: " "
   end
 
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
