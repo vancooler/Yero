@@ -166,14 +166,16 @@ describe 'API' do
     let(:cutie) {FactoryGirl.create(:user)}
     let(:her_bff) {FactoryGirl.create(:user)}
 
-    let(:venue_1)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Aubar')}
-    let(:room_dance){FactoryGirl.create(:room, venue: venue_1, name: 'Dance')}
-    let(:beacon_1a) {FactoryGirl.create(:beacon, room: room_1, name: 'Vancouver_Aubar_Dance_01_123')}
-    let(:beacon_1b) {FactoryGirl.create(:beacon, room: room_1, name: 'Vancouver_Aubar_Dance_02_456')}
+    let(:venue_type) {FactoryGirl.create(:venue_type)}
 
-    let(:venue_2)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Republic')}
+    let(:venue_1)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Aubar', venue_type: venue_type)}
+    let(:dance_room){FactoryGirl.create(:room, venue: venue_1, name: 'Dance')}
+    let(:beacon_1a) {FactoryGirl.create(:beacon, room: dance_room, name: 'Vancouver_Aubar_Dance_01_123')}
+    let(:beacon_1b) {FactoryGirl.create(:beacon, room: dance_room, name: 'Vancouver_Aubar_Dance_02_456')}
+
+    let(:venue_2)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Republic', venue_type: venue_type)}
     let(:room_vip)  {FactoryGirl.create(:room, venue: venue_1, name: 'VIP')}
-    let(:beacon_2a) {FactoryGirl.create(:beacon, room: room_1, name: 'Vancouver_Aubar_Dance_02_456')}
+    let(:beacon_2a) {FactoryGirl.create(:beacon, room: room_vip, name: 'Vancouver_Republic_VIP_01_789')}
 
     describe 'A user has 0 people in the list before entering a beacon' do
       before {post 'api/v1/users',{key: user.key}}
@@ -185,7 +187,7 @@ describe 'API' do
       it { expect(response_to_client[:data]).to be(nil) }
     end
     describe 'when a different user entered to a venue' do
-      before { post 'api/v1/room/enter', {key: his_buddy.key, beacon_key: beacon_a1.key} }
+      before { post 'api/v1/room/enter', {key: his_buddy.key, beacon_key: beacon_1a.key} }
       
       let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
 

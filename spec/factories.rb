@@ -20,8 +20,14 @@ FactoryGirl.define do
     zipcode 'V7S1B2'
     dress_code 'Formal'
     phone '6041234567'
+    address_line_one '123 Granville Street'
     # association :venue_network, factory: :venue_network
     venue_network
+    venue_type
+  end
+
+  factory :venue_type do
+    sequence(:name) { "type-#{n}" }
   end
 
   factory :room do
