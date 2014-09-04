@@ -79,3 +79,4 @@ gem 'unicorn'
 
 # for easier migration seeding & debugging
 gem 'migration_data'
+gem 'json-jwt'
