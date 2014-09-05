@@ -4,8 +4,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require 'rspec/rails'
 require 'rspec/autorun'
 
-# API_TEST_BASE_URL = "http://purpleoctopus-staging.herokuapp.com"
-API_TEST_BASE_URL = "http://localhost:3000"
+Fog.mock!
 
 # Requires supporting ruby files with custom matchers and macros, etc,
 # in spec/support/ and its subdirectories.
@@ -52,6 +51,25 @@ RSpec.configure do |config|
   # Disable the old-style object.should syntax.
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  # clean up uploaded files
+  config.after(:each) do
+    if Rails.env.test? || Rails.env.cucumber?
+      FileUtils.rm_rf(Dir["#{Rails.root}/spec/support/uploads"])
+    end 
+  end
+
+  # include factorygirl
+  config.include FactoryGirl::Syntax::Methods
+
+  # clean up database after each run
+  config.before(:suite) do
+    begin
+      DatabaseCleaner.start
+    ensure
+      DatabaseCleaner.clean
+    end
   end
 
   # Make sure jobs dont linger between tests for sidekiq

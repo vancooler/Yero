@@ -65,6 +65,7 @@ group :development, :test do
   gem 'minitest'
   gem 'rspec-rails', '2.13.1'
   gem 'factory_girl_rails'
+  gem 'faker'
   # Use debugger
   # gem 'debugger'
 end
@@ -72,6 +73,7 @@ end
 group :test do
   gem 'selenium-webdriver', '2.35.1'
   gem 'capybara', git: 'https://github.com/jnicklas/capybara.git'
+  gem 'database_cleaner', github: 'bmabey/database_cleaner'
 end
 
 gem 'unicorn'
