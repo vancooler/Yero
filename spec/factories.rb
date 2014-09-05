@@ -9,8 +9,13 @@ FactoryGirl.define do
         break random_token unless User.exists?(key: random_token)
       end
     }
+    factory :user_with_avatar do
+      after(:create) do |user|
+        UserAvatar.create(user: user, default: true)
+      end
+    end
   end
-  
+
   factory :venue do
     sequence(:name)  { |n| "Venue #{n}" }
     sequence(:email) { |n| "venue_#{n}@example.com" }
@@ -27,7 +32,7 @@ FactoryGirl.define do
   end
 
   factory :venue_type do
-    sequence(:name) { "type-#{n}" }
+    sequence(:name) { |n| "type-#{n}" }
   end
 
   factory :room do
@@ -36,16 +41,34 @@ FactoryGirl.define do
   end
 
   factory :beacon do
-    sequence(:name) {"Vancouver_Aubar_Dance_#{n}_123123"}
+    sequence(:key) {"Vancouver_Aubar_Dance_#{n}_123123"}
   end
 
   factory :user_avatar do
     user
+    avatar Rack::Test::UploadedFile.new(File.open(File.join(Rails.root, '/spec/files/sample_avatar.jpg')))
   end
 
   factory :venue_network do
     sequence(:area) {|n| n}
     sequence(:name) {|n| "Sample Name #{n}"}
     city 'Vancouver'
+  end
+
+  factory :web_user do
+    first_name      Faker::Name.first_name
+    last_name       Faker::Name.last_name
+    business_name   Faker::Company.name
+    address_line_1  Faker::Address.street_address
+    address_line_2  Faker::Address.secondary_address
+    city            "Vancouver"
+    state           "BC"
+    country         "Canada"
+    zipcode         "v7s1a1"
+    business_phone  Faker::PhoneNumber.phone_number
+    cell_phone      Faker::PhoneNumber.phone_number
+    email           Faker::Internet.email
+    password        "foobar11"
+    password_confirmation "foobar11"
   end
 end

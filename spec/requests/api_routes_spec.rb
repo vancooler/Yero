@@ -39,8 +39,192 @@ describe 'API' do
       it 'should reject registration without a gender'
     end
 
+  end
+  describe 'Beacons' do
+    let(:venue_network) {FactoryGirl.create(:venue_network)}
+
+    let(:user) {FactoryGirl.create(:user)}
+    
+
+
+    context "There are users in two different venues, and user requests a user list.." do
+      let(:his_buddy) { FactoryGirl.create(:user_with_avatar, first_name: "His Buddy", gender: "M")}
+      let(:cutie)     { FactoryGirl.create(:user_with_avatar, first_name: "Cutie",     gender: "F")}
+      let(:her_bff)   { FactoryGirl.create(:user_with_avatar, first_name: "Her BFF",   gender: "F")}
+
+      let(:venue_type) {FactoryGirl.create(:venue_type)}
+      
+      # first venue
+      let(:venue_1)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Aubar', venue_type: venue_type)}
+      let(:dance_room){FactoryGirl.create(:room, venue: venue_1, name: 'Dance')}
+      let(:beacon_1a) {FactoryGirl.create(:beacon, room: dance_room, key: 'Vancouver_Aubar_Dance_01_123')}
+      let(:beacon_1b) {FactoryGirl.create(:beacon, room: dance_room, key: 'Vancouver_Aubar_Dance_02_456')}
+
+      # second venue
+      let(:venue_2)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Republic', venue_type: venue_type)}
+      let(:room_vip)  {FactoryGirl.create(:room, venue: venue_2, name: 'VIP')}
+      let(:beacon_2a) {FactoryGirl.create(:beacon, room: room_vip, key: 'Vancouver_Republic_VIP_01_789')}
+
+      before do
+        post 'api/v1/room/enter', {key: his_buddy.key, beacon_key: beacon_1b.key} 
+        # puts '-'*100
+        # puts his_buddy.inspect
+        # puts beacon_1b.room.inspect
+        # puts beacon_1b.room.venue.inspect
+        # puts "Buddy Entered..#{beacon_1b.inspect}"
+        # puts "*"*100
+        # puts ""
+        # puts '-'*100
+        post 'api/v1/room/enter', {key: cutie.key,     beacon_key: beacon_2a.key} 
+        # puts cutie.inspect
+        # puts "Cutie Entered..#{beacon_2a.inspect}"
+        # puts beacon_2a.room.inspect
+        # puts beacon_2a.room.venue.inspect
+        # puts "*"*100
+        # puts ""
+        post 'api/v1/room/enter', {key: her_bff.key,   beacon_key: beacon_2a.key} 
+        # puts her_bff.inspect
+        # puts "her bff Entered.."
+        # puts ""
+      end
+      
+      describe "the user didnt enter the network yet.." do
+        before do
+          post 'api/v1/users',{key: user.key}
+        end
+
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+        it { expect(response).to be_success }
+        it { expect(response_to_client[:success]).to be(true)}
+        it "should not have any users in his list" do
+          expect(response_to_client[:users].count).to be(0)
+        end
+      end
+
+      describe "the user enters a venue the same as his buddy (through a different beacon in the venue).." do
+        before do
+         post 'api/v1/room/enter', {key: his_buddy.key,   beacon_key: beacon_1b.key} 
+         post 'api/v1/room/enter', {key: user.key,        beacon_key: beacon_1a.key} 
+         post 'api/v1/users',      {key: user.key} 
+       end
+        
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+        it { expect(response).to be_success }
+        it { expect(response_to_client[:success]).to be(true)}
+        it "should not have 3 users in his list" do
+          expect(response_to_client[:users].count).to be(3)
+        end
+        it "should show that his buddy has a badge" do
+          response_to_client[:users].each do |user_hash|
+            if user_hash[:id] == his_buddy.id
+              expect(user_hash[:same_venue_badge]).to be(true) 
+            end
+          end
+        end
+
+        it "should show that all users in other venues without a badge" do
+          users_in_other_venues = []
+          response_to_client[:users].each do |user_hash|
+            users_in_other_venues << user_hash unless user_hash[:id] == his_buddy.id
+          end
+          expect(users_in_other_venues.first[:same_venue_badge]).to be(false) 
+          expect(users_in_other_venues.last[:same_venue_badge]).to be(false) 
+        end
+
+        describe "the user exits the venue.." do
+          before do
+            post 'api/v1/room/leave', {key: user.key, beacon_key: beacon_1a.key} 
+            post 'api/v1/users',      {key: user.key} 
+          end
+
+          let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+          it { expect(response).to be_success }
+          it { expect(response_to_client[:success]).to be(true)}
+          it "should show 3 users" do
+            expect(response_to_client[:users].count).to be(3) 
+          end
+          it "should not show any bades in the user list" do
+            badge_booleans = []
+            response_to_client[:users].each do |user_hash|
+              badge_booleans << user_hash[:same_venue_badge]
+            end
+            badge_booleans.uniq!
+            expect(badge_booleans.count).to be(1)
+            expect(badge_booleans[0]).to be(false)
+          end
+        end
+
+        describe "his buddy leaves the venue through the beacon he entered.." do
+          before do
+            post 'api/v1/room/leave', {key: his_buddy.key,        beacon_key: beacon_1b.key} 
+            post 'api/v1/users',{key: user.key}
+          end
+
+          let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+          it { expect(response).to be_success }
+          it { expect(response_to_client[:success]).to be(true)}
+          it "should still have 3 users in his list" do
+            expect(response_to_client[:users].count).to be(3)
+          end
+          it "should show no badges in his list" do
+            badge_booleans = []
+            response_to_client[:users].each do |user_hash|
+              badge_booleans << user_hash[:same_venue_badge]
+            end
+            badge_booleans.uniq!
+            expect(badge_booleans.count).to be(1)
+            expect(badge_booleans[0]).to be(false)
+          end
+        end
+        describe "his buddy leaves the venue through a different beacon.." do
+          before do
+            post 'api/v1/room/leave', {key: his_buddy.key,        beacon_key: beacon_1a.key} 
+            post 'api/v1/users',{key: user.key}
+          end
+          
+          let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+          it { expect(response).to be_success }
+          it { expect(response_to_client[:success]).to be(true)}
+          it "should still have 3 users in his list" do
+            expect(response_to_client[:users].count).to be(3)
+          end
+          it "should show no badges in his list" do
+            badge_booleans = []
+            response_to_client[:users].each do |user_hash|
+              badge_booleans << user_hash[:same_venue_badge]
+            end
+            badge_booleans.uniq!
+            expect(badge_booleans.count).to be(1)
+            expect(badge_booleans[0]).to be(false)
+          end
+        end
+      end
+
+      describe "the user enters the second venue" do
+        it "should show the user other participants"
+        it "should show the user badges of the people in his current venue"
+        it "should show the users in the current venue first"
+      end
+      describe "everyone leaves their venues" do
+        it "should show a list of participants"
+        it "should not show any badges in the users list"
+      end
+
+    end
+
+  end
+
+  describe 'User Profile' do
+    
+    let (:avatar_path) {'/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'}
+    let!(:user) {FactoryGirl.create(:user)}
+
     describe "Existing user uploads a new avatar" do
-      let!(:user) {FactoryGirl.create(:user)}
       before do
         post 'api/v1/avatar/create', 
         {
@@ -57,7 +241,6 @@ describe 'API' do
     end
 
     describe "Existing user uploads a avatar set to default " do
-      let!(:user) {FactoryGirl.create(:user)}
       
       before do
         post 'api/v1/avatar/create',
@@ -153,51 +336,62 @@ describe 'API' do
           end
         end
       end
-
     end
 
-  end
-  describe 'Beacons' do
-    let(:venue_network) {FactoryGirl.create(:venue_network)}
-
-    let(:user) {FactoryGirl.create(:user)}
-    let(:his_buddy) {FactoryGirl.create(:user)}
-
-    let(:cutie) {FactoryGirl.create(:user)}
-    let(:her_bff) {FactoryGirl.create(:user)}
-
-    let(:venue_type) {FactoryGirl.create(:venue_type)}
-
-    let(:venue_1)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Aubar', venue_type: venue_type)}
-    let(:dance_room){FactoryGirl.create(:room, venue: venue_1, name: 'Dance')}
-    let(:beacon_1a) {FactoryGirl.create(:beacon, room: dance_room, name: 'Vancouver_Aubar_Dance_01_123')}
-    let(:beacon_1b) {FactoryGirl.create(:beacon, room: dance_room, name: 'Vancouver_Aubar_Dance_02_456')}
-
-    let(:venue_2)   {FactoryGirl.create(:venue, venue_network: venue_network, name: 'Republic', venue_type: venue_type)}
-    let(:room_vip)  {FactoryGirl.create(:room, venue: venue_1, name: 'VIP')}
-    let(:beacon_2a) {FactoryGirl.create(:beacon, room: room_vip, name: 'Vancouver_Republic_VIP_01_789')}
-
-    describe 'A user has 0 people in the list before entering a beacon' do
-      before {post 'api/v1/users',{key: user.key}}
-
-      let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
-
-      it { expect(response).to be_success }
-      it { expect(response_to_client[:success]).to be(true)}
-      it { expect(response_to_client[:data]).to be(nil) }
-    end
-    describe 'when a different user entered to a venue' do
-      before { post 'api/v1/room/enter', {key: his_buddy.key, beacon_key: beacon_1a.key} }
+    context "User has an avatar.." do
       
-      let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+      let (:user) { FactoryGirl.create(:user_with_avatar)}
 
-      it { expect(response).to be_success }
-      it { expect(response_to_client[:success]).to be(true)}
+      describe "User requests to view his own profile" do
+        before {post '/api/v1/user/show', {key: user.key }}
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
 
+        # it { expect(response).to be_success }
+        # it { expect(response_to_client[:success]).to be(true) }
+        it "should poop" do
+          puts user.inspect, user.user_avatars.count, "::::" 
+        end
+      end
+
+      describe "User updates introduction line 1 of her profile" do
+        before do
+          post '/api/v1/user/update_profile', {key: user.key, introduction_1: "Intro 1"}
+          post '/api/v1/user/show', {key: user.key }
+        end
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+        it { expect(response).to be_success }
+        it { expect(response_to_client[:success]).to be(true) }
+        it { expect(response_to_client[:data][:introduction_1]).to be("Intro 1")}
+      end
+
+      describe "User updates introductino line 2 of his profile" do
+        before do
+          post '/api/v1/user/update_profile', {key: user.key, introduction_2:"Intro 2"}
+          post '/api/v1/user/show', {key: user.key }
+        end
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+        it { expect(response).to be_success }
+        it { expect(response_to_client[:success]).to be(true) }
+        it { expect(response_to_client[:data][:introduction_2]).to be("Intro 2")}
+      end
+
+      describe "User updates both lines at the same time" do
+        before do
+          post '/api/v1/user/update_profile', {key: user.key, introduction_1: "Intro 1", introduction_2:"Intro 2"}
+          post '/api/v1/user/show', {key: user.key }
+        end
+        let(:response_to_client) {JSON.parse(response.body, symbolize_names: true)}
+
+        it { expect(response).to be_success }
+        it { expect(response_to_client[:success]).to be(true) }
+        it { expect(response_to_client[:data][:introduction_1]).to be("Intro 1")}
+        it { expect(response_to_client[:data][:introduction_2]).to be("Intro 2")}
+      end
     end
 
   end
-
 #   describe "User changes his default avatar" do
 #     before do
 #       # @user = UserRegistration.new(first_name: "Bob", gender: "male", birthday:Time.now - 22.years)
