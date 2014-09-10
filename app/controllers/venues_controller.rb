@@ -125,4 +125,54 @@ class VenuesController < ApplicationController
     end
   end
 
+  #return active user in venue or venue network
+  def active_users
+    if params[:venue_id]
+      venue_id = params[:venue_id].to_i
+      users = ActiveInVenue.where(:venue_id => venue_id)
+      data = Jbuilder.encode do |json|
+        json.array! users do |p|
+          json.name p.user.first_name
+          json.image p.user.default_avatar.avatar.thumb.url if p.user.default_avatar and p.user.default_avatar.avatar
+          json.gender p.user.gender
+          json.age p.user.age
+          json.id p.user.id
+          json.layer_id p.user.layer_id
+        end
+      end
+
+      render json: {
+        list: JSON.parse(data)
+      }
+    elsif params[:venue_network_id]
+      venue_network_id = params[:venue_network_id].to_i
+      users = ActiveInVenueNetwork.where(:venue_network_id => venue_network_id)
+      data = Jbuilder.encode do |json|
+        json.array! users do |p|
+          json.name p.user.first_name
+          json.image p.user.default_avatar.avatar.thumb.url if p.user.default_avatar and p.user.default_avatar.avatar
+          json.gender p.user.gender
+          json.age p.user.age
+          json.id p.user.id
+          json.layer_id p.user.layer_id
+        end
+      end
+
+      render json: {
+        list: JSON.parse(data)
+      }
+    else
+      errors = Array.new()
+      errors[0] = "Need Venue ID or Venue Network ID"
+      data = Jbuilder.encode do |json|
+        json.array! errors do |p|
+          json.error p
+        end
+      end
+      render json:{
+        list: JSON.parse(data)
+      }
+    end
+  end
+
 end

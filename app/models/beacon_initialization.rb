@@ -30,8 +30,18 @@ class BeaconInitialization
         venue.name = venue_name
         venue.venue_network_id = network_id
         venue.email = "hello+#{venue_name}@yero.co"
-        venue.password = "whispr111"
-        venue.password_confirmation = "whispr111"
+
+        ##TODO: double check the fields required in venue
+        venue.city = "Vancouver"
+        venue.state = "BC"
+        venue.country = "Canada"
+        venue.address_line_one = "970 Burrard St"
+        venue.zipcode = "whatever"
+        venue.venue_type_id = 1
+
+
+        #venue.password = "whispr111"
+        #venue.password_confirmation = "whispr111"
         venue.save!
       end
       venue

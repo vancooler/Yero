@@ -22,6 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
+    logger.info "KEY: " + params[:key]
     User.find_by_key(params[:key])
   end
 

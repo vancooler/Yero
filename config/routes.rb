@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/add_favourite_venue',    to: 'users#add_favourite_venue'
   post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
   get  'api/v1/venues/people', to: 'venues#people'
+  get  'api/v1/venues/active_users', to: 'venues#active_users'
   
   post 'api/v1/avatar/create',             to: 'user_avatars#create'
   post 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'

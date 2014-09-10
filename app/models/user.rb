@@ -10,6 +10,8 @@ class User < ActiveRecord::Base
   has_many :activities, dependent: :destroy
   has_many :locations
   has_one :read_notification, dependent: :destroy
+  has_one :active_in_venue, dependent: :destroy
+  has_one :active_in_venue_network, dependent: :destroy
 
   reverse_geocoded_by :latitude, :longitude
 
@@ -47,20 +49,30 @@ class User < ActiveRecord::Base
 
   def current_venue
     return nil unless self.has_activity_today?
+=begin
     activity = Activity.for_user(self.id).on_current_day.with_beacons.last
     if activity.action == "Enter Beacon"
       activity.trackable.room.venue
     else
       nil
     end
+=end
+    return self.active_in_venue.venue
   end
   def has_activity_today?
-    self.activities.on_current_day.count > 0
+    #self.activities.on_current_day.count > 0
+    !self.active_in_venue.nil?
   end
   def fellow_participants
-    # current_venue = self.current_venue
-    return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
-
+    current_venue = self.current_venue
+    #return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
+    return nil if current_venue.nil?
+    aivs = ActiveInVenue.where("user_id != ?", self.id)
+    active_users_id = []
+    aivs.each do |aiv|
+      active_users_id << aiv.user_id
+    end
+=begin
     venue_activities = []
 
     Venue.all.each do |venue|
@@ -85,6 +97,7 @@ class User < ActiveRecord::Base
       end
       active_users_id << id_activity[0] if qualified
     end
+=end
     User.where(id: active_users_id)
   end
 

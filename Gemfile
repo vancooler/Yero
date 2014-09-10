@@ -44,7 +44,7 @@ gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem "carrierwave"
 gem "fog", "~> 1.3.1"
 gem 'mini_magick', '~> 3.7.0'
-gem 'rmagick'
+gem 'rmagick', '2.13.2'
 gem 'houston'
 gem 'aws-sdk'
 gem 'geocoder'

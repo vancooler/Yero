@@ -64,7 +64,7 @@ class UsersController < ApplicationController
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
-        json.since_1970     user.last_activity.since_1970
+        json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
         json.birthday       user.birthday
         json.gender         user.gender
 
@@ -95,6 +95,7 @@ class UsersController < ApplicationController
   end
 
   def sign_up
+    logger.info sign_up_params
     user_registration = UserRegistration.new(sign_up_params)
     user = user_registration.user
 
@@ -287,6 +288,6 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :first_name, :gender, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
   end
 end

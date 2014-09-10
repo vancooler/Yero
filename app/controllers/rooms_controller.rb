@@ -11,8 +11,11 @@ class RoomsController < ApplicationController
       beacon.create
     end
     beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
+    
     activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
-
+    
+    #log the last active time for venue and venue network
+    ActiveInVenue.enter_venue(beacon.room.venue, current_user)
     if activity_item.create
       render json: success
     else
@@ -45,6 +48,8 @@ class RoomsController < ApplicationController
 
   def user_leave
     beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
+    
+    ActiveInVenue.leave_venue(beacon.room.venue, current_user)
     activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
     if activity_item.create
       render json: success(beacon.to_json)

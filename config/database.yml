@@ -9,8 +9,13 @@ default: &default
   port: 5432
 
 development:
-  <<: *default
-  database: yero_development
+  adapter: postgresql
+  encoding: unicode
+  database: octopus
+  pool: 5
+  username: liuyang
+  password: root
+  host: 127.0.0.1
 
 test:
   <<: *default
