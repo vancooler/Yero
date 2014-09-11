@@ -38,10 +38,6 @@ class ActiveInVenue < ActiveRecord::Base
       v.save!
     end
 
-    #update user last_active
-    user.last_active = Time.now
-    user.last_activity = Time.now
-    user.save!
 
     #enter network
     ActiveInVenueNetwork.enter_venue_network(venue.venue_network, user)

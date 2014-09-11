@@ -8,6 +8,7 @@ class UserRegistration
   end
   def create
     create_key
+    @user.last_active = Time.now
     @user.save
     create_layer_account
   end
@@ -19,6 +20,7 @@ class UserRegistration
         break random_token unless User.exists?(key: random_token)
       end
     end
+
     def create_layer_account
       @user.layer_id = "pending"
       # @user.layer_id = "Not Available"
@@ -46,62 +48,76 @@ class UserRegistration
       # @user.layer_id = JSON.parse(response.body)["users"][0]["layer_id"]
 
       # save
+      # enc_data = Base64.urlsafe_encode64(data)
+      # enc_claim = Base64.urlsafe_encode64(claim)
+      # encoded_content = enc_data + "." + enc_claim
+      # Rails.logger.info "GGGGGG: " + @user.nonce
       require "base64"
 
-      data = [{ 
-        "id" => @user.key,
-        typ: "JWS",
-        alg: "RS256",
-        cty: "layer-eit;v=1",
-        kid:ENV['LAYER_AUTH_PUB_KEY']
-        }].to_json
-      claim=[{
-          iss: ENV['LAYER_APP_ID'],
-          prn: @user.key,
-          iat: Time.now.to_i,
-          exp: (Time.now + 20.years).to_i,
-          nce: "@user.nonce"
-        }].to_json
-      enc_data = Base64.urlsafe_encode64(data)
-      enc_claim = Base64.urlsafe_encode64(claim)
-      encoded_content = enc_data + "." + enc_claim
-      Rails.logger.info "GGGGGG: " + @user.nonce
-      #Rails.logger.info "HHHHHHHHH:" + encoded_content
+      if Rails.env == "development"
+        claim={
+            iss: '72767b32-1f2d-11e4-b632-09c700006127', #ENV['LAYER_APP_ID'],
+            prn: @user.key,
+            iat: Time.now.to_i,
+            exp: (Time.now + 20.years).to_i,
+            nce: @user.nonce
+          }
+      else
+        claim={
+            iss: ENV['LAYER_APP_ID'],
+            prn: @user.key,
+            iat: Time.now.to_i,
+            exp: (Time.now + 20.years).to_i,
+            nce: @user.nonce
+          }
+      end
+      layer_private_key = "MIICWwIBAAKBgFuwNhDvT1QsxCiIaC2zLuc4mHcVrQgmcyEkLgX8pf22wTblFRMyivscGyCZ2IkAHxwCdea8M1FdTMEuW3k52tkpXl3KZVx9E+DygqAJOBycaoxZqaVQWnXAdKJupQbtJZGjJW0bGt/vPwibnc/YwWwoK4l/YhVYzr+2LKijXNX/AgMBAAECgYA4Psl77AIDBg8zOjKGTlQofXxyGPbzd/rKStJ807bUBCdU0IT0KN4/Gse9YQMHT+7FlPDUoYDtmcl6/EAbBpWsQQql3qFVTBY8hf1bNuQwu9zkw3bhAQLYXeRorlieaNVrTqquwn/jc+poBhXgYyCeYVwDpzRvySTVU4YFUzmDgQJBALc71uReb2cdvSsCKZDVw3YQaHtau02vlGiqitkzsTzCsk9d5J4kLhkVzWEz/167ny34Sda1bspwpCGOzQbHcL8CQQCAGY4xswamPLCXw5iRT6LRNLAR3QGIiUnOc+Bbv+T3I35xQWhs+gTXL+lUjAS/usrh7I+Y7tR7hy7Dm6FQXqrBAkAXQkpJ3M7pWPYNQo4CK5BPKVAJ8H98IgCFtLhBT/V8j/5QYsvFYzRSzNiwMQiGfux6ylydG5S/r8K128mcxa5DAkB4yqBA0RXGD5hdozzsWPGo4EverE3T19FW8gFvwsU/HaMPXKQBjsiduToGVXns6VCCNTU6+oo2aUR5gvlb9ciBAkEAil5BP/x9GgL/xOcKWI/rdGTXsvVc6OZz8onrSeJpQX7f6VPJFubF28fiWGW4u7yKhMonmNaUSLCiR/wBRpHFSw=="
+      private_key = OpenSSL::PKey::RSA.new(Base64.decode64(layer_private_key)) #ENV['LAYER_PRIVATE_KEY'])
 
-# private_key = %Q(
-# -----BEGIN RSA PRIVATE KEY-----
-# MIICWwIBAAKBgFuwNhDvT1QsxCiIaC2zLuc4mHcVrQgmcyEkLgX8pf22wTblFRMy
-# ivscGyCZ2IkAHxwCdea8M1FdTMEuW3k52tkpXl3KZVx9E+DygqAJOBycaoxZqaVQ
-# WnXAdKJupQbtJZGjJW0bGt/vPwibnc/YwWwoK4l/YhVYzr+2LKijXNX/AgMBAAEC
-# gYA4Psl77AIDBg8zOjKGTlQofXxyGPbzd/rKStJ807bUBCdU0IT0KN4/Gse9YQMH
-# T+7FlPDUoYDtmcl6/EAbBpWsQQql3qFVTBY8hf1bNuQwu9zkw3bhAQLYXeRorlie
-# aNVrTqquwn/jc+poBhXgYyCeYVwDpzRvySTVU4YFUzmDgQJBALc71uReb2cdvSsC
-# KZDVw3YQaHtau02vlGiqitkzsTzCsk9d5J4kLhkVzWEz/167ny34Sda1bspwpCGO
-# zQbHcL8CQQCAGY4xswamPLCXw5iRT6LRNLAR3QGIiUnOc+Bbv+T3I35xQWhs+gTX
-# L+lUjAS/usrh7I+Y7tR7hy7Dm6FQXqrBAkAXQkpJ3M7pWPYNQo4CK5BPKVAJ8H98
-# IgCFtLhBT/V8j/5QYsvFYzRSzNiwMQiGfux6ylydG5S/r8K128mcxa5DAkB4yqBA
-# 0RXGD5hdozzsWPGo4EverE3T19FW8gFvwsU/HaMPXKQBjsiduToGVXns6VCCNTU6
-# +oo2aUR5gvlb9ciBAkEAil5BP/x9GgL/xOcKWI/rdGTXsvVc6OZz8onrSeJpQX7f
-# 6VPJFubF28fiWGW4u7yKhMonmNaUSLCiR/wBRpHFSw==
-# -----END RSA PRIVATE KEY-----
-# ).delete!("\n")
+      @jwt = JSON::JWT.new(claim)
+      # Constructing the header
+      @jwt.header['typ'] = 'JWS'
+      @jwt.header['cty'] = 'layer-eit;v=1'
+      if Rails.env == "development"
+        @jwt.header['kid'] = '8ef75be4-2182-11e4-b157-301601003ad4' #ENV['LAYER_AUTH_PUB_KEY']
+      else
+        @jwt.header['kid'] = ENV['LAYER_AUTH_PUB_KEY']
+      end
+      @jwt.header['alg'] = 'RS256'
+
+      token = @jwt.sign(private_key, :RS256).to_s
+
+      Rails.logger.info "HHHHHHHHH:" + token
+
 #       JWT.encode(data, private_key, "RS256", {"kid" => ENV['LAYER_APP_ID']})
 #       public_key = OpenSSL::PKey::EC.new("8ef75be4-2182-11e4-b157-301601003ad4")
 #       token = JWT.encode(data, private_key)
-#       RestClient.put( "https://layer.com/users/"+ENV['LAYER_APP_ID']+"/token",
-#                           {
-#                             access_token: token
-#                           }
+      @user.layer_id = token
+      @user.save
+      # RestClient.put( "https://layer.com/users/72767b32-1f2d-11e4-b632-09c700006127/token",
+      #                     {
+      #                       access_token: token
+      #                     }
+      #                   )
 
-#                                   # "jws_claim" =>{
-#                                   #   iss: ENV['LAYER_APP_ID'],
-#                                   #   prn: @user.key,
-#                                   #   uat: Time.now,
-#                                   #   exp: Time.now + 20.years
-#                                   # }
-#                               # }
-#                         )
-#       @user.layer_id = token
-
+                                  # "jws_claim" =>{
+                                  #   iss: ENV['LAYER_APP_ID'],
+                                  #   prn: @user.key,
+                                  #   uat: Time.now,
+                                  #   exp: Time.now + 20.years
+                                  # }
+                              # }
+      # logger.info response
     end
 end
+
+
+
+
+
+
+
+
+
+
+

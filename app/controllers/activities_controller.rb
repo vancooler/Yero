@@ -5,9 +5,12 @@ class ActivitiesController < ApplicationController
   respond_to :json
   
   def show
-    activity = current_user.last_activity
+    current_user.last_active = Time.now
+    current_user.save
+    activity = current_user.last_active
     if activity.present?
-      render json: success(activity)
+      #render json: success(activity)
+      render json: success((activity - Time.new('1970')).seconds.to_i)
     else
       render json: error("No Activity Found.")
     end
