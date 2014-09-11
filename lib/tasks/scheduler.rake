@@ -25,11 +25,11 @@ end
 #cleanup for user activity in venue and venue network
 namespace :cleanup do
 include ActionView::Helpers::DateHelper
-  #task :cleanup_venue_venue => :environment do 
-  #  ActiveInVenue.clean_up
-  #end
+  task :everyday_venue_cleanup => :environment do 
+    ActiveInVenue.clean_up
+  end
 
-  task :everyday_cleanup_network => :environment do 
+  task :network_cleanup => :environment do 
     ActiveInVenueNetwork.everyday_cleanup
   end
 

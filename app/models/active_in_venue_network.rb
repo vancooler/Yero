@@ -50,7 +50,7 @@ class ActiveInVenueNetwork < ActiveRecord::Base
   end
 
   def self.everyday_cleanup
-    vn = ActiveInVenueNetwork.where("last_activity < ? ", Time.now - 0.1.seconds)
+    vn = ActiveInVenueNetwork.where("last_activity < ? ", Time.now - 1.day)
     if vn and vn.count > 1
       result = vn.destroy_all
     elsif vn and vn.count == 1
