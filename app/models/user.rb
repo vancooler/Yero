@@ -98,7 +98,8 @@ class User < ActiveRecord::Base
       active_users_id << id_activity[0] if qualified
     end
 =end
-    User.where(id: active_users_id)
+    users = User.where(id: active_users_id)
+    self.user_sort(users)
   end
 
   def fellow_participants_sorted #by distance then by activity
@@ -108,6 +109,47 @@ class User < ActiveRecord::Base
     results = results.near(self, 50, unit: :km).sort_by_last_active
     results_with_no_location = results_with_no_location.
     sorted_results = results_with_location + results_with_no_location
+  end
+
+  def user_sort(users)
+    users_with_location = users.where.not(latitude:nil, longitude:nil)
+    users_with_no_location = users - users_with_location
+    # users_2 = users.near(self, 2, unit: :km).order('distance DESC')
+    # users_5 = users.near(self, 5, unit: :km).order('distance DESC') - users_2
+    # users_10 = users.near(self, 10, unit: :km).order('distance DESC') - users_5 - users_2
+    # users_20 = users.near(self, 20, unit: :km).order('distance DESC') - users_10 - users_5 - users_2
+    # users_40 = users.near(self, 40, unit: :km).order('distance DESC') - users_20 - users_10 - users_5 - users_2
+    # users_60 = users.near(self, 60, unit: :km).order('distance DESC') - users_40 - users_20 - users_10 - users_5 - users_2
+    # logger.info "2km : " + users_2.length.to_s + "\n" +
+    #             "5km : " + users_5.length.to_s + "\n" +
+    #             "10km: " + users_10.length.to_s + "\n" +
+    #             "20km: " + users_20.length.to_s + "\n" +
+    #             "40km: " + users_40.length.to_s + "\n" +
+    #             "60km: " + users_60.length.to_s
+    result_users = users.near(self, 60, unit: :km).order('distance DESC')
+    return result_users
+
+
+  end
+
+  def distance_label(user)
+    distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
+    case distance 
+    when 0..2    
+      return "Within 2km" 
+    when 2..5    
+      return "Within 5km" 
+    when 5..10    
+      return "Within 10km" 
+    when 10..20    
+      return "Within 20km" 
+    when 20..40    
+      return "Within 40km" 
+    when 40..61    
+      return "Within 60km" 
+    else
+      return "More than 60km"
+    end
   end
 
   def last_activity

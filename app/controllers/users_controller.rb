@@ -67,7 +67,7 @@ class UsersController < ApplicationController
         json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
         json.birthday       user.birthday
         json.gender         user.gender
-
+        json.distance       current_user.distance_label(user)
         json.created_at     user.created_at
         json.updated_at     user.updated_at
 
