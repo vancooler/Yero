@@ -30,12 +30,14 @@ class UserAvatarsController < ApplicationController
   def destroy
     avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
 
-    if avatar
+    if avatar and !avatar.default
       if avatar.destroy
         render json: success
       else
         render json: error(avatar.errors)
       end
+    elsif avatar and avatar.default
+      render json: error("This is the main avatar, please set another avatar as your main avatar and then delete it.")
     else
       render json: error("Avatar not found.")
     end
