@@ -48,9 +48,11 @@ class UsersController < ApplicationController
           main_avatar   =  user.user_avatars.find_by(default:true)
           other_avatars =  user.user_avatars.where.not(default:true)
 
-          avatars.avatar_0     main_avatar.avatar.url
+          avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
           avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
           avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
+          avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
+
         end
 
         if Whisper.where(origin_id: current_user.id, target_id: user).present?
