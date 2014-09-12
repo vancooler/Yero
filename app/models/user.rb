@@ -126,7 +126,7 @@ class User < ActiveRecord::Base
     #             "20km: " + users_20.length.to_s + "\n" +
     #             "40km: " + users_40.length.to_s + "\n" +
     #             "60km: " + users_60.length.to_s
-    result_users = users.near(self, 60, unit: :km).order('distance DESC')
+    result_users = users.near(self, 60, :units => :km).order('distance DESC')
     return result_users
 
 
