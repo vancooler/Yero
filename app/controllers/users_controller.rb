@@ -10,7 +10,7 @@ class UsersController < ApplicationController
       introduction_1: current_user.introduction_1,
       introduction_2: current_user.introduction_2,
       key: current_user.key,
-      since_1970: (current_user.last_active - Time.new('1970')).seconds.to_i #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
+      since_1970: (current_user.last_active - Time.new('1970')).seconds.to_i, #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
       birthday: current_user.birthday,
       gender: current_user.gender,
       created_at: current_user.created_at,
