@@ -49,6 +49,7 @@ gem 'houston'
 gem 'aws-sdk'
 gem 'geocoder'
 gem 'sidekiq'
+gem 'kaminari'
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
 

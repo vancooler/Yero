@@ -39,7 +39,7 @@ class UsersController < ApplicationController
     # @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
 
     users = Jbuilder.encode do |json|
-      json.array! current_user.fellow_participants do |user|
+      json.array! current_user.fellow_participants.page(params[:page]).per(5) do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first

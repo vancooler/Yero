@@ -149,6 +149,9 @@ GEM
       securecompare
       url_safe_base64
     jwt (1.0.0)
+    kaminari (0.16.1)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     kgio (2.9.2)
     mail (2.5.4)
       mime-types (~> 1.16)
@@ -294,6 +297,7 @@ DEPENDENCIES
   jquery-rails
   json-jwt
   jwt
+  kaminari
   migration_data
   mini_magick (~> 3.7.0)
   minitest
