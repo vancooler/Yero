@@ -106,10 +106,10 @@ class User < ActiveRecord::Base
       users = users.where(:gender => gender)
     end
     if !max_age.nil? 
-      where("birthday >= ?", max_age.years.ago + 1.day)
+      users = users.where("birthday >= ?", max_age.years.ago + 1.day)
     end
     if !min_age.nil?
-      where("birthday <= ?", min_age.years.ago)
+      users = users.where("birthday <= ?", min_age.years.ago)
     end
     self.user_sort(users)
   end
