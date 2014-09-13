@@ -37,13 +37,17 @@ class UsersController < ApplicationController
     # @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
     # @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
     # @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
+    gender = params[:gender] if !params[:gender].nil? and !params[:gender].empty?
+    min_age = params[:min_age].to_i if !params[:min_age].nil? and !params[:min_age].empty?
+    max_age = params[:max_age].to_i if !params[:max_age].nil? and !params[:max_age].empty?
+    venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
     page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
-        return_users = current_user.fellow_participants.page(page_number).per(users_per_page)
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id).page(page_number).per(users_per_page)
       else
-        return_users = current_user.fellow_participants
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id)
       end
       json.array! return_users do |user|
         next unless user.user_avatars.present?

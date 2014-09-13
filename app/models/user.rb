@@ -63,11 +63,14 @@ class User < ActiveRecord::Base
     #self.activities.on_current_day.count > 0
     !self.active_in_venue.nil?
   end
-  def fellow_participants
+  def fellow_participants(gender, min_age, max_age, venue_id)
     current_venue = self.current_venue
     #return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
     return nil if current_venue.nil?
     aivs = ActiveInVenue.where("user_id != ?", self.id)
+    if !venue_id.nil?
+      aivs = aivs.where(:venue_id => venue_id)
+    end
     active_users_id = []
     aivs.each do |aiv|
       active_users_id << aiv.user_id
@@ -99,6 +102,15 @@ class User < ActiveRecord::Base
     end
 =end
     users = User.where(id: active_users_id)
+    if !gender.nil?
+      users = users.where(:gender => gender)
+    end
+    if !max_age.nil? 
+      where("birthday >= ?", max_age.years.ago + 1.day)
+    end
+    if !min_age.nil?
+      where("birthday <= ?", min_age.years.ago)
+    end
     self.user_sort(users)
   end
 
