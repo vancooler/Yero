@@ -3,15 +3,34 @@ class UserAvatarsController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def set_default
-    avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
-    if avatar
-      if avatar.set_as_default
-        render json: success(avatar)
+    current_main_avatar = current_user.UserAvatar.find_by(user: current_user, default: true)
+    if !current_main_avatar.nil?
+      current_main_avatar.default = false
+      if current_main_avatar.save        
+        avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
+        if avatar
+          if avatar.set_as_default
+            render json: success(avatar)
+          else
+            render json: error(avatar.errors)
+          end
+        else
+          render json: error('Avatar could not be found.')
+        end
       else
-        render json: error(avatar.errors)
+        ender json: error('Something wrong here, please contact the administrator.')
       end
     else
-      render json: error('Avatar could not be found.')
+      avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
+      if avatar
+        if avatar.set_as_default
+          render json: success(avatar)
+        else
+          render json: error(avatar.errors)
+        end
+      else
+        render json: error('Avatar could not be found.')
+      end
     end
   end
 
