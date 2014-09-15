@@ -11,10 +11,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140827235107) do
+ActiveRecord::Schema.define(version: 20140911143209) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_in_venue_networks", force: true do |t|
+    t.integer  "venue_network_id",                                 null: false
+    t.integer  "user_id",                                          null: false
+    t.datetime "last_activity",    default: '2014-09-05 19:48:39', null: false
+    t.datetime "enter_time",       default: '2014-09-05 19:48:39', null: false
+    t.integer  "active_status",    default: 1
+  end
+
+  create_table "active_in_venues", force: true do |t|
+    t.integer  "venue_id",                                      null: false
+    t.integer  "user_id",                                       null: false
+    t.datetime "last_activity", default: '2014-09-05 19:26:31', null: false
+    t.datetime "enter_time",    default: '2014-09-05 19:26:31', null: false
+  end
 
   create_table "activities", force: true do |t|
     t.integer  "user_id"
@@ -138,12 +153,13 @@ ActiveRecord::Schema.define(version: 20140827235107) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "apn_token"
-    t.string   "layer_id"
+    t.text     "layer_id"
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "last_active"
     t.string   "introduction_1", default: " "
     t.string   "introduction_2", default: " "
+    t.string   "nonce"
   end
 
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
