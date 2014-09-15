@@ -3,7 +3,7 @@ class UserAvatarsController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def set_default
-    current_main_avatar = current_user.UserAvatar.find_by(user: current_user, default: true)
+    current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     if !current_main_avatar.nil?
       current_main_avatar.default = false
       if current_main_avatar.save        
@@ -39,7 +39,17 @@ class UserAvatarsController < ApplicationController
     avatar.avatar = params[:avatar]
 
     if avatar.save
-      avatar.set_as_default if params[:default] == true
+      if params[:default] == true
+        current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
+        if !current_main_avatar.nil?
+          current_main_avatar.default = false
+          if current_main_avatar.save
+            avatar.set_as_default 
+          end
+        else
+          avatar.set_as_default 
+        end
+      end
       render json: success(current_user.to_json(false))
     else
       render json: error(avatar.errors)
