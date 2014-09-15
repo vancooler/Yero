@@ -35,9 +35,13 @@ class UserAvatarsController < ApplicationController
   end
 
   def create
-    avatar = UserAvatar.new(user: current_user)
+    if !params[:avatar_id].nil?
+      avatar_id = params[:avatar_id] 
+      avatar = UserAvatar.find(params[:avatar_id])
+    else  
+      avatar = UserAvatar.new(user: current_user)
+    end
     avatar.avatar = params[:avatar]
-
     if avatar.save
       if params[:default].to_s == 'true'
         current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
