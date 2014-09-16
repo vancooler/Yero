@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
     #self.activities.on_current_day.count > 0
     !self.active_in_venue.nil?
   end
-  def fellow_participants(gender, min_age, max_age, venue_id)
+  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
     current_venue = self.current_venue
     #return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
     return nil if current_venue.nil?
@@ -103,7 +103,9 @@ class User < ActiveRecord::Base
 =end
     users = User.where(id: active_users_id)
     if !gender.nil?
-      users = users.where(:gender => gender)
+      if gender.downcase == "male" or gender.downcase == "female"
+        users = users.where(:gender => gender)
+      end
     end
     if !max_age.nil? 
       users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day)
@@ -111,7 +113,9 @@ class User < ActiveRecord::Base
     if !min_age.nil?
       users = users.where("birthday <= ?", (min_age + 1).years.ago)
     end
-    self.user_sort(users)
+    min_distance = 0 if min_distance.nil?
+    max_distance = 60 if max_distance.nil?
+    self.user_sort(users, min_distance, max_distance)
   end
 
   def fellow_participants_sorted #by distance then by activity
@@ -123,7 +127,7 @@ class User < ActiveRecord::Base
     sorted_results = results_with_location + results_with_no_location
   end
 
-  def user_sort(users)
+  def user_sort(users, min_distance, max_distance)
     users_with_location = users.where.not(latitude:nil, longitude:nil)
     users_with_no_location = users - users_with_location
     # users_2 = users.near(self, 2, unit: :km).order('distance DESC')
@@ -138,7 +142,7 @@ class User < ActiveRecord::Base
     #             "20km: " + users_20.length.to_s + "\n" +
     #             "40km: " + users_40.length.to_s + "\n" +
     #             "60km: " + users_60.length.to_s
-    result_users = users.near(self, 60, :units => :km).order('distance DESC')
+    result_users = users.near(self, max_distance, :units => :km).order('distance DESC')
     return result_users
 
 
