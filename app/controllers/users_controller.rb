@@ -94,27 +94,33 @@ class UsersController < ApplicationController
         other_avatars =  user.user_avatars.where.not(default:true)
         avatar_array = Array.new
         avatar_array[0] = {
-              avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
               thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
+            }
+        avatar_array[1] = {
+              avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
               avatar_id: main_avatar.nil? ? '' : main_avatar.id,
               default: true
             }
-        avatar_array[1] = {
-              avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-              avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-              default: false
-            }
-        avatar_array[2] = {
-              avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-              avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
-              default: false
-            }
+        if other_avatars.count > 0
+          avatar_array[1] = {
+                avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
+                avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
+                default: false
+              }
+          if other_avatars.count > 1
+            avatar_array[2] = {
+                  avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
+                  avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                  default: false
+                }
+          end
+        end
         json.avatars do |a|
           json.array! avatar_array do |avatar|
-            a.avatar      avatar[:avatar]
+            a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
             a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-            a.avatar_id   avatar[:avatar_id]
-            a.default     avatar[:default]
+            a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+            a.default     avatar[:default]   if !avatar[:default].nil?
           end
         end
 
