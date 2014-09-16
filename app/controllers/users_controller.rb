@@ -26,13 +26,13 @@ class UsersController < ApplicationController
           default: true
         },
         avatar_1: {
-          avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : " ",
-          avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : " ",
+          avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
+          avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
           default: false
         },
         avatar_2: {
-          avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : " ",
-          avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : " ",
+          avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
+          avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
           default: false
         }
       }
@@ -71,11 +71,26 @@ class UsersController < ApplicationController
           main_avatar   =  user.user_avatars.find_by(default:true)
           other_avatars =  user.user_avatars.where.not(default:true)
 
-          avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
-          avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
-          avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
-          avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
-
+          # avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
+          # avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
+          # avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
+          # avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
+          json.avatar_0 do |avatar_0|
+            avatar_0.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
+            avatar_0.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
+            avatar_0.avatar_id main_avatar.nil? ? '' : main_avatar.id
+            avatar_0.default   true
+          end
+          json.avatar_1 do |avatar_1|
+            avatar_1.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
+            avatar_1.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
+            avatar_1.default   false
+          end
+          json.avatar_2 do |avatar_2|
+            avatar_2.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
+            avatar_2.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
+            avatar_2.default   false
+          end
         end
 
         if Whisper.where(origin_id: current_user.id, target_id: user).present?
