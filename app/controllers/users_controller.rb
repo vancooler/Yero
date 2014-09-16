@@ -102,13 +102,13 @@ class UsersController < ApplicationController
               default: true
             }
         if other_avatars.count > 0
-          avatar_array[1] = {
+          avatar_array[2] = {
                 avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
                 avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
                 default: false
               }
           if other_avatars.count > 1
-            avatar_array[2] = {
+            avatar_array[3] = {
                   avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
                   avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
                   default: false
