@@ -35,6 +35,7 @@ class UsersController < ApplicationController
       layer_id: current_user.layer_id,
       latitude:current_user.latitude,
       longitude:current_user.longitude,
+      avatars: avatar_array
       # avatars: {
       #   avatar_0: {
       #     avatar: current_user.main_avatar.avatar.url,
@@ -52,7 +53,6 @@ class UsersController < ApplicationController
       #     default: false
       #   }
       # }
-      avatars: avatar_array
     }
 
     render json: success(user)
@@ -79,36 +79,59 @@ class UsersController < ApplicationController
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id)
       end
+
+
+
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first
         # json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
-        json.avatars do |avatars|
-          main_avatar   =  user.user_avatars.find_by(default:true)
-          other_avatars =  user.user_avatars.where.not(default:true)
+        avatar_array = Array.new
+        main_avatar   =  user.user_avatars.find_by(default:true)
+        other_avatars =  user.user_avatars.where.not(default:true)
+        avatar_array[0] = {
+          json.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
+          json.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
+          json.avatar_id main_avatar.nil? ? '' : main_avatar.id
+          json.default   true
+        }
+        avatar_array[1] = {
+          json.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
+          json.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
+          json.default   false
+        }
+        avatar_array[2] = {
+            json.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
+            json.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
+            json.default   false
+        }
+        json.avatars        avatar_array
+        # json.avatars do |avatars|
+        #   main_avatar   =  user.user_avatars.find_by(default:true)
+        #   other_avatars =  user.user_avatars.where.not(default:true)
 
-          # avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
-          # avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
-          # avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
-          # avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
-          json.avatar_0 do |avatar_0|
-            avatar_0.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
-            avatar_0.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
-            avatar_0.avatar_id main_avatar.nil? ? '' : main_avatar.id
-            avatar_0.default   true
-          end
-          json.avatar_1 do |avatar_1|
-            avatar_1.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
-            avatar_1.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
-            avatar_1.default   false
-          end
-          json.avatar_2 do |avatar_2|
-            avatar_2.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
-            avatar_2.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
-            avatar_2.default   false
-          end
-        end
+        #   # avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
+        #   # avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
+        #   # avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
+        #   # avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
+        #   json.avatar_0 do |avatar_0|
+        #     avatar_0.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
+        #     avatar_0.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
+        #     avatar_0.avatar_id main_avatar.nil? ? '' : main_avatar.id
+        #     avatar_0.default   true
+        #   end
+        #   json.avatar_1 do |avatar_1|
+        #     avatar_1.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
+        #     avatar_1.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
+        #     avatar_1.default   false
+        #   end
+        #   json.avatar_2 do |avatar_2|
+        #     avatar_2.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
+        #     avatar_2.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
+        #     avatar_2.default   false
+        #   end
+        # end
 
         if Whisper.where(origin_id: current_user.id, target_id: user).present?
           json.whisper_sent true
