@@ -91,20 +91,20 @@ class UsersController < ApplicationController
         main_avatar   =  user.user_avatars.find_by(default:true)
         other_avatars =  user.user_avatars.where.not(default:true)
         avatar_array[0] = {
-          json.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
-          json.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
-          json.avatar_id main_avatar.nil? ? '' : main_avatar.id
-          json.default   true
+          avatars.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
+          avatars.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
+          avatars.avatar_id main_avatar.nil? ? '' : main_avatar.id
+          avatars.default   true
         }
         avatar_array[1] = {
-          json.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
-          json.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
-          json.default   false
+          avatars.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
+          avatars.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
+          avatars.default   false
         }
         avatar_array[2] = {
-            json.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
-            json.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
-            json.default   false
+            avatars.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
+            avatars.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
+            avatars.default   false
         }
         json.avatars        avatar_array
         # json.avatars do |avatars|
