@@ -143,6 +143,10 @@ class User < ActiveRecord::Base
     #             "40km: " + users_40.length.to_s + "\n" +
     #             "60km: " + users_60.length.to_s
     result_users = users.near(self, max_distance, :units => :km).order('distance DESC')
+    if min_distance != 0
+      remove_users = users.near(self, min_distance, :units => :km).order('distance DESC')
+      result_users = result_users.reject{|user| remove_users.include? user}
+    end
     return result_users
 
 
