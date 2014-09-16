@@ -5,17 +5,17 @@ class UsersController < ApplicationController
   def show
     # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
     avatar_array = Array.new
-    avatar_array['avatar_0'] = {
+    avatar_array[0] = {
           avatar: current_user.main_avatar.avatar.url,
           avatar_id: current_user.main_avatar.id,
           default: true
         }
-    avatar_array['avatar_1'] = {
+    avatar_array[1] = {
           avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
           avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
           default: false
         }
-    avatar_array['avatar_2'] = {
+    avatar_array[2] = {
           avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
           avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
           default: false
