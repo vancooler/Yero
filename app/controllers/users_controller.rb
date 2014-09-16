@@ -45,7 +45,8 @@ class UsersController < ApplicationController
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id).page(page_number).per(users_per_page)
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id)
+        return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id)
       end
