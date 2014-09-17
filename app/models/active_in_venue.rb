@@ -42,7 +42,7 @@ class ActiveInVenue < ActiveRecord::Base
     #enter network
     ActiveInVenueNetwork.enter_venue_network(venue.venue_network, user)
 
-    return p
+    return v
   end
 
   def self.leave_venue(venue, user)

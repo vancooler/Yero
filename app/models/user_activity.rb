@@ -17,4 +17,18 @@ class UserActivity < AWS::Record::HashModel
       self.update(since_1970: (self.timestamp - Time.new('1970')).seconds.to_i)
     end
   end
+
+  def self.create_in_aws(user, action, trackable_type, trackable_id)
+
+    v = UserActivity.new
+    v.user_id = user.id
+    v.action = action
+    v.timestamp = Time.now
+    v.since_1970 = (Time.now - Time.new('1970')).seconds.to_i
+    v.trackable_type = trackable_type
+    v.trackable_id = trackable_id
+    v.save!
+
+    return v
+  end
 end
