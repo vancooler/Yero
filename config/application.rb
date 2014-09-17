@@ -29,7 +29,7 @@ module PurpleOctopus
       end if File.exists?(env_file)
     end
 
-    AWS.config(access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'])#, region: 'us-west-2')
+    AWS.config(access_key_id: ENV['AWS_ACCESS_KEY_ID'], secret_access_key: ENV['AWS_SECRET_ACCESS_KEY'], region: 'us-west-2')
     config.action_controller.allow_forgery_protection = false
     # set rspec as the default test framework when generating controllers
     config.generators do |g|
