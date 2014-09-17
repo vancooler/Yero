@@ -16,6 +16,9 @@ class RoomsController < ApplicationController
     
     #log the last active time for venue and venue network
     ActiveInVenue.enter_venue(beacon.room.venue, current_user)
+
+    #log in aws dynamoDB
+    UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
     if activity_item.create
       render json: success
     else
@@ -51,6 +54,8 @@ class RoomsController < ApplicationController
     
     ActiveInVenue.leave_venue(beacon.room.venue, current_user)
     activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
+    #log in aws dynamoDB
+    UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
     if activity_item.create
       render json: success(beacon.to_json)
     else
