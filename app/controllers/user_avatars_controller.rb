@@ -39,9 +39,8 @@ class UserAvatarsController < ApplicationController
       avatar_id = params[:avatar_id] 
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
 
-      if avatar
-      else
-        render json: error("Avatar not found.")
+      if avatar.nil?
+        avatar = UserAvatar.new(user: current_user)
       end
     else  
       avatar = UserAvatar.new(user: current_user)
