@@ -58,7 +58,7 @@ class UserAvatarsController < ApplicationController
             avatar.set_as_default 
           end
         else
-          logger.info "Replace Main Avatar"
+          logger.info "Replace Main Avatar " + avatar.id.to_s + " " + avatar.default.to_s
           avatar.set_as_default 
         end
       end
