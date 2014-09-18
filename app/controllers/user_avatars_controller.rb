@@ -37,17 +37,22 @@ class UserAvatarsController < ApplicationController
   def create
     if !params[:avatar_id].nil?
       avatar_id = params[:avatar_id] 
-      avatar = UserAvatar.find(params[:avatar_id])
+      avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
+
+      if avatar
+      else
+        render json: error("Avatar not found.")
+      end
     else  
       avatar = UserAvatar.new(user: current_user)
     end
     current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     avatar.avatar = params[:avatar]
     if avatar.save
-      if params[:default].to_s == 'true'
-        
+      if params[:default].to_s == 'true'      
         logger.info "AVATAR HERE: " + params[:default].to_s
         if !current_main_avatar.nil? and current_main_avatar.id != avatar.id
+          logger.info "NOT MAIN"
           current_main_avatar.default = false
           if current_main_avatar.save
             avatar.set_as_default 
