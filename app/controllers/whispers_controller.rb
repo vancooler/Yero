@@ -19,21 +19,31 @@ class WhispersController < ApplicationController
     end
   end
   def api_create
-    @whisper = Whisper.new(origin_id: current_user.id, target_id: params[:target_id])
-    # if read_notification = current_user.read_notification
-    # else
-    #   read_notification = ReadNotification.new
-    #   read_notification.user = current_user
-    # end
+    # @whisper = Whisper.new(origin_id: current_user.id, target_id: params[:target_id])
+    # # if read_notification = current_user.read_notification
+    # # else
+    # #   read_notification = ReadNotification.new
+    # #   read_notification.user = current_user
+    # # end
 
-    # read_notification.before_sending_whisper_notification = true
-    # read_notification.save
+    # # read_notification.before_sending_whisper_notification = true
+    # # read_notification.save
     
-    if @whisper.save
-      render json: success(@whisper.to_json)
-    else
-      render json: error(@whisper.errors.to_json)
-    end
+    # if @whisper.save
+    #   render json: success(@whisper.to_json)
+    # else
+    #   render json: error(@whisper.errors.to_json)
+    # end
+    # 
+
+    target_id = params[:target_id]
+    origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
+    venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
+    notification_type = params[:notification_type]
+    message = params[:message]
+    
+    WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
+    WhisperNotification.send_push_notification_to_target_user(message)
   end
 end
 
