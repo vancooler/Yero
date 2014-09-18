@@ -20,7 +20,7 @@ class UserAvatar < ActiveRecord::Base
       avatar.save
     end
     self.default = true
-    if self.save
+    if self.save!
       logger.info "CURRENT DEFAULT VALUE" + self.default.to_s
     end
   end
