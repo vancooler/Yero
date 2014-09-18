@@ -41,10 +41,10 @@ class UserAvatarsController < ApplicationController
     else  
       avatar = UserAvatar.new(user: current_user)
     end
+    current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     avatar.avatar = params[:avatar]
     if avatar.save
       if params[:default].to_s == 'true'
-        current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
         
         logger.info "AVATAR HERE: " + params[:default].to_s
         if !current_main_avatar.nil? and current_main_avatar.id != avatar.id
@@ -53,6 +53,7 @@ class UserAvatarsController < ApplicationController
             avatar.set_as_default 
           end
         else
+          logger.info "Replace Main Avatar"
           avatar.set_as_default 
         end
       end
