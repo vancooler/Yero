@@ -49,15 +49,20 @@ class User < ActiveRecord::Base
 
   def current_venue
     return nil unless self.has_activity_today?
-=begin
-    activity = Activity.for_user(self.id).on_current_day.with_beacons.last
-    if activity.action == "Enter Beacon"
-      activity.trackable.room.venue
-    else
-      nil
-    end
-=end
     return self.active_in_venue.venue
+    # activity = Activity.for_user(self.id).on_current_day.with_beacons.last
+    # if activity.action == "Enter Beacon"
+    #   activity.trackable.room.venue
+    # else
+    #   nil
+    # end
+  end
+  def current_venue_network
+    if self.active_in_venue_network.nil?
+      return nil
+    else
+      return self.active_in_venue_network.venue_network
+    end
   end
   def has_activity_today?
     #self.activities.on_current_day.count > 0
@@ -65,8 +70,9 @@ class User < ActiveRecord::Base
   end
   def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
     current_venue = self.current_venue
+    current_venue_network = self.current_venue_network
     #return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
-    return nil if current_venue.nil?
+    return nil if current_venue.nil? and current_venue_network.nil?
     aivs = ActiveInVenue.where("user_id != ?", self.id)
     if !venue_id.nil?
       aivs = aivs.where(:venue_id => venue_id)

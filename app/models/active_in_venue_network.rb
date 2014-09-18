@@ -11,17 +11,9 @@ class ActiveInVenueNetwork < ActiveRecord::Base
 
   def self.enter_venue_network(venue_network, user)
 
-    #deactive record in any other venue network
-    # oldArray = ActiveInVenueNetwork.where("venue_network_id != ? and user_id = ? and active_status = ?", venue_network.id, user.id, 1)
-    # if oldArray and oldArray.count > 0
-    #   oldArray.each do |oldvn|
-    #     oldvn.active_status = 0
-    #     oldvn.save!
-    #   end
-    # end
-
     vnArray = ActiveInVenueNetwork.where("venue_network_id = ? and user_id = ?", venue_network.id, user.id)
     if vnArray and vnArray.count == 0
+      #if not there create a new record
       vn = ActiveInVenueNetwork.new
       vn.venue_network = venue_network
       vn.user = user
@@ -30,6 +22,7 @@ class ActiveInVenueNetwork < ActiveRecord::Base
       vn.active_status = 1
       vn.save!
     elsif vnArray and vnArray.count == 1
+      #if already in some venue network, just update it
       vn = vnArray.first
       vn.active_status = 1
       vn.last_activity = Time.now
@@ -50,7 +43,8 @@ class ActiveInVenueNetwork < ActiveRecord::Base
   end
 
   def self.everyday_cleanup
-    vn = ActiveInVenueNetwork.where("last_activity < ? ", Time.now - 1.day)
+    #vn = ActiveInVenueNetwork.where("last_activity < ? ", Time.now - 0.1.seconds)
+    vn = ActiveInVenueNetwork.all
     if vn and vn.count > 1
       result = vn.destroy_all
     elsif vn and vn.count == 1

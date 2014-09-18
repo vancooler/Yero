@@ -48,9 +48,6 @@ class ActiveInVenue < ActiveRecord::Base
   def self.leave_venue(venue, user)
     venue_network = venue.venue_network
 
-    #change venue network activity status
-    # ActiveInVenueNetwork.leave_venue_network(venue.venue_network, user)
-
     #delete venue activity
     v = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
     if v and v.count == 1
