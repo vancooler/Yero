@@ -19,8 +19,10 @@ class UserAvatar < ActiveRecord::Base
       avatar.default = false
       avatar.save
     end
-    self.default= true
-    self.save
+    self.default = true
+    if self.save
+      logger.info "CURRENT DEFAULT VALUE" + self.default.to_s
+    end
   end
 
   private
