@@ -16,8 +16,10 @@ class UserAvatar < ActiveRecord::Base
 
   def set_as_default
     UserAvatar.where(user_id: self.user_id, default: true).each do |avatar|
-      avatar.default = false
-      avatar.save
+      if avatar.id != self.id
+        avatar.default = false
+        avatar.save
+      end
     end
     self.default = true
     if self.save!
