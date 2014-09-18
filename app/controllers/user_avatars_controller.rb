@@ -10,7 +10,7 @@ class UserAvatarsController < ApplicationController
         avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
         if avatar
           if avatar.set_as_default
-            render json: success(avatar)
+            render json: success(current_user.to_json(false))
           else
             render json: error(avatar.errors)
           end
