@@ -4,15 +4,16 @@ class LocationsController < ApplicationController
 
   def create
     if current_user && params[:latitude].present? && params[:longitude].present?
-      location_history = current_user.locations.new(
-        latitude: params[:latitude].to_f,
-        longitude: params[:longitude].to_f)
-      
+      # location_history = current_user.locations.new(
+      #   latitude: params[:latitude].to_f,
+      #   longitude: params[:longitude].to_f)
+      #TODO: move the data in this table to DynamoDB
       user = current_user
       user.latitude = params[:latitude].to_f
       user.longitude = params[:longitude].to_f
 
-      if location_history.save && user.save
+      # if location_history.save && user.save
+      if user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f)
         render json: success
       else
         render json: error("Could not save location.")
@@ -22,8 +23,14 @@ class LocationsController < ApplicationController
     end
   end
   def show
-    if current_user && current_user.location.any?
-      render json: current_user.location.last
+    if current_user #&& current_user.location.any?
+      location = {
+        latitude:current_user.latitude,
+        longitude:current_user.longitude,
+      }
+
+      render json: location
+
     else
       render json: error("User or Location cannot be found.")
     end
