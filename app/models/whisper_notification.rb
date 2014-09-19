@@ -34,8 +34,12 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     #item = table.items[target_id.to_s, timestamp.to_i]
     item = table.items.where(:id).equals(id.to_s).first
-    item.attributes.update do |u|
-      u.set 'viewed' => 1
+    attributes = item.attributes.to_h
+    notification_type = attributes['notification_type'].to_s
+    if notification_type == "Enter Venue Greeting"
+      item.attributes.update do |u|
+        u.set 'viewed' => 1
+      end
     end
     
     # number of notification to read for this user: -1
