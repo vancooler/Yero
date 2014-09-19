@@ -27,6 +27,26 @@ class WhisperNotification < AWS::Record::HashModel
     return n
   end
 
+  def self.read_notification(id, user)
+    # mark as 'viewed' in aws dynamoDB notification table
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    item = table.items[target_id.to_s, timestamp.to_i]
+    item = table.items.where(:id).equals(id.to_s).first
+    item.attributes.update do |u|
+      u.set 'viewed' => 1
+    end
+    
+    # number of notification to read for this user: -1
+    if user.notification_read.nil? or user.notification_read <= 0
+      user.notification_read = 0
+    else
+      user.notification_read = user.notification_read - 1
+    end
+    user.save
+  end
+
 
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
@@ -58,6 +78,7 @@ class WhisperNotification < AWS::Record::HashModel
           whisper_id: self.id,
           origin_user: origin_user_key,
           target_user: target_user.key,
+          timestamp: self.timestamp,
           target_apn: token,
           viewed: self.viewed,
           accepted: self.accepted

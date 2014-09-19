@@ -12,14 +12,14 @@ class RoomsController < ApplicationController
     end
     beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
     
-    activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
     
     #log the last active time for venue and venue network
-    ActiveInVenue.enter_venue(beacon.room.venue, current_user)
+    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user)
 
     #log in aws dynamoDB
     UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
     
+    #check whether the user entered this venue today, if not push greeting notification
     if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
       WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Greeting")
       greeting_message = "Welcome " + current_user.first_name + "!"
@@ -27,14 +27,29 @@ class RoomsController < ApplicationController
       WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Venue Greeting")
       WhisperNotification.send_push_notification_to_target_user(greeting_message)
       WhisperNotification.send_push_notification_to_target_user(venue_message)
-      current_user.notification_read += 1
+      
+      # number of notification to read for this user: +1
+      if current_user.notification_read.nil?
+        current_user.notification_read = 0
+      else
+        current_user.notification_read += 1
+      end
       current_user.save
     end
-    if activity_item.create
+
+    if result
       render json: success
     else
-      render json: error("Could not log entry.")
+      render json: error("Could not enter.")
     end
+    # activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
+    # if activity_item.create
+    #   render json: success
+    # else
+    #   render json: error("Could not log entry.")
+    # end
+
+
     # temperature = params[:temperature]
     #   if beacon
     #         activity_item.create
@@ -63,15 +78,20 @@ class RoomsController < ApplicationController
   def user_leave
     beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
     
-    ActiveInVenue.leave_venue(beacon.room.venue, current_user)
-    activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
+    result = ActiveInVenue.leave_venue(beacon.room.venue, current_user)
     #log in aws dynamoDB
     UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
-    if activity_item.create
-      render json: success(beacon.to_json)
+    if result
+      render json: success
     else
-      render json: error("Could not log leaving.")
+      render json: error("Could not leave.")
     end
+    # activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
+    # if activity_item.create
+    #   render json: success(beacon.to_json)
+    # else
+    #   render json: error("Could not log leaving.")
+    # end
 
     # participant = Participant.find_by_user_id(current_user.id)
 

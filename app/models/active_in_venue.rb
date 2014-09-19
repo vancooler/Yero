@@ -6,7 +6,7 @@ class ActiveInVenue < ActiveRecord::Base
   # keeps track of the latest activity of a user
   def update_activity
     self.last_activity = Time.now
-    self.save!
+    return self.save!
   end
 
   def venue_network
@@ -28,21 +28,21 @@ class ActiveInVenue < ActiveRecord::Base
     pArray = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
     if pArray and pArray.count > 0
       v = pArray.first
-      v.update_activity
+      result = v.update_activity
     else
       v = ActiveInVenue.new
       v.venue = venue
       v.user = user
       v.enter_time = Time.now
       v.last_activity = Time.now
-      v.save!
+      result = v.save!
     end
 
 
     #enter network
     ActiveInVenueNetwork.enter_venue_network(venue.venue_network, user)
 
-    return v
+    return result
   end
 
   def self.leave_venue(venue, user)
