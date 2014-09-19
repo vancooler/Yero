@@ -40,15 +40,17 @@ class WhisperNotification < AWS::Record::HashModel
       item.attributes.update do |u|
         u.set 'viewed' => 1
       end
-    end
     
-    # number of notification to read for this user: -1
-    if user.notification_read.nil? or user.notification_read <= 0
-      user.notification_read = 0
+      # number of notification to read for this user: -1
+      if user.notification_read.nil? or user.notification_read <= 0
+        user.notification_read = 0
+      else
+        user.notification_read = user.notification_read - 1
+      end
+      return user.save
     else
-      user.notification_read = user.notification_read - 1
+      return true
     end
-    return user.save
   end
 
   def self.venue_info(id)
