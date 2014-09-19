@@ -32,7 +32,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    item = table.items[target_id.to_s, timestamp.to_i]
+    #item = table.items[target_id.to_s, timestamp.to_i]
     item = table.items.where(:id).equals(id.to_s).first
     item.attributes.update do |u|
       u.set 'viewed' => 1
