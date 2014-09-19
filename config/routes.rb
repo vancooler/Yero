@@ -54,6 +54,7 @@ Rails.application.routes.draw do
   post 'api/v1/user/locations/show', to: 'locations#show'
   resources :whispers, only: [:new, :create]
   post 'api/v1/whisper/create', to: 'whispers#api_create'
+  post 'api/v1/whisper/read', to: 'whispers#api_read'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'

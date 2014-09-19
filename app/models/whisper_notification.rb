@@ -44,7 +44,21 @@ class WhisperNotification < AWS::Record::HashModel
     else
       user.notification_read = user.notification_read - 1
     end
-    user.save
+    return user.save
+  end
+
+  def self.venue_info(id)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    item = table.items.where(:id).equals(id.to_s).first
+    attributes = item.attributes.to_h
+    venue_id = attributes['venue_id'].to_i
+    if !venue_id.nil? and venue_id > 0
+      return Venue.find(venue_id)
+    else
+      return nil
+    end
   end
 
 

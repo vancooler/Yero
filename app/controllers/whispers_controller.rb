@@ -41,9 +41,21 @@ class WhispersController < ApplicationController
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type]
     message = params[:message]
-    
+
     WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
     WhisperNotification.send_push_notification_to_target_user(message)
+  end
+
+  def api_read
+    id = params[:notification_id]
+    result = WhisperNotification.read_notification(id, current_user)
+    venue = WhisperNotification.venue_info(id)
+
+    if result
+      render json: success(venue) 
+    else
+      render json: error(venue)
+    end
   end
 end
 
