@@ -33,6 +33,10 @@ include ActionView::Helpers::DateHelper
     ActiveInVenueNetwork.everyday_cleanup
   end
 
+  task :everyday_notification_cleanup => :environment do
+    VenueEnteredToday.everyday_cleanup
+  end
+
 
 
   task :random_test => :environment do 
