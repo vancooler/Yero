@@ -21,12 +21,12 @@ class RoomsController < ApplicationController
     
     #check whether the user entered this venue today, if not push greeting notification
     if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
-      WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Greeting")
+      n1 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Greeting")
       greeting_message = "Welcome " + current_user.first_name + "!"
       venue_message = "welcome to " + beacon.room.venue.name + "!"
-      WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Venue Greeting")
-      WhisperNotification.send_push_notification_to_target_user(greeting_message)
-      WhisperNotification.send_push_notification_to_target_user(venue_message)
+      n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "Enter Venue Greeting")
+      n1.send_push_notification_to_target_user(greeting_message)
+      n2.send_push_notification_to_target_user(venue_message)
       
       # number of notification to read for this user: +1
       if current_user.notification_read.nil?
