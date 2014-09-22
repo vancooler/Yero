@@ -10,8 +10,17 @@ class UserAvatarsController < ApplicationController
         avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
         if avatar
           if avatar.set_as_default
-            logger.debug "User attributes hash: #{current_user.attributes.inspect}"
-            render json: success(current_user.to_json(false))
+            user_info = current_user.to_json(false)
+            avatars = Array.new
+            user_info['avatars'].each do |avatar|
+              if avatar['default'].to_s == "true"
+                avatars.unshift(avatar)
+              else
+                avatar.push(avatar)
+              end
+            end
+            user_info['avatars'] = avatars
+            render json: success(user_info)
           else
             render json: error(avatar.errors)
           end
@@ -25,8 +34,17 @@ class UserAvatarsController < ApplicationController
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
       if avatar
         if avatar.set_as_default
-          logger.debug "User attributes hash: #{current_user.attributes.inspect}"
-          render json: success(current_user.to_json(false))
+          user_info = current_user.to_json(false)
+            avatars = Array.new
+            user_info['avatars'].each do |avatar|
+              if avatar['default'].to_s == "true"
+                avatars.unshift(avatar)
+              else
+                avatar.push(avatar)
+              end
+            end
+            user_info['avatars'] = avatars
+            render json: success(user_info)
         else
           render json: error(avatar.errors)
         end
