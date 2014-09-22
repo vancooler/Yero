@@ -81,7 +81,18 @@ class UserAvatarsController < ApplicationController
           avatar.set_as_default 
         end
       end
-      render json: success(current_user.to_json(false))
+      user_info = current_user.to_json(false)
+      avatars = Array.new
+      user_info['avatars'].each do |avatar|
+        if avatar['default'].to_s == "true"
+          avatars.unshift(avatar)
+        else
+          avatars.push(avatar)
+        end
+      end
+      user_info['avatars'] = avatars
+      render json: success(user_info)
+      # render json: success(current_user.to_json(false))
     else
       render json: error(avatar.errors)
     end
