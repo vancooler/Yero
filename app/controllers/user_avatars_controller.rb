@@ -24,6 +24,7 @@ class UserAvatarsController < ApplicationController
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
       if avatar
         if avatar.set_as_default
+          logger.debug "User attributes hash: #{current_user.attributes.inspect}"
           render json: success(current_user.to_json(false))
         else
           render json: error(avatar.errors)
