@@ -16,7 +16,7 @@ class UserAvatarsController < ApplicationController
               if avatar['default'].to_s == "true"
                 avatars.unshift(avatar)
               else
-                avatar.push(avatar)
+                avatars.push(avatar)
               end
             end
             user_info['avatars'] = avatars
@@ -40,7 +40,7 @@ class UserAvatarsController < ApplicationController
               if avatar['default'].to_s == "true"
                 avatars.unshift(avatar)
               else
-                avatar.push(avatar)
+                avatars.push(avatar)
               end
             end
             user_info['avatars'] = avatars
