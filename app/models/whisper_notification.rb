@@ -29,39 +29,60 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.read_notification(id, user)
     # mark as 'viewed' in aws dynamoDB notification table
-    dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
-    table.load_schema
-    #item = table.items[target_id.to_s, timestamp.to_i]
-    item = table.items.where(:id).equals(id.to_s).first
-    attributes = item.attributes.to_h
-    notification_type = attributes['notification_type'].to_s
-    if notification_type == "Enter Venue Greeting"
-      item.attributes.update do |u|
-        u.set 'viewed' => 1
-      end
-    
-      # number of notification to read for this user: -1
-      if user.notification_read.nil? or user.notification_read <= 0
-        user.notification_read = 0
-      else
-        user.notification_read = user.notification_read - 1
-      end
-      return user.save
+    # dynamo_db = AWS::DynamoDB.new
+    # table = dynamo_db.tables['WhisperNotification']
+    # table.load_schema
+    # item = table.items.where(:id).equals(id.to_s).first
+    item = WhisperNotification.find_by_dynamodb_id(id)
+    if item.nil?
+      return false
     else
-      return true
+      attributes = item.attributes.to_h
+      notification_type = attributes['notification_type'].to_s
+      if notification_type == "Enter Venue Greeting"
+        item.attributes.update do |u|
+          u.set 'viewed' => 1
+        end
+      
+        # number of notification to read for this user: -1
+        if user.notification_read.nil? or user.notification_read <= 0
+          user.notification_read = 0
+        else
+          user.notification_read = user.notification_read - 1
+        end
+        return user.save
+      else
+        return true
+      end
     end
   end
 
   def self.venue_info(id)
+    # dynamo_db = AWS::DynamoDB.new
+    # table = dynamo_db.tables['WhisperNotification']
+    # table.load_schema
+    # item = table.items.where(:id).equals(id.to_s).first
+    item = WhisperNotification.find_by_dynamodb_id(id)
+    if item.nil?
+      return nil
+    else
+      attributes = item.attributes.to_h
+      venue_id = attributes['venue_id'].to_i
+      if !venue_id.nil? and venue_id > 0
+        return Venue.find(venue_id)
+      else
+        return nil
+      end
+    end
+  end
+
+  def self.find_by_dynamodb_id(id)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    item = table.items.where(:id).equals(id.to_s).first
-    attributes = item.attributes.to_h
-    venue_id = attributes['venue_id'].to_i
-    if !venue_id.nil? and venue_id > 0
-      return Venue.find(venue_id)
+    items = table.items.where(:id).equals(id.to_s)
+    if items and items.count > 0
+      return items.first
     else
       return nil
     end
