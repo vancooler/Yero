@@ -55,6 +55,8 @@ Rails.application.routes.draw do
   resources :whispers, only: [:new, :create]
   post 'api/v1/whisper/create', to: 'whispers#api_create'
   post 'api/v1/whisper/read', to: 'whispers#api_read'
+  post 'api/v1/whisper/accept_request', to: 'whispers#chat_accept'
+  post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'

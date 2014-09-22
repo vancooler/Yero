@@ -39,7 +39,7 @@ class WhisperNotification < AWS::Record::HashModel
     else
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
-      if notification_type == "Enter Venue Greeting"
+      if notification_type == "Enter Venue Greeting" or notification_type == "Chat Request"
         item.attributes.update do |u|
           u.set 'viewed' => 1
         end
@@ -88,6 +88,44 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  def self.chat_accept(id)
+    item = WhisperNotification.find_by_dynamodb_id(id)
+    if item.nil?
+      return false
+    else
+      attributes = item.attributes.to_h
+      notification_type = attributes['notification_type'].to_s
+      target_id = attributes['target_id'].to_s
+      if notification_type == "Chat Request" 
+        item.attributes.update do |u|
+          u.set 'accepted' => 1
+        end
+        return true
+      else
+        return false
+      end
+    end
+  end
+
+  def self.my_chatting_requests(target_id)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:target_id).equals(target_id.to_s).where(:notification_type).equals("Chat Request")
+    if items and items.count > 0
+      request_user_array = Array.new
+      items.each do |i|
+        attributes = i.attributes.to_h
+        origin_id = attributes['origin_id'].to_i
+        user = User.find(origin_id)
+        request_user_array << user if !user.nil?
+      end
+      return request_user_array
+    else
+      return nil
+    end
+  end
+
 
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
@@ -111,7 +149,7 @@ class WhisperNotification < AWS::Record::HashModel
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = 1
+    notification.badge = target_user.notification_read
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true

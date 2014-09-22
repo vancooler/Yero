@@ -40,10 +40,17 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type]
-    message = params[:message]
+    message = (params[:message].nil? and notification_type == "Chat Request") ? "Chat Request" : params[:message]
 
-    WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
-    WhisperNotification.send_push_notification_to_target_user(message)
+    if notification_type == "Chat Request"
+      origin_id = current_user.id.to_s
+    end
+    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
+    if n and notification_type == "Chat Request"
+      current_user.notification_read += 1
+      current_user.save
+    end
+    n.send_push_notification_to_target_user(message)
   end
 
   def api_read
@@ -56,6 +63,34 @@ class WhispersController < ApplicationController
     else
       render json: error(venue)
     end
+  end
+
+  def chat_accept
+    id = params[:notification_id]
+    item = WhisperNotification.find_by_dynamodb_id(id)
+    if item.nil?
+      render json: error('Request not fount')
+    else
+      attributes = item.attributes.to_h
+      notification_type = attributes['notification_type'].to_s
+      target_id = attributes['target_id'].to_s
+      if notification_type == "Chat Request" and target_id == current_user.id.to_s
+        result = WhisperNotification.chat_accept(id)
+        if result
+          render json: success 
+        else
+          render json: error('Could not accept the chat request.')
+        end
+      else
+        render json: error('Request not fount')
+      end
+    end
+  end
+
+
+  def all_my_chat_requests
+    items = WhisperNotification.my_chatting_requests(current_user.id.to_s)
+    render json: success(items)
   end
 end
 
