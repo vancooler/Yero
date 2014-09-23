@@ -39,7 +39,7 @@ class WhisperNotification < AWS::Record::HashModel
     else
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
-      if notification_type == "Enter Venue Greeting" or notification_type == "Chat Request"
+      if notification_type != "Enter Greeting"
         item.attributes.update do |u|
           u.set 'viewed' => 1
         end
