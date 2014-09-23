@@ -126,7 +126,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.delete_notification(id, current_user)
+  def self.delete_notification(id, user)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       return false
@@ -135,11 +135,15 @@ class WhisperNotification < AWS::Record::HashModel
       notification_type = attributes['notification_type'].to_s
       notification_read = attributes['notification_read'].to_i
       if notification_type != "Enter Greeting" and notification_read == 0
-        return false
-      else
-        item.delete
-        return true
+        if user.notification_read.nil? or user.notification_read <= 0
+          user.notification_read = 0
+        else
+          user.notification_read = user.notification_read - 1
+        end        
+        user.save
       end
+      item.delete
+      return true
     end
     
   end
