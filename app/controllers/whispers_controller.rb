@@ -79,6 +79,17 @@ class WhispersController < ApplicationController
     end
   end
 
+  def api_delete
+    id = params[:notification_id]
+    result = WhisperNotification.delete_notification(id, current_user)
+
+    if result
+      render json: success 
+    else
+      render json: error
+    end
+  end
+
   def chat_accept
     id = params[:notification_id]
     item = WhisperNotification.find_by_dynamodb_id(id)

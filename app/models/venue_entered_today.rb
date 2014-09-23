@@ -18,7 +18,7 @@ class VenueEnteredToday < ActiveRecord::Base
       vn.save!
       return true
     elsif vnArray and vnArray.count > 0
-      return false
+      return true # TODO: change to false to make sure only one notification for user in each venue perday
     end
 
   end
