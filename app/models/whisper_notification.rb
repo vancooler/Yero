@@ -160,7 +160,7 @@ class WhisperNotification < AWS::Record::HashModel
           timestamp: self.timestamp,
           target_apn: token,
           viewed: self.viewed,
-          accepted: self.accepted
+          accepted: self.accepted,
           type: self.notification_type
       }
     # And... sent! That's all it takes.
