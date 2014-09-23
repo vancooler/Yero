@@ -18,6 +18,20 @@ class WhispersController < ApplicationController
       render json: error(@whisper.errors)
     end
   end
+
+
+  def create_by_url
+    target_id = params[:target_id]
+    origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
+    venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
+    notification_type = params[:notification_type]
+    message = (params[:message].nil? and notification_type == "Chat Request") ? "Chat Request" : params[:message]
+
+    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
+
+    n.send_push_notification_to_target_user(message)
+  end
+
   def api_create
     # @whisper = Whisper.new(origin_id: current_user.id, target_id: params[:target_id])
     # # if read_notification = current_user.read_notification

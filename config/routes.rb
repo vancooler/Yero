@@ -53,6 +53,7 @@ Rails.application.routes.draw do
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
   resources :whispers, only: [:new, :create]
+  get  'api/v1/whispter/create_by_url', to: 'whispter#create_by_url'
   post 'api/v1/whisper/create', to: 'whispers#api_create'
   post 'api/v1/whisper/read', to: 'whispers#api_read'
   post 'api/v1/whisper/accept_request', to: 'whispers#chat_accept'
