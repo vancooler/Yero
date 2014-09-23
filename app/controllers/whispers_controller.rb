@@ -54,7 +54,11 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type]
-    message = (params[:message].nil? and notification_type == "Chat Request") ? "Chat Request" : params[:message]
+    if params[:message].nil? and notification_type == "Chat Request"
+      message = current_user.first_name + " just whispered you! (swipe to view profile)" 
+    else
+      message = params[:message]
+    end
 
     if notification_type == "Chat Request"
       origin_id = current_user.id.to_s
