@@ -6,6 +6,10 @@ class WhisperNotification < AWS::Record::HashModel
   string_attr :created_date
   string_attr :venue_id
   string_attr :notification_type
+              # '0' => welcome
+              # '1' => enter venue greeting
+              # '2' => chat request
+              # '3' => lottery
   boolean_attr :viewed
   boolean_attr :accepted
 
@@ -39,7 +43,7 @@ class WhisperNotification < AWS::Record::HashModel
     else
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
-      if notification_type != "Enter Greeting"
+      if notification_type != "0"
         item.attributes.update do |u|
           u.set 'viewed' => 1
         end
@@ -96,7 +100,7 @@ class WhisperNotification < AWS::Record::HashModel
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
       target_id = attributes['target_id'].to_s
-      if notification_type == "Chat Request" 
+      if notification_type == "2" 
         item.attributes.update do |u|
           u.set 'accepted' => 1
         end
@@ -111,7 +115,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:target_id).equals(target_id.to_s).where(:notification_type).equals("Chat Request")
+    items = table.items.where(:target_id).equals(target_id.to_s).where(:notification_type).equals("2")
     if items and items.count > 0
       request_user_array = Array.new
       items.each do |i|
@@ -134,7 +138,7 @@ class WhisperNotification < AWS::Record::HashModel
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
       notification_read = attributes['notification_read'].to_i
-      if notification_type != "Enter Greeting" and notification_read == 0
+      if notification_type != "0" and notification_read == 0
         if user.notification_read.nil? or user.notification_read <= 0
           user.notification_read = 0
         else
@@ -183,6 +187,7 @@ class WhisperNotification < AWS::Record::HashModel
           viewed: self.viewed,
           accepted: self.accepted,
           type: self.notification_type
+          notification_badge: target_user.notification_read
       }
     # And... sent! That's all it takes.
     apn.push(notification)

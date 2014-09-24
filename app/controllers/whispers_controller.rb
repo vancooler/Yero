@@ -25,7 +25,7 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type]
-    message = (params[:message].nil? and notification_type == "Chat Request") ? "Chat Request" : params[:message]
+    message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
 
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
 
@@ -54,17 +54,17 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type]
-    if params[:message].nil? and notification_type == "Chat Request"
+    if params[:message].nil? and notification_type == "2"
       message = current_user.first_name + " just whispered you! (swipe to view profile)" 
     else
       message = params[:message]
     end
 
-    if notification_type == "Chat Request"
+    if notification_type == "2"
       origin_id = current_user.id.to_s
     end
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
-    if n and notification_type == "Chat Request"
+    if n and notification_type == "2"
       current_user.notification_read += 1
       current_user.save
     end
@@ -103,7 +103,7 @@ class WhispersController < ApplicationController
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
       target_id = attributes['target_id'].to_s
-      if notification_type == "Chat Request" and target_id == current_user.id.to_s
+      if notification_type == "2" and target_id == current_user.id.to_s
         result = WhisperNotification.chat_accept(id)
         if result
           render json: success 
