@@ -141,8 +141,8 @@ class WhisperNotification < AWS::Record::HashModel
         h['whisper_id'] = attributes['id']
         request_user_array << h
       end
-      request_user_array = request_user_array.sort_by { |hsh| -hsh[:timestamp] }
-      return request_user_array
+      request_user_array = request_user_array.sort_by { |hsh| hsh[:timestamp] }
+      return request_user_array.reverse
     else
       return nil
     end
@@ -198,8 +198,8 @@ class WhisperNotification < AWS::Record::HashModel
     end
     users = Array.new
     users = target_user_array + origin_user_array
-    users = users.sort_by { |hsh| -hsh[:timestamp] }
-    return users
+    users = users.sort_by { |hsh| hsh[:timestamp] }
+    return users.reverse
   end
 
   def self.get_info(user)
@@ -235,8 +235,8 @@ class WhisperNotification < AWS::Record::HashModel
         n['viewed'] = attributes['viewed'].to_i
         request_array << n
       end
-      request_array = request_array.sort_by { |hsh| -hsh[:timestamp] }
-      return request_array
+      request_array = request_array.sort_by { |hsh| hsh[:timestamp] }
+      return request_array.reverse
     else
       return nil
     end
