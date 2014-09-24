@@ -118,7 +118,8 @@ class WhispersController < ApplicationController
 
 
   def all_my_chat_requests
-    items = WhisperNotification.my_chatting_requests(current_user.id.to_s)
+    role = params[:role] # "origin", "target", "both"
+    items = WhisperNotification.my_chatting_requests(current_user.id.to_s, role)
     render json: success(items)
   end
 end
