@@ -88,7 +88,7 @@ class WhispersController < ApplicationController
 
     
     notifications = WhisperNotification.get_info(current_user)
-    if venue.nil?
+    if notifications.nil?
       render json: error
     else
       render json: success(notifications)
