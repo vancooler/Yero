@@ -117,11 +117,11 @@ class WhispersController < ApplicationController
       notification_type = attributes['notification_type'].to_s
       target_id = attributes['target_id'].to_s
       if notification_type == "2" and target_id == current_user.id.to_s
-        result = WhisperNotification.chat_accept(id)
+        result = WhisperNotification.chat_action(id, action)
         if result
           render json: success 
         else
-          render json: error('Could not accept the chat request.')
+          render json: error('Could not accept/decline the chat request.')
         end
       else
         render json: error('Request not fount')
