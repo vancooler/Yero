@@ -73,6 +73,7 @@ class WhispersController < ApplicationController
       current_user.save
     end
     n.send_push_notification_to_target_user(message)
+    render json: success
   end
 
   def api_read
