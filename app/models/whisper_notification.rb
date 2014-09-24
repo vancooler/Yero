@@ -235,6 +235,7 @@ class WhisperNotification < AWS::Record::HashModel
         n['timestamp'] = attributes['timestamp'].to_i
         n['whisper_id'] = attributes['id']
         n['viewed'] = attributes['viewed'].to_i
+        n['notification_type'] = attributes['notification_type']
         request_array << n
       end
       request_array = request_array.sort_by { |hsh| hsh[:timestamp] }

@@ -112,7 +112,7 @@ class WhispersController < ApplicationController
 
   def chat_action
     id = params[:notification_id]
-    handle_action = params[:action]
+    handle_action = params[:handle_action]
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       render json: error('Request not fount')
