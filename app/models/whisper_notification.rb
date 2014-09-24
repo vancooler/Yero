@@ -133,6 +133,7 @@ class WhisperNotification < AWS::Record::HashModel
         if origin_id > 0
           user = User.find(origin_id)
           h['origin_user'] = user
+          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
         else
           h['origin_user'] = ''
         end
@@ -163,6 +164,7 @@ class WhisperNotification < AWS::Record::HashModel
         if origin_id > 0
           user = User.find(origin_id)
           h['origin_user'] = user
+          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
         else
           h['origin_user'] = ''
         end
@@ -182,6 +184,7 @@ class WhisperNotification < AWS::Record::HashModel
         if target_id > 0
           user = User.find(target_id)
           h['target_user'] = user
+          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
         else
           h['target_user'] = ''
         end
@@ -290,9 +293,9 @@ class WhisperNotification < AWS::Record::HashModel
           whisper_id: self.id,
           origin_user: origin_user_key,
           target_user: target_user.key,
-          timestamp: self.timestamp.to_i,
+          timestamp: self.timestamp,
           target_apn: token,
-          viewed: self.viewed.to_i,
+          viewed: self.viewed,
           accepted: self.accepted,
           type: self.notification_type,
           notification_badge: target_user.notification_read
