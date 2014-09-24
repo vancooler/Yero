@@ -25,16 +25,17 @@ end
 #cleanup for user activity in venue and venue network
 namespace :cleanup do
 include ActionView::Helpers::DateHelper
+  # TODO: uncomment the three lines to enable cron job
   task :everyday_venue_cleanup => :environment do 
-    ActiveInVenue.clean_up
+    # ActiveInVenue.clean_up
   end
 
   task :network_cleanup => :environment do 
-    ActiveInVenueNetwork.everyday_cleanup
+    # ActiveInVenueNetwork.everyday_cleanup
   end
 
   task :everyday_notification_cleanup => :environment do
-    VenueEnteredToday.everyday_cleanup
+    # VenueEnteredToday.everyday_cleanup
   end
 
 
