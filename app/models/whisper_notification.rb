@@ -112,7 +112,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.my_chatting_requests(target_id, role)
+  def self.my_chatting_requests(target_id)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
@@ -129,31 +129,6 @@ class WhisperNotification < AWS::Record::HashModel
     else
       return nil
     end
-    # origin_user_array = Array.new
-    # target_user_array = Array.new
-    # if role == "target" or role == "both"
-    #   items = table.items.where(:target_id).equals(target_id.to_s).where(:notification_type).equals("2")
-    #   if items and items.count > 0
-    #     items.each do |i|
-    #       attributes = i.attributes.to_h
-    #       origin_id = attributes['origin_id'].to_i
-    #       user = User.find(origin_id)
-    #       origin_user_array << user if !user.nil?
-    #     end
-    #   end
-    # elsif role == "origin" or role == "both"
-    #   items = table.items.where(:origin_id).equals(target_id.to_s).where(:notification_type).equals("2")
-    #   if items and items.count > 0
-    #     items.each do |i|
-    #       attributes = i.attributes.to_h
-    #       target_id = attributes['target_id'].to_i
-    #       user = User.find(target_id)
-    #       target_user_array << user if !user.nil?
-    #     end
-    #   end
-    # end
-    # if role == "target"
-    #   users_list = 
   end
 
   def self.delete_notification(id, user)
