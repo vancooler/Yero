@@ -147,11 +147,15 @@ class WhisperNotification < AWS::Record::HashModel
         n = Hash.new
         attributes = i.attributes.to_h
         venue_id = attributes['venue_id'].to_i
-        venue = Venue.find(venue_id)
-        if venue.nil?
-          n['venue_name'] = ''
+        if venue_id > 0
+          venue = Venue.find(venue_id)
+          if venue.nil?
+            n['venue_name'] = ''
+          else
+            n['venue_name'] = venue.name
+          end
         else
-          n['venue_name'] = venue.name
+          n['venue_name'] = ''
         end
         n['message'] = 'HARD CODE MESSAGE'
         n['date'] = 'HARD CODE DATE'
