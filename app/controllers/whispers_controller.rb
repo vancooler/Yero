@@ -91,7 +91,7 @@ class WhispersController < ApplicationController
     if venue.nil?
       render json: error
     else
-      render json: success(venue)
+      render json: success(notifications)
     end
   end
 
