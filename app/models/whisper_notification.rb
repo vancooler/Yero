@@ -252,8 +252,8 @@ class WhisperNotification < AWS::Record::HashModel
     else
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s
-      notification_read = attributes['notification_read'].to_i
-      if notification_type != "0" and notification_read == 0
+      viewed = attributes['viewed']
+      if notification_type != "0" and viewed == 0
         if user.notification_read.nil? or user.notification_read <= 0
           user.notification_read = 0
         else
@@ -263,6 +263,28 @@ class WhisperNotification < AWS::Record::HashModel
       end
       item.delete
       return true
+    end
+    
+  end
+
+  def self.delete_all_chat(user)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2")
+    items.each do |item|
+      attributes = item.attributes.to_h
+      notification_type = attributes['notification_type'].to_s
+      viewed = attributes['viewed']
+      if notification_type != "0" and viewed == 0
+        if user.notification_read.nil? or user.notification_read <= 0
+          user.notification_read = 0
+        else
+          user.notification_read = user.notification_read - 1
+        end        
+        user.save
+      end
+      item.delete
     end
     
   end

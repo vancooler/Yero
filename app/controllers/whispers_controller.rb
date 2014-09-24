@@ -110,6 +110,16 @@ class WhispersController < ApplicationController
     end
   end
 
+  def api_delete_all_chat
+    result = WhisperNotification.delete_all_chat(current_user)
+
+    if result
+      render json: success 
+    else
+      render json: error
+    end
+  end
+
   def chat_action
     id = params[:notification_id]
     handle_action = params[:handle_action]
