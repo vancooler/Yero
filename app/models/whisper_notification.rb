@@ -11,8 +11,10 @@ class WhisperNotification < AWS::Record::HashModel
               # '2' => chat request
               # '3' => lottery
   boolean_attr :viewed
-  boolean_attr :accepted
-  boolean_attr :rejected
+  integer_attr :accepted
+              # 0 => nothing
+              # 1 => accepted
+              # 2 => declined
 
 
   #create user's Notification log in AWS DynamoDB
@@ -122,13 +124,74 @@ class WhisperNotification < AWS::Record::HashModel
       items.each do |i|
         attributes = i.attributes.to_h
         origin_id = attributes['origin_id'].to_i
-        user = User.find(origin_id)
-        request_user_array << user if !user.nil?
+        h = Hash.new
+        if origin_id > 0
+          user = User.find(origin_id)
+          h['origin_user'] = user
+        else
+          h['origin_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        request_user_array << h
       end
+      request_user_array = request_user_array.sort_by { |hsh| hsh[:timestamp] }
       return request_user_array
     else
       return nil
     end
+  end
+
+  def my_chat_request_history(user)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2")
+    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2")
+    target_user_array = Array.new
+    origin_user_array = Array.new
+    if target_items and target_items.count > 0
+      target_items.each do |i|
+        attributes = i.attributes.to_h
+        origin_id = attributes['origin_id'].to_i
+        h = Hash.new
+        if origin_id > 0
+          user = User.find(origin_id)
+          h['origin_user'] = user
+        else
+          h['origin_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'target_user'
+        target_user_array << h
+      end
+      # return target_user_array
+    end
+    if origin_items and origin_items.count > 0
+      origin_items.each do |i|
+        attributes = i.attributes.to_h
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        if target_id > 0
+          user = User.find(target_id)
+          h['target_user'] = user
+        else
+          h['target_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'origin_user'
+        origin_user_array << h
+      end
+      # return origin_user_array
+    end
+    users = Array.new
+    users = target_user_array + origin_user_array
+    users = users.sort_by { |hsh| hsh[:timestamp] }
+    return users
   end
 
   def self.get_info(user)

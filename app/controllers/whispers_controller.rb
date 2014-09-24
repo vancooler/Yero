@@ -135,6 +135,11 @@ class WhispersController < ApplicationController
     items = WhisperNotification.my_chatting_requests(current_user.id.to_s)
     render json: success(items)
   end
+
+  def chat_request_history
+    items = WhisperNotification.my_chat_request_history(current_user)
+    render json: success(items)
+  end
 end
 
 
