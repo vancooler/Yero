@@ -112,7 +112,7 @@ class WhispersController < ApplicationController
 
   def chat_action
     id = params[:notification_id]
-    action = params[:action]
+    handle_action = params[:action]
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       render json: error('Request not fount')
@@ -121,7 +121,7 @@ class WhispersController < ApplicationController
       notification_type = attributes['notification_type'].to_s
       target_id = attributes['target_id'].to_s
       if notification_type == "2" and target_id == current_user.id.to_s
-        result = WhisperNotification.chat_action(id, action)
+        result = WhisperNotification.chat_action(id, handle_action)
         if result
           render json: success 
         else

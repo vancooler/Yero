@@ -95,7 +95,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.chat_action(id, action)
+  def self.chat_action(id, handle_action)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       return false
@@ -104,12 +104,12 @@ class WhisperNotification < AWS::Record::HashModel
       notification_type = attributes['notification_type'].to_s
       target_id = attributes['target_id'].to_s
       if notification_type == "2" 
-        Rails.logger.info "ACTION: " + action
+        Rails.logger.info "ACTION: " + handle_action
         item.attributes.update do |u|
-          if action == 'accept'
+          if handle_action == 'accept'
             Rails.logger.info "ACCEPT!!"
             u.set 'accepted' => 1
-          elsif action == 'decline'
+          elsif handle_action == 'decline'
             u.set 'accepted' => 2
           end
             
