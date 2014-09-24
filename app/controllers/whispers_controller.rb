@@ -65,7 +65,11 @@ class WhispersController < ApplicationController
     end
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
     if n and notification_type == "2"
-      current_user.notification_read += 1
+      if current_user.notification_read.nil?
+        current_user.notification_read = 1
+      else
+        current_user.notification_read += 1
+      end
       current_user.save
     end
     n.send_push_notification_to_target_user(message)
