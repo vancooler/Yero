@@ -93,7 +93,7 @@ class WhispersController < ApplicationController
     
     notifications = WhisperNotification.get_info(current_user)
     if notifications.nil?
-      render json: error
+      render json: error("Nothing there")
     else
       render json: success(notifications)
     end
@@ -106,17 +106,17 @@ class WhispersController < ApplicationController
     if result
       render json: success 
     else
-      render json: error
+      render json: error("Cannot delete!")
     end
   end
 
-  def api_delete_all_chat
-    result = WhisperNotification.delete_all_chat(current_user)
+  def api_decline_all_chat
+    result = WhisperNotification.decline_all_chat(current_user)
 
     if result
       render json: success 
     else
-      render json: error
+      render json: error("Cannot decline!")
     end
   end
 
