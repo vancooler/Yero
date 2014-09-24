@@ -131,6 +131,41 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  def self.get_info(user)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:target_id).equals(user.id.to_s)
+    if items and items.count > 0
+      # * venue name
+      # * message and date  <— hardcode
+      # * timestamp
+      # * whisper_id
+      # * viewed
+      request_array = Array.new
+      items.each do |i|
+        n = Hash.new
+        attributes = i.attributes.to_h
+        venue_id = attributes['venue_id'].to_i
+        venue = Venue.find(venue_id)
+        if venue.nil?
+          n['venue_name'] = ''
+        else
+          n['venue_name'] = venue.name
+        end
+        n['message'] = 'HARD CODE MESSAGE'
+        n['date'] = 'HARD CODE DATE'
+        n['timestamp'] = attributes['timestamp']
+        n['whisper_id'] = attributes['id']
+        n['viewed'] = attributes['viewed']
+        request_array << n
+      end
+      return request_array
+    else
+      return nil
+    end
+  end
+
   def self.delete_notification(id, user)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?

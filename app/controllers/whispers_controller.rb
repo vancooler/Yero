@@ -83,6 +83,18 @@ class WhispersController < ApplicationController
     end
   end
 
+  def get_info
+    # result = WhisperNotification.read_notification(id, current_user)
+
+    
+    notifications = WhisperNotification.get_info(current_user)
+    if venue.nil?
+      render json: error
+    else
+      render json: success(venue)
+    end
+  end
+
   def api_delete
     id = params[:notification_id]
     result = WhisperNotification.delete_notification(id, current_user)
@@ -94,8 +106,9 @@ class WhispersController < ApplicationController
     end
   end
 
-  def chat_accept
+  def chat_action
     id = params[:notification_id]
+    action = params[:action]
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       render json: error('Request not fount')

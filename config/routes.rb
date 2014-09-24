@@ -56,8 +56,12 @@ Rails.application.routes.draw do
   get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
   post 'api/v1/whisper/create', to: 'whispers#api_create'
   post 'api/v1/whisper/read', to: 'whispers#api_read'
-  post 'api/v1/whisper/accept_request', to: 'whispers#chat_accept'
+  post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
   post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
+  post 'api/v1/notification/get_info', to: 'whispers#get_info'
+  post 'api/v1/whisper/chat_request_history', to: 'whispers#chat_request_history'
+  post 'api/v1/notification/delete', to: 'whispers#delete'
+
   # Venue/Beacon API
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
