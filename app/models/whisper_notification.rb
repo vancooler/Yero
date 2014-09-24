@@ -106,6 +106,7 @@ class WhisperNotification < AWS::Record::HashModel
       if notification_type == "2" 
         item.attributes.update do |u|
           if action == 'accept'
+            logger.info "ACCEPT!!"
             u.set 'accepted' => 1
           elsif action == 'decline'
             u.set 'accepted' => 2
