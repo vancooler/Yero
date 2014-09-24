@@ -159,9 +159,9 @@ class WhisperNotification < AWS::Record::HashModel
         end
         n['message'] = 'HARD CODE MESSAGE'
         n['date'] = 'HARD CODE DATE'
-        n['timestamp'] = attributes['timestamp']
+        n['timestamp'] = attributes['timestamp'].to_i
         n['whisper_id'] = attributes['id']
-        n['viewed'] = attributes['viewed']
+        n['viewed'] = attributes['viewed'].to_i
         request_array << n
       end
       return request_array
@@ -222,9 +222,9 @@ class WhisperNotification < AWS::Record::HashModel
           whisper_id: self.id,
           origin_user: origin_user_key,
           target_user: target_user.key,
-          timestamp: self.timestamp,
+          timestamp: self.timestamp.to_i,
           target_apn: token,
-          viewed: self.viewed,
+          viewed: self.viewed.to_i,
           accepted: self.accepted,
           type: self.notification_type,
           notification_badge: target_user.notification_read
