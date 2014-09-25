@@ -66,7 +66,7 @@ class WhispersController < ApplicationController
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
     if n and notification_type == "2"
       record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
-      if record_found.present? and record_found.count > 0
+      if record_found.present? and record_found.count <= 0
         WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
       end
       # if current_user.notification_read.nil? or current_user.notification_read == 0
