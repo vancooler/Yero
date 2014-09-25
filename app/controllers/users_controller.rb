@@ -77,15 +77,13 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     users = Jbuilder.encode do |json|
-      start_time = Time.now
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
         return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
       end
-      end_time = Time.now
-      diff_1 += (end_time - start_time)
+      start_time = Time.now
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
@@ -183,11 +181,13 @@ class UsersController < ApplicationController
         json.longitude      user.longitude 
 
       end
+      end_time = Time.now
+      diff_1 += (end_time - start_time)
     end
     users = JSON.parse(users).delete_if(&:empty?)
     final_time = Time.now
     # diff_2 = final_time - end_time
-    logger.info "TIME: " + diff_1.to_s 
+    logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users")
   end
 
