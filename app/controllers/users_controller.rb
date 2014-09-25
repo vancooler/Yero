@@ -157,7 +157,7 @@ class UsersController < ApplicationController
         #   json.whisper_sent false
         # end
         start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
+        json.whisper_sent false #WhisperNotification.whisper_sent(current_user, user)
 
         end_time = Time.now
         diff_1 += (end_time - start_time)
