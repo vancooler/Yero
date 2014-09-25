@@ -52,12 +52,12 @@ class WhisperNotification < AWS::Record::HashModel
         end
       
         # number of notification to read for this user: -1
-        if user.notification_read.nil? or user.notification_read <= 0
-          user.notification_read = 0
-        else
-          user.notification_read = user.notification_read - 1
-        end
-        return user.save
+        # if user.notification_read.nil? or user.notification_read <= 0
+        #   user.notification_read = 0
+        # else
+        #   user.notification_read = user.notification_read - 1
+        # end
+        # return user.save
       else
         return true
       end
@@ -250,17 +250,17 @@ class WhisperNotification < AWS::Record::HashModel
     if item.nil?
       return false
     else
-      attributes = item.attributes.to_h
-      notification_type = attributes['notification_type'].to_s
-      viewed = attributes['viewed']
-      if notification_type != "0" and viewed == 0
-        if user.notification_read.nil? or user.notification_read <= 0
-          user.notification_read = 0
-        else
-          user.notification_read = user.notification_read - 1
-        end        
-        user.save
-      end
+      # attributes = item.attributes.to_h
+      # notification_type = attributes['notification_type'].to_s
+      # viewed = attributes['viewed']
+      # if notification_type != "0" and viewed == 0
+      #   if user.notification_read.nil? or user.notification_read <= 0
+      #     user.notification_read = 0
+      #   else
+      #     user.notification_read = user.notification_read - 1
+      #   end        
+      #   user.save
+      # end
       item.delete
       return true
     end
