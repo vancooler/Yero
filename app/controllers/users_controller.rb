@@ -74,6 +74,7 @@ class UsersController < ApplicationController
     venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
     page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
+    start_time = Time.now
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
@@ -183,6 +184,8 @@ class UsersController < ApplicationController
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
+    end_time = Time.now
+    logger.info "TIME: " + (end_time - start_time).to_s + "s"
     render json: success(users, "users")
   end
 
