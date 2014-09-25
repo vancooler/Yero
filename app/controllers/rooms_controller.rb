@@ -29,8 +29,8 @@ class RoomsController < ApplicationController
       n2.send_push_notification_to_target_user(venue_message)
       
       # number of notification to read for this user: +1
-      if current_user.notification_read.nil?
-        current_user.notification_read = 0
+      if current_user.notification_read.nil? or current_user.notification_read == 0
+        current_user.notification_read = 1
       else
         current_user.notification_read += 1
       end

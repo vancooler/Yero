@@ -306,7 +306,7 @@ class WhisperNotification < AWS::Record::HashModel
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = target_user.notification_read
+    notification.badge = (target_user.notification_read.nil? ? 0 : target_user.notification_read)
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
@@ -319,7 +319,7 @@ class WhisperNotification < AWS::Record::HashModel
           viewed: self.viewed,
           accepted: self.accepted,
           type: self.notification_type.to_i,
-          notification_badge: target_user.notification_read
+          notification_badge: (target_user.notification_read.nil? ? 0 : target_user.notification_read)
       }
     # And... sent! That's all it takes.
     apn.push(notification)
