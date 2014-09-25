@@ -117,7 +117,7 @@ class User < ActiveRecord::Base
       users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day)
     end
     Rails.logger.info "MIN_AGE: " + min_age.to_s
-    if !min_age.nil?
+    if !min_age.nil? and min_age > 0
       users = users.where("birthday <= ?", (min_age + 1).years.ago)
     end
     min_distance = 0 if min_distance.nil?
