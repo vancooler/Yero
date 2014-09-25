@@ -157,8 +157,10 @@ class UsersController < ApplicationController
         #   json.whisper_sent false
         # end
         start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
-
+        # json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
+        record_found = WhisperSent.where(:origin_user_id => current_user.id).where(:target_user_id => user.id)
+      
+        json.whisper_sent (record_found.present? and record_found.count > 0)
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
