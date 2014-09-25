@@ -83,13 +83,12 @@ class UsersController < ApplicationController
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
       end
-      start_time = Time.now
+      
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
         # next if user.user_avatars.first
         # json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
-        
         main_avatar   =  user.user_avatars.find_by(default:true)
         other_avatars =  user.user_avatars.where.not(default:true)
         avatar_array = Array.new
@@ -157,8 +156,11 @@ class UsersController < ApplicationController
         # else
         #   json.whisper_sent false
         # end
+        start_time = Time.now
         json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
 
+        end_time = Time.now
+        diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
 
         json.id             user.id
@@ -181,8 +183,6 @@ class UsersController < ApplicationController
         json.longitude      user.longitude 
 
       end
-      end_time = Time.now
-      diff_1 += (end_time - start_time)
     end
     users = JSON.parse(users).delete_if(&:empty?)
     final_time = Time.now
