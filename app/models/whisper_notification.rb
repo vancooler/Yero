@@ -324,10 +324,10 @@ class WhisperNotification < AWS::Record::HashModel
     chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
     badge_number = 0
-    if chat_items.present
+    if chat_items.present?
       badge_number += chat_items.count
     end
-    if greeting_items.present
+    if greeting_items.present?
       badge_number += greeting_items.count
     end
 
