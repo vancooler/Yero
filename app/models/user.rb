@@ -109,7 +109,7 @@ class User < ActiveRecord::Base
 =end
     users = User.where(id: active_users_id)
     if !gender.nil?
-      if gender.downcase == "male" or gender.downcase == "female"
+      if gender.downcase == "male" or gender.downcase == "female" or gender.downcase == "m" or gender.downcase == "f"
         users = users.where(:gender => gender)
       end
     end
