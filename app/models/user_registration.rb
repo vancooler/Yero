@@ -22,7 +22,17 @@ class UserRegistration
     end
 
     def create_layer_account
-      if @user.layer_id.nil?
+      #####################################################################
+      #
+      # If the Chat token created on the phone side, just set it in singup
+      # param "layer_id"
+      #
+      # if the parameters have no token but have nonce like Layer, 
+      # generate token and save it
+      #
+      #####################################################################
+
+      if @user.layer_id.nil? and @user.nonce.present?
         @user.layer_id = "pending"
         # @user.layer_id = "Not Available"
         # cert = AWS::S3.new.buckets[ENV['S3_BUCKET_NAME']].objects['private/layer/layer.crt'].read
