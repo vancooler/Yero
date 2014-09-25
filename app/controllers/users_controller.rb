@@ -152,11 +152,12 @@ class UsersController < ApplicationController
         #   end
         # end
 
-        if Whisper.where(origin_id: current_user.id, target_id: user).present?
-          json.whisper_sent true
-        else
-          json.whisper_sent false
-        end
+        # if Whisper.where(origin_id: current_user.id, target_id: user).present?
+        #   json.whisper_sent true
+        # else
+        #   json.whisper_sent false
+        # end
+        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
 
         json.same_venue_badge          current_user.same_venue_as?(user.id)
 

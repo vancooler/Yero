@@ -284,6 +284,18 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
+  def self.whisper_sent(origin_user, target_user)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:target_id).equals(target_user.id.to_s).where(:origin_id).equals(origin_user.id.to_s).where(:notification_type).equals("2")
+    if items.present? and items.count > 0
+      return true
+    else
+      return false
+    end
+  end
+
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
