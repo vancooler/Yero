@@ -186,8 +186,8 @@ class UsersController < ApplicationController
     end
     users = JSON.parse(users).delete_if(&:empty?)
     final_time = Time.now
-    diff_2 = final_time - end_time
-    logger.info "TIME: " + diff_1.to_s + "s - " + diff_2.to_s + "s"
+    # diff_2 = final_time - end_time
+    logger.info "TIME: " + diff_1.to_s 
     render json: success(users, "users")
   end
 
