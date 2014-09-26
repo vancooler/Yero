@@ -52,7 +52,7 @@ gem 'sidekiq'
 gem 'kaminari'
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
-
+gem 'redis'
 #layer gem
 gem 'jwt'
 

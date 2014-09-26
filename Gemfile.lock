@@ -304,6 +304,7 @@ DEPENDENCIES
   pg
   rails (= 4.1.0)
   rails_12factor
+  redis
   rest-client
   rmagick (= 2.13.2)
   rspec-rails (= 2.13.1)
