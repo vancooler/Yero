@@ -201,7 +201,6 @@ class UsersController < ApplicationController
   end
 
   def sign_up
-    logger.info sign_up_params
     user_registration = UserRegistration.new(sign_up_params)
     user = user_registration.user
 
