@@ -205,7 +205,11 @@ class UsersController < ApplicationController
     user = user_registration.user
 
     if user_registration.create
-      render json: success(user.to_json(true))
+      response = user.to_json(true)
+      thumb = response["avatars"].first['avatar']
+      response["avatars"].first['thumbnail'] = thumb
+      response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
