@@ -208,7 +208,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:target_id).equals(user.id.to_s)
+    items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals('1')
     if items and items.count > 0
       # * venue name
       # * message and date  <— hardcode
