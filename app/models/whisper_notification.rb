@@ -135,11 +135,21 @@ class WhisperNotification < AWS::Record::HashModel
         if origin_id > 0
           user = User.find(origin_id)
           h['origin_user'] = user
-          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
+          avatar_array = Array.new
+          avatar_array[0] = {
+            thumbnail: user.main_avatar.avatar.thumb.url
+          }
+          avatar_array[1] = {
+            avatar: u.main_avatar.nil? ? '' : u.main_avatar.avatar.url,
+            avatar_id: u.main_avatar.nil? ? '' : u.main_avatar.id,
+            default: true
+          }
+          
+          h['avatars'] = avatar_array
         else
           h['origin_user'] = ''
         end
-        h['timestamp'] = attributes['timestamp'].to_i
+        h['since_1970'] = attributes['timestamp'].to_i
         h['whisper_id'] = attributes['id']
         request_user_array << h
       end
