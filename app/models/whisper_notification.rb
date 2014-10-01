@@ -140,8 +140,8 @@ class WhisperNotification < AWS::Record::HashModel
             thumbnail: user.main_avatar.avatar.thumb.url
           }
           avatar_array[1] = {
-            avatar: u.main_avatar.nil? ? '' : u.main_avatar.avatar.url,
-            avatar_id: u.main_avatar.nil? ? '' : u.main_avatar.id,
+            avatar: user.main_avatar.nil? ? '' : user.main_avatar.avatar.url,
+            avatar_id: user.main_avatar.nil? ? '' : user.main_avatar.id,
             default: true
           }
           
