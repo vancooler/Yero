@@ -84,10 +84,15 @@ class UserAvatarsController < ApplicationController
       user_info = current_user.to_json(false)
       avatars = Array.new
       user_info['avatars'].each do |avatar|
+        real_avatar = UserAvatar.find(avatar['avatar_id'].to_i)
+        return_avatar = Hash.new
+        return_avatar['avatar'] = real_avatar.avatar.url
+        return_avatar['default'] = real_avatar.default
+        return_avatar['avatar_id'] = avatar['avatar_id'].to_i
         if avatar['default'].to_s == "true"
-          avatars.unshift(avatar)
+          avatars.unshift(return_avatar)
         else
-          avatars.push(avatar)
+          avatars.push(return_avatar)
         end
       end
       user_info['avatars'] = avatars
