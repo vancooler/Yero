@@ -108,7 +108,22 @@ class UserAvatarsController < ApplicationController
 
     if avatar and !avatar.default
       if avatar.destroy
-        render json: success
+        user_info = current_user.to_json(false)
+        avatars = Array.new
+        user_info['avatars'].each do |a|
+          real_avatar = UserAvatar.find(a['avatar_id'].to_i)
+          return_avatar = Hash.new
+          return_avatar['avatar'] = real_avatar.avatar.url
+          return_avatar['default'] = real_avatar.default
+          return_avatar['avatar_id'] = a['avatar_id'].to_i
+          if a['default'].to_s == "true"
+            avatars.unshift(return_avatar)
+          else
+            avatars.push(return_avatar)
+          end
+        end
+        user_info['avatars'] = avatars
+        render json: success(user_info)
       else
         render json: error(avatar.errors)
       end
