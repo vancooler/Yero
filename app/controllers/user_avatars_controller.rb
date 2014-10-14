@@ -20,6 +20,11 @@ class UserAvatarsController < ApplicationController
               end
             end
             user_info['avatars'] = avatars
+            user_info["avatars"].each do |a|
+              thumb = a['avatar']
+              a['thumbnail'] = thumb
+              a['avatar'] = thumb.gsub! 'thumb_', ''
+            end
             render json: success(user_info)
           else
             render json: error(avatar.errors)
@@ -44,6 +49,11 @@ class UserAvatarsController < ApplicationController
               end
             end
             user_info['avatars'] = avatars
+            user_info["avatars"].each do |a|
+              thumb = a['avatar']
+              a['thumbnail'] = thumb
+              a['avatar'] = thumb.gsub! 'thumb_', ''
+            end
             render json: success(user_info)
         else
           render json: error(avatar.errors)
