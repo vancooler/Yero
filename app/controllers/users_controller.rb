@@ -121,7 +121,7 @@ class UsersController < ApplicationController
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
         json.same_beacon               current_user.same_beacon_as?(user.id)
-
+        json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
@@ -155,7 +155,7 @@ class UsersController < ApplicationController
       end
     end
     users = users - same_beacon_users - same_venue_users
-    users = same_beacon_users.shuffle + same_venue_users.shuffle + users
+    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
     final_time = Time.now
     # diff_2 = final_time - end_time
     logger.info "NEWTIME: " + diff_1.to_s 

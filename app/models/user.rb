@@ -234,6 +234,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  def actual_distance(user)
+    distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
+    return distance
+  end
+
   def last_activity
     self.activities.last
   end
