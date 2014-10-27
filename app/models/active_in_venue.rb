@@ -29,6 +29,7 @@ class ActiveInVenue < ActiveRecord::Base
     pArray = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
     if pArray and pArray.count > 0
       v = pArray.first
+      v.beacon = beacon
       result = v.update_activity
     else
       v = ActiveInVenue.new
