@@ -31,7 +31,7 @@ class BeaconInitialization
       if venue.new_record?
         venue.name = venue_name
         venue.venue_network_id = network.id
-        # venue.email = "hello+#{venue_name}@yero.co"
+        venue.email = "hello+#{venue_name}@yero.co"
 
         # ##TODO: double check the fields required in venue
         # venue.city = "Vancouver"
