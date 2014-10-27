@@ -14,7 +14,7 @@ class RoomsController < ApplicationController
     
     
     #log the last active time for venue and venue network
-    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user)
+    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
 
     #log in aws dynamoDB
     UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
