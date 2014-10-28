@@ -9,20 +9,26 @@ class RoomsController < ApplicationController
     if beacon.blank?
       beacon = BeaconInitialization.new(params[:beacon_key])
       beacon.create
+      beacon = Beacon.find_by(key: params[:beacon_key])
     end
+
     beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
     
     
     #log the last active time for venue and venue network
-    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user)
+    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
 
     #log in aws dynamoDB
     UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
     
     #check whether the user entered this venue today, if not push greeting notification
     if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
-      n1 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "0")
-      greeting_message = "Welcome " + current_user.first_name + "!"
+      
+      # Remove the system welcome notification which is type '0'
+      # n1 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "0")
+      # greeting_message = "Welcome " + current_user.first_name + "!"
+      # n1.send_push_notification_to_target_user(greeting_message)
+      
       venue_message = "welcome to " + beacon.room.venue.name + "! Open this chat to learn more about tonight. (swipe to view message)"
       n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1")
       
@@ -33,7 +39,6 @@ class RoomsController < ApplicationController
         current_user.notification_read += 1
       end
       current_user.save
-      n1.send_push_notification_to_target_user(greeting_message)
       n2.send_push_notification_to_target_user(venue_message)
     end
 
@@ -42,6 +47,9 @@ class RoomsController < ApplicationController
     else
       render json: error("Could not enter.")
     end
+
+
+
     # activity_item = ActivityItem.new(current_user, beacon, "Enter Beacon")
     # if activity_item.create
     #   render json: success

@@ -43,6 +43,7 @@ Rails.application.routes.draw do
   get  'api/v1/venues/active_users', to: 'venues#active_users'
 
   post 'api/v1/avatar/create',             to: 'user_avatars#create'
+  post 'api/v1/avatar/create_for_signup',  to: 'user_avatars#create_avatar'
   post 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
   post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
   post 'api/v1/user/update_profile',       to: 'users#update_profile'

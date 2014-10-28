@@ -14,8 +14,7 @@ class Venue < ActiveRecord::Base
   geocoded_by :address
   after_validation :geocode
 
-  validates_presence_of :venue_network, :city, :state, :country,
-    :email, :name, :address_line_one, :zipcode, :venue_type
+  validates_presence_of :venue_network, :name
 
   def tonightly
     Nightly.today_or_create(self)

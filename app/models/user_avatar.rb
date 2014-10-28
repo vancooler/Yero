@@ -31,7 +31,11 @@ class UserAvatar < ActiveRecord::Base
   private
 
     def set_default_avatar_if_only_one_avatar_present
-      return if (self.user.user_avatars.count > 1 || self.default == true)
+      if !self.user.nil?
+        return if (self.user.user_avatars.count > 1 || self.default == true)   
+      else
+        return
+      end
       self.default = true
       self.save
     end

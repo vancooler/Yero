@@ -43,20 +43,55 @@ class User < ActiveRecord::Base
     end
   end
 
+
+  ##########################################################################
+  #
+  # Check whether a user is in the same beacon as the current user
+  #
+  ##########################################################################
+  def same_beacon_as?(user_id)
+    if fellow_participant = User.find(user_id)
+      
+      fellow_participant_beacon = fellow_participant.current_beacon
+      self_beacon = self.current_beacon
+
+      return false if fellow_participant_beacon.nil? || self_beacon.nil?
+
+      self.current_beacon.id == fellow_participant.current_beacon.id
+    else
+      false
+    end
+  end
+
   def secondary_avatars
     user_avatars.where.not(default: true)
   end
 
+  ##########################################################################
+  #
+  # Return the current user's current venue connection
+  #
+  ##########################################################################
   def current_venue
     return nil unless self.has_activity_today?
     return self.active_in_venue.venue
-    # activity = Activity.for_user(self.id).on_current_day.with_beacons.last
-    # if activity.action == "Enter Beacon"
-    #   activity.trackable.room.venue
-    # else
-    #   nil
-    # end
   end
+
+  ##########################################################################
+  #
+  # Return the current user's current beacon connection
+  #
+  ##########################################################################
+  def current_beacon
+    return nil unless self.has_activity_today?
+    return self.active_in_venue.beacon
+  end
+
+  ##########################################################################
+  #
+  # Return the current user's current venue network connection
+  #
+  ##########################################################################
   def current_venue_network
     if self.active_in_venue_network.nil?
       return nil
@@ -71,8 +106,7 @@ class User < ActiveRecord::Base
   def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
     current_venue = self.current_venue
     current_venue_network = self.current_venue_network
-    #return nil if (current_venue == nil || self.activities.on_current_day.count == 0)
-    return nil if current_venue.nil? and current_venue_network.nil?
+    # return nil if current_venue.nil? and current_venue_network.nil?
     aivs = ActiveInVenue.where("user_id != ?", self.id)
     if !venue_id.nil?
       aivs = aivs.where(:venue_id => venue_id)
@@ -116,12 +150,12 @@ class User < ActiveRecord::Base
     if !max_age.nil? 
       users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day)
     end
-    Rails.logger.info "MIN_AGE: " + min_age.to_s
     if !min_age.nil? and min_age > 0
       users = users.where("birthday <= ?", (min_age + 1).years.ago)
     end
     min_distance = 0 if min_distance.nil?
     max_distance = 60 if max_distance.nil?
+    
     self.user_sort(users, min_distance, max_distance)
   end
 
@@ -134,29 +168,50 @@ class User < ActiveRecord::Base
     sorted_results = results_with_location + results_with_no_location
   end
 
+  ##########################################################################
+  #
+  # Sort the users in same beacon in random order
+  #
+  ##########################################################################
+  def same_beacon_users(users)
+    users.each do |u|
+      if !self.same_beacon_as?(u.id)
+        users.reject{|user| user.id == u.id}
+      end
+    end
+    users = users.shuffle
+    return users
+  end
+
+  ##########################################################################
+  #
+  # Sort the users in same venue in random order
+  #
+  ##########################################################################
+  def same_venue_users(users)
+    users.each do |u|
+      if !self.same_venue_as?(u.id)
+        users.reject{|user| user.id == u.id}
+      end
+    end
+    users = users.shuffle
+    return users
+  end
+
+  ##########################################################################
+  #
+  # Sort the users list by same beacon, same venue, distance and random
+  #
+  ##########################################################################
   def user_sort(users, min_distance, max_distance)
-    users_with_location = users.where.not(latitude:nil, longitude:nil)
-    users_with_no_location = users - users_with_location
-    # users_2 = users.near(self, 2, unit: :km).order('distance DESC')
-    # users_5 = users.near(self, 5, unit: :km).order('distance DESC') - users_2
-    # users_10 = users.near(self, 10, unit: :km).order('distance DESC') - users_5 - users_2
-    # users_20 = users.near(self, 20, unit: :km).order('distance DESC') - users_10 - users_5 - users_2
-    # users_40 = users.near(self, 40, unit: :km).order('distance DESC') - users_20 - users_10 - users_5 - users_2
-    # users_60 = users.near(self, 60, unit: :km).order('distance DESC') - users_40 - users_20 - users_10 - users_5 - users_2
-    # logger.info "2km : " + users_2.length.to_s + "\n" +
-    #             "5km : " + users_5.length.to_s + "\n" +
-    #             "10km: " + users_10.length.to_s + "\n" +
-    #             "20km: " + users_20.length.to_s + "\n" +
-    #             "40km: " + users_40.length.to_s + "\n" +
-    #             "60km: " + users_60.length.to_s
+    
     result_users = users.near(self, max_distance, :units => :km).order('distance DESC')
     if min_distance != 0
       remove_users = users.near(self, min_distance, :units => :km).order('distance DESC')
       result_users = result_users.reject{|user| remove_users.include? user}
     end
+       
     return result_users
-
-
   end
 
   def distance_label(user)
@@ -177,6 +232,11 @@ class User < ActiveRecord::Base
     else
       return "More than 60km"
     end
+  end
+
+  def actual_distance(user)
+    distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
+    return distance
   end
 
   def last_activity

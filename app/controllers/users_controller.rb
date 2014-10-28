@@ -60,12 +60,6 @@ class UsersController < ApplicationController
 
   # API
   def index
-    # @users = User.active
-    # @users = @users.where(gender: "M") if params[:gender] == "M"
-    # @users = @users.where(gender: "F") if params[:gender] == "F"
-    # @users = @users.where("birthday > ?", (Time.now - params[:max_age].to_i.years)) if params[:max_age]
-    # @users = @users.where("birthday < ?", (Time.now - params[:min_age].to_i.years)) if params[:max_age]
-    # @users = @users.where("current_venue_id = ?", params[:venue_id].to_i) if params[:venue_id]
     gender = params[:gender] if !params[:gender].nil? and !params[:gender].empty?
     min_age = params[:min_age].to_i if !params[:min_age].nil? and !params[:min_age].empty?
     max_age = params[:max_age].to_i if !params[:max_age].nil? and !params[:max_age].empty?
@@ -87,8 +81,6 @@ class UsersController < ApplicationController
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
-        # next if user.user_avatars.first
-        # json.main_avatar    user.main_avatar.present? ? user.main_avatar.avatar.url : nil
         main_avatar   =  user.user_avatars.find_by(default:true)
         other_avatars =  user.user_avatars.where.not(default:true)
         avatar_array = Array.new
@@ -123,47 +115,13 @@ class UsersController < ApplicationController
           end
         end
 
-
-
-        # json.avatars do |avatars|
-        #   main_avatar   =  user.user_avatars.find_by(default:true)
-        #   other_avatars =  user.user_avatars.where.not(default:true)
-
-        #   # avatars.avatar_0     main_avatar.avatar.url if main_avatar and main_avatar.avatar
-        #   # avatars.avatar_1     other_avatars.first.avatar.url if other_avatars.count > 0
-        #   # avatars.avatar_2     other_avatars.last.avatar.url if other_avatars.count > 1
-        #   # avatars.avatar_0_thumbnail     main_avatar.avatar.thumb.url if main_avatar and main_avatar.avatar and main_avatar.avatar.thumb
-        #   json.avatar_0 do |avatar_0|
-        #     avatar_0.avatar    main_avatar.nil? ? '' : main_avatar.avatar.url
-        #     avatar_0.thumbnail main_avatar.nil? ? '' : main_avatar.avatar.thumb.url
-        #     avatar_0.avatar_id main_avatar.nil? ? '' : main_avatar.id
-        #     avatar_0.default   true
-        #   end
-        #   json.avatar_1 do |avatar_1|
-        #     avatar_1.avatar    other_avatars.count > 0 ? other_avatars.first.avatar.url : ''
-        #     avatar_1.avatar_id other_avatars.count > 0 ? other_avatars.first.id : ''
-        #     avatar_1.default   false
-        #   end
-        #   json.avatar_2 do |avatar_2|
-        #     avatar_2.avatar    other_avatars.count > 1 ? other_avatars.last.avatar.url : ''
-        #     avatar_2.avatar_id other_avatars.count > 1 ? other_avatars.last.id : ''
-        #     avatar_2.default   false
-        #   end
-        # end
-
-        # if Whisper.where(origin_id: current_user.id, target_id: user).present?
-        #   json.whisper_sent true
-        # else
-        #   json.whisper_sent false
-        # end
         start_time = Time.now
         json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
-        # record_found = WhisperSent.where(:origin_user_id => current_user.id).where(:target_user_id => user.id)
-        # json.whisper_sent (record_found.present? and record_found.count > 0)
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
-
+        json.same_beacon               current_user.same_beacon_as?(user.id)
+        json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
@@ -177,15 +135,27 @@ class UsersController < ApplicationController
         json.apn_token      user.apn_token
         json.layer_id       user.layer_id
 
-        # json.main_avatar_processed  user.user_avatars.main.url
-
-        # json.secondary_avatars 
+        
         json.latitude       user.latitude  
         json.longitude      user.longitude 
+
+        json.introduction_1 user.introduction_1
+        json.introduction_2 user.introduction_2
 
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
+    same_beacon_users = []
+    same_venue_users = []
+    users.each do |u|
+      if u['same_beacon'].to_s == "true"
+        same_beacon_users << u
+      elsif u['same_venue_badge'].to_s == "true"
+        same_venue_users << u
+      end
+    end
+    users = users - same_beacon_users - same_venue_users
+    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
     final_time = Time.now
     # diff_2 = final_time - end_time
     logger.info "NEWTIME: " + diff_1.to_s 

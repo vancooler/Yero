@@ -1,5 +1,6 @@
 class ActiveInVenue < ActiveRecord::Base
   belongs_to :venue
+  belongs_to :beacon
   belongs_to :user
 
 
@@ -13,7 +14,7 @@ class ActiveInVenue < ActiveRecord::Base
     self.venue.venue_network
   end
 
-  def self.enter_venue(venue, user)
+  def self.enter_venue(venue, user, beacon)
     #remove record in any other venue
     oldArray = ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id)
     if oldArray and oldArray.count > 0
@@ -28,12 +29,14 @@ class ActiveInVenue < ActiveRecord::Base
     pArray = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
     if pArray and pArray.count > 0
       v = pArray.first
+      v.beacon = beacon
       result = v.update_activity
     else
       v = ActiveInVenue.new
       v.venue = venue
       v.user = user
       v.enter_time = Time.now
+      v.beacon = beacon
       v.last_activity = Time.now
       result = v.save!
     end

@@ -1,5 +1,5 @@
 class UserAvatarsController < ApplicationController
-  before_action :authenticate_api
+  before_action :authenticate_api, except: [:create_avater]
   skip_before_filter  :verify_authenticity_token
 
   def set_default
@@ -107,6 +107,24 @@ class UserAvatarsController < ApplicationController
       end
       user_info['avatars'] = avatars
       render json: success(user_info)
+      # render json: success(current_user.to_json(false))
+    else
+      render json: error(avatar.errors)
+    end
+  end
+
+
+  ###################################################################
+  #
+  # Just create avatar before user register and return avatar id
+  #
+  ###################################################################
+  def create_avater
+    avatar = UserAvatar.new(default: true)    
+    avatar.avatar = params[:avatar]
+    if avatar.save
+      
+      render json: success(avatar)
       # render json: success(current_user.to_json(false))
     else
       render json: error(avatar.errors)
