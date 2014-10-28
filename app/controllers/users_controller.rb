@@ -174,9 +174,9 @@ class UsersController < ApplicationController
     Rails.logger.debug sign_up_params.inspect
     Rails.logger.debug params.inspect
     tmp_params = sign_up_params
-    tmp_params[:user].delete('avatar_id')
+    tmp_params["user"].delete('avatar_id')
     new_params = sign_up_params
-    new_params[:user] = tmp[:user]
+    new_params["user"] = tmp_params["user"]
     user_registration = UserRegistration.new(new_params)
     
     user = user_registration.user
