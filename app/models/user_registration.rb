@@ -2,6 +2,8 @@ class UserRegistration
   attr_reader :user
   def initialize(user_params)
     @user = User.new(user_params)
+    p "PARAMS:" 
+    p user_params
     p @user 
     p "user has been initialized"
     p @user.inspect

@@ -171,14 +171,33 @@ class UsersController < ApplicationController
   end
 
   def sign_up
-    user_registration = UserRegistration.new(sign_up_params)
+    Rails.logger.info "PARAMETERS: "
+    Rails.logger.debug sign_up_params.inspect
+    Rails.logger.debug params.inspect
+    tmp_params = sign_up_params
+    tmp_params.delete('avatar_id')
+    
+    user_registration = UserRegistration.new(tmp_params)
+    
     user = user_registration.user
 
     if user_registration.create
+      #signup with the avatar id
+      avatar_id = sign_up_params[:avatar_id]
+      avatar = UserAvatar.find(avatar_id)
+      avatar.user_id = user.id
+      avatar.save
       response = user.to_json(true)
-      thumb = response["avatars"].first['avatar']
-      response["avatars"].first['thumbnail'] = thumb
-      response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      user_avatar = Hash.new
+      user_avatar['thumbnail'] = avatar.avatar.thumb.url
+      user_avatar['avatar'] = avatar.avatar.url
+      response["avatars"] = [user_avatar]
+
+      # The way in one step
+      # response = user.to_json(true)
+      # thumb = response["avatars"].first['avatar']
+      # response["avatars"].first['thumbnail'] = thumb
+      # response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
       render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
@@ -367,7 +386,8 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
+    # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
   end
 end
 
