@@ -1,0 +1,173 @@
+@import "compass/css3";
+@import "foundation";
+
+// type
+strong {
+	font-family: 'GothamBook';
+}
+.hero h5,
+.feature h3,
+.feature h4 {
+	text-transform: none;
+}
+
+.feature h4 {
+	margin-bottom: 0.3rem;
+}
+
+.hero h5 em {
+	@media #{$medium-up} {
+		display: block;
+	}
+		display: inline;
+}
+
+
+//header
+
+.top-bar-section ul li {
+	margin-right: 5px;
+
+	a:not(.button) {
+		line-height: 3 !important;
+		margin-top: 12px;
+		border-radius: 5px;
+	}
+	a.active {
+		border: 1px solid #111;
+	}
+	&.social-link a {
+		// border-radius: 50%;
+		// padding: 5px !important;
+		margin-top: 15px;
+		background: none;
+		background: url(<%= asset_path 'social.png' %>) no-repeat !important;
+		background-color: none;
+		width: 30px;
+		height: 35px;
+
+		&.fb {
+			background: url(<%= asset_path 'social.png' %>) no-repeat -37px 0px !important;
+		}
+		&.tw {
+			background-position: 0px 40px;
+		}
+		&.ig {
+			background: url(<%= asset_path 'social.png' %>) no-repeat -77px 0px !important;
+		}
+		&.yt {
+			background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
+		}
+	}
+}
+
+.home-link span {
+	font-size: 0;
+}
+
+
+// homepage features
+.hero,
+.feature,
+.email-signup {
+	padding: 100px 0;
+}
+
+.page-header {
+	padding: 100px 0px 50px;
+}
+.email-signup {
+	background: #ebedf2;
+}
+
+.feature:first-of-type {
+	margin-top: 0px !important;
+}
+.feature h4 {
+	@media #{$medium-up} {
+		margin-top: 200px;
+	}
+
+}
+
+.hero h2 {
+	@media #{$medium-up} {
+		margin-top: 150px;
+	}
+}
+
+.hero-download-link {
+	display: block;
+	margin-top: 8rem;
+	@media #{$small-only} {
+		margin-top: 10px;
+		margin-bottom: 20px;
+	}
+}
+
+
+//inputs
+.city-input,
+.email-input {
+	input[type="text"],
+	input[type="email"] {
+		padding-left: 50px;
+	}
+}
+.city-input input[type="text"],
+.city-input input[type="text"]:focus {
+	background: url(<%= asset_path 'marker.png' %>) no-repeat 4%;
+	background-size: 8%;
+	background-color: #fff;
+}
+.email-input input[type="email"],
+.email-input input[type="email"]:focus {
+	background: url(<%= asset_path 'email.png' %>) no-repeat 4%;
+	background-size: 8%;
+	background-color: #fff;
+}
+
+
+
+// footer
+
+.page-footer {
+	padding-top: 50px;
+}
+.footer-links {
+	list-style-type: none;
+	li {
+		@media #{$medium-up} {
+			display: inline-block;
+			text-align: center;
+			padding: 10px 25px;
+		}
+	 padding: 10px 0;
+	}
+}
+
+.download {
+	margin: 100px auto;
+}
+
+
+// page header
+.page-header {
+
+}
+
+// faq
+.faq-item {
+	margin-bottom: 20px;
+}
+.faq-question {
+	display: block;
+	margin-bottom: 15px;
+}
+.faq-answer {
+
+}
+
+.how-it-works .feature {
+	padding: 20px 0;
+}

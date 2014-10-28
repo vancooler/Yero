@@ -1,3 +1,5 @@
+<% body_class "home" %>
+<% content_for :title , "Home" %>
 <div class="hero medium-text-right">
 	<div class="row">
 		<div class="medium-7 columns">
@@ -7,9 +9,12 @@
 				See who's partying tonight in your city
 				<em>without having to be there.</em>
 			</h5>
+			<a href="" class="hero-download-link">
+				<%= image_tag "appstore.png"%>
+			</a>
 		</div>
-		<div class="medium-5 columns">
-			phone app image
+		<div class="medium-3 columns left">
+			<%= image_tag "hero-phone.png", :class=>'hero-img' %>
 		</div>
 	</div>
 </div>
@@ -27,10 +32,10 @@
 			</p>
 			<div class="form">
 				<form action="">
-				<div class="medium-5 columns">
+				<div class="medium-5 columns city-input">
 					<input type="text" placeholder="Your City">
 				</div>
-				<div class="medium-5 columns">
+				<div class="medium-5 columns email-input">
 					<input type="email" placeholder="Email">
 				</div>
 				<div class="medium-2 columns">
@@ -100,8 +105,10 @@
 
 <div class="download text-center">
 	<div class="row">
-		<div class="medium-6 medium-centered columns">
-			download button
+		<div class="medium-4 medium-centered columns">
+			<a href="">
+				<%= image_tag "appstore.png" %>
+			</a>
 		</div>
 	</div>
 </div>

@@ -25,7 +25,12 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'home#index'
+  # static pages below:
   get 'faq', to: 'home#faq'
+  get 'how-it-works', to: 'home#how-it-works'
+  get 'privacy', to: 'home#privacy'
+  get 'about', to: 'home#about'
+  get 'terms-of-use', to: 'home#terms-of-use'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/update',                 to: 'users#update_settings'

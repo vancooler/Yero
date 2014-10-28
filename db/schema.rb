@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140925160202) do
+ActiveRecord::Schema.define(version: 20141027112733) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20140925160202) do
     t.integer  "user_id",                                       null: false
     t.datetime "last_activity", default: '2014-09-05 19:26:31', null: false
     t.datetime "enter_time",    default: '2014-09-05 19:26:31', null: false
+    t.integer  "beacon_id"
   end
 
   create_table "activities", force: true do |t|
