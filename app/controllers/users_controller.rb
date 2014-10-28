@@ -171,19 +171,19 @@ class UsersController < ApplicationController
   end
 
   def sign_up
+    Rails.logger.info "PARAMETERS: "
     Rails.logger.debug sign_up_params.inspect
     Rails.logger.debug params.inspect
     tmp_params = sign_up_params
-    tmp_params["user"].delete('avatar_id')
-    new_params = sign_up_params
-    new_params["user"] = tmp_params["user"]
-    user_registration = UserRegistration.new(new_params)
+    tmp_params.delete('avatar_id')
+    
+    user_registration = UserRegistration.new(tmp_params)
     
     user = user_registration.user
 
     if user_registration.create
       #signup with the avatar id
-      avatar_id = sign_up_params[:user][:avatar_id]
+      avatar_id = sign_up_params[:avatar_id]
       avatar = UserAvatar.find(avatar_id)
       avatar.user_id = user.id
       avatar.save
