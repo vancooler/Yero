@@ -31,7 +31,7 @@ $xxlarge-only: "#{$screen} and (min-width:#{lower-bound($xxlarge-range)}) and (m
 
 
 .top-bar {
-  border-bottom: 1px solid #ddd;
+  // border-bottom: 1px solid #ddd;
   z-index: 999;
   position: relative;
   a {

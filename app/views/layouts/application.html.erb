@@ -13,11 +13,11 @@
   </head>
 
   <body data-no-turbolink>
-    <div class="contain-togrid sticky">
+    <div class="contain-to-grid sticky top-header">
       <nav class="top-bar" data-topbar data-options="sticky_on: large">
         <ul class="title-area">
           <li class="name">
-            <h1><a href="#">WHISPR</a></h1>
+            <h1><a href="/">YERO</a></h1>
           </li>
           <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
         </ul>
@@ -30,12 +30,36 @@
             <%# else %>
               <li class="active"><%#= link_to "sign in", new_venue_session_path %></li>
             <%# end %>
+            <li><a href="/faq">FAQ</a></li>
+            <li><a href="#">How it works</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">For Venues</a></li>
+            <li class="divider"></li>
+            <li class="social-link"><a href="">FB</a></li>
+            <li class="social-link"><a href="">TW</a></li>
+            <li class="social-link"><a href="">IG</a></li>
+            <li class="social-link"><a href="">YT</a></li>
           </ul>
+
         </section>
       </nav>
     </div>
 
     <%= yield %>
+
+    <footer class="page-footer">
+      <div class="row">
+        <div class="medium-8 medium-centered columns">
+          <ul class="footer-links medium-text-center">
+            <li><a href="about">About</a></li>
+            <li><a href="">We're Hiring</a></li>
+            <li><a href="">Terms of Use</a></li>
+            <li><a href="">Privacy Policy</a></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
     <%= javascript_include_tag "application" %>
     <%= yield :javascript_library %>
     <%= yield :javascript_inline %>

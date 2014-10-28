@@ -1,0 +1,64 @@
+@import "compass/css3";
+@import "foundation";
+
+// type
+.hero h5,
+h3 {
+	text-transform: none;
+}
+
+.hero h5 em {
+	@media #{$medium-up} {
+		display: block;
+	}
+		display: inline;
+}
+
+
+//header
+
+.top-bar-section li {
+	margin-right: 5px;
+
+	a:not(.button) {
+		line-height: 3 !important;
+		margin-top: 12px;
+		border-radius: 5px;
+	}
+	&.active:not(.has-form) a {
+		border: 1px solid #111;
+	}
+	&.social-link a {
+		// border-radius: 50%;
+		// padding: 5px !important;
+	}
+}
+
+
+// homepage features
+.hero,
+.feature,
+.email-signup{
+	padding: 100px 0;
+}
+.email-signup {
+	background: #ebedf2;
+}
+
+
+// footer
+
+.page-footer {
+	padding-top: 50px;
+}
+.footer-links {
+	list-style-type: none;
+	li {
+		@media #{$medium-up} {
+			display: inline-block;
+			text-align: center;
+			padding: 10px 25px;
+		}
+	 padding: 10px 0;
+	}
+}

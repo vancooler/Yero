@@ -33,8 +33,8 @@
 // $include-html-grid-classes: $include-html-classes;
 // $include-xl-html-grid-classes: false;
 
-// $row-width: rem-calc(1000);
-// $total-columns: 12;
+$row-width: rem-calc(1200);
+$total-columns: 12;
 
 // Global
 
@@ -54,12 +54,13 @@ $body-font-family: "GothamThin", Arial, sans-serif;
 // $default-float: left;
 
 // We use these as default colors throughout
-// $primary-color: #008CBA;
-// $secondary-color: #e7e7e7;
+$primary-color: #2effa5;
+$secondary-color: #939292;
 // $alert-color: #f04124;
 // $success-color: #43AC6A;
 // $warning-color: #f08a24;
 // $info-color: #a0d3e8;
+$btn-color: #2effa5;
 
 // We use these to make sure border radius matches unless we want it different.
 // $global-radius: 3px;
@@ -138,7 +139,7 @@ $header-text-rendering: optimizeLegibility;
 
 // We use these to style anchors
 // $anchor-text-decoration: none;
-// $anchor-font-color: $primary-color;
+$anchor-font-color: $secondary-color;
 // $anchor-font-color-hover: scale-color($primary-color, $lightness: -14%);
 
 // We use these to style the <hr> element
@@ -309,7 +310,7 @@ $button-lrg: rem-calc(16);
 
 // We use these to control button text styles.
 // $button-font-family: $body-font-family;
-// $button-font-color: #fff;
+$button-font-color: #000; //#fff;
 // $button-font-color-alt: #333;
 // $button-font-tny: rem-calc(11);
 // $button-font-sml: rem-calc(13);
@@ -324,7 +325,7 @@ $button-lrg: rem-calc(16);
 // We use these to control button border styles.
 // $button-border-width: 0px;
 // $button-border-style: solid;
-// $bg: $primary-color;
+$bg: $btn-color; //$primary-color;
 // $button-border-color: scale-color($bg, $lightness: $button-function-factor);
 
 // We use this to set the default radius used throughout the core.
@@ -483,17 +484,17 @@ $form-label-small-transform: capitalize;
 $form-label-bottom-margin: 1.2rem;
 // $input-font-family: inherit;
 $input-font-color: rgba(0,0,0,0.65);
-// $input-font-size: rem-calc(14);
+$input-font-size: rem-calc(19);
 // $input-bg-color: #fff;
 $input-focus-bg-color: scale-color(#000, $lightness: 99%);
-// $input-border-color: scale-color(#fff, $lightness: -20%);
+$input-border-color: scale-color(#fff, $lightness: -20%);
 // $input-focus-border-color: scale-color(#fff, $lightness: -40%);
-// $input-border-style: solid;
-// $input-border-width: 1px;
+$input-border-style: solid;
+$input-border-width: 1px;
 // $input-border-radius: $global-radius;
 // $input-disabled-bg: #ddd;
-$input-box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
-$input-include-glowing-effect: false;
+$input-box-shadow: none; //inset 0 1px 2px rgba(0,0,0,0.1);
+$input-include-glowing-effect: true;
 
 // We use these to style the fieldset border and spacing.
 // $fieldset-border-style: solid;
@@ -1142,11 +1143,11 @@ $input-include-glowing-effect: false;
 // $include-html-top-bar-classes: $include-html-classes;
 
 // Background color for the top bar
-$topbar-bg-color: #fff;
+$topbar-bg-color: #2effa5;
 // $topbar-bg: $topbar-bg-color;
 
 // Height and margin
-$topbar-height: 45px;
+$topbar-height: 65px;
 // $topbar-margin-bottom: 0;
 
 // Controlling the styles for the title in the top bar
@@ -1154,7 +1155,7 @@ $topbar-height: 45px;
 // $topbar-title-font-size: rem-calc(17);
 
 // Style the top bar dropdown elements
-// $topbar-dropdown-bg: #333;
+$topbar-dropdown-bg: #2effa5;
 // $topbar-dropdown-link-color: #fff;
 // $topbar-dropdown-link-bg: #333;
 // $topbar-dropdown-link-weight: normal;
@@ -1165,17 +1166,17 @@ $topbar-height: 45px;
 // Set the link colors and styles for top-level nav
 $topbar-link-color: #111;
 // $topbar-link-color-hover: #fff;
-// $topbar-link-color-active: #fff;
+$topbar-link-color-active: #111; //#fff;
 // $topbar-link-color-active-hover: #fff;
 // $topbar-link-weight: normal;
 // $topbar-link-font-size: rem-calc(13);
 // $topbar-link-hover-lightness: -10%; // Darken by 10%
-// $topbar-link-bg-hover: #272727;
+$topbar-link-bg-hover: $secondary-color; //#272727;
 // $topbar-link-bg-active: $primary-color;
-// $topbar-link-bg-active-hover: scale-color($primary-color, $lightness: -14%);
+$topbar-link-bg-active-hover: scale-color($secondary-color, $lightness: -14%);
 // $topbar-link-font-family: $body-font-family;
 $topbar-link-text-transform: uppercase;
-$topbar-link-padding: $topbar-height / 2;
+$topbar-link-padding: $topbar-height / 4;
 
 // $topbar-button-font-size: 0.75rem;
 // $topbar-button-top: 7px;
