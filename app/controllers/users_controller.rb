@@ -176,7 +176,7 @@ class UsersController < ApplicationController
 
     if user_registration.create
       #signup with the avatar id
-      avatar_id = params[:avatar_id]
+      avatar_id = params[:user][:avatar_id]
       avatar = UserAvatar.find(avatar_id)
       avatar.user_id = user.id
       avatar.save
@@ -380,7 +380,7 @@ class UsersController < ApplicationController
 
   def sign_up_params
     # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender)
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
   end
 end
 
