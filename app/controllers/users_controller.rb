@@ -171,7 +171,10 @@ class UsersController < ApplicationController
   end
 
   def sign_up
+    Rails.logger.debug sign_up_params.inspect
+    Rails.logger.debug params.inspect
     user_registration = UserRegistration.new(sign_up_params)
+    
     user = user_registration.user
 
     if user_registration.create
