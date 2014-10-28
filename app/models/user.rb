@@ -5,7 +5,7 @@ class User < ActiveRecord::Base
   has_many :favourite_venues
   has_many :venues, through: :favourite_venues
   has_many :user_avatars
-  accepts_nested_attributes_for :user_avatars
+  # accepts_nested_attributes_for :user_avatars
   has_one  :participant
   has_many :activities, dependent: :destroy
   has_many :locations
