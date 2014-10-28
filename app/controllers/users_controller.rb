@@ -380,7 +380,7 @@ class UsersController < ApplicationController
 
   def sign_up_params
     # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender)
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
   end
 end
 
