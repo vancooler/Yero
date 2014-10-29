@@ -116,7 +116,8 @@ class WhispersController < ApplicationController
   end
 
   def api_decline_all_chat
-    result = WhisperNotification.decline_all_chat(current_user)
+    ids = params[:notification_ids]
+    result = WhisperNotification.decline_all_chat(current_user, ids)
 
     if result
       render json: success 

@@ -277,20 +277,22 @@ class WhisperNotification < AWS::Record::HashModel
     
   end
 
-  def self.decline_all_chat(user)
+  def self.decline_all_chat(user, ids_array)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2")
+    items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0)
     items.each do |item|
       attributes = item.attributes.to_h
       accepted = attributes['accepted']
-      if accepted == 0
+      id = attributes['id']
+      if ids_array.include?(id) 
         item.attributes.update do |u|
           u.set 'accepted' => 2          
         end
       end
     end
+    
     return true
   end
 
