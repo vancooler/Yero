@@ -184,15 +184,19 @@ class UsersController < ApplicationController
     if user_registration.create
       #signup with the avatar id
       avatar_id = sign_up_params[:avatar_id]
-      avatar = UserAvatar.find(avatar_id)
-      avatar.user_id = user.id
-      avatar.save
       response = user.to_json(true)
-      user_avatar = Hash.new
-      user_avatar['thumbnail'] = avatar.avatar.thumb.url
-      user_avatar['avatar'] = avatar.avatar.url
-      response["avatars"] = [user_avatar]
-
+      response["avatars"] = Array.new
+      if avatar_id.to_i > 0
+        avatar = UserAvatar.find(avatar_id.to_i)
+        if !avatar.nil?
+          avatar.user_id = user.id
+          avatar.save
+          user_avatar = Hash.new
+          user_avatar['thumbnail'] = avatar.avatar.thumb.url
+          user_avatar['avatar'] = avatar.avatar.url
+          response["avatars"] = [user_avatar]
+        end
+      end
       # The way in one step
       # response = user.to_json(true)
       # thumb = response["avatars"].first['avatar']
