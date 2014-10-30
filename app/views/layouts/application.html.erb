@@ -8,6 +8,8 @@
 
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "vendor/modernizr" %>
+    <%= favicon_link_tag(source='favicon.ico') %>
+    <%= favicon_link_tag('/favicon.png', rel: 'apple-touch-icon', type: 'image/png') %>
 
     <%= csrf_meta_tags %>
   </head>

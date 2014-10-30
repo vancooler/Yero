@@ -59,6 +59,11 @@ strong {
 			background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
 		}
 	}
+	&.social-link {
+			@media #{$small-only} {
+			display: inline-block;
+		}
+	}
 }
 
 .home-link span {
