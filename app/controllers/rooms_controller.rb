@@ -20,7 +20,7 @@ class RoomsController < ApplicationController
 
     #log in aws dynamoDB
     UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
-    
+    first_entry_flag = 0
     #check whether the user entered this venue today, if not push greeting notification
     if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
       
@@ -29,6 +29,7 @@ class RoomsController < ApplicationController
       # greeting_message = "Welcome " + current_user.first_name + "!"
       # n1.send_push_notification_to_target_user(greeting_message)
       
+      first_entry_flag = 1
       venue_message = "welcome to " + beacon.room.venue.name + "! Open this chat to learn more about tonight. (swipe to view message)"
       n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1")
       
@@ -41,9 +42,11 @@ class RoomsController < ApplicationController
       current_user.save
       n2.send_push_notification_to_target_user(venue_message)
     end
+    first_entry = Hash.new
+    first_entry = {"First in this venue tonight" => first_entry_flag}
 
     if result
-      render json: success
+      render json: success(first_entry)
     else
       render json: error("Could not enter.")
     end
