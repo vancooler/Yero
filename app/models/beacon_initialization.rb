@@ -47,12 +47,22 @@ class BeaconInitialization
       return venue
     end
     def create_room(room_name, venue_id)
-      r = Room.find_or_create_by(name: room_name, venue_id: venue_id)
+      r = Room.find_by(name: room_name, venue_id: venue_id) || Room.new
+      if r.new_record?
+        r.name = room_name
+        r.venue_id = venue_id
+        r.save!
+      end
       Rails.logger.info "R: " + r.name
       return r
     end
     def create_beacon(beacon_name, room_id)
-      beacon = Beacon.find_or_create_by(key: beacon_name, room_id: room_id)
+      beacon = Beacon.find_by(key: beacon_name, room_id: room_id) || Beacon.new
+      if beacon.new_record?
+        beacon.key = beacon_name,
+        beacon.room_id = room_id
+        beacon.save!
+      end
       Rails.logger.info "B: " + beacon.key
       return beacon
     end
