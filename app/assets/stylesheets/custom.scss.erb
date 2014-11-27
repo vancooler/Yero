@@ -5,12 +5,24 @@
 strong {
 	font-family: 'GothamBook';
 }
+.hero {
+	background: url(<%= asset_path 'bg.png' %>) no-repeat center;
+	background-position: cover;
+}
 .hero h5,
 .feature h3,
 .feature h4 {
 	text-transform: none;
 }
 
+.hero {
+	h2, h5, p {
+		color: #fff;
+	}
+	p {
+		letter-spacing: 0.1em;
+	}
+}
 .feature h4 {
 	margin-bottom: 0.3rem;
 }
@@ -24,7 +36,12 @@ strong {
 
 
 //header
-
+.top-bar-section .right{
+	@media #{$medium-up} {
+		min-width: 475px;
+		// width: 375px !important;
+	}
+}
 .top-bar-section ul li {
 	margin-right: 5px;
 
@@ -59,6 +76,9 @@ strong {
 			background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
 		}
 	}
+	@media #{$small-only} {
+		padding: 0 5px;
+	}
 	&.social-link {
 			@media #{$small-only} {
 			display: inline-block;
@@ -73,11 +93,13 @@ strong {
 
 // homepage features
 .hero,
-.feature,
-.email-signup {
+.email-signup,
+.padding {
 	padding: 100px 0;
 }
-
+.feature {
+	// min-height: 650px;
+}
 .page-header {
 	padding: 100px 0px 50px;
 }
@@ -92,18 +114,75 @@ strong {
 	@media #{$medium-up} {
 		margin-top: 200px;
 	}
+}
+.nightlife {
+	padding-top: 20px;
+}
+.matching,
+.network {
+	height: 500px;
+	position: relative;
+	img {
+		position: absolute;
+		left: 55%;
+		bottom: 0px;
+	}
+	@media #{$small-only} {
+		height: 600px;
+		img {
+			right: 10%;
+			bottom: 0px;
+			height: 300px;
+			width: auto;
+		}
+	}
+}
+.chatting {
+	height: 500px;
+	position: relative;
+	img {
+		position: absolute;
+		bottom: 0px;
+	}
+	.chats-img {
+		left: 10%;
+	}
+	.chatting-img {
+		left: 30%;
+	}
+	@media #{$small-only} {
+		height: 600px;
+		img {
+			bottom: 0px;
+			height: 300px;
+			width: auto;
+		}
+		.chats-img {
+			left: 5%;
+		}
+		.chatting-img {
+			right: 2%;
+		}
+	}
+}
+.grey {
+	background-color: #f2f2f2;
+}
 
+.details {
+	margin-top: 15%;
 }
 
 .hero h2 {
 	@media #{$medium-up} {
-		margin-top: 150px;
+		margin-top: 175px;
 	}
 }
 
 .hero-download-link {
 	display: block;
-	margin-top: 8rem;
+	margin-top: 4rem;
+	margin-bottom: 2rem;
 	@media #{$small-only} {
 		margin-top: 10px;
 		margin-bottom: 20px;
@@ -175,4 +254,20 @@ strong {
 
 .how-it-works .feature {
 	padding: 20px 0;
+}
+
+// buttons
+.button-wide {
+	width: 300px;
+}
+.button-arr:after {
+	content: '';
+	background: url(<%= asset_path 'arrow.png' %>) no-repeat center;
+	background-size: cover;
+	height: 15px;
+	width: 10px;
+	position: absolute;
+	right: 20px;
+	top: 15px;
+
 }

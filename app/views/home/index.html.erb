@@ -1,25 +1,25 @@
 <% body_class "home" %>
 <% content_for :title , "Home" %>
-<div class="hero medium-text-right">
+<div class="hero medium-text-center">
 	<div class="row">
-		<div class="medium-7 columns">
-			<h2>Next Level Nightlife</h2>
-			<h5>
-				YERO is the newest and fastest way to experience nightlife.<br>
-				See who's partying tonight in your city
+		<div class="medium-8 medium-centered columns">
+			<h2>Make it a Night to Remember</h2>
+			<p>
+				YERO is the newest way to experience nightlife.<br>
+				See who's partying tonight in your city<br>
 				<em>without having to be there.</em>
-			</h5>
+			</p>
 			<a href="" class="hero-download-link">
 				<%= image_tag "appstore.png"%>
 			</a>
 		</div>
-		<div class="medium-3 small-8 columns left">
+		<!-- <div class="medium-3 small-8 columns left">
 			<%= image_tag "hero-phone.png", :class=>'hero-img' %>
-		</div>
+		</div> -->
 	</div>
 </div>
 
-<div class="email-signup text-center">
+<!-- <div class="email-signup text-center">
 	<div class="row">
 		<div class="medium-8 medium-centered columns">
 			<h3>
@@ -45,27 +45,31 @@
 			</div>
 		</div>
 	</div>
-</div>
+</div> -->
 
-<div class="feature medium-text-left">
+<div class="feature nightlife medium-text-left">
 	<div class="row">
-		<div class="medium-6 medium-offset-6 columns">
+		<div class="medium-4 medium-offset-2 columns">
+			<%= image_tag "nextlevel.png" %>
+		</div>
+		<div class="medium-6 columns details">
 			<h3>
-				Tonight's Network
+				Next Level Nightlife
 			</h3>
 			<p>
-				YERO turns clubs and lounges into network access points. <br>
-				This way, only people verified to be out tonight are displayed.
+				YERO is a social app designed for tonight. <br>
+				Everyone you see is inside a club, lounge or festival<br>
+				&ndash; right now.
 			</p>
 		</div>
 	</div>
 </div>
 
-<div class="feature medium-text-right">
+<div class="feature medium-text-right grey matching">
 	<div class="row">
-		<div class="medium-6 columns">
+		<div class="medium-5 medium-offset-1 columns details">
 			<h3>
-				Less Sketchy, less Awkward
+				Matching Made Easy
 			</h3>
 			<p>
 				GPS-based flirting apps can take weeks to meet up. <br>
@@ -73,34 +77,43 @@
 				Now that awkward first impression isn't so awkward.
 			</p>
 		</div>
+		<div class="medium-4 medium-offset-1 left columns">
+		</div>
 	</div>
+	<%= image_tag "matching.png" %>
 </div>
 
-<div class="feature medium-text-left">
+<div class="feature chatting medium-text-left">
 	<div class="row">
-		<div class="medium-6 medium-offset-6 columns">
+		<div class="medium-6 medium-offset-6 columns details">
 			<h3>
-				Flirt Faster and Farther
+				Venue-based Chatting
 			</h3>
 			<p>
-				Reach out to someone without having to think twice about approaching them. Send and receive anonymous chat requests with anyone in the same venue or another venue nearby.
+				Meet someone new inside a nightlife environment <br>
+				surrounded by your friends, drinks and music <br>
+				Breaking the ice has never been so easy.
 			</p>
 		</div>
 	</div>
+	<%= image_tag "chats.png", :class=>'chats-img' %>
+	<%= image_tag "chatting.png", :class=>'chatting-img' %>
 </div>
 
-<div class="feature medium-text-right">
+<div class="feature medium-text-right network grey">
 	<div class="row">
-		<div class="medium-6 columns">
+		<div class="medium-6 columns details">
 			<h3>
-				Time Limited
+				Tonight's Network
 			</h3>
 			<p>
-				YERO clears the network each night so that a new night can begin. <br>
-				Don't worry - you have 12 hours before it happens.
+				YERO runs every night from 8pm until 8 am.<br>
+				At 8 am, the network is cleared so that a new night can begin. <br>
+				This way, the network stays exclusive to tonight.
 			</p>
 		</div>
 	</div>
+	<%= image_tag "tonight.png", :class=>'tonight-img' %>
 </div>
 
 <div class="download text-center">
