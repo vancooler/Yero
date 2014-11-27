@@ -55,6 +55,19 @@
 
     <%= yield %>
 
+    <footer class="page-footer">
+      <div class="row">
+        <div class="medium-8 medium-centered columns">
+          <ul class="footer-links medium-text-center">
+            <li><%= link_to('About', '/about', :class=>'nav-item '+check_active('/about')) %></li>
+            <li><%= link_to('We\'re Hiring', '/careers', :class=>'nav-item '+check_active('/careers')) %></li>
+            <li><%= link_to('Terms of Use', '/terms-of-use', :class=>'nav-item '+check_active('/terms-of-use')) %></li>
+            <li><%= link_to('Privacy Policy', '/privacy', :class=>'nav-item '+check_active('/privacy')) %></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
     </main>
     <%= javascript_include_tag "application" %>
     <%= yield :javascript_library %>
