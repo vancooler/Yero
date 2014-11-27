@@ -84,7 +84,7 @@ class UserRegistration
               nce: @user.nonce
             }
         end
-        layer_private_key = "MIICWwIBAAKBgFuwNhDvT1QsxCiIaC2zLuc4mHcVrQgmcyEkLgX8pf22wTblFRMyivscGyCZ2IkAHxwCdea8M1FdTMEuW3k52tkpXl3KZVx9E+DygqAJOBycaoxZqaVQWnXAdKJupQbtJZGjJW0bGt/vPwibnc/YwWwoK4l/YhVYzr+2LKijXNX/AgMBAAECgYA4Psl77AIDBg8zOjKGTlQofXxyGPbzd/rKStJ807bUBCdU0IT0KN4/Gse9YQMHT+7FlPDUoYDtmcl6/EAbBpWsQQql3qFVTBY8hf1bNuQwu9zkw3bhAQLYXeRorlieaNVrTqquwn/jc+poBhXgYyCeYVwDpzRvySTVU4YFUzmDgQJBALc71uReb2cdvSsCKZDVw3YQaHtau02vlGiqitkzsTzCsk9d5J4kLhkVzWEz/167ny34Sda1bspwpCGOzQbHcL8CQQCAGY4xswamPLCXw5iRT6LRNLAR3QGIiUnOc+Bbv+T3I35xQWhs+gTXL+lUjAS/usrh7I+Y7tR7hy7Dm6FQXqrBAkAXQkpJ3M7pWPYNQo4CK5BPKVAJ8H98IgCFtLhBT/V8j/5QYsvFYzRSzNiwMQiGfux6ylydG5S/r8K128mcxa5DAkB4yqBA0RXGD5hdozzsWPGo4EverE3T19FW8gFvwsU/HaMPXKQBjsiduToGVXns6VCCNTU6+oo2aUR5gvlb9ciBAkEAil5BP/x9GgL/xOcKWI/rdGTXsvVc6OZz8onrSeJpQX7f6VPJFubF28fiWGW4u7yKhMonmNaUSLCiR/wBRpHFSw=="
+        layer_private_key = "MIICWwIBAAKBgHy9T7wGqCcrvPDkYysQT+yeAGAofuGsnfb92KrUmnWziazsFP1IuRFXZ3ISi0cH+YOzwooCU6g9f1jRgHfl29UB7v4DneUMcAnuA78XamIUcDSByBcLRtqmW/t+8s/POSzmz3GYkTn2q443rW+e25lSp+SL1KrBQue1gMkdWnUvAgMBAAECgYABXOAeIcR8iRHLX/NlaQw2fZNreYXJWWVwaV2QoDn/xzJd3UZtbfn3oojSyjkTUZb8RV5+u3/GesWFZuSMasp4CV8e8XB40pWYOXYu3s0FY0Qv3JlN/q7XUt44k+PgF0U6XxGFQ+FdzAxxRXwu7+A78Gbj8RSalCnkQDh2bZ5zQQJBAMAztdiRcOvyjsMlnipur5phbWgsVCalQPYzuxphEa6+fwvF7Swpfs8X8D+tSbkJMJ+ArPDbMPNym2ZQvXgvOVcCQQCmJQB1oGHfRLNIClhZtvtQBRQMUeU4tlXb8KxUrOwymY5JMt90C5nBO+el9fxm1VXhVko1PNDFEIHmh8TSnsPpAkB07AAnqvKC1p+6X1wEfCkfRT2FLdJTYBxQqc+ckIhtQT2QL+vD/cpCuVFRq105zzlhDqomK3Fv57xZVaytPC0pAkAReDSLKbkAy+159rSBgm78Y/xOq1HJ28o9XRoRsTkIvQKsCbBbOFkLa2wZFDtc6LOmBPe6j1F4VxsBjWcRqmX5AkEAplz5LeaZ17gEYugLUVKSy5PoGw16CQ+pkXrcswOuA2AE3qFh+txHMIre/cZfavYedxbvIhlWMSYfx33r1XPD3g=="
         private_key = OpenSSL::PKey::RSA.new(Base64.decode64(layer_private_key)) #ENV['LAYER_PRIVATE_KEY'])
 
         @jwt = JSON::JWT.new(claim)
@@ -92,7 +92,7 @@ class UserRegistration
         @jwt.header['typ'] = 'JWS'
         @jwt.header['cty'] = 'layer-eit;v=1'
         if Rails.env == "development"
-          @jwt.header['kid'] = '8ef75be4-2182-11e4-b157-301601003ad4' #ENV['LAYER_AUTH_PUB_KEY']
+          @jwt.header['kid'] = '25611206-65e8-11e4-a3ec-e6f6000002da' #ENV['LAYER_AUTH_PUB_KEY']
         else
           @jwt.header['kid'] = ENV['LAYER_AUTH_PUB_KEY']
         end
