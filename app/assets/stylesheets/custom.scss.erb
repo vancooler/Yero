@@ -21,6 +21,7 @@ strong {
 	}
 	p {
 		letter-spacing: 0.1em;
+		font-family: "GothamThin";
 	}
 }
 .feature h4 {
@@ -38,9 +39,13 @@ strong {
 //header
 .top-bar-section .right{
 	@media #{$medium-up} {
-		min-width: 475px;
+		width: 475px;
 		// width: 375px !important;
 	}
+
+	// .social-link {
+	// 	display: none;
+	// }
 }
 .top-bar-section ul li {
 	margin-right: 5px;
@@ -88,6 +93,11 @@ strong {
 
 .home-link span {
 	font-size: 0;
+}
+.top-bar .name h1 {
+	a.home-link {
+		padding: 0px;
+	}
 }
 
 

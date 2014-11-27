@@ -41,7 +41,7 @@ $total-columns: 12;
 // We use these to control various global styles
 // $body-bg: #fff;
 // $body-font-color: #222;
-$body-font-family: "GothamThin", Arial, sans-serif;
+$body-font-family: "GothamLight", Arial, sans-serif;//"GothamThin", Arial, sans-serif;
 // $body-font-weight: normal;
 // $body-font-style: normal;
 
@@ -73,6 +73,11 @@ $global-radius: 10px;
 
 // $column-gutter: rem-calc(30);
 
+$small-range: (0em, 40em);
+$medium-range: (40.063em, 64em);
+$large-range: (64.063em, 90em);
+$xlarge-range: (90.063em, 120em);
+$xxlarge-range: (120.063em, 99999999em);
 // Media Query Ranges
 // Legacy
 // $small: $medium-up;
@@ -1199,8 +1204,8 @@ $topbar-menu-icon-color-toggled: #333;
 // Transitions and breakpoint styles
 // $topbar-transition-speed: 300ms;
 // Using rem-calc for the below breakpoint causes issues with top bar
-// $topbar-breakpoint: #{lower-bound($medium-range)}; // Change to 9999px for always mobile layout
-// $topbar-media-query: $medium-up;
+$topbar-breakpoint: #{lower-bound($large-range)}; // Change to 9999px for always mobile layout
+// $topbar-media-query: medium-up;
 
 // Divider Styles
 // $topbar-divider-border-bottom: solid 1px  scale-color($topbar-bg-color, $lightness: 13%);
