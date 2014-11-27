@@ -148,11 +148,21 @@ strong {
 		position: absolute;
 		bottom: 0px;
 	}
-	.chats-img {
-		left: 10%;
+	@media #{$medium-up} {
+		.chats-img {
+			left: 10%;
+		}
+		.chatting-img {
+			left: 25%;
+		}
 	}
-	.chatting-img {
-		left: 30%;
+	@media only screen and (min-width: 41em) and (max-width: 50em) {
+		.chats-img {
+			left: 5%;
+		}
+		.chatting-img {
+			left: 10%;
+		}
 	}
 	@media #{$small-only} {
 		height: 600px;
