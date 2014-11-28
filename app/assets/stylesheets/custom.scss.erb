@@ -5,6 +5,13 @@
 strong {
 	font-family: 'GothamBook';
 }
+body{
+	hr {
+		border-width: 2px 0 0;
+		border-color: #222;
+		margin: 50px 0;
+	}
+}
 .hero {
 	background: url(<%= asset_path 'bg.png' %>) no-repeat center;
 	background-position: cover;
@@ -58,28 +65,46 @@ strong {
 	a.active {
 		border: 1px solid #111;
 	}
-	&.social-link a {
+	&.social-link {
+
+	}
+	&.social-link > a {
 		// border-radius: 50%;
-		// padding: 5px !important;
-		margin-top: 15px;
+		// padding-bottom: 5px;// !important;
+		margin-top: 20px;
 		background: none;
-		background: url(<%= asset_path 'social.png' %>) no-repeat !important;
-		background-color: none;
-		width: 30px;
-		height: 35px;
+		// background: url(<%= asset_path 'facebook.png' %>) no-repeat !important;
+		// background-color: none;
+		width: 22px;
+		height: 22px;
 
 		&.fb {
-			background: url(<%= asset_path 'social.png' %>) no-repeat -37px 0px !important;
+			background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
 		}
 		&.tw {
-			background-position: 0px 40px;
+			background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
 		}
 		&.ig {
-			background: url(<%= asset_path 'social.png' %>) no-repeat -77px 0px !important;
+			background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -77px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
 		}
-		&.yt {
-			background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
-		}
+		// &.yt {
+		// 	background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
+		// }
 	}
 	@media #{$small-only} {
 		padding: 0 5px;
@@ -89,6 +114,7 @@ strong {
 			display: inline-block;
 		}
 	}
+
 }
 
 .home-link span {
@@ -215,17 +241,23 @@ strong {
 
 
 //inputs
-.city-input,
+
 .email-input {
 	input[type="text"],
 	input[type="email"] {
 		padding-left: 50px;
 	}
 }
-.city-input input[type="text"],
-.city-input input[type="text"]:focus {
-	background: url(<%= asset_path 'marker.png' %>) no-repeat 4%;
-	background-size: 8%;
+.phone-input {
+	input[type="text"],
+	input[type="email"] {
+		padding-left: 35px;
+	}
+}
+.phone-input input[type="text"],
+.phone-input input[type="text"]:focus {
+	background: url(<%= asset_path 'phone.png' %>) no-repeat 4%;
+	background-size: 5%;
 	background-color: #fff;
 }
 .email-input input[type="email"],
@@ -293,5 +325,41 @@ strong {
 	position: absolute;
 	right: 20px;
 	top: 15px;
+}
 
+//contact
+
+.contact-content {
+	h3 {
+		text-transform: none;
+		font-family: 'GothamLight';
+	}
+	h5 {
+		text-transform: none;
+		margin-top: 25px;
+	}
+}
+
+//android
+
+.android-content {
+
+}
+.shades-img {
+	margin-bottom: 100px;
+}
+
+.form {
+	padding: 20px;
+	background-color: #242524;
+	overflow: hidden;
+
+	input[type="email"],
+	input[type="text"],
+	input[type="submit"]{
+		margin-bottom: 0;
+	}
+}
+.email-form {
+	margin-top: 50px;
 }

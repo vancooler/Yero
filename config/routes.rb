@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'terms-of-use', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
+  get 'android', to: 'home#android'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/update',                 to: 'users#update_settings'
