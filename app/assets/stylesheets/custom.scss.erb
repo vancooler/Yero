@@ -354,10 +354,15 @@ body{
 	background-color: #242524;
 	overflow: hidden;
 
-	input[type="email"],
-	input[type="text"],
 	input[type="submit"]{
 		margin-bottom: 0;
+	}
+
+	@media #{$medium-up}{
+		input[type="email"],
+		input[type="text"]{
+			margin-bottom: 0;
+		}
 	}
 }
 .email-form {
