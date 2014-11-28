@@ -248,7 +248,6 @@ class UsersController < ApplicationController
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
     final_time = Time.now
     # diff_2 = final_time - end_time
-    logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users")
   end
 
