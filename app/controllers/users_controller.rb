@@ -162,6 +162,96 @@ class UsersController < ApplicationController
     render json: success(users, "users")
   end
 
+  def friends
+    users = Jbuilder.encode do |json|
+      
+      return_users = current_user.whisper_friends
+      
+      
+      json.array! return_users do |user|
+        next unless user.user_avatars.present?
+        next unless user.main_avatar.present?
+        main_avatar   =  user.user_avatars.find_by(default:true)
+        other_avatars =  user.user_avatars.where.not(default:true)
+        avatar_array = Array.new
+        avatar_array[0] = {
+              thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
+            }
+        avatar_array[1] = {
+              avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
+              avatar_id: main_avatar.nil? ? '' : main_avatar.id,
+              default: true
+            }
+        if other_avatars.count > 0
+          avatar_array[2] = {
+                avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
+                avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
+                default: false
+              }
+          if other_avatars.count > 1
+            avatar_array[3] = {
+                  avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
+                  avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                  default: false
+                }
+          end
+        end
+        json.avatars do |a|
+          json.array! avatar_array do |avatar|
+            a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
+            a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+            a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+            a.default     avatar[:default]   if !avatar[:default].nil?
+          end
+        end
+
+        start_time = Time.now
+        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
+        end_time = Time.now
+        diff_1 += (end_time - start_time)
+        json.same_venue_badge          current_user.same_venue_as?(user.id)
+        json.same_beacon               current_user.same_beacon_as?(user.id)
+        json.actual_distance           current_user.actual_distance(user)
+        json.id             user.id
+        json.first_name     user.first_name
+        json.key            user.key
+        json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+        json.birthday       user.birthday
+        json.gender         user.gender
+        json.distance       current_user.distance_label(user)
+        json.created_at     user.created_at
+        json.updated_at     user.updated_at
+
+        json.apn_token      user.apn_token
+        json.layer_id       user.layer_id
+
+        
+        json.latitude       user.latitude  
+        json.longitude      user.longitude 
+
+        json.introduction_1 user.introduction_1
+        json.introduction_2 user.introduction_2
+
+      end
+    end
+    users = JSON.parse(users).delete_if(&:empty?)
+    same_beacon_users = []
+    same_venue_users = []
+    users.each do |u|
+      if u['same_beacon'].to_s == "true"
+        same_beacon_users << u
+      elsif u['same_venue_badge'].to_s == "true"
+        same_venue_users << u
+      end
+    end
+    users = users - same_beacon_users - same_venue_users
+    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
+    final_time = Time.now
+    # diff_2 = final_time - end_time
+    logger.info "NEWTIME: " + diff_1.to_s 
+    render json: success(users, "users")
+  end
+
   def update_profile
     if current_user.update(introduction_1: CGI.unescape(params[:introduction_1]), introduction_2: CGI.unescape(params[:introduction_2]))
       render json: success(current_user)

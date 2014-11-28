@@ -159,6 +159,12 @@ class User < ActiveRecord::Base
     self.user_sort(users, min_distance, max_distance)
   end
 
+  def whisper_friends
+    active_users_id = WhisperNotification.find_friends(self.id)
+    users = User.where(id: active_users_id)
+    return users
+  end
+
   def fellow_participants_sorted #by distance then by activity
     results = self.fellow_participants
     results_with_location = results.where.not(latitude:nil, longitude:nil)
