@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   devise_scope :web_users do
     get 'dashboard', to: 'venues#dashboard', as: :venue_root
     get 'nightly', to: 'venues#nightly', as: :venue_nightly
-    # get 'settings', to: 'venues#settings', as: :venue_settings
+    get 'settings', to: 'venues#settings', as: :settings
 
     get 'nightly/tonight', to: 'venues#tonightly', as: :venue_tonightly
     get 'nightly/:id', to: 'nightlies#show', as: :show_nightly
@@ -51,6 +51,7 @@ Rails.application.routes.draw do
   
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
+  post 'api/v1/friends', to: 'users#friends'
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
   resources :whispers, only: [:new, :create]
