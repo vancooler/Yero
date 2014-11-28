@@ -4,38 +4,71 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title><%= content_for?(:title) ? yield(:title) : "foundation-rails" %></title>
+    <title><%= content_for?(:title) ? yield(:title) : "YERO" %> | YERO</title>
 
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "vendor/modernizr" %>
+    <%= favicon_link_tag(source='favicon.ico') %>
+    <%= favicon_link_tag('/favicon.png', rel: 'apple-touch-icon', type: 'image/png') %>
 
     <%= csrf_meta_tags %>
   </head>
 
-  <body data-no-turbolink>
-    <div class="contain-togrid sticky">
-      <nav class="top-bar" data-topbar data-options="sticky_on: large">
+  <body data-no-turbolink class="<%= yield (:body_class) %>" >
+    <div class="contain-to-grid sticky top-header">
+      <nav class="top-bar" data-topbar data-options="sticky_on: large" role="nagivation">
         <ul class="title-area">
           <li class="name">
-            <h1><a href="#">WHISPR</a></h1>
+            <!-- <h1><a href="/">YERO</a></h1> -->
+            <h1>
+            <%= link_to('/', :class=>'home-link') do %>
+              <%= image_tag("logo.png", :alt => "logo", :class => "logo") %>
+              <span>YERO</span>
+            <% end %>
+            </h1>
           </li>
-          <li class="toggle-topbar menu-icon"><a href="#">Menu</a></li>
+          <li class="toggle-topbar menu-icon"><a href="#"><span>Menu</span></a></li>
         </ul>
 
         <section class="top-bar-section">
           <!-- Right Nav Section -->
           <ul class="right">
             <%# if current_venue %>
-              <li class="active"><%#= link_to "sign out", destroy_venue_session_path, :method => "DELETE" %></li>
+              <!-- <li class="active"><%#= link_to "sign out", destroy_venue_session_path, :method => "DELETE" %></li> -->
             <%# else %>
-              <li class="active"><%#= link_to "sign in", new_venue_session_path %></li>
+              <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
+            <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
+            <!-- <li><%= link_to('How It Works', '/how-it-works', :class=>'nav-item '+check_active('/how-it-works')) %></li> -->
+            <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
+            <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
+            <li class="social-link"><a href="" class="tw"></a></li>
+            <li class="social-link"><a href="" class="fb"></a></li>
+            <li class="social-link"><a href="" class="ig"></a></li>
+            <!-- <li class="social-link"><a href="" class="yt"></a></li> -->
           </ul>
+
         </section>
       </nav>
     </div>
+    <main>
 
     <%= yield %>
+
+    <footer class="page-footer">
+      <div class="row">
+        <div class="medium-8 medium-centered columns">
+          <ul class="footer-links medium-text-center">
+            <li><%= link_to('About', '/about', :class=>'nav-item '+check_active('/about')) %></li>
+            <li><%= link_to('We\'re Hiring', '/careers', :class=>'nav-item '+check_active('/careers')) %></li>
+            <li><%= link_to('Terms of Use', '/terms-of-use', :class=>'nav-item '+check_active('/terms-of-use')) %></li>
+            <li><%= link_to('Privacy Policy', '/privacy', :class=>'nav-item '+check_active('/privacy')) %></li>
+          </ul>
+        </div>
+      </div>
+    </footer>
+
+    </main>
     <%= javascript_include_tag "application" %>
     <%= yield :javascript_library %>
     <%= yield :javascript_inline %>

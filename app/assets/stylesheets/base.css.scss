@@ -31,7 +31,7 @@ $xxlarge-only: "#{$screen} and (min-width:#{lower-bound($xxlarge-range)}) and (m
 
 
 .top-bar {
-  border-bottom: 1px solid #ddd;
+  // border-bottom: 1px solid #ddd;
   z-index: 999;
   position: relative;
   a {
@@ -45,7 +45,7 @@ h1, h2, h3, h4, h5 {
 }
 
 label {
-  letter-spacing: 0.1em;
+  letter-spacing: 0.2em;
 }
 
 ::-webkit-input-placeholder {
@@ -65,7 +65,7 @@ label {
 }
 
 .button, input[type="submit"] {
-  text-transform: uppercase;
+  // text-transform: uppercase;
   letter-spacing: 1px;
 }
 

@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  
+
   devise_for :web_users, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   #temporary routes for YJ to test out notification functionality
   get 'temp_beacon/enter_random_users', as: 'enter_users'
@@ -25,7 +25,16 @@ Rails.application.routes.draw do
 
   # You can have the root of your site routed with "root"
   root 'home#index'
-
+  # static pages below:
+  get 'faq', to: 'home#faq'
+  get 'how-it-works', to: 'home#how-it-works'
+  get 'contact', to: 'home#contact'
+  get 'for-venues', to: 'home#for-venues'
+  get 'privacy', to: 'home#privacy'
+  get 'about', to: 'home#about'
+  get 'terms-of-use', to: 'home#terms-of-use'
+  get 'careers', to: 'home#careers'
+  get 'android', to: 'home#android'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/update',                 to: 'users#update_settings'
@@ -41,14 +50,14 @@ Rails.application.routes.draw do
   post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
   get  'api/v1/venues/people', to: 'venues#people'
   get  'api/v1/venues/active_users', to: 'venues#active_users'
-  
+
   post 'api/v1/avatar/create',             to: 'user_avatars#create'
   post 'api/v1/avatar/create_for_signup',  to: 'user_avatars#create_avatar'
   post 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
   post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
   post 'api/v1/user/update_profile',       to: 'users#update_profile'
   post 'api/v1/user/show',                 to: 'users#show'
-  
+
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
   post 'api/v1/friends', to: 'users#friends'

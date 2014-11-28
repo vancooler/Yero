@@ -1,0 +1,370 @@
+@import "compass/css3";
+@import "foundation";
+
+// type
+strong {
+	font-family: 'GothamBook';
+}
+body{
+	hr {
+		border-width: 2px 0 0;
+		border-color: #222;
+		margin: 50px 0;
+	}
+}
+.hero {
+	background: url(<%= asset_path 'bg.png' %>) no-repeat center;
+	background-position: cover;
+}
+.hero h5,
+.feature h3,
+.feature h4 {
+	text-transform: none;
+}
+
+.hero {
+	h2, h5, p {
+		color: #fff;
+	}
+	p {
+		letter-spacing: 0.1em;
+		font-family: "GothamThin";
+	}
+}
+.feature h4 {
+	margin-bottom: 0.3rem;
+}
+
+.hero h5 em {
+	@media #{$medium-up} {
+		display: block;
+	}
+		display: inline;
+}
+
+
+//header
+.top-bar-section .right{
+	@media #{$medium-up} {
+		width: 475px;
+		// width: 375px !important;
+	}
+
+	// .social-link {
+	// 	display: none;
+	// }
+}
+.top-bar-section ul li {
+	margin-right: 5px;
+
+	a:not(.button) {
+		line-height: 3 !important;
+		margin-top: 12px;
+		border-radius: 5px;
+	}
+	a.active {
+		border: 1px solid #111;
+	}
+	&.social-link {
+
+	}
+	&.social-link > a {
+		// border-radius: 50%;
+		// padding-bottom: 5px;// !important;
+		margin-top: 20px;
+		background: none;
+		// background: url(<%= asset_path 'facebook.png' %>) no-repeat !important;
+		// background-color: none;
+		width: 22px;
+		height: 22px;
+
+		&.fb {
+			background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
+		}
+		&.tw {
+			background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
+		}
+		&.ig {
+			background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -77px 0px !important;
+			background-size: contain;
+			&:hover {
+				background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -37px 0px !important;
+				background-size: contain;
+			}
+		}
+		// &.yt {
+		// 	background: url(<%= asset_path 'social.png' %>) no-repeat -115px 0px !important;
+		// }
+	}
+	@media #{$small-only} {
+		padding: 0 5px;
+	}
+	&.social-link {
+			@media #{$small-only} {
+			display: inline-block;
+		}
+	}
+
+}
+
+.home-link span {
+	font-size: 0;
+}
+.top-bar .name h1 {
+	a.home-link {
+		padding: 0px;
+	}
+}
+
+
+// homepage features
+.hero,
+.email-signup,
+.padding {
+	padding: 100px 0;
+}
+.feature {
+	// min-height: 650px;
+}
+.page-header {
+	padding: 100px 0px 50px;
+}
+.email-signup {
+	background: #ebedf2;
+}
+
+.feature:first-of-type {
+	margin-top: 0px !important;
+}
+.feature h4 {
+	@media #{$medium-up} {
+		margin-top: 200px;
+	}
+}
+.nightlife {
+	padding-top: 20px;
+}
+.matching,
+.network {
+	height: 500px;
+	&.network {
+		height: 560px;
+	}
+	position: relative;
+	img {
+		position: absolute;
+		left: 55%;
+		bottom: 0px;
+	}
+	@media #{$small-only} {
+		height: 600px;
+		img {
+			right: 10%;
+			left: auto;
+			bottom: 0px;
+			height: 300px;
+			width: auto;
+		}
+	}
+}
+.chatting {
+	height: 500px;
+	position: relative;
+	img {
+		position: absolute;
+		bottom: 0px;
+	}
+	@media #{$medium-up} {
+		.chats-img {
+			left: 10%;
+		}
+		.chatting-img {
+			left: 25%;
+		}
+	}
+	@media only screen and (min-width: 41em) and (max-width: 50em) {
+		.chats-img {
+			left: 5%;
+		}
+		.chatting-img {
+			left: 10%;
+		}
+	}
+	@media #{$small-only} {
+		height: 600px;
+		img {
+			bottom: 0px;
+			height: 300px;
+			width: auto;
+		}
+		.chats-img {
+			left: 5%;
+		}
+		.chatting-img {
+			right: 2%;
+		}
+	}
+}
+.grey {
+	background-color: #f2f2f2;
+}
+
+.details {
+	margin-top: 15%;
+}
+
+.hero h2 {
+	@media #{$medium-up} {
+		margin-top: 175px;
+	}
+}
+
+.hero-download-link {
+	display: block;
+	margin-top: 4rem;
+	margin-bottom: 2rem;
+	@media #{$small-only} {
+		margin-top: 10px;
+		margin-bottom: 20px;
+	}
+}
+
+
+//inputs
+
+.email-input {
+	input[type="text"],
+	input[type="email"] {
+		padding-left: 50px;
+	}
+}
+.phone-input {
+	input[type="text"],
+	input[type="email"] {
+		padding-left: 35px;
+	}
+}
+.phone-input input[type="text"],
+.phone-input input[type="text"]:focus {
+	background: url(<%= asset_path 'phone.png' %>) no-repeat 4%;
+	background-size: 5%;
+	background-color: #fff;
+}
+.email-input input[type="email"],
+.email-input input[type="email"]:focus {
+	background: url(<%= asset_path 'email.png' %>) no-repeat 4%;
+	background-size: 8%;
+	background-color: #fff;
+}
+
+
+
+// footer
+
+.page-footer {
+	padding-top: 50px;
+}
+.footer-links {
+	list-style-type: none;
+	li {
+		@media #{$medium-up} {
+			display: inline-block;
+			text-align: center;
+			padding: 10px 25px;
+		}
+	 padding: 10px 0;
+	}
+}
+
+.download {
+	margin: 100px auto;
+}
+
+
+// page header
+.page-header {
+
+}
+
+// faq
+.faq-item {
+	margin-bottom: 20px;
+}
+.faq-question {
+	display: block;
+	margin-bottom: 15px;
+}
+.faq-answer {
+
+}
+
+.how-it-works .feature {
+	padding: 20px 0;
+}
+
+// buttons
+.button-wide {
+	width: 300px;
+}
+.button-arr:after {
+	content: '';
+	background: url(<%= asset_path 'arrow.png' %>) no-repeat center;
+	background-size: cover;
+	height: 15px;
+	width: 10px;
+	position: absolute;
+	right: 20px;
+	top: 15px;
+}
+
+//contact
+
+.contact-content {
+	h3 {
+		text-transform: none;
+		font-family: 'GothamLight';
+	}
+	h5 {
+		text-transform: none;
+		margin-top: 25px;
+	}
+}
+
+//android
+
+.android-content {
+
+}
+.shades-img {
+	margin-bottom: 100px;
+}
+
+.form {
+	padding: 20px;
+	background-color: #242524;
+	overflow: hidden;
+
+	input[type="submit"]{
+		margin-bottom: 0;
+	}
+
+	@media #{$medium-up}{
+		input[type="email"],
+		input[type="text"]{
+			margin-bottom: 0;
+		}
+	}
+}
+.email-form {
+	margin-top: 50px;
+}
