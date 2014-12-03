@@ -314,7 +314,7 @@ $button-lrg: rem-calc(16);
 // $button-margin-bottom: rem-calc(20);
 
 // We use these to control button text styles.
-$button-font-family: 'GothamMedium';
+$button-font-family: 'GothamBook';
 $button-font-color: #000; //#fff;
 // $button-font-color-alt: #333;
 // $button-font-tny: rem-calc(11);
@@ -1170,7 +1170,7 @@ $topbar-dropdown-bg: #2effa5;
 
 // Set the link colors and styles for top-level nav
 $topbar-link-color: #111;
-// $topbar-link-color-hover: #fff;
+$topbar-link-color-hover: #000; //#fff;
 $topbar-link-color-active: #111; //#fff;
 // $topbar-link-color-active-hover: #fff;
 // $topbar-link-weight: normal;

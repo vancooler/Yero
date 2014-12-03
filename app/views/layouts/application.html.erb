@@ -12,6 +12,14 @@
     <%= favicon_link_tag('/favicon.png', rel: 'apple-touch-icon', type: 'image/png') %>
 
     <%= csrf_meta_tags %>
+    <script type='text/javascript'>
+    (function (d, t) {
+      var bh = d.createElement(t), s = d.getElementsByTagName(t)[0];
+      bh.type = 'text/javascript';
+      bh.src = '//www.bugherd.com/sidebarv2.js?apikey=jthfoxltd4tnadqxdcbahq';
+      s.parentNode.insertBefore(bh, s);
+      })(document, 'script');
+    </script>
   </head>
 
   <body data-no-turbolink class="<%= yield (:body_class) %>" >
