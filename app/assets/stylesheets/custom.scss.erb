@@ -54,9 +54,20 @@ body{
 	// 	display: none;
 	// }
 }
+.logo {
+	max-width: 195px;
+	height: auto;
+}
+
 .top-bar-section ul li {
 	margin-right: 5px;
 
+	&.divider {
+		width: 30px;
+		@media #{$small-only} {
+			display: none;
+		}
+	}
 	a:not(.button) {
 		line-height: 3 !important;
 		margin-top: 12px;
@@ -248,7 +259,8 @@ body{
 		padding-left: 50px;
 	}
 }
-.phone-input {
+.phone-input,
+.city-input {
 	input[type="text"],
 	input[type="email"] {
 		padding-left: 35px;
@@ -260,19 +272,27 @@ body{
 	background-size: 5%;
 	background-color: #fff;
 }
+.city-input input[type="text"],
+.city-input input[type="text"]:focus {
+	background: url(<%= asset_path 'marker.png' %>) no-repeat 4%;
+	background-size: 8%;
+	background-color: #fff;
+}
 .email-input input[type="email"],
 .email-input input[type="email"]:focus {
 	background: url(<%= asset_path 'email.png' %>) no-repeat 4%;
 	background-size: 8%;
 	background-color: #fff;
 }
-
+label {
+	letter-spacing: 0;
+}
 
 
 // footer
 
 .page-footer {
-	padding-top: 50px;
+	// padding-top: 50px;
 }
 .footer-links {
 	list-style-type: none;

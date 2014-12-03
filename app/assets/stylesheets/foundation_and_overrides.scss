@@ -484,7 +484,7 @@ $bg: $btn-color; //$primary-color;
 // $form-label-font-size: rem-calc(14);
 // $form-label-font-weight: normal;
 // $form-label-line-height: 1.5;
-$form-label-font-color: scale-color(#000, $lightness: 50%);
+$form-label-font-color: #000; //scale-color(#000, $lightness: 50%);
 $form-label-small-transform: capitalize;
 $form-label-bottom-margin: 1.2rem;
 // $input-font-family: inherit;
