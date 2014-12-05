@@ -29,7 +29,7 @@ class BetaSignupUsersController < InheritedResources::Base
 
     respond_to do |format|
       if @beta_signup_user.save 
-        format.html { redirect_to root_url }
+        format.html { redirect_to thanks_beta_signup_url }
         format.json { render json: @beta_signup_user, status: :created, location: @beta_signup_user }
       else
         format.html { render action: "new" }

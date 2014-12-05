@@ -27,9 +27,12 @@ Rails.application.routes.draw do
     post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count
   end
 
+  
+
   # You can have the root of your site routed with "root"
   root 'home#index'
   # static pages below:
+  get 'thanks', to: 'beta_signup_users#thanks', as: :thanks_beta_signup
   get 'faq', to: 'home#faq'
   get 'how-it-works', to: 'home#how-it-works'
   get 'contact', to: 'home#contact'
