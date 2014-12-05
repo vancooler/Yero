@@ -1,0 +1,33 @@
+<%= form_for(@beta_signup_user) do |f| %>
+  <% if @beta_signup_user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@beta_signup_user.errors.count, "error") %> prohibited this beta_signup_user from being saved:</h2>
+
+      <ul>
+      <% @beta_signup_user.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :city %><br>
+    <%= f.text_field :city %>
+  </div>
+  <div class="field">
+    <%= f.label :phone_model %><br>
+    <%= f.text_field :phone_model %>
+  </div>
+  <div class="field">
+    <%= f.label :phone_type %><br>
+    <%= f.text_field :phone_type %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

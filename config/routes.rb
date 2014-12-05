@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
 
+  resources :beta_signup_users
+
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
   devise_for :web_users, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   #temporary routes for YJ to test out notification functionality
   get 'temp_beacon/enter_random_users', as: 'enter_users'
@@ -34,8 +38,8 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'terms-of-use', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
-  get 'android', to: 'home#android'
-  get 'beta-signup', to: 'home#beta'
+  get 'android', to: 'beta_signup_users#android'
+  get 'beta-signup', to: 'beta_signup_users#beta'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/update',                 to: 'users#update_settings'

@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @beta_signup_user.email %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @beta_signup_user.city %>
+</p>
+
+<p>
+  <strong>Phone model:</strong>
+  <%= @beta_signup_user.phone_model %>
+</p>
+
+<p>
+  <strong>Phone type:</strong>
+  <%= @beta_signup_user.phone_type %>
+</p>
+
+<%= link_to 'Edit', edit_beta_signup_user_path(@beta_signup_user) %> |
+<%= link_to 'Back', beta_signup_users_path %>

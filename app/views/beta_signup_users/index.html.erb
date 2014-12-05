@@ -1,0 +1,31 @@
+<h1>Listing beta_signup_users</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Email</th>
+      <th>City</th>
+      <th>Phone model</th>
+      <th>Phone type</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @beta_signup_users.each do |beta_signup_user| %>
+      <tr>
+        <td><%= beta_signup_user.email %></td>
+        <td><%= beta_signup_user.city %></td>
+        <td><%= beta_signup_user.phone_model %></td>
+        <td><%= beta_signup_user.phone_type %></td>
+        <td><%= link_to 'Show', beta_signup_user %></td>
+        <td><%= link_to 'Edit', edit_beta_signup_user_path(beta_signup_user) %></td>
+        <td><%= link_to 'Destroy', beta_signup_user, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Beta signup user', new_beta_signup_user_path %>
