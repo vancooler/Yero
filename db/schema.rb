@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141205002253) do
+ActiveRecord::Schema.define(version: 20141211203837) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -188,10 +188,10 @@ ActiveRecord::Schema.define(version: 20141205002253) do
   end
 
   create_table "users", force: true do |t|
-    t.date     "birthday",                        null: false
-    t.string   "first_name",                      null: false
-    t.string   "gender",                          null: false
-    t.string   "key",                             null: false
+    t.date     "birthday",                         null: false
+    t.string   "first_name",                       null: false
+    t.string   "gender",                           null: false
+    t.string   "key",                              null: false
     t.datetime "last_activity"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -204,6 +204,12 @@ ActiveRecord::Schema.define(version: 20141205002253) do
     t.string   "introduction_2",    default: " "
     t.string   "nonce"
     t.integer  "notification_read"
+    t.string   "email"
+    t.string   "snapchat_id"
+    t.string   "wechat_id"
+    t.string   "password"
+    t.boolean  "discovery",         default: true
+    t.boolean  "exclusive",         default: true
   end
 
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
