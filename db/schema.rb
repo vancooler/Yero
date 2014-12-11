@@ -34,16 +34,16 @@ ActiveRecord::Schema.define(version: 20141205002253) do
   create_table "active_in_venue_networks", force: true do |t|
     t.integer  "venue_network_id",                                 null: false
     t.integer  "user_id",                                          null: false
-    t.datetime "last_activity",    default: '2014-09-05 19:48:39', null: false
-    t.datetime "enter_time",       default: '2014-09-05 19:48:39', null: false
+    t.datetime "last_activity",    default: '2014-12-11 18:32:22', null: false
+    t.datetime "enter_time",       default: '2014-12-11 18:32:22', null: false
     t.integer  "active_status",    default: 1
   end
 
   create_table "active_in_venues", force: true do |t|
     t.integer  "venue_id",                                      null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-09-05 19:26:31', null: false
-    t.datetime "enter_time",    default: '2014-09-05 19:26:31', null: false
+    t.datetime "last_activity", default: '2014-12-11 18:32:22', null: false
+    t.datetime "enter_time",    default: '2014-12-11 18:32:22', null: false
     t.integer  "beacon_id"
   end
 
@@ -134,15 +134,15 @@ ActiveRecord::Schema.define(version: 20141205002253) do
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-09-02 20:49:09', null: false
-    t.datetime "enter_time",    default: '2014-09-02 20:49:09', null: false
+    t.datetime "last_activity", default: '2014-12-11 18:32:21', null: false
+    t.datetime "enter_time",    default: '2014-12-11 18:32:21', null: false
     t.integer  "temperature"
   end
 
   create_table "pokes", force: true do |t|
     t.integer  "poker_id"
     t.integer  "pokee_id"
-    t.datetime "poked_at", default: '2014-09-02 20:49:09'
+    t.datetime "poked_at", default: '2014-12-11 18:32:21'
     t.boolean  "viewed",   default: false
   end
 
@@ -211,7 +211,7 @@ ActiveRecord::Schema.define(version: 20141205002253) do
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
-    t.datetime "enter_time", default: '2014-10-27 19:50:59', null: false
+    t.datetime "enter_time", default: '2014-12-11 18:32:22', null: false
   end
 
   create_table "venue_networks", force: true do |t|
@@ -285,7 +285,7 @@ ActiveRecord::Schema.define(version: 20141205002253) do
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
-    t.datetime "whisper_time",   default: '2014-10-27 19:50:59', null: false
+    t.datetime "whisper_time",   default: '2014-12-11 18:32:22', null: false
   end
 
   create_table "whispers", force: true do |t|
