@@ -288,11 +288,12 @@ class UsersController < ApplicationController
       # end
       
       # The way in one step
+      puts "Creaty"
       response = user.to_json(true)
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
       response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      render json: sign_up_params.to_json
+      render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
