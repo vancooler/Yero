@@ -288,10 +288,10 @@ class UsersController < ApplicationController
       # end
       
       # The way in one step
-      
-      p "The response"
-      p user_registration.inspect
-      
+      response = user.to_json(true)
+      thumb = response["avatars"].first['avatar']
+      response["avatars"].first['thumbnail'] = thumb
+      response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
       render json: user_registration.to_json.inspect
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
