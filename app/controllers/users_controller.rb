@@ -288,7 +288,6 @@ class UsersController < ApplicationController
       # end
       
       # The way in one step
-      puts "Creaty"
       response = user.to_json(true)
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
