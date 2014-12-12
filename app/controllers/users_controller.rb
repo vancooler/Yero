@@ -292,7 +292,7 @@ class UsersController < ApplicationController
       p "The response"
       p user_registration.inspect
       
-      render json: success(response)
+      render json: user_registration.inspect
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
