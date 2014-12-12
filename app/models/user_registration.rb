@@ -12,6 +12,8 @@ class UserRegistration
     create_key
     @user.last_active = Time.now
     @user.save
+    p "USER WAS SAVED"
+    p @user.inspect
     # create_layer_account
   end
 

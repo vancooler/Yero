@@ -289,6 +289,8 @@ class UsersController < ApplicationController
       
       # The way in one step
       response = user.to_json(true)
+      p "The response"
+      p response.inspect
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
       response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
