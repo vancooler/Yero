@@ -292,7 +292,7 @@ class UsersController < ApplicationController
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
       response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      return response
+      return sign_up_params.to_json
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
