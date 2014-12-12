@@ -292,7 +292,8 @@ class UsersController < ApplicationController
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
       response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      puts "The response is: "response.inspect
+      puts "The response is: "
+      puts response.inspect
       render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
