@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
 
   reverse_geocoded_by :latitude, :longitude
 
-  mount_uploader :avatar, AvatarUploader
+  # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity
 
   validates :birthday, :first_name, :gender, presence: true
