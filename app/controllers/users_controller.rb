@@ -308,8 +308,9 @@ class UsersController < ApplicationController
 
   def login
     user = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password])
+    puts user
     if user.valid?
-      render success(user.to_json(false))
+      render success(user.to_json(true))
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end  
