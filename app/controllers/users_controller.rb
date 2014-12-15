@@ -309,7 +309,7 @@ class UsersController < ApplicationController
   end
 
   def login
-    user = User.find_by_key(login_params[:key])
+    user = User.find_by_key(email: login_params[:email], key: login_params[:key], password: login_params[:password]).take
     puts user.inspect
     # if user
     #   render success(user.to_json(true))
@@ -506,7 +506,7 @@ class UsersController < ApplicationController
   end
 
   def login_params
-    params.require(:user).permit(:email, :password)
+    params.require(:user).permit(:email, :password, :key)
   end
 end
 
