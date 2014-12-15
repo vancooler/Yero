@@ -310,7 +310,7 @@ class UsersController < ApplicationController
 
   def login
     user = User.find_by_key(params[:key])
-    puts user.inspect
+    puts user.email.inspect
     # if user
     #   render success(user.to_json(true))
     # else
