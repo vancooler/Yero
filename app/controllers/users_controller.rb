@@ -309,11 +309,12 @@ class UsersController < ApplicationController
   def login
     user = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password])
     puts user.inspect
-    if user
-      render success(user.to_json(true))
-    else
-      render json: error(JSON.parse(user.errors.messages.to_json))
-    end  
+    # if user
+    #   render success(user.to_json(true))
+    # else
+    #   render json: error(JSON.parse(user.errors.messages.to_json))
+    # end  
+    render user.to_json.inspect
   end
 
   def update_settings
