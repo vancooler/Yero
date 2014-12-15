@@ -286,6 +286,12 @@ class UsersController < ApplicationController
       #     response["avatars"] = [user_avatar]
       #   end
       # end
+
+      # avatars = sign_up_params[:avatar]
+      # if avatars
+      #   user_avatar = UserAvatar.create()
+      # else
+      # end
       
       # The way in one step
       response = user.to_json(true)
@@ -294,7 +300,7 @@ class UsersController < ApplicationController
       # thumb = response["avatars"].first['avatar']
       # response["avatars"].first['thumbnail'] = thumb
       # response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      render json: user.to_json.inspect
+      render json: user_registration.to_json.inspect
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
