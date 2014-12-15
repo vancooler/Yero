@@ -307,11 +307,11 @@ class UsersController < ApplicationController
   end
 
   def login
-    login = User.where(email: login_params[:email], key: login_params[:key])
+    login = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password])
     if login
-      response = user.to_json(true)
+      response = login.to_json(true)
     else
-      response = user.to_json(false)
+      response = login.to_json(false)
     end
 
     render json: response
