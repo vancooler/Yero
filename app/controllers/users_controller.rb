@@ -314,7 +314,7 @@ class UsersController < ApplicationController
     # else
     #   render json: error(JSON.parse(user.errors.messages.to_json))
     # end  
-    render user.to_json.inspect
+    render json: user.to_json.inspect
   end
 
   def update_settings
