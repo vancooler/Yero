@@ -287,27 +287,29 @@ class UsersController < ApplicationController
       #   end
       # end
 
-      avatar = sign_up_params[:avatar]
-      if avatar
-        user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
-      else
-      end
+      # avatar = sign_up_params[:avatar]
+      # if avatar
+      #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
+      # else
+      # end
       
       # The way in one step
       response = user.to_json(true)
-      p 'here is response:'
-      p response.inspect
-      # thumb = response["avatars"].first['avatar']
-      # response["avatars"].first['thumbnail'] = thumb
-      # response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      render json: user_avatar.to_json.inspect
+      # p 'here is response:'
+      # p response.inspect
+      thumb = response["avatars"].first['avatar']
+      response["avatars"].first['thumbnail'] = thumb
+      response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      # render json: user_registration.to_json.inspect
+      # render json: user_avatar.to_json.inspect
+      render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
   end
 
   def login
-    user = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password]).take
+    user = User.find_by_key(login_params[:key])
     puts user.inspect
     # if user
     #   render success(user.to_json(true))
