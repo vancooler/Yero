@@ -307,7 +307,7 @@ class UsersController < ApplicationController
   end
 
   def login
-    user = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password])
+    user = User.where(email: login_params[:email], key: login_params[:key], password: login_params[:password]).take
     puts user[:sucess].inspect
     # if user
     #   render success(user.to_json(true))
