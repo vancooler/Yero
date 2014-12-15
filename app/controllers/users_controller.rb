@@ -306,6 +306,10 @@ class UsersController < ApplicationController
     end
   end
 
+  def login
+    render json: login_params.to_json.inspect
+  end
+
   def update_settings
     user = User.find_by_key(params[:key])
     user.assign_attributes(sign_up_params)
@@ -490,6 +494,10 @@ class UsersController < ApplicationController
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
     # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
+  end
+
+  def login_params
+    params.require(:user).permit(:email, :password)
   end
 end
 
