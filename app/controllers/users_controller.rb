@@ -309,7 +309,7 @@ class UsersController < ApplicationController
   end
 
   def login
-    user = User.find_by_key(params[:key]])
+    user = User.find_by_key(params[:key])
     puts user.inspect
     # if user
     #   render success(user.to_json(true))
