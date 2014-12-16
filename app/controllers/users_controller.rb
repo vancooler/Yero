@@ -338,8 +338,13 @@ class UsersController < ApplicationController
     user = User.find_by_key(params[:key])
     snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
     wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
-    puts snapchat_id
-    puts wechat_id
+    user.snapchat_id = snapchat_id
+    user.wechat_id = wechat_id
+    if user.save
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
 
   end
 
