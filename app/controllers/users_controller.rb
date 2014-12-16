@@ -336,8 +336,10 @@ class UsersController < ApplicationController
 
   def update_chat_accounts
     user = User.find_by_key(params[:key])
-    puts params[:snapchat_id]
-    puts params[:wechat_id]
+    snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
+    wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
+    puts snapchat_id
+    puts wechat_id
 
   end
 
