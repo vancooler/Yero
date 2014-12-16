@@ -321,9 +321,12 @@ class UsersController < ApplicationController
   def update_settings
     user = User.find_by_key(params[:key])
     # user.assign_attributes(sign_up_params)
-    puts params[:exclusive].inspect
-    puts params[:discovery].inspect
-    # user.update(exclusive: params[:exclusive], discovery: params[:discovery])
+
+    if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
     # if user.valid?
     #   user.save!
     #   render json: success(user.to_json(false))
