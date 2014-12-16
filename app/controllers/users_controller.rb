@@ -311,7 +311,6 @@ class UsersController < ApplicationController
   def login
     user = User.find_by_key(params[:key])
     if (params[:email] == user.email and params[:password] == user.password)
-      puts user.inspect
       render json: success(user.to_json(true))
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
@@ -333,6 +332,13 @@ class UsersController < ApplicationController
     # else
     #   render json: error(JSON.parse(user.errors.messages.to_json))
     # end
+  end
+
+  def update_chat_accounts
+    user = User.find_by_key(params[:key])
+    puts params[:snapchat_id]
+    puts params[:wechat_id]
+
   end
 
   def update_image
