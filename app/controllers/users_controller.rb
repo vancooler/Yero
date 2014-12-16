@@ -310,14 +310,11 @@ class UsersController < ApplicationController
 
   def login
     user = User.find_by_key(params[:key])
-    puts login_params[:password].inspect
-    # if(params[:enter] == user.email and params[:password] == user.password)
-    # if user
-    #   render success(user.to_json(true))
-    # else
-    #   render json: error(JSON.parse(user.errors.messages.to_json))
-    # end  
-    render json: user.to_json.inspect
+    if (params[:enter] == user.email and params[:password] == user.password)
+      render success(user.to_json(true))
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end  
   end
 
   def update_settings
