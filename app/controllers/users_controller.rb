@@ -310,6 +310,8 @@ class UsersController < ApplicationController
 
   def login
     user = User.find_by_key(params[:key])
+    puts user.email.inspect
+    puts user.password.inspect
     if (params[:enter] == user.email and params[:password] == user.password)
       puts true.inspect
       render json: success(user.to_json(true))
