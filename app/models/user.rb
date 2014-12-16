@@ -272,6 +272,11 @@ class User < ActiveRecord::Base
       json.first_name first_name
       json.gender gender
       json.layer_id layer_id
+      json.email email
+      json.snapchat_id snapchat_id
+      json.wechat_id wechat_id
+      json.discovery discovery
+      json.exclusive exclusive
 
       json.avatars do
         avatars = self.user_avatars.all
