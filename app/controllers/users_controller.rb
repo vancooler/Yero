@@ -133,7 +133,7 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        json.layer_id       user.layer_id
+        # json.layer_id       user.layer_id
 
         
         json.latitude       user.latitude  
@@ -345,7 +345,9 @@ class UsersController < ApplicationController
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
+  end
 
+  def remove_chat_accounts
   end
 
   def update_image
