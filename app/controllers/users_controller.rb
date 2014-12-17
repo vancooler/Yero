@@ -362,6 +362,13 @@ class UsersController < ApplicationController
     end
   end
 
+  def forgot_password
+    user = User.find_by_key(params[:key])
+    if (params[:email] == user.email)
+      UserMailer.welcome_email(user).deliver
+    end
+  end
+
   def update_image
     user = User.find_by_key(params[:key])
     avatar = user.user_avatars.find(params[:avatar_id])
