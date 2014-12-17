@@ -365,7 +365,7 @@ class UsersController < ApplicationController
   def forgot_password
     user = User.find_by_key(params[:key])
     if (params[:email] == user.email)
-      UserMailer.forgot_password(user).deliver
+      UserMailer.forget_password(user).deliver
       puts "sent"
       render json: success(true)
     else
