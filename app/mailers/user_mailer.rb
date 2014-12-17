@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default from: "from@example.com"
+  default from: "donaldlee50@gmail.com"
 
   def forget_password(user)
   	@user = user
