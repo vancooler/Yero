@@ -32,7 +32,7 @@ class UsersController < ApplicationController
       created_at: current_user.created_at,
       updated_at: current_user.updated_at,
       apn_token: current_user.apn_token,
-      layer_id: current_user.layer_id,
+      # layer_id: current_user.layer_id,
       latitude:current_user.latitude,
       longitude:current_user.longitude,
       avatars: avatar_array
@@ -223,7 +223,7 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        json.layer_id       user.layer_id
+        # json.layer_id       user.layer_id
 
         
         json.latitude       user.latitude  
@@ -356,7 +356,7 @@ class UsersController < ApplicationController
       user.wechat_id = nil
     end
     if user.save
-      render json: success(user.to_json(true))
+      render json: success(true)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
