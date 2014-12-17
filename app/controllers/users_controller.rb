@@ -348,6 +348,18 @@ class UsersController < ApplicationController
   end
 
   def remove_chat_accounts
+    user = User.find_by_key(params[:key])
+    if params[:snapchat_id] = true
+      user.snapchat_id = nil
+    end
+    if params[:wechat_id] = true
+      user.wechat_id = nil
+    end
+    if user.save
+      render json: success(user.to_json(true))
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
   end
 
   def update_image
