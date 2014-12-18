@@ -543,8 +543,8 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
-    # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
+    params.require(:user).permit(:birthday, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
+    # params.require(:user).permit(:birthday, :first_name, :gender, :avatar_id)
   end
 
   def login_params
@@ -558,7 +558,6 @@ end
 #   u = User.new
 #   u.birthday = "1993-09-09"
 #   u.first_name = "TEST_" + i.to_s
-#   u.nonce = "TEST_" + i.to_s + "_nonce"
 #   u.gender = "Male"
 #   u.latitude = rand 49.0..50.0
 #   u.longitude = rand -124.0..-123.0
