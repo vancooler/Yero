@@ -366,7 +366,6 @@ class UsersController < ApplicationController
     @user = User.find_by_key(params[:key])
     if (params[:email] == @user.email)
       UserMailer.forget_password(@user).deliver
-      puts "sent"
       render json: success(true)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
