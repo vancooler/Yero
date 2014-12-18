@@ -36,5 +36,9 @@ Rails.application.configure do
   # config.action_view.raise_on_missing_translations = true
 
   config.action_mailer.default_url_options = { host: 'localhost:3000' }
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = false
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default :charset => "utf-8"
   ENV["REDISTOGO_URL"] = 'redis://redistogo:7fdc01450101bbb8fdc6b69aa5e50c81@hoki.redistogo.com:9604/'
 end
