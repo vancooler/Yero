@@ -60,6 +60,7 @@ gem 'carrierwave_backgrounder'
 gem 'redis'
 #layer gem
 gem 'jwt'
+gem 'sendgrid'
 
 gem 'rails_12factor', group: :production
 
