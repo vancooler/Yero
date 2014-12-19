@@ -528,7 +528,7 @@ class UsersController < ApplicationController
 
   def accept_contract
     user = User.find_by_key(params[:key])
-    if params[:accept_contract]
+    if params[:accept_contract] == true
       user.update(accept_contract: true)
     end
   end
