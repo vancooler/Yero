@@ -133,8 +133,6 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        # json.layer_id       user.layer_id
-
         
         json.latitude       user.latitude  
         json.longitude      user.longitude 
