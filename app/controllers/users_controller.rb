@@ -526,6 +526,13 @@ class UsersController < ApplicationController
     }
   end
 
+  def accept_contract
+    user = User.find_by_key(params[:key])
+    if params[:accept_contract]
+      user.update(accept_contract: true)
+    end
+  end
+
   # def read_notification_update
   #   if current_user.read_notification.nil?
   #     read_notification = ReadNotification.create(user: current_user)
