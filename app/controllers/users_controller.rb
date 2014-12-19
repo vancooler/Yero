@@ -526,12 +526,15 @@ class UsersController < ApplicationController
     }
   end
 
+  # Accept contract makes sure the user accepts the rules of yero
   def accept_contract
     user = User.find_by_key(params[:key])
     if params[:accept_contract] == true
       user.update(accept_contract: true)
+      puts 'true'
       render json: success(true)
     else
+      puts 'false'
       render json: success(false)
     end
   end
