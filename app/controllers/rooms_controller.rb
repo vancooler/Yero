@@ -11,7 +11,7 @@ class RoomsController < ApplicationController
       beacon.create
       beacon = Beacon.find_by(key: params[:beacon_key])
     end
-
+    puts params[:beacon_key]
     beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
     
     
