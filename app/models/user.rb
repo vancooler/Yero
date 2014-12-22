@@ -122,13 +122,17 @@ class User < ActiveRecord::Base
     #self.activities.on_current_day.count > 0
     !self.active_in_venue.nil?
   end
-  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     current_venue = self.current_venue
     current_venue_network = self.current_venue_network
     # return nil if current_venue.nil? and current_venue_network.nil?
-    aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
-    if !venue_id.nil? #If a parameter was passed in for venue_id
-      aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
+    if everyone # everyone will search the network if the option is true
+      aivs = ActiveInVenueNetwork.where("user_id != ?", self.id)
+    else # else we will just search the people in the venue
+      aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
+      if !venue_id.nil? #If a parameter was passed in for venue_id
+        aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
+      end
     end
     active_users_id = [] # Make empty array.
     aivs.each do |aiv| 

@@ -66,6 +66,7 @@ class UsersController < ApplicationController
     min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
     max_distance = params[:max_distance].to_i if !params[:max_distance].nil? and !params[:max_distance].empty?
     venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
+    everyone = params[:everyone].to_i if !params[:everyone].nil? and !params[:everyone].empty?
     page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     diff_1 = 0
@@ -73,11 +74,11 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
         #fellow_participants basically returns all users that are out or in your particular venue
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         # Basically a pagination thing for mobile.
         return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
       else
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       end
       
       json.array! return_users do |user|
