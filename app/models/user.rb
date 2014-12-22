@@ -44,6 +44,24 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Checks if you are in a different venue as the other person
+  def different_venue_as?(user_id)
+    if fellow_participant = User.find(user_id)
+      
+      fellow_participant_venue = fellow_participant.current_venue
+      self_venue = self.current_venue
+
+      if !fellow_participant_venue.nil? && !self_venue.nil?
+        if self.current_venue.id != fellow_participant.current_venue.id
+          return true
+        end
+      end
+      false
+    else
+      false
+    end
+  end
+
 
   ##########################################################################
   #

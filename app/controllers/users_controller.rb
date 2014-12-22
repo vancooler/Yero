@@ -122,6 +122,7 @@ class UsersController < ApplicationController
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+        json.different_venue_badge     current_user.different_venue_as(user.id)
         json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
         json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
         json.id             user.id
