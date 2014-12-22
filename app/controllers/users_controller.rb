@@ -117,22 +117,20 @@ class UsersController < ApplicationController
           end
         end
 
-        puts json.avatars
-
         start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
+        json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
         end_time = Time.now
         diff_1 += (end_time - start_time)
-        json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.same_beacon               current_user.same_beacon_as?(user.id)
-        json.actual_distance           current_user.actual_distance(user)
+        json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+        json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+        json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
         json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
         json.birthday       user.birthday
         json.gender         user.gender
-        json.distance       current_user.distance_label(user)
+        json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
         json.created_at     user.created_at
         json.updated_at     user.updated_at
 
@@ -147,21 +145,21 @@ class UsersController < ApplicationController
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
-    same_beacon_users = []
-    same_venue_users = []
-    users.each do |u|
-      if u['same_beacon'].to_s == "true"
-        same_beacon_users << u
-      elsif u['same_venue_badge'].to_s == "true"
-        same_venue_users << u
+    same_beacon_users = [] # Make a empty array for users in the same beacon
+    same_venue_users = [] #Make a empty array for users in the same venue
+    users.each do |u| # Go through the users
+      if u['same_beacon'].to_s == "true" #If the users' same beacon field is true
+        same_beacon_users << u # Throw the user into the array
+      elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+        same_venue_users << u # Throw the user into the array
       end
     end
-    users = users - same_beacon_users - same_venue_users
-    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
+    users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
     logger.info "NEWTIME: " + diff_1.to_s 
-    render json: success(users, "users")
+    render json: success(users, "users") #Return users
   end
 
   def friends

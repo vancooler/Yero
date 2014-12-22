@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
     user_avatars.find_by(default: true)
   end
 
+  # Checks if you are in the same venue as the other person
   def same_venue_as?(user_id)
     if fellow_participant = User.find(user_id)
       
