@@ -72,7 +72,9 @@ class UsersController < ApplicationController
     diff_2 = 0
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
+        #fellow_participants basically returns all users that are out or in your particular venue
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+        # Basically a pagination thing for mobile.
         return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
@@ -114,6 +116,8 @@ class UsersController < ApplicationController
             a.default     avatar[:default]   if !avatar[:default].nil?
           end
         end
+
+        puts json.avatars
 
         start_time = Time.now
         json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
