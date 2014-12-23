@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
     user_avatars.find_by(default: true)
   end
 
+  # Checks if you are in the same venue as the other person
   def same_venue_as?(user_id)
     if fellow_participant = User.find(user_id)
       
@@ -38,6 +39,24 @@ class User < ActiveRecord::Base
       return false if fellow_participant_venue.nil? || self_venue.nil?
 
       self.current_venue.id == fellow_participant.current_venue.id
+    else
+      false
+    end
+  end
+
+  # Checks if you are in a different venue as the other person
+  def different_venue_as?(user_id)
+    if fellow_participant = User.find(user_id)
+      
+      fellow_participant_venue = fellow_participant.current_venue
+      self_venue = self.current_venue
+
+      if !fellow_participant_venue.nil? && !self_venue.nil?
+        if self.current_venue.id != fellow_participant.current_venue.id
+          return true
+        end
+      end
+      false
     else
       false
     end
@@ -103,17 +122,21 @@ class User < ActiveRecord::Base
     #self.activities.on_current_day.count > 0
     !self.active_in_venue.nil?
   end
-  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     current_venue = self.current_venue
     current_venue_network = self.current_venue_network
     # return nil if current_venue.nil? and current_venue_network.nil?
-    aivs = ActiveInVenue.where("user_id != ?", self.id)
-    if !venue_id.nil?
-      aivs = aivs.where(:venue_id => venue_id)
+    if everyone # everyone will search the network if the option is true
+      aivs = ActiveInVenueNetwork.where("user_id != ?", self.id)
+    else # else we will just search the people in the venue
+      aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
+      if !venue_id.nil? #If a parameter was passed in for venue_id
+        aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
+      end
     end
-    active_users_id = []
-    aivs.each do |aiv|
-      active_users_id << aiv.user_id
+    active_users_id = [] # Make empty array.
+    aivs.each do |aiv| 
+      active_users_id << aiv.user_id #Toss into the array the user_id's of the people that are out or in a particular venue.
     end
 =begin
     venue_activities = []
@@ -141,22 +164,22 @@ class User < ActiveRecord::Base
       active_users_id << id_activity[0] if qualified
     end
 =end
-    users = User.where(id: active_users_id)
+    users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     if !gender.nil?
       if gender.downcase == "male" or gender.downcase == "female" or gender.downcase == "m" or gender.downcase == "f"
-        users = users.where(:gender => gender)
+        users = users.where(:gender => gender) #Filter by gender
       end
     end
     if !max_age.nil? 
-      users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day)
+      users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day) #Filter by max age
     end
     if !min_age.nil? and min_age > 0
-      users = users.where("birthday <= ?", (min_age + 1).years.ago)
+      users = users.where("birthday <= ?", (min_age + 1).years.ago) # Filter by min age
     end
-    min_distance = 0 if min_distance.nil?
+    min_distance = 0 if min_distance.nil? 
     max_distance = 60 if max_distance.nil?
     
-    self.user_sort(users, min_distance, max_distance)
+    self.user_sort(users, min_distance, max_distance) #Returns the users filtered
   end
 
   def whisper_friends
@@ -271,7 +294,11 @@ class User < ActiveRecord::Base
       json.birthday birthday
       json.first_name first_name
       json.gender gender
-      json.layer_id layer_id
+      json.email email
+      json.snapchat_id snapchat_id
+      json.wechat_id wechat_id
+      json.discovery discovery
+      json.exclusive exclusive
 
       json.avatars do
         avatars = self.user_avatars.all

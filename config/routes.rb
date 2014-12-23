@@ -45,7 +45,12 @@ Rails.application.routes.draw do
   get 'beta-signup', to: 'beta_signup_users#beta'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
+  post 'api/v1/users/login',                  to: 'users#login'
+  post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
   post 'api/v1/users/update',                 to: 'users#update_settings'
+  post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
+  post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
+  post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
   post 'api/v1/users/update-apn',             to: 'users#update_apn'
   get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
   get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list

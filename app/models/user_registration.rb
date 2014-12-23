@@ -12,7 +12,7 @@ class UserRegistration
     create_key
     @user.last_active = Time.now
     @user.save
-    create_layer_account
+    # create_layer_account
   end
 
   private

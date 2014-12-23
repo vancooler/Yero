@@ -59,7 +59,7 @@ class BeaconInitialization
     def create_beacon(beacon_name, room_id)
       beacon = Beacon.find_by(key: beacon_name, room_id: room_id) || Beacon.new
       if beacon.new_record?
-        beacon.key = beacon_name,
+        beacon.key = beacon_name
         beacon.room_id = room_id
         beacon.save!
       end

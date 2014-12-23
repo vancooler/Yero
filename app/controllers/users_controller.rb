@@ -32,7 +32,7 @@ class UsersController < ApplicationController
       created_at: current_user.created_at,
       updated_at: current_user.updated_at,
       apn_token: current_user.apn_token,
-      layer_id: current_user.layer_id,
+      # layer_id: current_user.layer_id,
       latitude:current_user.latitude,
       longitude:current_user.longitude,
       avatars: avatar_array
@@ -66,16 +66,19 @@ class UsersController < ApplicationController
     min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
     max_distance = params[:max_distance].to_i if !params[:max_distance].nil? and !params[:max_distance].empty?
     venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
+    everyone = params[:everyone].to_i if !params[:everyone].nil? and !params[:everyone].empty?
     page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     diff_1 = 0
     diff_2 = 0
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+        #fellow_participants basically returns all users that are out or in your particular venue
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+        # Basically a pagination thing for mobile.
         return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
       else
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance)
+        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       end
       
       json.array! return_users do |user|
@@ -116,25 +119,24 @@ class UsersController < ApplicationController
         end
 
         start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
+        json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
         end_time = Time.now
         diff_1 += (end_time - start_time)
-        json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.same_beacon               current_user.same_beacon_as?(user.id)
-        json.actual_distance           current_user.actual_distance(user)
+        json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+        json.different_venue_badge     current_user.different_venue_as(user.id)
+        json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+        json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
         json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
         json.birthday       user.birthday
         json.gender         user.gender
-        json.distance       current_user.distance_label(user)
+        json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
         json.created_at     user.created_at
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        json.layer_id       user.layer_id
-
         
         json.latitude       user.latitude  
         json.longitude      user.longitude 
@@ -145,21 +147,21 @@ class UsersController < ApplicationController
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
-    same_beacon_users = []
-    same_venue_users = []
-    users.each do |u|
-      if u['same_beacon'].to_s == "true"
-        same_beacon_users << u
-      elsif u['same_venue_badge'].to_s == "true"
-        same_venue_users << u
+    same_beacon_users = [] # Make a empty array for users in the same beacon
+    same_venue_users = [] #Make a empty array for users in the same venue
+    users.each do |u| # Go through the users
+      if u['same_beacon'].to_s == "true" #If the users' same beacon field is true
+        same_beacon_users << u # Throw the user into the array
+      elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+        same_venue_users << u # Throw the user into the array
       end
     end
-    users = users - same_beacon_users - same_venue_users
-    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
+    users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
     logger.info "NEWTIME: " + diff_1.to_s 
-    render json: success(users, "users")
+    render json: success(users, "users") #Return users
   end
 
   def friends
@@ -223,7 +225,7 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        json.layer_id       user.layer_id
+        # json.layer_id       user.layer_id
 
         
         json.latitude       user.latitude  
@@ -286,25 +288,87 @@ class UsersController < ApplicationController
       #     response["avatars"] = [user_avatar]
       #   end
       # end
+
+      # avatar = sign_up_params[:avatar]
+      # if avatar
+      #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
+      # else
+      # end
       
       # The way in one step
       response = user.to_json(true)
+      # p 'here is response:'
+      # p response.inspect
       thumb = response["avatars"].first['avatar']
       response["avatars"].first['thumbnail'] = thumb
       response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      # render json: user_registration.to_json.inspect
+      # render json: user_avatar.to_json.inspect
       render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
   end
 
+  def login
+    user = User.find_by_key(params[:key])
+    if (params[:email] == user.email and params[:password] == user.password)
+      render json: success(user.to_json(true))
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end  
+  end
+
   def update_settings
     user = User.find_by_key(params[:key])
-    user.assign_attributes(sign_up_params)
+    # user.assign_attributes(sign_up_params)
 
-    if user.valid?
-      user.save!
-      render json: success(user.to_json(false))
+    if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+    # if user.valid?
+    #   user.save!
+    #   render json: success(user.to_json(false))
+    # else
+    #   render json: error(JSON.parse(user.errors.messages.to_json))
+    # end
+  end
+
+  def update_chat_accounts
+    user = User.find_by_key(params[:key])
+    snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
+    wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
+    user.snapchat_id = snapchat_id
+    user.wechat_id = wechat_id
+    if user.save
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+  end
+
+  def remove_chat_accounts
+    user = User.find_by_key(params[:key])
+    if params[:snapchat_id] == true
+      user.snapchat_id = nil
+    end
+    if params[:wechat_id] == true
+      user.wechat_id = nil
+    end
+    if user.save
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+  end
+
+  def forgot_password
+    @user = User.find_by_key(params[:key])
+    if (params[:email] == @user.email)
+      UserMailer.forget_password(@user).deliver
+      render json: success(true)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
@@ -464,6 +528,17 @@ class UsersController < ApplicationController
     }
   end
 
+  # Accept contract makes sure the user accepts the rules of yero
+  def accept_contract
+    user = User.find_by_key(params[:key])
+    if params[:accept_contract] == true
+      user.update(accept_contract: true)
+      render json: success(true)
+    else
+      render json: success(false)
+    end
+  end
+
   # def read_notification_update
   #   if current_user.read_notification.nil?
   #     read_notification = ReadNotification.create(user: current_user)
@@ -480,8 +555,12 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, user_avatars_attributes: [:avatar])
-    # params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :avatar_id)
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
+    # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
+  end
+
+  def login_params
+    params.require(:user).permit(:email, :password, :key)
   end
 end
 
@@ -491,7 +570,7 @@ end
 #   u = User.new
 #   u.birthday = "1993-09-09"
 #   u.first_name = "TEST_" + i.to_s
-#   u.nonce = "TEST_" + i.to_s + "_nonce"
+
 #   u.gender = "Male"
 #   u.latitude = rand 49.0..50.0
 #   u.longitude = rand -124.0..-123.0

@@ -17,6 +17,7 @@ class ActiveInVenue < ActiveRecord::Base
   def self.enter_venue(venue, user, beacon)
     #remove record in any other venue
     oldArray = ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id)
+    puts oldArray
     if oldArray and oldArray.count > 0
       if oldArray.count == 1
         oldArray.first.destroy
