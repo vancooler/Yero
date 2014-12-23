@@ -325,7 +325,7 @@ class UsersController < ApplicationController
 
     if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
       user_params = {user.exclusive, user.discovery}
-      render json: success(user)
+      render json: success(user_params)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
