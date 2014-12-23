@@ -353,7 +353,7 @@ class UsersController < ApplicationController
     user.snapchat_id = snapchat_id
     user.wechat_id = wechat_id
     if user.save
-      render json: success(true)
+      render json: success(user)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end

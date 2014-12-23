@@ -96,10 +96,14 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.find_friends(user_id)
-    dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
-    table.load_schema
+    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table.load_schema 
+    # :notification_type. '1' => enter venue greeting, '2' => chat request
+    # :accepted. 0 => nothing, 1 => accepted, 2 => declined
+    # sender_items = select items where target_id equals the user_id and where the notification_type is a chat request that has been accepted
     sender_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    
     receiver_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     friends = Array.new
     sender_items.each do |i|
