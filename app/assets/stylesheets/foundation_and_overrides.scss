@@ -41,7 +41,7 @@ $total-columns: 12;
 // We use these to control various global styles
 // $body-bg: #fff;
 // $body-font-color: #222;
-$body-font-family: "GothamLight", Arial, sans-serif;//"GothamThin", Arial, sans-serif;
+$body-font-family: "GothamBook", Arial, sans-serif;//"GothamThin", Arial, sans-serif;
 // $body-font-weight: normal;
 // $body-font-style: normal;
 
@@ -325,7 +325,7 @@ $button-font-color: #000; //#fff;
 // $button-font-align: center;
 
 // We use these to control various hover effects.
-// $button-function-factor: -20%;
+$button-function-factor: 0%; //-20%;
 
 // We use these to control button border styles.
 // $button-border-width: 0px;
