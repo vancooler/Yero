@@ -324,7 +324,9 @@ class UsersController < ApplicationController
     # user.assign_attributes(sign_up_params)
 
     if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
-      render json: success(user)
+      u = Hash.new
+      u = {exclusive: user.exclusive, discovery: user.discovery}
+      render json: success(u)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
