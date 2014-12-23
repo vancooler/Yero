@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141211203837) do
+ActiveRecord::Schema.define(version: 20141223174133) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,16 +34,16 @@ ActiveRecord::Schema.define(version: 20141211203837) do
   create_table "active_in_venue_networks", force: true do |t|
     t.integer  "venue_network_id",                                 null: false
     t.integer  "user_id",                                          null: false
-    t.datetime "last_activity",    default: '2014-12-11 18:32:22', null: false
-    t.datetime "enter_time",       default: '2014-12-11 18:32:22', null: false
+    t.datetime "last_activity",    default: '2014-09-05 19:48:39', null: false
+    t.datetime "enter_time",       default: '2014-09-05 19:48:39', null: false
     t.integer  "active_status",    default: 1
   end
 
   create_table "active_in_venues", force: true do |t|
     t.integer  "venue_id",                                      null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-12-11 18:32:22', null: false
-    t.datetime "enter_time",    default: '2014-12-11 18:32:22', null: false
+    t.datetime "last_activity", default: '2014-09-05 19:26:31', null: false
+    t.datetime "enter_time",    default: '2014-09-05 19:26:31', null: false
     t.integer  "beacon_id"
   end
 
@@ -134,15 +134,15 @@ ActiveRecord::Schema.define(version: 20141211203837) do
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-12-11 18:32:21', null: false
-    t.datetime "enter_time",    default: '2014-12-11 18:32:21', null: false
+    t.datetime "last_activity", default: '2014-09-02 20:49:09', null: false
+    t.datetime "enter_time",    default: '2014-09-02 20:49:09', null: false
     t.integer  "temperature"
   end
 
   create_table "pokes", force: true do |t|
     t.integer  "poker_id"
     t.integer  "pokee_id"
-    t.datetime "poked_at", default: '2014-12-11 18:32:21'
+    t.datetime "poked_at", default: '2014-09-02 20:49:09'
     t.boolean  "viewed",   default: false
   end
 
@@ -188,36 +188,37 @@ ActiveRecord::Schema.define(version: 20141211203837) do
   end
 
   create_table "users", force: true do |t|
-    t.date     "birthday",                         null: false
-    t.string   "first_name",                       null: false
-    t.string   "gender",                           null: false
-    t.string   "key",                              null: false
+    t.date     "birthday",                          null: false
+    t.string   "first_name",                        null: false
+    t.string   "gender",                            null: false
+    t.string   "key",                               null: false
     t.datetime "last_activity"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "apn_token"
-    t.text     "layer_id"
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "last_active"
     t.string   "introduction_1",    default: " "
     t.string   "introduction_2",    default: " "
-    t.string   "nonce"
     t.integer  "notification_read"
     t.string   "email"
     t.string   "snapchat_id"
     t.string   "wechat_id"
     t.string   "password"
     t.boolean  "discovery",         default: true
-    t.boolean  "exclusive",         default: true
+    t.boolean  "exclusive",         default: false
+    t.boolean  "active",            default: true
+    t.boolean  "accept_contract",   default: false
   end
 
+  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
 
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
-    t.datetime "enter_time", default: '2014-12-11 18:32:22', null: false
+    t.datetime "enter_time", default: '2014-10-27 19:50:59', null: false
   end
 
   create_table "venue_networks", force: true do |t|
@@ -291,7 +292,7 @@ ActiveRecord::Schema.define(version: 20141211203837) do
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
-    t.datetime "whisper_time",   default: '2014-12-11 18:32:22', null: false
+    t.datetime "whisper_time",   default: '2014-10-27 19:50:59', null: false
   end
 
   create_table "whispers", force: true do |t|
