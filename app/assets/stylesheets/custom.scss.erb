@@ -271,6 +271,22 @@ body{
 	input[type="email"] {
 		padding-left: 35px;
 	}
+	select {
+		padding-left: 35px;
+		background: url(<%= asset_path 'phone.png' %>) no-repeat 4%;
+		background-color: #fff;
+		color: #ccc;
+		font-size: rem-calc(18);
+		&:hover {
+			background-color: #fff;
+			border-color: #ccc;
+			font-weight: normal;
+			// font-size: 1.19rem;
+			font-size: rem-calc(18);
+		}
+		option:first-of-type {
+		}
+	}
 }
 .phone-input input[type="text"],
 .phone-input input[type="text"]:focus {

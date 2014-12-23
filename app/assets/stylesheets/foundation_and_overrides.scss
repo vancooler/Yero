@@ -536,8 +536,8 @@ $input-include-glowing-effect: true;
 // $glowing-effect-color: $input-focus-border-color;
 
 // Select variables
-// $select-bg-color: #fafafa;
-// $select-hover-bg-color: scale-color($select-bg-color, $lightness: -3%);
+$select-bg-color: #fff;// #fafafa;
+$select-hover-bg-color: #fff; //scale-color($select-bg-color, $lightness: -3%);
 
 // Inline Lists
 
