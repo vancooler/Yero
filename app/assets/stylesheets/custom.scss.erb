@@ -148,7 +148,7 @@ body{
 	// min-height: 650px;
 }
 .page-header {
-	padding: 100px 0px 50px;
+	padding: 90px 0px 50px;
 }
 .email-signup {
 	background: #ebedf2;
@@ -271,6 +271,22 @@ body{
 	input[type="email"] {
 		padding-left: 35px;
 	}
+	select {
+		padding-left: 35px;
+		background: url(<%= asset_path 'phone.png' %>) no-repeat 4%;
+		background-color: #fff;
+		color: #ccc;
+		font-size: rem-calc(18);
+		&:hover {
+			background-color: #fff;
+			border-color: #ccc;
+			font-weight: normal;
+			// font-size: 1.19rem;
+			font-size: rem-calc(18);
+		}
+		option:first-of-type {
+		}
+	}
 }
 .phone-input input[type="text"],
 .phone-input input[type="text"]:focus {
@@ -319,7 +335,11 @@ label {
 
 // page header
 .page-header {
-
+	h2 {
+		margin-top: 0px;
+		-webkit-margin-before: 0;
+		margin-bottom: 25px;
+	}
 }
 
 // faq
@@ -358,12 +378,13 @@ label {
 .contact-content {
 	h3 {
 		text-transform: none;
-		font-family: 'GothamLight';
-		letter-spacing: 0.15rem;
+		font-family: 'GothamBook';
+		letter-spacing: 0.1rem;
 	}
 	h5 {
 		text-transform: none;
 		margin-top: 25px;
+		margin-bottom: 10px;
 	}
 }
 
