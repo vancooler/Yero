@@ -336,6 +336,16 @@ class UsersController < ApplicationController
     # end
   end
 
+  def deactivate
+    user = User.find_by_key(params[:key])
+    if !params[:active]
+      user.update(active: true)
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+  end
+
   def update_chat_accounts
     user = User.find_by_key(params[:key])
     snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id

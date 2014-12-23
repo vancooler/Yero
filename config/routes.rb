@@ -48,6 +48,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/login',                  to: 'users#login'
   post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
   post 'api/v1/users/update',                 to: 'users#update_settings'
+  post 'api/v1/users/deactivate',             to: 'users#deactivate'
   post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
   post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
