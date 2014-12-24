@@ -119,11 +119,11 @@ class WhisperNotification < AWS::Record::HashModel
         end
       end
     end
-    receiver_items.each do |i|
-      attributes = i.attributes.to_h
-      target_id = attributes['target_id'].to_i
-      h = Hash.new
-      if target_id > 0 
+    receiver_items.each do |i| #For each item
+      attributes = i.attributes.to_h # Turn each item into a hash
+      target_id = attributes['target_id'].to_i # Turn the target id key-value pair back to an integer
+      h = Hash.new # Make a new hash object
+      if target_id > 0  
         if friends.include? target_id
         else
           friends.push(target_id)
