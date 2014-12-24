@@ -147,9 +147,6 @@ class User < ActiveRecord::Base
         end
       end
     end
-
-    puts "The active users:"
-    puts active_users_id.inspect
 =begin
     venue_activities = []
 
@@ -178,7 +175,7 @@ class User < ActiveRecord::Base
 =end
     users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     if !gender.nil? || gender != "A"
-      if gender.downcase == "male" or gender.downcase == "female" or gender == "M" or gender.downcase == "F"
+      if gender.downcase == "male" or gender.downcase == "female" or gender == "M" or gender == "F"
         users = users.where(:gender => gender) #Filter by gender
       end
     end
@@ -190,7 +187,8 @@ class User < ActiveRecord::Base
     end
     min_distance = 0 if min_distance.nil? 
     max_distance = 60 if max_distance.nil?
-    
+    puts "The active users:"
+    puts users.inspect
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
   end
 
