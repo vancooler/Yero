@@ -324,7 +324,9 @@ class UsersController < ApplicationController
     # user.assign_attributes(sign_up_params)
 
     if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
-      render json: success(true)
+      u = Hash.new
+      u = {exclusive: user.exclusive, discovery: user.discovery}
+      render json: success(u)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
@@ -336,6 +338,16 @@ class UsersController < ApplicationController
     # end
   end
 
+  def deactivate
+    user = User.find_by_key(params[:key])
+    if !params[:active]
+      user.update(active: true)
+      render json: success(true)
+    else
+      render json: error(JSON.parse(user.errors.messages.to_json))
+    end
+  end
+
   def update_chat_accounts
     user = User.find_by_key(params[:key])
     snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
@@ -343,7 +355,7 @@ class UsersController < ApplicationController
     user.snapchat_id = snapchat_id
     user.wechat_id = wechat_id
     if user.save
-      render json: success(true)
+      render json: success(user)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
