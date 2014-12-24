@@ -133,7 +133,7 @@ class WhisperNotification < AWS::Record::HashModel
     return friends # return friends
   end
 
-  def self.system_notification(user.id)
+  def self.system_notification(user_id)
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
