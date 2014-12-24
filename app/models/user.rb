@@ -141,7 +141,10 @@ class User < ActiveRecord::Base
     end
     if aivn # If there are people acitve in venue network
       aivn.each do |aivn| # Loop
-        active_users_id << aivn.user_id # Throw each one into the array
+        if active_users_id.include? aivn.user_id
+        else
+          active_users_id << aivn.user_id # Throw each one into the array
+        end
       end
     end
 =begin
