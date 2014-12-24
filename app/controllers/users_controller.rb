@@ -157,7 +157,7 @@ class UsersController < ApplicationController
         same_venue_users << u # Throw the user into the array
       end
     end
-    users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+    # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
