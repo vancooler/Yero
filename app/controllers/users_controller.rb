@@ -71,6 +71,7 @@ class UsersController < ApplicationController
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     diff_1 = 0
     diff_2 = 0
+    s_time = Time.now
     users = Jbuilder.encode do |json|
       if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
         #fellow_participants basically returns all users that are out or in your particular venue
@@ -160,6 +161,10 @@ class UsersController < ApplicationController
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
+    e_time = Time.now
+    runtime = e_time - s_time
+    puts "The runtime is: "
+    puts runtime.inspect
     logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users") #Return users
   end
