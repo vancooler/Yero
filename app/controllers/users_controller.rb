@@ -165,7 +165,6 @@ class UsersController < ApplicationController
     runtime = e_time - s_time
     puts "The runtime is: "
     puts runtime.inspect
-    puts users.inspect
     logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users") #Return users
   end

@@ -130,6 +130,7 @@ class User < ActiveRecord::Base
       aivs = ActiveInVenueNetwork.where("user_id != ?", self.id)
     else # else we will just search the people in the venue
       aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
+      aivn = ActiveInVenueNetwork.where("user_id != ?", self.id)
       if !venue_id.nil? #If a parameter was passed in for venue_id
         aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
       end
@@ -137,6 +138,11 @@ class User < ActiveRecord::Base
     active_users_id = [] # Make empty array.
     aivs.each do |aiv| 
       active_users_id << aiv.user_id #Toss into the array the user_id's of the people that are out or in a particular venue.
+    end
+    if aivn # If there are people acitve in venue network
+      aivn.each do |aivn| # Loop
+        active_users_id << aivn.user_id # Throw each one into the array
+      end
     end
 =begin
     venue_activities = []
