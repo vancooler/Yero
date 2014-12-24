@@ -148,6 +148,7 @@ class User < ActiveRecord::Base
       end
     end
 
+    puts "The active users:"
     puts active_users_id.inspect
 =begin
     venue_activities = []
