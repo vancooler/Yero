@@ -123,14 +123,14 @@ class WhisperNotification < AWS::Record::HashModel
       attributes = i.attributes.to_h # Turn each item into a hash
       target_id = attributes['target_id'].to_i # Turn the target id key-value pair back to an integer
       h = Hash.new # Make a new hash object
-      if target_id > 0  
-        if friends.include? target_id
+      if target_id > 0  # Greater than 0 means its an actual person
+        if friends.include? target_id # If target_id is already in friends array, then do nothing
         else
-          friends.push(target_id)
+          friends.push(target_id) # else throw the target_id into the array
         end
       end
     end
-    return friends
+    return friends # return friends
   end
 
   def self.chat_action(id, handle_action)
