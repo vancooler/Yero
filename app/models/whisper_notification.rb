@@ -133,6 +133,27 @@ class WhisperNotification < AWS::Record::HashModel
     return friends # return friends
   end
 
+  def self.system_notification(user.id)
+    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table.load_schema 
+    # Retrieve the system notifications that were sent by the venue, with notification_type = 1
+    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1")
+    venue = Array.new # Make a new hash object
+    venue_items.each do |i| # For each item
+      attributes = i.attributes.to_h # Turn each item into a hash
+      venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
+      h = Hash.new # Make a new hash object
+      if venue_id > 0 
+        if venue.include? venue_id #venue id already in there, then do nothing
+        else
+          venue.push(venue_id) # Throw venue_id into the array
+        end
+      end
+    end
+    return venue
+  end
+
   def self.chat_action(id, handle_action)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?

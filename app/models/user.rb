@@ -188,6 +188,11 @@ class User < ActiveRecord::Base
     return users
   end
 
+  def whisper_venue
+    venue = WhisperNotification.system_notification(self.id)
+    return venue
+  end
+
   def fellow_participants_sorted #by distance then by activity
     results = self.fellow_participants
     results_with_location = results.where.not(latitude:nil, longitude:nil)
