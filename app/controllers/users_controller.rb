@@ -60,16 +60,15 @@ class UsersController < ApplicationController
 
   # API
   def index
-    puts params.inspect
     gender = params[:gender] if !params[:gender].blank?
-    min_age = params[:min_age].to_i if !params[:min_age].nil? and !params[:min_age].empty?
-    max_age = params[:max_age].to_i if !params[:max_age].nil? and !params[:max_age].empty?
-    min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
-    max_distance = params[:max_distance].to_i if !params[:max_distance].nil? and !params[:max_distance].empty?
-    venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
+    min_age = params[:min_age].to_i if !params[:min_age].blank?
+    max_age = params[:max_age].to_i if !params[:max_age].blank?
+    min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
+    max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
+    venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
     everyone = params[:everyone] == "1"? true : false
-    page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
-    users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
+    page_number = params[:page] if !params[:page].blank?
+    users_per_page = params[:per_page] if !blank?
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
