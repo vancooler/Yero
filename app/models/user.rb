@@ -187,8 +187,6 @@ class User < ActiveRecord::Base
     end
     min_distance = 0 if min_distance.nil? 
     max_distance = 60 if max_distance.nil?
-    puts "The active users:"
-    puts users.inspect
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
   end
 

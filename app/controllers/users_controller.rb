@@ -60,7 +60,7 @@ class UsersController < ApplicationController
 
   # API
   def index
-    gender = params[:gender] if !params[:gender].nil? and !params[:gender].empty?
+    gender = params[:gender] if !params[:gender].blank?
     min_age = params[:min_age].to_i if !params[:min_age].nil? and !params[:min_age].empty?
     max_age = params[:max_age].to_i if !params[:max_age].nil? and !params[:max_age].empty?
     min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
@@ -217,7 +217,8 @@ class UsersController < ApplicationController
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.same_beacon               current_user.same_beacon_as?(user.id)
+        json.different_venue_badge     current_user.different_venue_as?(user.id)
+        # json.same_beacon               current_user.same_beacon_as?(user.id)
         json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
@@ -230,8 +231,6 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        # json.layer_id       user.layer_id
-
         
         json.latitude       user.latitude  
         json.longitude      user.longitude 
@@ -250,6 +249,7 @@ class UsersController < ApplicationController
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
       end
+
     end
     users = users - same_beacon_users - same_venue_users
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
