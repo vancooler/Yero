@@ -243,13 +243,13 @@ class UsersController < ApplicationController
     users = JSON.parse(users).delete_if(&:empty?)
     same_beacon_users = []
     same_venue_users = []
+    different_venue_users = [] 
     users.each do |u|
-      if u['same_beacon'].to_s == "true"
-        same_beacon_users << u
+      if u['different_venue_users'].to_s = "true"
+        different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
       end
-
     end
     users = users - same_beacon_users - same_venue_users
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
