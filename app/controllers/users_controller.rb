@@ -73,7 +73,7 @@ class UsersController < ApplicationController
     diff_2 = 0
     s_time = Time.now
     users = Jbuilder.encode do |json|
-      if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
+      if !params[:page].blank? and !params[:per_page].blank?
         #fellow_participants basically returns all users that are out or in your particular venue
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         # Basically a pagination thing for mobile.
