@@ -103,34 +103,56 @@ class WhisperNotification < AWS::Record::HashModel
     # :accepted. 0 => nothing, 1 => accepted, 2 => declined
     # sender_items = select items where target_id equals the user_id and where the notification_type is a chat request that has been accepted
     # target_id is the user id that receives the request
-    sender_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     # receiver_items = select items where origin_id equals user_id and where the notification_type is a chat request that has been accepted
     # origin_id is the user id that sent the request
-    receiver_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
-    friends = Array.new # Friends is a new array
-    sender_items.each do |i| # For each item
-      attributes = i.attributes.to_h # Turn each item into a hash
-      origin_id = attributes['origin_id'].to_i # Turn the origin id key-value pair back to an integer
-      h = Hash.new # Make a new hash object
-      if origin_id > 0 # Greater than 0 means it's from a friend
-        if friends.include? origin_id # if origin_id is already in friends array, then do nothing
-        else 
-          friends.push(origin_id) #else throw the origin_id into the array
-        end
-      end
-    end
-    receiver_items.each do |i| #For each item
-      attributes = i.attributes.to_h # Turn each item into a hash
-      target_id = attributes['target_id'].to_i # Turn the target id key-value pair back to an integer
-      h = Hash.new # Make a new hash object
-      if target_id > 0  # Greater than 0 means its an actual person
-        if friends.include? target_id # If target_id is already in friends array, then do nothing
+    origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    target_user_array = Array.new
+    origin_user_array = Array.new
+    if target_items and target_items.count > 0
+      target_items.each do |i|
+        attributes = i.attributes.to_h
+        origin_id = attributes['origin_id'].to_i
+        h = Hash.new
+        if origin_id > 0
+          user = User.find(origin_id)
+          h['origin_user'] = user
+          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
         else
-          friends.push(target_id) # else throw the target_id into the array
+          h['origin_user'] = ''
         end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'target_user'
+        target_user_array << h
       end
+      # return target_user_array
     end
-    return friends # return friends
+    if origin_items and origin_items.count > 0
+      origin_items.each do |i|
+        attributes = i.attributes.to_h
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        if target_id > 0
+          user = User.find(target_id)
+          h['target_user'] = user
+          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+        else
+          h['target_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'origin_user'
+        origin_user_array << h
+      end
+      # return origin_user_array
+    end
+    users = Array.new
+    users = target_user_array + origin_user_array
+    users = users.sort_by { |hsh| hsh[:timestamp] }
+    return users.reverse
   end
 
   def self.system_notification(user_id)
