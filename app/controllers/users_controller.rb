@@ -66,7 +66,7 @@ class UsersController < ApplicationController
     min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
     max_distance = params[:max_distance].to_i if !params[:max_distance].nil? and !params[:max_distance].empty?
     venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
-    everyone = params[:everyone].to_i if !params[:everyone].nil? and !params[:everyone].empty?
+    everyone = params[:everyone].to_i if !params[:everyone].blank?
     page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
     users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
     diff_1 = 0
