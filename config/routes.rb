@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count
   end
 
-  
+
 
   # You can have the root of your site routed with "root"
   root 'home#index'
@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'terms-of-use', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
+  get 'get-in-touch', to: 'home#get-in-touch'
+  get 'venue-login', to: 'home#venue-login'
   get 'android', to: 'beta_signup_users#android'
   get 'beta-signup', to: 'beta_signup_users#beta'
   # User API

@@ -1,5 +1,5 @@
-<% body_class "beta-signup" %>
-<% content_for :title , "Beta Signup" %>
+<% body_class "android" %>
+<% content_for :title , "Android Users" %>
 <!-- <header class="page-header">
 	<div class="row">
 		<div class="medium-12 columns">
@@ -12,7 +12,7 @@
 	<div class="row">
 		<div class="medium-8 medium-centered columns">
 
-			<%= image_tag "shades.png", :class=>'shades-img' %>
+			<%- # image_tag "shades.png", :class=>'shades-img' -%>
 
 			<p>Unfortunately, YERO is not ready for Android users.</p>
 		</div>
@@ -22,28 +22,32 @@
 		</div>
 
 		<div class="medium-8 medium-centered columns">
-			<p>Want to know when we launch on Android? <br>
+			<p>Want to know when it is? <br>
 				Submit your information below and we'll make sure to notify you!
 			</p>
 		</div>
 		<%= form_for @beta_signup_user, :html => { :honeypot => true } do |f| -%>
 
-		<div class="medium-8 medium-centered columns email-form">
+		<div class="medium-4 medium-centered columns email-form">
 			<div class="form">
 				<%= f.hidden_field :city, :value => @beta_signup_user.city %>
 				<%= f.hidden_field :phone_type, :value => @beta_signup_user.phone_type %>
-				<div class="medium-5 columns phone-input">
+				<div class="email-input">
+					<!-- <input type="email" placeholder="Email"> -->
+					<%= f.email_field :email, :placeholder => "Email",:required => true %>
+				</div>
+				<div class="phone-input">
 					<!-- <input type="text" placeholder="Phone model"> -->
 					<%#= f.text_field :phone_model, :placeholder => "Phone model",:required => true %>
         			<%= f.select :phone_model, options_for_select(@models, f.object.phone_model),{:include_blank => 'Phone model'}, :required => true, :placeholder => "Phone model"%>
 				</div>
-				<div class="medium-5 columns email-input">
-					<!-- <input type="email" placeholder="Email"> -->
-					<%= f.email_field :email, :placeholder => "Email",:required => true %>
+				<div class="city-input">
+					<!-- <input type="text" placeholder="City"> -->
+					<%= f.text_field :email, :placeholder => "City",:required => true %>
 				</div>
-				<div class="medium-2 columns">
+				<div class="">
 					<!-- <input type="submit" value="Submit" class="button small"> -->
-					<%= f.submit "submit", :class => 'button small' %>
+					<%= f.submit "submit", :class => 'button expand' %>
 				</div>
 			</div>
 		</div>

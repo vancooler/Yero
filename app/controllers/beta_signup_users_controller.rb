@@ -4,7 +4,7 @@ class BetaSignupUsersController < InheritedResources::Base
   	@beta_signup_user = BetaSignupUser.new
   	@beta_signup_user.phone_type = "Android"
   	@beta_signup_user.city = "N/A"
-  	@models = ["HTC", "Samsung"]
+  	@models = ["Google Nexus 5", "Google Nexus 6", "HTC One M8", "HTC One M7", "LG G3", "Moto X", "Oneplus One", "Samsung Galaxy S5", "Samsung Galaxy S4", "Samsung Galaxy Note 4", "Samsung Galaxy Note 3", "Sony Xperia Z3", "Other"]
 
     respond_to do |format|
       format.html # new.html.erb
@@ -28,7 +28,7 @@ class BetaSignupUsersController < InheritedResources::Base
     @beta_signup_user = BetaSignupUser.new(:email => params[:beta_signup_user][:email], :city => params[:beta_signup_user][:city], :phone_model => params[:beta_signup_user][:phone_model], :phone_type => params[:beta_signup_user][:phone_type])
 
     respond_to do |format|
-      if @beta_signup_user.save 
+      if @beta_signup_user.save
         format.html { redirect_to thanks_beta_signup_url }
         format.json { render json: @beta_signup_user, status: :created, location: @beta_signup_user }
       else
