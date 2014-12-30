@@ -25,7 +25,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.origin_id = origin_id
     n.venue_id = venue_id
     n.notification_type = notification_type
-    n.timestamp = Time.now
+    n.timestamp = Time.now.strftime("%Q")
     n.created_date = Date.today.to_s
     n.viewed = false
     n.accepted = false
@@ -103,34 +103,78 @@ class WhisperNotification < AWS::Record::HashModel
     # :accepted. 0 => nothing, 1 => accepted, 2 => declined
     # sender_items = select items where target_id equals the user_id and where the notification_type is a chat request that has been accepted
     # target_id is the user id that receives the request
-    sender_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     # receiver_items = select items where origin_id equals user_id and where the notification_type is a chat request that has been accepted
     # origin_id is the user id that sent the request
-    receiver_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
-    friends = Array.new # Friends is a new array
-    sender_items.each do |i| # For each item
-      attributes = i.attributes.to_h # Turn each item into a hash
-      origin_id = attributes['origin_id'].to_i # Turn the origin id key-value pair back to an integer
-      h = Hash.new # Make a new hash object
-      if origin_id > 0 # Greater than 0 means it's from a friend
-        if friends.include? origin_id # if origin_id is already in friends array, then do nothing
-        else 
-          friends.push(origin_id) #else throw the origin_id into the array
-        end
-      end
-    end
-    receiver_items.each do |i|
-      attributes = i.attributes.to_h
-      target_id = attributes['target_id'].to_i
-      h = Hash.new
-      if target_id > 0 
-        if friends.include? target_id
+    origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    target_user_array = Array.new
+    origin_user_array = Array.new
+    if target_items and target_items.count > 0
+      target_items.each do |i|
+        attributes = i.attributes.to_h
+        origin_id = attributes['origin_id'].to_i
+        h = Hash.new
+        if origin_id > 0
+          user = User.find(origin_id)
+          h['origin_user'] = user
+          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
         else
-          friends.push(target_id)
+          h['origin_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'target_user'
+        target_user_array << h
+      end
+      # return target_user_array
+    end
+    if origin_items and origin_items.count > 0
+      origin_items.each do |i|
+        attributes = i.attributes.to_h
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        if target_id > 0
+          user = User.find(target_id)
+          h['target_user'] = user
+          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+        else
+          h['target_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'origin_user'
+        origin_user_array << h
+      end
+      # return origin_user_array
+    end
+    users = Array.new
+    users = target_user_array + origin_user_array
+    users = users.sort_by { |hsh| hsh[:timestamp] }
+    puts users.inspect
+    return users.reverse
+  end
+
+  def self.system_notification(user_id)
+    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table.load_schema 
+    # Retrieve the system notifications that were sent by the venue, with notification_type = 1
+    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1")
+    venue = Array.new # Make a new hash object
+    venue_items.each do |i| # For each item
+      attributes = i.attributes.to_h # Turn each item into a hash
+      venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
+      h = Hash.new # Make a new hash object
+      if venue_id > 0 
+        if venue.include? venue_id #venue id already in there, then do nothing
+        else
+          venue.push(venue_id) # Throw venue_id into the array
         end
       end
     end
-    return friends
+    return venue
   end
 
   def self.chat_action(id, handle_action)

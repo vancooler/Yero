@@ -60,19 +60,20 @@ class UsersController < ApplicationController
 
   # API
   def index
-    gender = params[:gender] if !params[:gender].nil? and !params[:gender].empty?
-    min_age = params[:min_age].to_i if !params[:min_age].nil? and !params[:min_age].empty?
-    max_age = params[:max_age].to_i if !params[:max_age].nil? and !params[:max_age].empty?
-    min_distance = params[:min_distance].to_i if !params[:min_distance].nil? and !params[:min_distance].empty?
-    max_distance = params[:max_distance].to_i if !params[:max_distance].nil? and !params[:max_distance].empty?
-    venue_id = params[:venue_id].to_i if !params[:venue_id].nil? and !params[:venue_id].empty?
-    everyone = params[:everyone].to_i if !params[:everyone].nil? and !params[:everyone].empty?
-    page_number = params[:page] if !params[:page].nil? and !params[:page].empty?
-    users_per_page = params[:per_page] if !params[:per_page].nil? and !params[:per_page].empty?
+    gender = params[:gender] if !params[:gender].blank?
+    min_age = params[:min_age].to_i if !params[:min_age].blank?
+    max_age = params[:max_age].to_i if !params[:max_age].blank?
+    min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
+    max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
+    venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
+    everyone = params[:everyone] == "1"? true : false
+    page_number = params[:page] if !params[:page].blank?
+    users_per_page = params[:per_page] if !blank?
     diff_1 = 0
     diff_2 = 0
+    s_time = Time.now
     users = Jbuilder.encode do |json|
-      if !params[:page].nil? and !params[:page].empty? and !params[:per_page].nil? and !params[:per_page].empty?
+      if !params[:page].blank? and !params[:per_page].blank?
         #fellow_participants basically returns all users that are out or in your particular venue
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         # Basically a pagination thing for mobile.
@@ -123,7 +124,7 @@ class UsersController < ApplicationController
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-        json.different_venue_badge     current_user.different_venue_as(user.id)
+        json.different_venue_badge     current_user.different_venue_as?(user.id)
         json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
         json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
         json.id             user.id
@@ -156,10 +157,14 @@ class UsersController < ApplicationController
         same_venue_users << u # Throw the user into the array
       end
     end
-    users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+    # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
     users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
+    e_time = Time.now
+    runtime = e_time - s_time
+    puts "The runtime is: "
+    puts runtime.inspect
     logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users") #Return users
   end
@@ -168,8 +173,8 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       
       return_users = current_user.whisper_friends
-      
-      
+      return_venues = current_user.whisper_venue
+      puts return_users.inspect
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
@@ -212,7 +217,8 @@ class UsersController < ApplicationController
         end_time = Time.now
         diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.same_beacon               current_user.same_beacon_as?(user.id)
+        json.different_venue_badge     current_user.different_venue_as?(user.id)
+        # json.same_beacon               current_user.same_beacon_as?(user.id)
         json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
@@ -225,8 +231,6 @@ class UsersController < ApplicationController
         json.updated_at     user.updated_at
 
         json.apn_token      user.apn_token
-        # json.layer_id       user.layer_id
-
         
         json.latitude       user.latitude  
         json.longitude      user.longitude 
@@ -239,9 +243,10 @@ class UsersController < ApplicationController
     users = JSON.parse(users).delete_if(&:empty?)
     same_beacon_users = []
     same_venue_users = []
+    different_venue_users = [] 
     users.each do |u|
-      if u['same_beacon'].to_s == "true"
-        same_beacon_users << u
+      if u['different_venue_users'].to_s = "true"
+        different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
       end
