@@ -26,6 +26,10 @@ Rails.application.routes.draw do
     post 'api/nightly/update_regular',   to: 'nightlies#update_regular', as: :update_regular_nightly
     post 'api/nightly/increase/:gender', to: 'nightlies#increase_count', as: :increase_count
   end
+  devise_scope :web_user do
+    get "/get-in-touch" => "devise/registrations#new"
+    get '/venue-login' => 'devise/sessions#new'
+  end
 
 
 
@@ -41,8 +45,8 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'terms-of-use', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
-  get 'get-in-touch', to: 'home#get-in-touch'
-  get 'venue-login', to: 'home#venue-login'
+  # get 'get-in-touch', to: 'home#get-in-touch'
+  # get 'venue-login', to: 'home#venue-login'
   get 'android', to: 'beta_signup_users#android'
   get 'beta-signup', to: 'beta_signup_users#beta'
   # User API
