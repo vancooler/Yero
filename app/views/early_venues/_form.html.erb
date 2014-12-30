@@ -1,0 +1,41 @@
+<%= form_for(@early_venue) do |f| %>
+  <% if @early_venue.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@early_venue.errors.count, "error") %> prohibited this early_venue from being saved:</h2>
+
+      <ul>
+      <% @early_venue.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :username %><br>
+    <%= f.text_field :username %>
+  </div>
+  <div class="field">
+    <%= f.label :city %><br>
+    <%= f.text_field :city %>
+  </div>
+  <div class="field">
+    <%= f.label :job_title %><br>
+    <%= f.text_field :job_title %>
+  </div>
+  <div class="field">
+    <%= f.label :phone %><br>
+    <%= f.text_field :phone %>
+  </div>
+  <div class="field">
+    <%= f.label :email %><br>
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :venue_name %><br>
+    <%= f.text_field :venue_name %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

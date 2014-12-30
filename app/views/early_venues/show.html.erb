@@ -1,0 +1,34 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Username:</strong>
+  <%= @early_venue.username %>
+</p>
+
+<p>
+  <strong>City:</strong>
+  <%= @early_venue.city %>
+</p>
+
+<p>
+  <strong>Job title:</strong>
+  <%= @early_venue.job_title %>
+</p>
+
+<p>
+  <strong>Phone:</strong>
+  <%= @early_venue.phone %>
+</p>
+
+<p>
+  <strong>Email:</strong>
+  <%= @early_venue.email %>
+</p>
+
+<p>
+  <strong>Venue name:</strong>
+  <%= @early_venue.venue_name %>
+</p>
+
+<%= link_to 'Edit', edit_early_venue_path(@early_venue) %> |
+<%= link_to 'Back', early_venues_path %>

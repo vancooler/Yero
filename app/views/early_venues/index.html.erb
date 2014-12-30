@@ -1,0 +1,35 @@
+<h1>Listing early_venues</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>City</th>
+      <th>Job title</th>
+      <th>Phone</th>
+      <th>Email</th>
+      <th>Venue name</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @early_venues.each do |early_venue| %>
+      <tr>
+        <td><%= early_venue.username %></td>
+        <td><%= early_venue.city %></td>
+        <td><%= early_venue.job_title %></td>
+        <td><%= early_venue.phone %></td>
+        <td><%= early_venue.email %></td>
+        <td><%= early_venue.venue_name %></td>
+        <td><%= link_to 'Show', early_venue %></td>
+        <td><%= link_to 'Edit', edit_early_venue_path(early_venue) %></td>
+        <td><%= link_to 'Destroy', early_venue, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Early venue', new_early_venue_path %>
