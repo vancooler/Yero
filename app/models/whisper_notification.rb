@@ -25,7 +25,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.origin_id = origin_id
     n.venue_id = venue_id
     n.notification_type = notification_type
-    n.timestamp = Time.now.strftime("%Q")
+    n.timestamp = Time.now
     n.created_date = Date.today.to_s
     n.viewed = false
     n.accepted = false
