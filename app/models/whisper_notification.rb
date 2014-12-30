@@ -25,7 +25,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.origin_id = origin_id
     n.venue_id = venue_id
     n.notification_type = notification_type
-    n.timestamp = Time.now.strftime("%Q")
+    n.timestamp = Time.now
     n.created_date = Date.today.to_s
     n.viewed = false
     n.accepted = false
@@ -109,26 +109,26 @@ class WhisperNotification < AWS::Record::HashModel
     origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     target_user_array = Array.new
     origin_user_array = Array.new
-    if target_items and target_items.count > 0
-      target_items.each do |i|
-        attributes = i.attributes.to_h
-        origin_id = attributes['origin_id'].to_i
-        h = Hash.new
-        if origin_id > 0
-          user = User.find(origin_id)
-          h['origin_user'] = user
-          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
-        else
-          h['origin_user'] = ''
-        end
-        h['timestamp'] = attributes['timestamp'].to_i
-        h['whisper_id'] = attributes['id']
-        h['accepted'] = attributes['accepted'].to_i
-        h['my_role'] = 'target_user'
-        target_user_array << h
-      end
-      # return target_user_array
-    end
+    # if target_items and target_items.count > 0
+    #   target_items.each do |i|
+    #     attributes = i.attributes.to_h
+    #     origin_id = attributes['origin_id'].to_i
+    #     h = Hash.new
+    #     if origin_id > 0
+    #       user = User.find(origin_id)
+    #       h['origin_user'] = user
+    #       h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
+    #     else
+    #       h['origin_user'] = ''
+    #     end
+    #     h['timestamp'] = attributes['timestamp'].to_i
+    #     h['whisper_id'] = attributes['id']
+    #     h['accepted'] = attributes['accepted'].to_i
+    #     h['my_role'] = 'target_user'
+    #     target_user_array << h
+    #   end
+    #   # return target_user_array
+    # end
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
         attributes = i.attributes.to_h
