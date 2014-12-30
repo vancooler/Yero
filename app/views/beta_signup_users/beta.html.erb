@@ -10,10 +10,10 @@
 	}
 .ui-autocomplete-loading { background: white url("/images/ui-anim_basic_16x16.gif") right center no-repeat; }
 </style>
- 
+
 <script type="text/javascript">
- 
-jQuery(function () 
+
+jQuery(function ()
  {
 	 jQuery("#cityAjax").autocomplete({
 		source: function (request, response) {
@@ -60,7 +60,7 @@ jQuery(function ()
 	<div class="row">
 		<div class="medium-8 medium-centered columns">
 
-			<%= image_tag "shades.png", :class=>'shades-img' %>
+			<%- # image_tag "shades.png", :class=>'shades-img' -%>
 
 			<p>YERO for iPhone 5+ is currently in private beta.</p>
 		</div>
@@ -100,7 +100,7 @@ jQuery(function ()
 					Yes, I'd like to participate in YERO beta testing.
 				</label>
 			</div>
-			
+
 		</div>
 		<% end -%>
 

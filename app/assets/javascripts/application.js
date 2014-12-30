@@ -16,3 +16,7 @@
 //= require foundation
 
 $(function(){ $(document).foundation(); });
+
+
+// console.log('I\'m here!');
+

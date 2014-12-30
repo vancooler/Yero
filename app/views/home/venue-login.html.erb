@@ -1,0 +1,39 @@
+<% body_class "venue-login" %>
+<% content_for :title , "Venue Log In" %>
+<!-- <header class="page-header">
+	<div class="row">
+		<div class="medium-12 columns">
+			<h2>Android</h2>
+		</div>
+	</div>
+</header>
+ -->
+<section class="page-content get-in-touch-content padding text-center">
+	<div class="row">
+
+		<div class="medium-8 medium-centered columns">
+			<h3>Venue Partner Login</h3>
+		</div>
+		<%- #form_for @beta_signup_user, :html => { :honeypot => true } # do |f| -%>
+		<div class="medium-4 medium-centered columns email-form">
+			<div>
+				<%- # f.hidden_field :city, :value => @beta_signup_user.city -%>
+				<%- #f.hidden_field :phone_type, :value => @beta_signup_user.phone_type -%>
+				<div class="email-input">
+					<input type="email" placeholder="Email">
+					<%- #f.email_field :email, :placeholder => "Email",:required => true -%>
+				</div>
+				<div class="password-input">
+					<input type="password" placeholder="Password">
+				</div>
+				<div class="">
+					<input type="submit" value="Login" class="button expand">
+					<%- #f.submit "submit", :class => 'button expand' -%>
+				</div>
+				<a href="" class="forgot-pass">Forgot Password?</a>
+			</div>
+		</div>
+		<%# end -%>
+
+	</div>
+</section>

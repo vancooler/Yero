@@ -3,7 +3,7 @@
 
 // type
 strong {
-	font-family: 'GothamBook';
+	font-family: 'GothamMedium';
 }
 body{
 	hr {
@@ -13,7 +13,7 @@ body{
 	}
 }
 .hero {
-	background: url(<%= asset_path 'bg.png' %>) no-repeat center;
+	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center;
 	background-position: cover;
 }
 .hero h5,
@@ -42,6 +42,32 @@ body{
 		display: inline;
 }
 
+.transparent.top-header.contain-to-grid {
+	// position: fixed;
+	background: transparent;
+	-webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
+	-moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
+	transition: background .5s ease-in-out,padding .5s ease-in-out;
+
+	.title-area {
+
+	}
+	.top-bar {
+		background: transparent;
+	}
+	.top-bar-section {
+		ul li {
+			background: transparent;
+			a {
+				color: #fff;
+				background: transparent;
+			}
+			&.divider {
+				border: none;
+			}
+		}
+	}
+}
 
 //header
 .top-bar-section .right{
@@ -75,6 +101,10 @@ body{
 	}
 	a.active {
 		border: 1px solid #111;
+	}
+	a.sign-in {
+		display: inline;
+		text-transform: none;
 	}
 	&.social-link {
 
@@ -145,6 +175,9 @@ body{
 	padding: 100px 0;
 }
 .feature {
+	p {
+		font-family: "GothamLight";
+	}
 	// min-height: 650px;
 }
 .page-header {
@@ -168,14 +201,12 @@ body{
 .matching,
 .network {
 	height: 500px;
-	&.network {
-		height: 560px;
-	}
 	position: relative;
 	img {
 		position: absolute;
 		left: 55%;
 		bottom: 0px;
+		max-width: 250px;
 	}
 	@media #{$small-only} {
 		height: 600px;
@@ -183,8 +214,17 @@ body{
 			right: 10%;
 			left: auto;
 			bottom: 0px;
-			height: 300px;
+			height: 320px;
 			width: auto;
+		}
+	}
+	&.network {
+		height: 560px;
+		img {
+			max-width: 350px;
+				@media #{$small-only} {
+					height: 300px;
+				}
 		}
 	}
 }
@@ -194,18 +234,20 @@ body{
 	img {
 		position: absolute;
 		bottom: 0px;
+		left: 5%;
+		max-width: 350px;
 	}
 	@media #{$medium-up} {
 		.chats-img {
-			left: 10%;
+			left: 20%;
 		}
 		.chatting-img {
 			left: 25%;
 		}
 	}
-	@media only screen and (min-width: 41em) and (max-width: 50em) {
+	@media only screen and (min-width: 41em) and (max-width: 55em) {
 		.chats-img {
-			left: 5%;
+			left: 1%;
 		}
 		.chatting-img {
 			left: 10%;
@@ -254,14 +296,23 @@ body{
 	&:hover {
 		color: #fff;
 	}
+	input.button{
+		margin-top: 15px;
+	}
 }
 
 
 //inputs
 
-.email-input {
+.email-input,
+.email-input,
+.name-input,
+.job-input,
+.venue-input,
+.password-input   {
 	input[type="text"],
-	input[type="email"] {
+	input[type="password"],
+	input[type="email"]{
 		padding-left: 50px;
 	}
 }
@@ -269,10 +320,10 @@ body{
 .city-input {
 	input[type="text"],
 	input[type="email"] {
-		padding-left: 35px;
+		padding-left: 50px;
 	}
 	select {
-		padding-left: 35px;
+		padding-left: 50px;
 		background: url(<%= asset_path 'phone.png' %>) no-repeat 4%;
 		background-color: #fff;
 		color: #ccc;
@@ -294,10 +345,16 @@ body{
 	background-size: 5%;
 	background-color: #fff;
 }
+.phone-number input[type="text"],
+.phone-number input[type="text"]:focus {
+	background: url(<%= asset_path 'handle.png' %>) no-repeat 4%;
+	background-size: 8%;
+	background-color: #fff;
+}
 .city-input input[type="text"],
 .city-input input[type="text"]:focus {
 	background: url(<%= asset_path 'marker.png' %>) no-repeat 4%;
-	background-size: 8%;
+	background-size: 7%;
 	background-color: #fff;
 }
 .email-input input[type="email"],
@@ -305,6 +362,33 @@ body{
 	background: url(<%= asset_path 'email.png' %>) no-repeat 4%;
 	background-size: 8%;
 	background-color: #fff;
+}
+.name-input input[type="text"],
+.name-input input[type="text"]:focus {
+	background: url(<%= asset_path 'user.png' %>) no-repeat 4%;
+	background-size: 7%;
+	background-color: #fff;
+}
+.job-input input[type="text"],
+.job-input input[type="text"]:focus {
+	background: url(<%= asset_path 'lamp.png' %>) no-repeat 4%;
+	background-size: 7%;
+	background-color: #fff;
+}
+.venue-input input[type="text"],
+.venue-input input[type="text"]:focus {
+	background: url(<%= asset_path 'wine.png' %>) no-repeat 4%;
+	background-size: 7%;
+	background-color: #fff;
+}
+.password-input input[type="password"],
+.password-input input[type="password"]:focus {
+	background: url(<%= asset_path 'lock.png' %>) no-repeat 4%;
+	background-size: 7%;
+	background-color: #fff;
+}
+.forgot-pass {
+	color: #444;
 }
 label {
 	letter-spacing: 0;
@@ -353,7 +437,26 @@ label {
 .faq-answer {
 
 }
-
+.faq {
+	.tabs {
+		a {
+			background-color: transparent;
+			&:hover {
+				background-color: transparent;
+			}
+		}
+		.active {
+			a {
+				border: 2px solid #000;
+				border-radius: 10px;
+				background-color: transparent;
+			}
+		}
+	}
+	.content {
+		margin-left: 0px;
+	}
+}
 .how-it-works .feature {
 	padding: 20px 0;
 }
@@ -374,8 +477,18 @@ label {
 }
 
 //contact
-
-.contact-content {
+h3 {
+	text-transform: none;
+	font-family: 'GothamBook';
+	letter-spacing: 0.1rem;
+}
+h5 {
+	text-transform: none;
+	margin-top: 25px;
+	margin-bottom: 10px;
+}
+.contact-content,
+.about {
 	h3 {
 		text-transform: none;
 		font-family: 'GothamBook';
@@ -404,12 +517,13 @@ label {
 	margin-bottom: 40px;
 	input[type="submit"]{
 		margin-bottom: 0;
+
 	}
 
 	@media #{$medium-up}{
 		input[type="email"],
 		input[type="text"]{
-			margin-bottom: 0;
+			// margin-bottom: 0;
 		}
 	}
 }

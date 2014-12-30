@@ -1,0 +1,58 @@
+<% body_class "get-in-touch" %>
+<% content_for :title , "Get In Touch" %>
+<!-- <header class="page-header">
+	<div class="row">
+		<div class="medium-12 columns">
+			<h2>Android</h2>
+		</div>
+	</div>
+</header>
+ -->
+<section class="page-content get-in-touch-content padding text-center">
+	<div class="row">
+
+		<div class="medium-8 medium-centered columns">
+			<p>Want to learn what Yero can do for your venue?<br>
+				Submit your information below and we'll get back to you within 48 business hours.
+			</p>
+		</div>
+		<%- #form_for @beta_signup_user, :html => { :honeypot => true } # do |f| -%>
+		<div class="medium-4 medium-centered columns email-form">
+			<div class="form">
+				<%- # f.hidden_field :city, :value => @beta_signup_user.city -%>
+				<%- #f.hidden_field :phone_type, :value => @beta_signup_user.phone_type -%>
+				<div class="name-input">
+					<input type="text" placeholder="Name">
+					<%- #f.email_field :email, :placeholder => "Email",:required => true -%>
+				</div>
+				<div class="job-input">
+					<input type="text" placeholder="Job Title">
+					<%- #f.email_field :email, :placeholder => "Email",:required => true -%>
+				</div>
+				<div class="venue-input">
+					<input type="text" placeholder="Venue Name">
+					<%- #f.email_field :email, :placeholder => "Email",:required => true -%>
+				</div>
+				<div class="city-input">
+					<input type="text" placeholder="City">
+					<%- #f.text_field :email, :placeholder => "City",:required => true -%>
+				</div>
+				<div class="email-input">
+					<input type="email" placeholder="Email">
+					<%- #f.email_field :email, :placeholder => "Email",:required => true -%>
+				</div>
+				<div class="phone-input phone-number">
+					<input type="text" placeholder="Phone Number">
+					<%#= f.text_field :phone_model, :placeholder => "Phone Number",:required => true %>
+        			<%- #f.select :phone_model, options_for_select(@models, f.object.phone_model),{:include_blank => 'Phone model'}, :required => true, :placeholder => "Phone model" -%>
+				</div>
+				<div class="">
+					<input type="submit" value="Contact Me" class="button expand">
+					<%- #f.submit "submit", :class => 'button expand' -%>
+				</div>
+			</div>
+		</div>
+		<%# end -%>
+
+	</div>
+</section>
