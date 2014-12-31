@@ -47,11 +47,11 @@
               <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
              <% if current_page?('/for-venues') %>
-              <li>Already a partner?
+              <li class="nav-alt">Already a partner?
                 <%= link_to('Sign In', '/venue-login', :class=>'nav-item sign-in')%>
               </li>
             <% elsif current_page?('/venue-login') %>
-              <li>Don't have an account?
+              <li class="nav-alt">Don't have an account?
                 <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
               </li>
             <% else %>

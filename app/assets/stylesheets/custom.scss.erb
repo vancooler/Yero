@@ -106,6 +106,9 @@ body{
 		display: inline;
 		text-transform: none;
 	}
+	&.nav-alt {
+		padding-top: 13px;
+	}
 	&.social-link {
 
 	}
@@ -265,6 +268,48 @@ body{
 		}
 		.chatting-img {
 			right: 2%;
+		}
+	}
+}
+.what-is {
+	padding-bottom: 0px;
+	height: 600px;
+	position: relative;
+	.image {
+		position: absolute;
+		bottom: 0px;
+		height: 450px;
+		img {
+			position: absolute;
+			bottom: 0px;
+			left: 40%;
+			max-width: 250px;
+		}
+		@media #{$small-only} {
+			position: relative;
+			height: 275px;
+			img {
+				// position: initial;
+				height: 275px;
+			}
+		}
+	}
+	@media #{$small-only} {
+		height: 700px;
+	}
+}
+
+// for venues
+
+.for-venues {
+	.venues-hero {
+		color: #fff;
+		background: url(<%= asset_path 'venueheader.png' %>) no-repeat center;
+		background-position: cover;
+		height: 600px;
+
+		h3 {
+			color: #fff;
 		}
 	}
 }
