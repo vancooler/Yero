@@ -148,17 +148,20 @@ class UsersController < ApplicationController
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
-    same_beacon_users = [] # Make a empty array for users in the same beacon
+    different_venue_users = [] # Make a empty array for users in the different venue
     same_venue_users = [] #Make a empty array for users in the same venue
+    no_badge_users = [] # Make an empty array for no badge users
     users.each do |u| # Go through the users
-      if u['same_beacon'].to_s == "true" #If the users' same beacon field is true
-        same_beacon_users << u # Throw the user into the array
+      if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+        different_venue_users << u # Throw the user into the array
       elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
         same_venue_users << u # Throw the user into the array
+      else 
+        no_badge_users << u
       end
     end
     # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users #Sort users by distance
+    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users #Sort users by distance
     final_time = Time.now
     # diff_2 = final_time - end_time
     e_time = Time.now
@@ -174,7 +177,7 @@ class UsersController < ApplicationController
       
       return_users = current_user.whisper_friends
       return_venues = current_user.whisper_venue
-      puts return_users.inspect
+      
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
@@ -241,9 +244,10 @@ class UsersController < ApplicationController
       end
     end
     users = JSON.parse(users).delete_if(&:empty?)
-    same_beacon_users = []
     same_venue_users = []
     different_venue_users = [] 
+    no_badge_users = []
+    puts users.inspect
     users.each do |u|
       if u['different_venue_users'].to_s = "true"
         different_venue_users << u
@@ -251,8 +255,9 @@ class UsersController < ApplicationController
         same_venue_users << u
       end
     end
-    users = users - same_beacon_users - same_venue_users
-    users = same_beacon_users.sort_by { |hsh| hsh[:actual_distance] } + same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + users
+ 
+    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
+    puts users.inspect
     final_time = Time.now
     # diff_2 = final_time - end_time
     render json: success(users, "users")

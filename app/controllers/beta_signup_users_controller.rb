@@ -3,7 +3,7 @@ class BetaSignupUsersController < InheritedResources::Base
   def android
   	@beta_signup_user = BetaSignupUser.new
   	@beta_signup_user.phone_type = "Android"
-  	@beta_signup_user.city = "N/A"
+  	# @beta_signup_user.city = "N/A"
   	@models = ["Google Nexus 5", "Google Nexus 6", "HTC One M8", "HTC One M7", "LG G3", "Moto X", "Oneplus One", "Samsung Galaxy S5", "Samsung Galaxy S4", "Samsung Galaxy Note 4", "Samsung Galaxy Note 3", "Sony Xperia Z3", "Other"]
 
     respond_to do |format|
