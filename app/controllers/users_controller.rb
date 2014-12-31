@@ -177,7 +177,7 @@ class UsersController < ApplicationController
       
       return_users = current_user.whisper_friends
       return_venues = current_user.whisper_venue
-      puts return_users.inspect
+      
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
@@ -247,6 +247,7 @@ class UsersController < ApplicationController
     same_beacon_users = []
     same_venue_users = []
     different_venue_users = [] 
+    puts users.inspect
     users.each do |u|
       if u['different_venue_users'].to_s = "true"
         different_venue_users << u
