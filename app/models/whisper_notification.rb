@@ -106,53 +106,52 @@ class WhisperNotification < AWS::Record::HashModel
     target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     # receiver_items = select items where origin_id equals user_id and where the notification_type is a chat request that has been accepted
     # origin_id is the user id that sent the request
-    origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2")
     target_user_array = Array.new
     origin_user_array = Array.new
-    if target_items and target_items.count > 0
-      target_items.each do |i|
-        attributes = i.attributes.to_h
-        origin_id = attributes['origin_id'].to_i
-        h = Hash.new
-        if origin_id > 0
-          user = User.find(origin_id)
-          h['origin_user'] = user
-          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
-        else
-          h['origin_user'] = ''
-        end
-        h['timestamp'] = attributes['timestamp'].to_i
-        h['whisper_id'] = attributes['id']
-        h['accepted'] = attributes['accepted'].to_i
-        h['my_role'] = 'target_user'
-        target_user_array << h
-      end
-      # return target_user_array
-    end
-    # if origin_items and origin_items.count > 0
-    #   origin_items.each do |i|
+    # if target_items and target_items.count > 0
+    #   target_items.each do |i|
     #     attributes = i.attributes.to_h
-    #     target_id = attributes['target_id'].to_i
+    #     origin_id = attributes['origin_id'].to_i
     #     h = Hash.new
-    #     if target_id > 0
-    #       user = User.find(target_id)
-    #       h['target_user'] = user
-    #       h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+    #     if origin_id > 0
+    #       user = User.find(origin_id)
+    #       h['origin_user'] = user
+    #       h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
     #     else
-    #       h['target_user'] = ''
+    #       h['origin_user'] = ''
     #     end
     #     h['timestamp'] = attributes['timestamp'].to_i
     #     h['whisper_id'] = attributes['id']
     #     h['accepted'] = attributes['accepted'].to_i
-    #     h['my_role'] = 'origin_user'
-    #     origin_user_array << h
+    #     h['my_role'] = 'target_user'
+    #     target_user_array << h
     #   end
-    #   # return origin_user_array
+    #   # return target_user_array
     # end
+    if origin_items and origin_items.count > 0
+      origin_items.each do |i|
+        attributes = i.attributes.to_h
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        if target_id > 0
+          user = User.find(target_id)
+          h['target_user'] = user
+          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+        else
+          h['target_user'] = ''
+        end
+        h['timestamp'] = attributes['timestamp'].to_i
+        h['whisper_id'] = attributes['id']
+        h['accepted'] = attributes['accepted'].to_i
+        h['my_role'] = 'origin_user'
+        origin_user_array << h
+      end
+      # return origin_user_array
+    end
     users = Array.new
     users = target_user_array + origin_user_array
     users = users.sort_by { |hsh| hsh[:timestamp] }
-
     return users.reverse
   end
 
