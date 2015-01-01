@@ -103,7 +103,7 @@ class WhisperNotification < AWS::Record::HashModel
     # :accepted. 0 => nothing, 1 => accepted, 2 => declined
     # sender_items = select items where target_id equals the user_id and where the notification_type is a chat request that has been accepted
     # target_id is the user id that receives the request
-    target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    # target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
     # receiver_items = select items where origin_id equals user_id and where the notification_type is a chat request that has been accepted
     # origin_id is the user id that sent the request
     origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2")
