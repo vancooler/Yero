@@ -177,9 +177,6 @@ class UsersController < ApplicationController
       
       return_users = current_user.whisper_friends
       return_venues = current_user.whisper_venue
-      
-      puts "current user:"
-      puts current_user.id.inspect
 
       json.array! return_users do |user|
         puts "return_users:"
