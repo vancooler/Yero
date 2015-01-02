@@ -176,9 +176,11 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       
       return_users = current_user.whisper_friends
-      
       return_venues = current_user.whisper_venue
       
+      puts "current user:"
+      puts current_user.id.inspect
+
       json.array! return_users do |user|
         puts "return_users:"
         puts user.inspect
@@ -196,7 +198,7 @@ class UsersController < ApplicationController
           end
         end
 
-        json.same_venue_badge          current_user.same_venue_as?(user.id)
+        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"])
         json.different_venue_badge     current_user.different_venue_as?(user.id) 
         json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
