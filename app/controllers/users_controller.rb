@@ -198,8 +198,8 @@ class UsersController < ApplicationController
           end
         end
 
-        json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.different_venue_badge     current_user.different_venue_as?(user.id) 
+        json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
+        json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
         json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
