@@ -215,13 +215,8 @@ class UsersController < ApplicationController
           end
         end
 
-        # start_time = Time.now
-        # json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
-        # end_time = Time.now
-        # diff_1 += (end_time - start_time)
         json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.different_venue_badge     current_user.different_venue_as?(user.id)
-        # json.same_beacon               current_user.same_beacon_as?(user.id)
+        json.different_venue_badge     current_user.different_venue_as?(user.id) 
         json.actual_distance           current_user.actual_distance(user)
         json.id             user.id
         json.first_name     user.first_name
@@ -260,7 +255,7 @@ class UsersController < ApplicationController
     users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
     final_time = Time.now 
     # diff_2 = final_time - end_time
-    render json: success(users, "users")
+    # render json: success(users, "users")
   end
 
   def update_profile
