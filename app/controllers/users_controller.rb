@@ -180,7 +180,7 @@ class UsersController < ApplicationController
 
       json.array! return_users do |user|
         puts "return_users:"
-        user = user["target_user"].attributes.to_a.inspect
+        user = user["target_user"].attributes.to_h.inspect
         puts user.inspect
         puts user["id"].inspect
         avatar_array = Array.new
