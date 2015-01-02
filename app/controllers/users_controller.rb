@@ -182,7 +182,7 @@ class UsersController < ApplicationController
         puts "return_users:"
         user = user["target_user"].attributes.to_h.inspect
         puts user.inspect
-        puts user["id"].to_i.inspect
+        puts JSON.parse(user["id"]).to_i.inspect
         avatar_array = Array.new
         avatar_array[0] = {
           thumbnail: user["target_user_thumb"],
