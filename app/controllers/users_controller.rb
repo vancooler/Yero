@@ -183,7 +183,7 @@ class UsersController < ApplicationController
 
       json.array! return_users do |user|
         puts "return_users:"
-        puts user["target_user"].inspect
+        puts user["target_user"].to_h.inspect
         avatar_array = Array.new
         avatar_array[0] = {
           thumbnail: user["target_user_thumb"],
@@ -200,7 +200,7 @@ class UsersController < ApplicationController
 
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"])
         json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"]) 
-        json.actual_distance           current_user.actual_distance(user)
+        json.actual_distance           current_user.actual_distance(user.to_h)
         json.id             user.id
         json.first_name     user.first_name
         json.key            user.key
