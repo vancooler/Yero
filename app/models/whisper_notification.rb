@@ -155,6 +155,7 @@ class WhisperNotification < AWS::Record::HashModel
     users.each do |user|
       origin_user_ids << user[:whisper_id]
     end
+    puts "The ids are"
     puts origin_user_ids.inspect
     return users.reverse
   end
