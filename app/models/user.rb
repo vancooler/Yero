@@ -195,7 +195,7 @@ class User < ActiveRecord::Base
     puts "In the user.rb"
     puts active_users_id[0].inspect
     # users = User.where(id: active_users_id)
-    return users
+    return active_users_id
   end
 
   def whisper_venue
