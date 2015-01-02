@@ -143,7 +143,7 @@ class WhisperNotification < AWS::Record::HashModel
         end
         h['timestamp'] = attributes['timestamp'].to_i
         h['whisper_id'] = attributes['id']
-        origin_user_array << h['target_id']
+        origin_user_array << h
       end
       # return origin_user_array
     end
@@ -151,6 +151,11 @@ class WhisperNotification < AWS::Record::HashModel
     users = target_user_array + origin_user_array
     users = users.sort_by { |hsh| hsh[:timestamp] }
 
+    origin_user_ids = Array.new
+    users.each do |user|
+      origin_user_ids << h['id']
+    end
+    puts origin_user_ids.inspect
     return users.reverse
   end
 

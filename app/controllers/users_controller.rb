@@ -258,7 +258,7 @@ class UsersController < ApplicationController
     end
  
     users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
-    puts users.inspect
+    # puts users.inspect
     final_time = Time.now 
     # diff_2 = final_time - end_time
     render json: success(users, "users")
