@@ -176,15 +176,12 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       
       return_users = current_user.whisper_friends
-      puts "return_users:"
-      puts return_users[0].inspect
+      
       return_venues = current_user.whisper_venue
       
       json.array! return_users do |user|
-        next unless user.user_avatars.present?
-        next unless user.main_avatar.present?
-        main_avatar   =  user.user_avatars.find_by(default:true)
-        other_avatars =  user.user_avatars.where.not(default:true)
+        puts "return_users:"
+        puts user.inspect
         avatar_array = Array.new
         avatar_array[0] = {
           thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
