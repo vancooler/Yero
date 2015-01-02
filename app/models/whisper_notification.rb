@@ -143,7 +143,7 @@ class WhisperNotification < AWS::Record::HashModel
         end
         h['timestamp'] = attributes['timestamp'].to_i
         h['whisper_id'] = attributes['id']
-        origin_user_array << h
+        origin_user_array << h['target_id']
       end
       # return origin_user_array
     end
