@@ -184,7 +184,7 @@ class UsersController < ApplicationController
         puts user.inspect
         avatar_array = Array.new
         avatar_array[0] = {
-          thumbnail: user.target_user_thumb,
+          thumbnail: user["target_user_thumb"],
         }
         
         json.avatars do |a|
