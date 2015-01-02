@@ -183,7 +183,7 @@ class UsersController < ApplicationController
 
       json.array! return_users do |user|
         puts "return_users:"
-        puts user.inspect
+        puts user["target_user"][0]["id"].inspect
         avatar_array = Array.new
         avatar_array[0] = {
           thumbnail: user["target_user_thumb"],
