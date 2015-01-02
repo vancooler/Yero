@@ -192,9 +192,6 @@ class User < ActiveRecord::Base
 
   def whisper_friends
     active_users_id = WhisperNotification.find_friends(self.id)
-    puts "In the user.rb"
-    puts active_users_id[0].inspect
-    # users = User.where(id: active_users_id)
     return active_users_id
   end
 

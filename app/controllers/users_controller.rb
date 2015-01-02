@@ -176,6 +176,8 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       
       return_users = current_user.whisper_friends
+      puts "return_users:"
+      puts return_users.inspect
       return_venues = current_user.whisper_venue
       
       json.array! return_users do |user|
