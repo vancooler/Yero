@@ -153,7 +153,7 @@ class WhisperNotification < AWS::Record::HashModel
 
     origin_user_ids = Array.new
     users.each do |user|
-      origin_user_ids << user['user_id']
+      origin_user_ids << user[:whisper_id]
     end
     puts origin_user_ids.inspect
     return users.reverse
