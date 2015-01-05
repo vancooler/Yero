@@ -177,7 +177,7 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    venues = Venue.find_by_id(return_venues)
+    venues = Venue.find(return_venues)
     puts "the venues are:"
     puts venues.inspect
 
