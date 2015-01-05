@@ -225,7 +225,7 @@ class UsersController < ApplicationController
     end  
     
     users = JSON.parse(users).delete_if(&:empty?)
-    puts users.inspect
+    
     # same_venue_users = []
     # different_venue_users = [] 
     # no_badge_users = []
