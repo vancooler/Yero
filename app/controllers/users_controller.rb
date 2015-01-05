@@ -173,57 +173,59 @@ class UsersController < ApplicationController
   end
 
   def friends
-    # users = Jbuilder.encode do |json|
+    
       
-      return_users = current_user.whisper_friends
-      return_venues = current_user.whisper_venue
-      puts "return_users:"
-      puts return_users.inspect
-      # json.array! return_users do |user|
-      return_users.each do |u|
-        puts "return_users loop:"
-        
-        puts u["target_user"].attributes.to_h.inspect
-        
-        # avatar_array = Array.new
-        # avatar_array[0] = {
-        #   thumbnail: user["target_user_thumb"],
-        # }
-      end  
-        # json.avatars do |a|
-        #   json.array! avatar_array do |avatar|
-        #     a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-        #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-        #     a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-        #     a.default     avatar[:default]   if !avatar[:default].nil?
-        #   end
-        # end
+    return_users = current_user.whisper_friends
+    return_venues = current_user.whisper_venue
+    puts "return_users:"
+    puts return_users.inspect
+    users = Jbuilder.encode do |json|
+    return_users.each do |u|
+      # puts "return_users loop:"
+      # puts u["target_user"].attributes.to_h.inspect
+      
+      json.array! return_users do |user|
+        avatar_array = Array.new
+        avatar_array[0] = {
+          thumbnail: user["target_user_thumb"],
+        }
+      end
 
-    #     json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
-    #     json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
-    #     json.actual_distance           current_user.actual_distance(user)
-    #     json.id             user.id
-    #     json.first_name     user.first_name
-    #     json.key            user.key
-    #     json.last_active    user.last_active
-    #     json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-    #     json.birthday       user.birthday
-    #     json.gender         user.gender
-    #     json.distance       current_user.distance_label(user)
-    #     json.created_at     user.created_at
-    #     json.updated_at     user.updated_at
+      json.avatars do |a|
+        json.array! avatar_array do |avatar|
+          a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
+          a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+          a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+          a.default     avatar[:default]   if !avatar[:default].nil?
+        end
+      end
 
-    #     json.apn_token      user.apn_token
-        
-    #     json.latitude       user.latitude  
-    #     json.longitude      user.longitude 
+      json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
+      json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
+      json.actual_distance           current_user.actual_distance(user)
+      json.id             user.id
+      json.first_name     user.first_name
+      json.key            user.key
+      json.last_active    user.last_active
+      json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+      json.birthday       user.birthday
+      json.gender         user.gender
+      json.distance       current_user.distance_label(user)
+      json.created_at     user.created_at
+      json.updated_at     user.updated_at
 
-    #     json.introduction_1 user.introduction_1
-    #     json.introduction_2 user.introduction_2
+      json.apn_token      user.apn_token
+      
+      json.latitude       user.latitude  
+      json.longitude      user.longitude 
 
-    #   end
-    # end
-    # users = JSON.parse(users).delete_if(&:empty?)
+      json.introduction_1 user.introduction_1
+      json.introduction_2 user.introduction_2
+    
+    end  
+    
+    users = JSON.parse(users).delete_if(&:empty?)
+    puts users.inspect
     # same_venue_users = []
     # different_venue_users = [] 
     # no_badge_users = []
