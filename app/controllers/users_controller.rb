@@ -181,7 +181,7 @@ class UsersController < ApplicationController
     users = Jbuilder.encode do |json|
       return_users.each do |user|
 
-        puts user["target_user"]r.inspect
+        puts user["target_user"].inspect
         json.array! return_users do |user|
           avatar_array = Array.new
           avatar_array[0] = {
