@@ -182,12 +182,12 @@ class UsersController < ApplicationController
       return_users.each do |u|
         puts "return_users:"
         
-        puts user.inspect
+        puts u.inspect
         
-        avatar_array = Array.new
-        avatar_array[0] = {
-          thumbnail: user["target_user_thumb"],
-        }
+        # avatar_array = Array.new
+        # avatar_array[0] = {
+        #   thumbnail: user["target_user_thumb"],
+        # }
       end  
         # json.avatars do |a|
         #   json.array! avatar_array do |avatar|
@@ -223,19 +223,19 @@ class UsersController < ApplicationController
     #   end
     # end
     # users = JSON.parse(users).delete_if(&:empty?)
-    same_venue_users = []
-    different_venue_users = [] 
-    no_badge_users = []
+    # same_venue_users = []
+    # different_venue_users = [] 
+    # no_badge_users = []
     
-    users.each do |u|
-      if u['different_venue_users'].to_s = "true"
-        different_venue_users << u
-      elsif u['same_venue_badge'].to_s == "true"
-        same_venue_users << u
-      end
-    end
+    # users.each do |u|
+    #   if u['different_venue_users'].to_s = "true"
+    #     different_venue_users << u
+    #   elsif u['same_venue_badge'].to_s == "true"
+    #     same_venue_users << u
+    #   end
+    # end
  
-    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
+    # users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
     # render json: success(users, "users")
   end
 
