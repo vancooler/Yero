@@ -189,6 +189,7 @@ class UsersController < ApplicationController
         json.first_name     user["target_user"]["first_name"]
         json.key            user["target_user"]["key"]
         json.last_active    user["target_user"]["last_active"]
+        json.last_activity  user["target_user"]["last_activity"]
         json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
         json.birthday       user["target_user"]["birthday"]
         json.gender         user["target_user"]["gender"]
@@ -196,9 +197,14 @@ class UsersController < ApplicationController
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user"]["target_user_thumb"] 
-
         json.apn_token      user["target_user"].apn_token
-        
+        json.notification_read  user["target_user"]["notification_read"]
+        json.email  user["target_user"]["email"]
+        json.snapchat_id  user["target_user"]["snapchat_id"]
+        json.wechat_id  user["target_user"]["wechat_id"]
+        json.timestamp  user["target_user"]["timestamp"]
+        json.whisper_id  user["target_user"]["whisper_id"]
+
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
 
