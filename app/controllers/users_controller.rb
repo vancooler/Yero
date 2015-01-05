@@ -179,7 +179,7 @@ class UsersController < ApplicationController
     return_venues = current_user.whisper_venue
     puts "return_users:"
     puts return_users.inspect
-    # users = Jbuilder.encode do |json|
+    users = Jbuilder.encode do |json|
     return_users.each do |u|
       # puts "return_users loop:"
       # puts u["target_user"].attributes.to_h.inspect
@@ -225,7 +225,7 @@ class UsersController < ApplicationController
     end  
     
     users = JSON.parse(users).delete_if(&:empty?)
-    
+
     # same_venue_users = []
     # different_venue_users = [] 
     # no_badge_users = []
