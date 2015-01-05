@@ -213,7 +213,7 @@ class UsersController < ApplicationController
     no_badge_users = []
     
     users.each do |u|
-      if u['different_venue_users'].to_s = "true"
+      if u['different_venue_badge'].to_s = "true"
         different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
