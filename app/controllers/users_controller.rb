@@ -184,18 +184,18 @@ class UsersController < ApplicationController
         # puts "return_users loop:"
         # puts u["target_user"].attributes.to_h.inspect
         
-        json.array! return_users do |user|
-          avatar_array = Array.new
-          avatar_array[0] = {
-            thumbnail: user["target_user_thumb"],
-          }
-        end
+        # json.array! return_users do |user|
+        #   avatar_array = Array.new
+        #   avatar_array[0] = {
+        #     thumbnail: user["target_user_thumb"],
+        #   }
+        # end
 
-        json.avatars do |a|
-          json.array! avatar_array do |avatar|
-            a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-          end
-        end
+        # json.avatars do |a|
+        #   json.array! avatar_array do |avatar|
+        #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+        #   end
+        # end
 
         json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
         json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
