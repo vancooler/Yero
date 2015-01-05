@@ -205,8 +205,9 @@ class UsersController < ApplicationController
         json.introduction_1 user["target_user"].introduction_1
         json.introduction_2 user["target_user"].introduction_2
       end
-      whisper_users << json
+      whisper_users << user
     end  
+    puts "the whispers:"
     puts whisper_users.inspect 
     # users = JSON.parse(users).delete_if(&:blank?)
 
