@@ -207,8 +207,8 @@ class UsersController < ApplicationController
         json.introduction_2 user["target_user"].introduction_2
       end
     end  
-    
-    users = JSON.parse(users).delete_if(&:blank?)
+    puts users.inspect 
+    # users = JSON.parse(users).delete_if(&:blank?)
 
     # same_venue_users = []
     # different_venue_users = [] 
