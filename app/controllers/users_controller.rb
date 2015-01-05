@@ -177,12 +177,13 @@ class UsersController < ApplicationController
       
       return_users = current_user.whisper_friends
       return_venues = current_user.whisper_venue
-
+      puts "return_users:"
+      puts return_users.inspect
       # json.array! return_users do |user|
       return_users.each do |u|
-        puts "return_users:"
+        puts "return_users loop:"
         
-        puts u.inspect
+        puts u.attributes.to_h.inspect
         
         # avatar_array = Array.new
         # avatar_array[0] = {
