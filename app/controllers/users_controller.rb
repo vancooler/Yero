@@ -180,9 +180,6 @@ class UsersController < ApplicationController
   
     users = Jbuilder.encode do |json|
       return_users.each do |user|
-
-        puts user["target_user"].inspect
-
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
         json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
         json.actual_distance           current_user.actual_distance(user["target_user"])
@@ -223,7 +220,7 @@ class UsersController < ApplicationController
     # end
  
     # users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
-    # render json: success(users, "users")
+    render json: success(users, "users")
   end
 
   def update_profile
