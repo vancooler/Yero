@@ -183,7 +183,7 @@ class UsersController < ApplicationController
       return_users.each do |u|
         puts "return_users loop:"
         
-        puts u.attributes.to_h.inspect
+        puts u["target_user"].attributes.to_h.inspect
         
         # avatar_array = Array.new
         # avatar_array[0] = {
