@@ -200,7 +200,7 @@ class UsersController < ApplicationController
         json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
         json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
         json.actual_distance           current_user.actual_distance(user)
-        json.id             user.id
+        json.id             user["id"]
         json.first_name     user.first_name
         json.key            user.key
         json.last_active    user.last_active
