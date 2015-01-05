@@ -177,7 +177,7 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-
+    puts "the venues are:"
     puts return_venues.inspect
 
     users = Jbuilder.encode do |json|
