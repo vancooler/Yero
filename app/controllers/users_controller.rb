@@ -181,7 +181,7 @@ class UsersController < ApplicationController
     puts return_users.inspect
     whisper_users = Array.new
     users = Jbuilder.encode do |json|
-      return_users.each do |user|
+      json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
         json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
         json.actual_distance           current_user.actual_distance(user["target_user"])
@@ -204,10 +204,9 @@ class UsersController < ApplicationController
 
         json.introduction_1 user["target_user"].introduction_1
         json.introduction_2 user["target_user"].introduction_2
-      end
-      whisper_users << json
+      end   
     end  
-    puts whisper_users.inspect 
+
     # users = JSON.parse(users).delete_if(&:blank?)
 
     # same_venue_users = []
