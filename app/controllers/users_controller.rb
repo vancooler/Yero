@@ -177,7 +177,9 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-  
+    puts "return users:" 
+    puts return_users.inspect
+
     users = Jbuilder.encode do |json|
       return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
