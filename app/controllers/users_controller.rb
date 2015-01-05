@@ -209,13 +209,13 @@ class UsersController < ApplicationController
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
 
-        json.apn_token      user.apn_token
+        json.apn_token      user["target_user"].apn_token
         
-        json.latitude       user.latitude  
-        json.longitude      user.longitude 
+        json.latitude       user["target_user"].latitude  
+        json.longitude      user["target_user"].longitude 
 
-        json.introduction_1 user.introduction_1
-        json.introduction_2 user.introduction_2
+        json.introduction_1 user["target_user"].introduction_1
+        json.introduction_2 user["target_user"].introduction_2
       end
     end  
     
