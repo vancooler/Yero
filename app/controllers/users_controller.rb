@@ -177,7 +177,7 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    
+
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -211,13 +211,13 @@ class UsersController < ApplicationController
     different_venue_users = [] 
     no_badge_users = []
     puts users.inspect 
-    # users.each do |u|
-    #   if u['different_venue_badge'].to_s = "true"
-    #     different_venue_users << u
-    #   elsif u['same_venue_badge'].to_s == "true"
-    #     same_venue_users << u
-    #   end
-    # end
+    users.each do |u|
+      if u['different_venue_badge'].to_s == "true"
+        different_venue_users << u
+      elsif u['same_venue_badge'].to_s == "true"
+        same_venue_users << u
+      end
+    end
  
     users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
     render json: success(users, "users")
