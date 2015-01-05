@@ -196,7 +196,7 @@ class UsersController < ApplicationController
         #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
         #   end
         # end
-        puts user["target_user"][0].inspect
+        puts user["target_user"]["id"].inspect
         json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
         json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
         json.actual_distance           current_user.actual_distance(user)
