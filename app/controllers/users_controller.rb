@@ -182,18 +182,6 @@ class UsersController < ApplicationController
       return_users.each do |user|
 
         puts user["target_user"].inspect
-        # json.array! return_users do |user|
-        #   avatar_array = Array.new
-        #   avatar_array[0] = {
-        #     thumbnail: user["target_user"]["target_user_thumb"],
-        #   }
-        # end
-
-        # json.avatars do |a|
-        #   json.array! avatar_array do |avatar|
-        #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-        #   end
-        # end
 
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
         json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
@@ -208,6 +196,7 @@ class UsersController < ApplicationController
         json.distance       current_user.distance_label(user["target_user"])
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
+        json.avatar_thumbnail user["target_user"]["target_user_thumb"] 
 
         json.apn_token      user["target_user"].apn_token
         
