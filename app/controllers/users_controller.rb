@@ -181,7 +181,7 @@ class UsersController < ApplicationController
       # json.array! return_users do |user|
       return_users.each do |u|
         puts "return_users:"
-        user = user.attributes.to_h.inspect
+        
         puts user.inspect
         
         avatar_array = Array.new
