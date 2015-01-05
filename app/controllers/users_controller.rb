@@ -208,7 +208,7 @@ class UsersController < ApplicationController
       end
     end  
     
-    users = JSON.parse(users).delete_if(&:empty?)
+    users = JSON.parse(users).delete_if(&:blank?)
 
     # same_venue_users = []
     # different_venue_users = [] 
