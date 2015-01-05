@@ -193,10 +193,7 @@ class UsersController < ApplicationController
 
         json.avatars do |a|
           json.array! avatar_array do |avatar|
-            a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
             a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-            a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-            a.default     avatar[:default]   if !avatar[:default].nil?
           end
         end
 
