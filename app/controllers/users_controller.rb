@@ -178,8 +178,6 @@ class UsersController < ApplicationController
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
 
-    puts return_users.inspect
-
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -196,14 +194,14 @@ class UsersController < ApplicationController
         json.distance       current_user.distance_label(user["target_user"])
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
-        json.avatar_thumbnail user["target_user"]["target_user_thumb"] 
+        json.avatar_thumbnail user["target_user_thumb"] 
         json.apn_token      user["target_user"].apn_token
-        json.notification_read  user["target_user"]["notification_read"]
+        json.notification_read  user["notification_read"]
         json.email  user["target_user"]["email"]
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
-        json.timestamp  user["target_user"]["timestamp"]
-        json.whisper_id  user["target_user"]["whisper_id"]
+        json.timestamp  user["timestamp"]
+        json.whisper_id  user["whisper_id"]
 
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
