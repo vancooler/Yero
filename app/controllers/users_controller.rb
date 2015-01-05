@@ -177,8 +177,9 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
+    venues = Venue.find_by_id(return_venues)
     puts "the venues are:"
-    puts return_venues.inspect
+    puts venues.inspect
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
