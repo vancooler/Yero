@@ -211,6 +211,11 @@ class UsersController < ApplicationController
         json.introduction_1 user["target_user"].introduction_1
         json.introduction_2 user["target_user"].introduction_2
       end   
+
+      #Loop through the return_venues ids and do a find to get the object
+      # Then do the json dance to include venue id, link to venue_avatars to get the picture
+      # And make a dynamic name with the welcome message
+
     end  
 
     users = JSON.parse(users).delete_if(&:blank?)
