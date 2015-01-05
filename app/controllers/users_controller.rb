@@ -177,9 +177,8 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    puts "return users:" 
-    puts return_users.inspect
-    whisper_users = Array.new
+
+
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -222,7 +221,7 @@ class UsersController < ApplicationController
     # end
  
     # users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
-    render json: success(whisper_users, "users")
+    render json: success(users, "users")
   end
 
   def update_profile
