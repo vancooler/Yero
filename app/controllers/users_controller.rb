@@ -177,39 +177,37 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    puts "return_users:"
-    puts return_users.inspect
+  
     users = Jbuilder.encode do |json|
       return_users.each do |user|
-        # puts "return_users loop:"
-        # puts u["target_user"].attributes.to_h.inspect
-        
-        # json.array! return_users do |user|
-        #   avatar_array = Array.new
-        #   avatar_array[0] = {
-        #     thumbnail: user["target_user_thumb"],
-        #   }
-        # end
 
-        # json.avatars do |a|
-        #   json.array! avatar_array do |avatar|
-        #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-        #   end
-        # end
-        puts user["target_user"]["id"].inspect
+        puts user["target_user"]r.inspect
+        json.array! return_users do |user|
+          avatar_array = Array.new
+          avatar_array[0] = {
+            thumbnail: user["target_user"]["target_user_thumb"],
+          }
+        end
+
+        json.avatars do |a|
+          json.array! avatar_array do |avatar|
+            a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+          end
+        end
+
         json.same_venue_badge          current_user.same_venue_as?(user.id.to_i)
         json.different_venue_badge     current_user.different_venue_as?(user.id.to_i) 
         json.actual_distance           current_user.actual_distance(user)
-        json.id             user.id
-        json.first_name     user.first_name
-        json.key            user.key
-        json.last_active    user.last_active
-        json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-        json.birthday       user.birthday
-        json.gender         user.gender
+        json.id             user["target_user"]["id"]
+        json.first_name     user["target_user"]["first_name"]
+        json.key            user["target_user"]["key"]
+        json.last_active    user["target_user"]["last_active"]
+        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
+        json.birthday       user["target_user"]["birthday"]
+        json.gender         user["target_user"]["gender"]
         json.distance       current_user.distance_label(user)
-        json.created_at     user.created_at
-        json.updated_at     user.updated_at
+        json.created_at     user["target_user"]["created_at"]
+        json.updated_at     user["target_user"]["updated_at"]
 
         json.apn_token      user.apn_token
         
