@@ -180,7 +180,7 @@ class UsersController < ApplicationController
     puts "return_users:"
     puts return_users.inspect
     users = Jbuilder.encode do |json|
-      return_users.each do |u|
+      return_users.each do |user|
         # puts "return_users loop:"
         # puts u["target_user"].attributes.to_h.inspect
         
