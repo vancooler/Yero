@@ -223,7 +223,7 @@ class UsersController < ApplicationController
     # end
  
     # users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
-    render json: success(users, "users")
+    render json: success(whisper_users, "users")
   end
 
   def update_profile
