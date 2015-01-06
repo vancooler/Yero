@@ -178,9 +178,7 @@ class UsersController < ApplicationController
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
     venues = Venue.find(return_venues)
-    puts "the venues are:"
-    puts venues.inspect
-
+  
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -217,8 +215,8 @@ class UsersController < ApplicationController
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
       # And make a dynamic name with the welcome message
       json.array! venues.each do |venue|
-        json.name venue["name"]
-        json.message "Welcome to "+venue["name"]+"! Open this Whisper to learn more about tonight."
+        json.venue_name venue["name"]
+        json.venue_message "Welcome to "+venue["name"]+"! Open this Whisper to learn more about tonight."
       end
     end  
 
