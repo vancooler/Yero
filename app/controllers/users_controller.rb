@@ -216,7 +216,10 @@ class UsersController < ApplicationController
       #Loop through the return_venues ids and do a find to get the object
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
       # And make a dynamic name with the welcome message
-
+      json.array! venues.each do |venue|
+        json.name venue["name"]
+        json.message "Welcome to "+venue["name"]+"! Open this Whisper to learn more about tonight."
+      end
     end  
 
     users = JSON.parse(users).delete_if(&:blank?)
