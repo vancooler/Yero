@@ -215,6 +215,7 @@ class UsersController < ApplicationController
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
       # And make a dynamic name with the welcome message
       json.array! venues.each do |venue|
+        puts venue.inspect
         json.venue_name venue["name"]
         json.venue_message "Welcome to "+venue["name"]+"! Open this Whisper to learn more about tonight."
       end
