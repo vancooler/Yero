@@ -140,7 +140,14 @@ class WhisperNotification < AWS::Record::HashModel
       if venue_id > 0 
         if venue.include? venue_id #venue id already in there, then do nothing
         else
-          venue.push(venue_id) # Throw venue_id into the array
+          h['venue'] = venue
+          h['venue_id'] = attributes['venue_id']
+          h['timestamp'] = attributes['timestamp']
+          h['accepted'] = attributes['accepted']
+          h['viewed'] = attributes['viewed']
+          h['created_date'] = attributes['created_date']
+          h['whisper_id'] = attributes['id']
+          venue << h # Throw venue_id into the array
         end
       end
     end
