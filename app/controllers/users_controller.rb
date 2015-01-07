@@ -179,6 +179,11 @@ class UsersController < ApplicationController
     return_venues = current_user.whisper_venue
     venues = Venue.find(return_venues)
   
+    puts "return_venues:"
+    puts return_venues.inspect
+    puts "venues:"
+    puts venues.inspect
+  
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -223,10 +228,7 @@ class UsersController < ApplicationController
       end
     end
 
-    puts "return_venues:"
-    puts return_venues.inspect
-    puts "venues:"
-    puts venues.inspect
+    
     puts "venues_array:"
     puts venues_array.inspect
 
