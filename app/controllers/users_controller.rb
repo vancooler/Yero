@@ -177,9 +177,6 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    puts "return_venues:"
-    puts return_venues.inspect
-    
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
@@ -201,6 +198,7 @@ class UsersController < ApplicationController
         json.apn_token      user["target_user"].apn_token
         json.notification_read  user["notification_read"]
         json.email  user["target_user"]["email"]
+        json.instagram_id  user["target_user"]["instagram_id"]
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
@@ -235,7 +233,7 @@ class UsersController < ApplicationController
     puts venues_array.inspect
 
     users = JSON.parse(users).delete_if(&:blank?)
-
+    venues
     same_venue_users = []
     different_venue_users = [] 
     no_badge_users = []
@@ -351,8 +349,10 @@ class UsersController < ApplicationController
     user = User.find_by_key(params[:key])
     snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
     wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
+    instagram_id = params[:instagram_id]? params[:instagram_id] : user.wechat_id
     user.snapchat_id = snapchat_id
     user.wechat_id = wechat_id
+    user.instagram_id = instagram_id
     if user.save
       render json: success(user)
     else
@@ -367,6 +367,9 @@ class UsersController < ApplicationController
     end
     if params[:wechat_id] == true
       user.wechat_id = nil
+    end
+    if params[:instagram_id] == true
+      user.instagram_id = nil
     end
     if user.save
       render json: success(true)
@@ -566,7 +569,7 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 

@@ -308,6 +308,7 @@ class User < ActiveRecord::Base
       json.gender gender
       json.email email
       json.snapchat_id snapchat_id
+      json.instagram_id instagram_id
       json.wechat_id wechat_id
       json.discovery discovery
       json.exclusive exclusive
