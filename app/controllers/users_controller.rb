@@ -218,6 +218,8 @@ class UsersController < ApplicationController
       # And make a dynamic name with the welcome message
       json.array! return_venues.each do |venue|
         venue_obj = Venue.find(venue["venue_id"])
+        venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+        puts venue_avatar.inspect
         json.venue_name venue_obj["name"]
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
