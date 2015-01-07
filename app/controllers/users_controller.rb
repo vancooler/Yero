@@ -233,13 +233,16 @@ class UsersController < ApplicationController
     puts venues_array.inspect
 
     users = JSON.parse(users).delete_if(&:blank?)
-    venues
+    venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
+    
     same_venue_users = []
     different_venue_users = [] 
     no_badge_users = []
 
     users.each do |u|
       if u['different_venue_badge'].to_s == "true"
+        puts "u"
+        puts u.inspect
         different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
