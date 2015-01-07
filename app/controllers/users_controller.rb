@@ -209,17 +209,22 @@ class UsersController < ApplicationController
 
         json.introduction_1 user["target_user"].introduction_1
         json.introduction_2 user["target_user"].introduction_2
-      end   
+      end         
+    end  
 
+    venues_array = Jbuilder.encode do |json|
       #Loop through the return_venues ids and do a find to get the object
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
       # And make a dynamic name with the welcome message
       json.array! venues.each do |venue|
-        puts venue.inspect
+        
         json.venue_name venue["name"]
         json.venue_message "Welcome to "+venue["name"]+"! Open this Whisper to learn more about tonight."
       end
-    end  
+    end
+
+    puts "The venues:"
+    puts venues_array.inspect
 
     users = JSON.parse(users).delete_if(&:blank?)
 
