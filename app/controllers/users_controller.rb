@@ -223,7 +223,11 @@ class UsersController < ApplicationController
       end
     end
 
-    puts "The venues:"
+    puts "return_venues:"
+    puts return_venues.inspect
+    puts "venues:"
+    puts venues.inspect
+    puts "venues_array:"
     puts venues_array.inspect
 
     users = JSON.parse(users).delete_if(&:blank?)
