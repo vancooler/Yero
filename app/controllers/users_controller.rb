@@ -240,9 +240,9 @@ class UsersController < ApplicationController
     no_badge_users = []
 
     users.each do |u|
+      puts "u"
+      puts u.inspect
       if u['different_venue_badge'].to_s == "true"
-        puts "u"
-        puts u.inspect
         different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
