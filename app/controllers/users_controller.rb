@@ -276,9 +276,9 @@ class UsersController < ApplicationController
     
     user_registration = UserRegistration.new(sign_up_params)
     
-    # user = user_registration.user
+    user = user_registration.user
 
-    if user_registration.create
+    if user.create
       # #signup with the avatar id
       # avatar_id = sign_up_params[:avatar_id]
       # response = user.to_json(true)
@@ -314,7 +314,7 @@ class UsersController < ApplicationController
 
       render json: success(response)
     else
-      render json: error(JSON.parse(user_registration.errors.messages.to_json))
+      render json: error(JSON.parse(user.errors.messages.to_json))
     end
   end
 
