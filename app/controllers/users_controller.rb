@@ -278,7 +278,7 @@ class UsersController < ApplicationController
     
     user = user_registration.user
 
-    if user.create
+    if user_registration.create
       # #signup with the avatar id
       # avatar_id = sign_up_params[:avatar_id]
       # response = user.to_json(true)
