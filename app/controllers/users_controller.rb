@@ -304,10 +304,13 @@ class UsersController < ApplicationController
       # The way in one step
       response = user.to_json(true)
       # p 'here is response:'
-      p response.inspect
-      # thumb = response["avatars"].first['avatar']
-      # response["avatars"].first['thumbnail'] = thumb
-      # response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      # p response.inspect
+      thumb = response["avatars"].first['avatar']
+      if thumb
+        response["avatars"].first['thumbnail'] = thumb
+        response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      end
+      
       # render json: user_registration.to_json.inspect
       # render json: user_avatar.to_json.inspect
       # 
