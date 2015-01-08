@@ -1,4 +1,7 @@
-FactoryGirl.define do
+FactoryGirl.define do  factory :prospect_city_client do
+    
+  end
+
   factory :user do
     sequence(:first_name)  { |n| "Person-#{n}" }
     birthday Time.now - ((19...100).to_a).sample.years
