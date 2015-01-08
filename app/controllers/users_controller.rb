@@ -72,17 +72,17 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    users = Jbuilder.encode do |json|
-      if !params[:page].blank? and !params[:per_page].blank?
-        #fellow_participants basically returns all users that are out or in your particular venue
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-        # Basically a pagination thing for mobile.
-        return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
-      else
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-      end
-
-      if ActiveInVenueNetwork.count > 10
+    if ActiveInVenueNetwork.count > 10
+      users = Jbuilder.encode do |json|
+        if !params[:page].blank? and !params[:per_page].blank?
+          #fellow_participants basically returns all users that are out or in your particular venue
+          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+          # Basically a pagination thing for mobile.
+          return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
+        else
+          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+        end
+        
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
@@ -147,30 +147,33 @@ class UsersController < ApplicationController
           json.introduction_2 user.introduction_2
 
         end
+        
       end
-    end
-    users = JSON.parse(users).delete_if(&:empty?)
-    different_venue_users = [] # Make a empty array for users in the different venue
-    same_venue_users = [] #Make a empty array for users in the same venue
-    no_badge_users = [] # Make an empty array for no badge users
-    users.each do |u| # Go through the users
-      if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-        different_venue_users << u # Throw the user into the array
-      elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-        same_venue_users << u # Throw the user into the array
-      else 
-        no_badge_users << u
+      users = JSON.parse(users).delete_if(&:empty?)
+      different_venue_users = [] # Make a empty array for users in the different venue
+      same_venue_users = [] #Make a empty array for users in the same venue
+      no_badge_users = [] # Make an empty array for no badge users
+      users.each do |u| # Go through the users
+        if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+          different_venue_users << u # Throw the user into the array
+        elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+          same_venue_users << u # Throw the user into the array
+        else 
+          no_badge_users << u
+        end
       end
+      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users #Sort users by distance
+      final_time = Time.now
+      # diff_2 = final_time - end_time
+      e_time = Time.now
+      runtime = e_time - s_time
+      puts "The runtime is: "
+      puts runtime.inspect
+      logger.info "NEWTIME: " + diff_1.to_s 
+    else
+      users = []
     end
-    # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users #Sort users by distance
-    final_time = Time.now
-    # diff_2 = final_time - end_time
-    e_time = Time.now
-    runtime = e_time - s_time
-    puts "The runtime is: "
-    puts runtime.inspect
-    logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users") #Return users
   end
 
