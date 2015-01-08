@@ -314,7 +314,7 @@ class UsersController < ApplicationController
 
       render json: success(response)
     else
-      render json: error(JSON.parse(user.errors.messages.to_json))
+      render json: error(JSON.parse(user_registration.errors.messages.to_json))
     end
   end
 
