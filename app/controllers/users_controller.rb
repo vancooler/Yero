@@ -81,8 +81,8 @@ class UsersController < ApplicationController
       else
         return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       end
-      puts "User count"
-      puts return_users.inspect
+      puts 'active'
+      puts ActiveInVenueNetwork.count.inspect
       json.array! return_users do |user|
         next unless user.user_avatars.present?
         next unless user.main_avatar.present?
