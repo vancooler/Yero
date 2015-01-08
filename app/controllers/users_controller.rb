@@ -251,9 +251,9 @@ class UsersController < ApplicationController
       venues << v
     end
  
-    puts venues.inspect
-
-    users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
+    return_data = same_venue_users + different_venue_users + no_badge_users + venues
+    # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
+    users = return_data.sort_by { |hsh| hsh[:timestamp] }
     render json: success(users, "users")
   end
 
