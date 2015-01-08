@@ -276,7 +276,7 @@ class UsersController < ApplicationController
     
     user_registration = UserRegistration.new(sign_up_params)
     
-    user = user_registration.user
+    # user = user_registration.user
 
     if user_registration.create
       # #signup with the avatar id
