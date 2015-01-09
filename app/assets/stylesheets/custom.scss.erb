@@ -44,28 +44,39 @@ body{
 
 .transparent.top-header.contain-to-grid {
 	// position: fixed;
-	background: transparent;
-	-webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
-	-moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
-	transition: background .5s ease-in-out,padding .5s ease-in-out;
-
-	.title-area {
-
-	}
-	.top-bar {
+	@media #{$medium-up}{
 		background: transparent;
-	}
-	.top-bar-section {
-		ul li {
-			background: transparent;
-			a {
-				color: #fff;
-				background: transparent;
-			}
-			&.divider {
-				border: none;
+		-webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
+		-moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
+		transition: background .5s ease-in-out,padding .5s ease-in-out;
+
+		.title-area {
+
+		}
+		.contain-to-grid,
+		.top-bar {
+			background: none;
+			li,
+			.top-bar-section li:not(.has-form) a:not(.button),
+			.social-link a {
+				background: none;
+				color: #2effa5;
+				&.divider {
+					border: none;
+				}
 			}
 		}
+
+		.top-bar-section {
+			ul li {
+				background: transparent;
+				a {
+					color: #fff;
+					background: transparent;
+				}
+			}
+		}
+
 	}
 }
 
@@ -107,7 +118,9 @@ body{
 		text-transform: none;
 	}
 	&.nav-alt {
+		font-family: "GothamBook";
 		padding-top: 13px;
+		font-size: rem-calc(13);
 	}
 	&.social-link {
 
@@ -170,12 +183,18 @@ body{
 	}
 }
 
+.page-content {
+	min-height: 400px;
+}
 
 // homepage features
 .hero,
 .email-signup,
 .padding {
 	padding: 100px 0;
+}
+.no-bottom {
+	padding-bottom: 0px;
 }
 .feature {
 	p {
@@ -189,7 +208,6 @@ body{
 .email-signup {
 	background: #ebedf2;
 }
-
 .feature:first-of-type {
 	margin-top: 0px !important;
 }
@@ -302,12 +320,31 @@ body{
 // for venues
 
 .for-venues {
+	// .contain-to-grid,
+	// .top-bar {
+	// 	background: none;
+	// 	li,
+	// 	.top-bar-section li:not(.has-form) a:not(.button),
+	// 	.social-link a {
+	// 		background: none;
+	// 		color: #2effa5;
+	// 	}
+	// }
+	h1 img.logo {
+		margin-top: 10px;
+	}
+	.top-bar .toggle-topbar.menu-icon {
+		margin-top: -25px;
+	}
 	.venues-hero {
 		color: #fff;
 		background: url(<%= asset_path 'venueheader.png' %>) no-repeat center;
 		background-position: cover;
-		height: 600px;
-
+		padding-bottom: 50px;
+		@media #{$medium-up} {
+			margin-top: -70px;
+			height: 650px;
+		}
 		h3 {
 			color: #fff;
 		}
@@ -319,6 +356,9 @@ body{
 
 .details {
 	margin-top: 15%;
+	p {
+		line-height: 3;
+	}
 }
 
 .hero h2 {
@@ -574,4 +614,18 @@ h5 {
 }
 .email-form {
 	margin-top: 50px;
+}
+
+
+// thank you
+
+.thank-you {
+
+	.page-header {
+		padding-bottom: 0px;
+	}
+
+	h2 {
+		text-transform: none;
+	}
 }

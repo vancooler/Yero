@@ -51,6 +51,9 @@ Rails.application.routes.draw do
   get 'venue-login', to: 'home#venue-login'
   get 'android', to: 'beta_signup_users#android'
   get 'beta-signup', to: 'beta_signup_users#beta'
+  get 'beta-thankyou', to: 'home#beta-thankyou'
+  get 'android-thankyou', to: 'home#android-thankyou'
+  get 'venues-thankyou', to: 'home#venues-thankyou'
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/login',                  to: 'users#login'
