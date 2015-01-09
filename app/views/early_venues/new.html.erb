@@ -52,6 +52,9 @@ jQuery(function ()
 			<p>Want to learn what Yero can do for your venue?<br>
 				Submit your information below and we'll get back to you within 48 business hours.
 			</p>
+			<%if params.has_key?(:phone) and !(/\A[+-]?\d+\z/ === params[:phone])%>
+				<div style="background-color:orange">Please enter number in [0-9] in Phone field.</div>
+			<%end%>
 		</div>
 		<%= form_for(@early_venue) do |f| %>
 		<div class="medium-4 medium-centered columns email-form">
