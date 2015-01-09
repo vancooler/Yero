@@ -29,8 +29,13 @@ class BetaSignupUsersController < InheritedResources::Base
 
     respond_to do |format|
       if @beta_signup_user.save
-        format.html { redirect_to thanks_beta_signup_url }
-        format.json { render json: @beta_signup_user, status: :created, location: @beta_signup_user }
+        if @beta_signup_user.phone_type == "Android"
+          format.html { redirect_to android_thankyou_url }
+          format.json { render json: @beta_signup_user, status: :created, location: @beta_signup_user }
+        elsif @beta_signup_user.phone_type == "iPhone"
+          format.html { redirect_to beta_thankyou_url }
+          format.json { render json: @beta_signup_user, status: :created, location: @beta_signup_user }
+        end
       else
         format.html { render action: "new" }
         format.json { render json: @beta_signup_user.errors, status: :unprocessable_entity }
