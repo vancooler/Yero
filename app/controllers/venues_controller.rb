@@ -12,6 +12,21 @@ class VenuesController < ApplicationController
     redirect_to show_nightly_path(nightly.id)
   end
 
+  def prospect
+    user = User.find_by_key(params[:key])
+    if(params[:email] && params[:longitude] && params[:latitude])
+      h = {email: params[:email], longitude: params[:longitude], latitude: params[:latitude]}
+      save_client = ProspectCityClient.create(h)
+      if save_client
+        render json: success(true)
+      else
+        render json: error("Error saving email, longitude, and latitude")
+      end
+    else
+      render json: error("Error saving email, longitude, and latitude")
+    end
+  end
+
   def lottery
     @winners = current_venue.winners.order("created_at DESC").first(5)
     @participants = current_venue.participants.all

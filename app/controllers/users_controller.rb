@@ -72,194 +72,193 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    users = Jbuilder.encode do |json|
-      if !params[:page].blank? and !params[:per_page].blank?
-        #fellow_participants basically returns all users that are out or in your particular venue
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-        # Basically a pagination thing for mobile.
-        return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
-      else
-        return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-      end
-      
-      json.array! return_users do |user|
-        next unless user.user_avatars.present?
-        next unless user.main_avatar.present?
-        main_avatar   =  user.user_avatars.find_by(default:true)
-        other_avatars =  user.user_avatars.where.not(default:true)
-        avatar_array = Array.new
-        avatar_array[0] = {
-              thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
-            }
-        avatar_array[1] = {
-              avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
-              avatar_id: main_avatar.nil? ? '' : main_avatar.id,
-              default: true
-            }
-        if other_avatars.count > 0
-          avatar_array[2] = {
-                avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-                avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                default: false
+    if ActiveInVenueNetwork.count > 10
+      users = Jbuilder.encode do |json|
+        if !params[:page].blank? and !params[:per_page].blank?
+          #fellow_participants basically returns all users that are out or in your particular venue
+          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+          # Basically a pagination thing for mobile.
+          return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
+        else
+          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+        end
+        
+        json.array! return_users do |user|
+          next unless user.user_avatars.present?
+          next unless user.main_avatar.present?
+          main_avatar   =  user.user_avatars.find_by(default:true)
+          other_avatars =  user.user_avatars.where.not(default:true)
+          avatar_array = Array.new
+          avatar_array[0] = {
+                thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
               }
-          if other_avatars.count > 1
-            avatar_array[3] = {
-                  avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-                  avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+          avatar_array[1] = {
+                avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
+                avatar_id: main_avatar.nil? ? '' : main_avatar.id,
+                default: true
+              }
+          if other_avatars.count > 0
+            avatar_array[2] = {
+                  avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
+                  avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
                   default: false
                 }
+            if other_avatars.count > 1
+              avatar_array[3] = {
+                    avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
+                    avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                    default: false
+                  }
+            end
           end
-        end
-        json.avatars do |a|
-          json.array! avatar_array do |avatar|
-            a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-            a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-            a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-            a.default     avatar[:default]   if !avatar[:default].nil?
+          json.avatars do |a|
+            json.array! avatar_array do |avatar|
+              a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
+              a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+              a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+              a.default     avatar[:default]   if !avatar[:default].nil?
+            end
           end
+
+          start_time = Time.now
+          json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
+          end_time = Time.now
+          diff_1 += (end_time - start_time)
+          json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+          json.different_venue_badge     current_user.different_venue_as?(user.id)
+          json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+          json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
+          json.id             user.id
+          json.first_name     user.first_name
+          json.key            user.key
+          json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+          json.birthday       user.birthday
+          json.gender         user.gender
+          json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
+          json.created_at     user.created_at
+          json.updated_at     user.updated_at
+
+          json.apn_token      user.apn_token
+          
+          json.latitude       user.latitude  
+          json.longitude      user.longitude 
+
+          json.introduction_1 user.introduction_1
+          json.introduction_2 user.introduction_2
+
         end
-
-        start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
-        end_time = Time.now
-        diff_1 += (end_time - start_time)
-        json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-        json.different_venue_badge     current_user.different_venue_as?(user.id)
-        json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-        json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
-        json.id             user.id
-        json.first_name     user.first_name
-        json.key            user.key
-        json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-        json.birthday       user.birthday
-        json.gender         user.gender
-        json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
-        json.created_at     user.created_at
-        json.updated_at     user.updated_at
-
-        json.apn_token      user.apn_token
         
-        json.latitude       user.latitude  
-        json.longitude      user.longitude 
-
-        json.introduction_1 user.introduction_1
-        json.introduction_2 user.introduction_2
-
       end
-    end
-    users = JSON.parse(users).delete_if(&:empty?)
-    different_venue_users = [] # Make a empty array for users in the different venue
-    same_venue_users = [] #Make a empty array for users in the same venue
-    no_badge_users = [] # Make an empty array for no badge users
-    users.each do |u| # Go through the users
-      if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-        different_venue_users << u # Throw the user into the array
-      elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-        same_venue_users << u # Throw the user into the array
-      else 
-        no_badge_users << u
+      users = JSON.parse(users).delete_if(&:empty?)
+      different_venue_users = [] # Make a empty array for users in the different venue
+      same_venue_users = [] #Make a empty array for users in the same venue
+      no_badge_users = [] # Make an empty array for no badge users
+      users.each do |u| # Go through the users
+        if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+          different_venue_users << u # Throw the user into the array
+        elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+          same_venue_users << u # Throw the user into the array
+        else 
+          no_badge_users << u
+        end
       end
+      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users #Sort users by distance
+      final_time = Time.now
+      # diff_2 = final_time - end_time
+      e_time = Time.now
+      runtime = e_time - s_time
+      puts "The runtime is: "
+      puts runtime.inspect
+      logger.info "NEWTIME: " + diff_1.to_s 
+    else
+      users = []
     end
-    # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users #Sort users by distance
-    final_time = Time.now
-    # diff_2 = final_time - end_time
-    e_time = Time.now
-    runtime = e_time - s_time
-    puts "The runtime is: "
-    puts runtime.inspect
-    logger.info "NEWTIME: " + diff_1.to_s 
     render json: success(users, "users") #Return users
   end
 
   def friends
+    
+      
+    return_users = current_user.whisper_friends
+    return_venues = current_user.whisper_venue
+
     users = Jbuilder.encode do |json|
-      
-      return_users = current_user.whisper_friends
-      return_venues = current_user.whisper_venue
-      
-      json.array! return_users do |user|
-        next unless user.user_avatars.present?
-        next unless user.main_avatar.present?
-        main_avatar   =  user.user_avatars.find_by(default:true)
-        other_avatars =  user.user_avatars.where.not(default:true)
-        avatar_array = Array.new
-        avatar_array[0] = {
-              thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
-            }
-        avatar_array[1] = {
-              avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
-              avatar_id: main_avatar.nil? ? '' : main_avatar.id,
-              default: true
-            }
-        if other_avatars.count > 0
-          avatar_array[2] = {
-                avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-                avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                default: false
-              }
-          if other_avatars.count > 1
-            avatar_array[3] = {
-                  avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-                  avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
-                  default: false
-                }
-          end
-        end
-        json.avatars do |a|
-          json.array! avatar_array do |avatar|
-            a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-            a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-            a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-            a.default     avatar[:default]   if !avatar[:default].nil?
-          end
-        end
+      json.array! return_users.each do |user|
+        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
+        json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
+        json.actual_distance           current_user.actual_distance(user["target_user"])
+        json.id             user["target_user"]["id"]
+        json.first_name     user["target_user"]["first_name"]
+        json.key            user["target_user"]["key"]
+        json.last_active    user["target_user"]["last_active"]
+        json.last_activity  user["target_user"]["last_activity"]
+        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
+        json.birthday       user["target_user"]["birthday"]
+        json.gender         user["target_user"]["gender"]
+        json.distance       current_user.distance_label(user["target_user"])
+        json.created_at     user["target_user"]["created_at"]
+        json.updated_at     user["target_user"]["updated_at"]
+        json.avatar_thumbnail user["target_user_thumb"] 
+        json.apn_token      user["target_user"].apn_token
+        json.notification_read  user["notification_read"]
+        json.email  user["target_user"]["email"]
+        json.instagram_id  user["target_user"]["instagram_id"]
+        json.snapchat_id  user["target_user"]["snapchat_id"]
+        json.wechat_id  user["target_user"]["wechat_id"]
+        json.timestamp  user["timestamp"]
+        json.whisper_id  user["whisper_id"]
 
-        start_time = Time.now
-        json.whisper_sent WhisperNotification.whisper_sent(current_user, user)
-        end_time = Time.now
-        diff_1 += (end_time - start_time)
-        json.same_venue_badge          current_user.same_venue_as?(user.id)
-        json.different_venue_badge     current_user.different_venue_as?(user.id)
-        # json.same_beacon               current_user.same_beacon_as?(user.id)
-        json.actual_distance           current_user.actual_distance(user)
-        json.id             user.id
-        json.first_name     user.first_name
-        json.key            user.key
-        json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-        json.birthday       user.birthday
-        json.gender         user.gender
-        json.distance       current_user.distance_label(user)
-        json.created_at     user.created_at
-        json.updated_at     user.updated_at
+        json.latitude       user["target_user"].latitude  
+        json.longitude      user["target_user"].longitude 
 
-        json.apn_token      user.apn_token
-        
-        json.latitude       user.latitude  
-        json.longitude      user.longitude 
+        json.introduction_1 user["target_user"].introduction_1
+        json.introduction_2 user["target_user"].introduction_2
+      end         
+    end  
 
-        json.introduction_1 user.introduction_1
-        json.introduction_2 user.introduction_2
-
+    venues_array = Jbuilder.encode do |json|
+      #Loop through the return_venues ids and do a find to get the object
+      # Then do the json dance to include venue id, link to venue_avatars to get the picture
+      # And make a dynamic name with the welcome message
+      json.array! return_venues.each do |venue|
+        venue_obj = Venue.find(venue["venue_id"])
+        venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+        json.venue_name venue_obj["name"]
+        json.venue_avatar venue_avatar["avatar"]
+        json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+        json.timestamp venue["timestamp"]
+        json.accepted venue["accepted"]
+        json.viewed venue["viewed"]
+        json.created_date venue["created_date"]
+        json.whisper_id venue["whisper_id"]
       end
     end
-    users = JSON.parse(users).delete_if(&:empty?)
+
+    users = JSON.parse(users).delete_if(&:blank?)
+    venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
+    
     same_venue_users = []
     different_venue_users = [] 
     no_badge_users = []
-    puts users.inspect
+    venues = []
+
     users.each do |u|
-      if u['different_venue_users'].to_s = "true"
+      if u['different_venue_badge'].to_s == "true"
         different_venue_users << u
       elsif u['same_venue_badge'].to_s == "true"
         same_venue_users << u
+      else
+        no_badge_users << u
       end
     end
+    venues_array.each do |v|
+      venues << v
+    end
  
-    users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] } + no_badge_users
-    puts users.inspect
-    final_time = Time.now
-    # diff_2 = final_time - end_time
+    return_data = same_venue_users + different_venue_users + no_badge_users + venues
+    # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
+    users = return_data.sort_by { |hsh| hsh[:timestamp] }
     render json: success(users, "users")
   end
 
@@ -310,10 +309,15 @@ class UsersController < ApplicationController
       # p 'here is response:'
       # p response.inspect
       thumb = response["avatars"].first['avatar']
-      response["avatars"].first['thumbnail'] = thumb
-      response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      if thumb
+        response["avatars"].first['thumbnail'] = thumb
+        response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      end
+      
       # render json: user_registration.to_json.inspect
       # render json: user_avatar.to_json.inspect
+      # 
+
       render json: success(response)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
@@ -362,8 +366,10 @@ class UsersController < ApplicationController
     user = User.find_by_key(params[:key])
     snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
     wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
+    instagram_id = params[:instagram_id]? params[:instagram_id] : user.wechat_id
     user.snapchat_id = snapchat_id
     user.wechat_id = wechat_id
+    user.instagram_id = instagram_id
     if user.save
       render json: success(user)
     else
@@ -378,6 +384,9 @@ class UsersController < ApplicationController
     end
     if params[:wechat_id] == true
       user.wechat_id = nil
+    end
+    if params[:instagram_id] == true
+      user.instagram_id = nil
     end
     if user.save
       render json: success(true)
@@ -577,7 +586,7 @@ class UsersController < ApplicationController
   private
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 

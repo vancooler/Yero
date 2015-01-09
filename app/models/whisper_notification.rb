@@ -99,36 +99,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
-    # :notification_type. '1' => enter venue greeting, '2' => chat request
-    # :accepted. 0 => nothing, 1 => accepted, 2 => declined
-    # sender_items = select items where target_id equals the user_id and where the notification_type is a chat request that has been accepted
-    # target_id is the user id that receives the request
-    target_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
-    # receiver_items = select items where origin_id equals user_id and where the notification_type is a chat request that has been accepted
-    # origin_id is the user id that sent the request
     origin_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2")
     target_user_array = Array.new
     origin_user_array = Array.new
-    # if target_items and target_items.count > 0
-    #   target_items.each do |i|
-    #     attributes = i.attributes.to_h
-    #     origin_id = attributes['origin_id'].to_i
-    #     h = Hash.new
-    #     if origin_id > 0
-    #       user = User.find(origin_id)
-    #       h['origin_user'] = user
-    #       h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
-    #     else
-    #       h['origin_user'] = ''
-    #     end
-    #     h['timestamp'] = attributes['timestamp'].to_i
-    #     h['whisper_id'] = attributes['id']
-    #     h['accepted'] = attributes['accepted'].to_i
-    #     h['my_role'] = 'target_user'
-    #     target_user_array << h
-    #   end
-    #   # return target_user_array
-    # end
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
         attributes = i.attributes.to_h
@@ -143,15 +116,13 @@ class WhisperNotification < AWS::Record::HashModel
         end
         h['timestamp'] = attributes['timestamp'].to_i
         h['whisper_id'] = attributes['id']
-        h['accepted'] = attributes['accepted'].to_i
-        h['my_role'] = 'origin_user'
         origin_user_array << h
       end
-      # return origin_user_array
     end
     users = Array.new
     users = target_user_array + origin_user_array
     users = users.sort_by { |hsh| hsh[:timestamp] }
+
     return users.reverse
   end
 
@@ -160,7 +131,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
-    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1")
+    venue_items = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("1")
     venue = Array.new # Make a new hash object
     venue_items.each do |i| # For each item
       attributes = i.attributes.to_h # Turn each item into a hash
@@ -169,7 +140,13 @@ class WhisperNotification < AWS::Record::HashModel
       if venue_id > 0 
         if venue.include? venue_id #venue id already in there, then do nothing
         else
-          venue.push(venue_id) # Throw venue_id into the array
+          h['venue_id'] = attributes['venue_id']
+          h['timestamp'] = attributes['timestamp'].to_i
+          h['accepted'] = attributes['accepted']
+          h['viewed'] = attributes['viewed']
+          h['created_date'] = attributes['created_date']
+          h['whisper_id'] = attributes['id']
+          venue << h # Throw venue_id into the array
         end
       end
     end

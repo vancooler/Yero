@@ -192,8 +192,7 @@ class User < ActiveRecord::Base
 
   def whisper_friends
     active_users_id = WhisperNotification.find_friends(self.id)
-    users = User.where(id: active_users_id)
-    return users
+    return active_users_id
   end
 
   def whisper_venue
@@ -309,6 +308,7 @@ class User < ActiveRecord::Base
       json.gender gender
       json.email email
       json.snapchat_id snapchat_id
+      json.instagram_id instagram_id
       json.wechat_id wechat_id
       json.discovery discovery
       json.exclusive exclusive
