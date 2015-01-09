@@ -6,7 +6,7 @@ class EarlyVenuesController < InheritedResources::Base
 
     respond_to do |format|
       if @early_venue.save
-        format.html { redirect_to thanks_beta_signup_url }
+        format.html { redirect_to venues_thankyou_url }
         format.json { render json: @early_venue, status: :created, location: @early_venue }
       else
         format.html { render action: "new" }

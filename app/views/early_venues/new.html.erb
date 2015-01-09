@@ -72,10 +72,10 @@ jQuery(function ()
 					<%= f.email_field :email, :placeholder => "Email", :required => true %>
 				</div>
 				<div class="phone-input phone-number">
-					<%= f.text_field :phone, :placeholder => "Phone Number", :required => true %>
+					<%= f.text_field :phone, :placeholder => "Phone Number", :required => true, :pattern => "[0-9]*", :oninvalid => "setCustomValidity('Please enter numbers in 0-9.')", :onchange => "try{setCustomValidity('')}catch(e){}" %>
 				</div>
 				<div class="">
-					<%= f.submit "Contact Me", :class=>"button expand" %>
+					<%= f.submit "Submit", :class=>"button expand" %>
 				</div>
 			</div>
 		</div>
