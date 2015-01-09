@@ -123,19 +123,21 @@ body{
 		font-size: rem-calc(13);
 	}
 	&.social-link {
-
+		// background-color: $primary-color;
 	}
-	&.social-link > a {
+	&.social-link  {
 		// border-radius: 50%;
 		// padding-bottom: 5px;// !important;
-		margin-top: 20px;
-		background: none;
-		// background: url(<%= asset_path 'facebook.png' %>) no-repeat !important;
-		// background-color: none;
-		width: 22px;
-		height: 22px;
+		> a {
+			margin-top: 20px;
+			background-color: none;
+			// background: url(<%= asset_path 'facebook.png' %>) no-repeat !important;
+			// background-color: none;
+			width: 22px;
+			height: 22px;
+		}
 
-		&.fb {
+		a:not(.button).fb {
 			background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
 			background-size: contain;
 			&:hover {
@@ -143,7 +145,7 @@ body{
 				background-size: contain;
 			}
 		}
-		&.tw {
+		 a:not(.button).tw {
 			background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
 			background-size: contain;
 			&:hover {
@@ -151,7 +153,7 @@ body{
 				background-size: contain;
 			}
 		}
-		&.ig {
+		 a:not(.button).ig {
 			background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -77px 0px !important;
 			background-size: contain;
 			&:hover {
@@ -353,7 +355,7 @@ body{
 	}
 }
 .grey {
-	background-color: #f2f2f2;
+	background-color: #f4f4f4;
 }
 
 .details {
