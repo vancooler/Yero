@@ -23,7 +23,7 @@
   </head>
 
   <body data-no-turbolink class="<%= yield (:body_class) %>" >
-    <div class="contain-to-grid sticky top-header <% if current_page?('/for-venues') %>transparent<% end %>">
+    <div class="contain-to-grid top-header <% if current_page?('/for-venues') %>transparent<% else %>sticky<% end %>">
       <nav class="top-bar" data-topbar data-options="sticky_on: large" role="nagivation">
         <ul class="title-area">
           <li class="name">
@@ -61,7 +61,6 @@
               </li>
             <% else %>
               <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
-            <!-- <li><%= link_to('How It Works', '/how-it-works', :class=>'nav-item '+check_active('/how-it-works')) %></li> -->
               <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
               <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
             <% end %>
