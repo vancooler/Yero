@@ -79,7 +79,7 @@
 
     <%= yield %>
 
-    <% if !current_page?('/venue-login') %>
+    <% if !current_page?('/venue-login') and !current_page?('/beta-signup') %>
     <footer class="page-footer">
       <div class="row">
         <div class="medium-8 medium-centered columns">
