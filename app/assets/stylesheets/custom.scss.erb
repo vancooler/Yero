@@ -12,8 +12,13 @@ body{
 		margin: 50px 0;
 	}
 }
+.home main {
+	@media #{$medium-up}{
+		margin-top: -65px;
+	}
+}
 .hero {
-	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center;
+	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
 	background-size: cover;
 	@media #{$large-up}{
 		height: 850px
@@ -46,38 +51,44 @@ body{
 		display: inline;
 }
 
+.top-bar {
+	background: none !important;
+}
+
+.top-header.contain-to-grid {
+	-webkit-transition: all .7s ease-out;
+	-moz-transition: all .7s ease-out;
+	transition: all .7s ease-out;
+}
+
 .transparent.top-header.contain-to-grid {
 	// position: fixed;
 	@media #{$medium-up}{
 		background: transparent;
-		-webkit-transition: background .5s ease-in-out,padding .5s ease-in-out;
-		-moz-transition: background .5s ease-in-out,padding .5s ease-in-out;
-		transition: background .5s ease-in-out,padding .5s ease-in-out;
-
 		.title-area {
 
 		}
 		.contain-to-grid,
 		.top-bar {
-			background: none;
 			li,
-			.top-bar-section li:not(.has-form) a:not(.button),
-			.social-link a {
+			.top-bar-section li:not(.has-form) a:not(.button){
 				background: none;
 				color: #2effa5;
-				&.divider {
-					border: none;
-				}
+			}
+			li.social-link a img{
+				 background: #2effa5;
 			}
 		}
 
 		.top-bar-section {
 			ul li {
 				background: transparent;
+
 				a {
 					color: #fff;
 					background: transparent;
 				}
+
 			}
 		}
 
@@ -100,11 +111,17 @@ body{
 	height: auto;
 }
 
-.top-bar-section ul li {
+.top-bar-section ul li:not(.has-form) {
 	margin-right: 5px;
+	background: none !important;
+	-webkit-transition: all .1s linear;
+	-moz-transition: all .1s linear;
+	transition: all .1s linear;
 
 	&.divider {
 		width: 30px;
+		background: none !important;
+		border-color: transparent;
 		@media #{$small-only} {
 			display: none;
 		}
@@ -113,6 +130,11 @@ body{
 		line-height: 3 !important;
 		margin-top: 12px;
 		border-radius: 5px;
+		background: transparent;
+
+		-webkit-transition: color .5s ease;
+		-moz-transition: color .5s ease;
+		transition: color .5s ease;
 	}
 	a.active {
 		border: 1px solid #111;
@@ -126,17 +148,11 @@ body{
 		padding-top: 13px;
 		font-size: rem-calc(13);
 	}
-	&.social-link {
-		// background-color: $primary-color;
-	}
 	&.social-link  {
-		// border-radius: 50%;
-		// padding-bottom: 5px;// !important;
+
 		> a {
 			margin-top: 20px;
 			background-color: none;
-			// background: url(<%= asset_path 'facebook.png' %>) no-repeat !important;
-			// background-color: none;
 			width: 22px;
 			height: 22px;
 		}
@@ -148,13 +164,21 @@ body{
 				background: url(<%= asset_path 'facebook.png' %>) no-repeat center;// -37px 0px !important;
 				background-size: contain;
 			}
+			&.green {
+				background: url(<%= asset_path 'facebook-green.png' %>) no-repeat center !important;
+				background-size: contain !important;
+			}
 		}
 		 a:not(.button).tw {
 			background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
 			background-size: contain;
 			&:hover {
 				background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
-				background-size: contain;
+				background-size: contain ;
+			}
+			&.green {
+				background: url(<%= asset_path 'twitter-green.png' %>) no-repeat center !important;
+				background-size: contain !important;
 			}
 		}
 		 a:not(.button).ig {
@@ -163,6 +187,10 @@ body{
 			&:hover {
 				background: url(<%= asset_path 'insta.png' %>) no-repeat center;// -37px 0px !important;
 				background-size: contain;
+			}
+			&.green {
+				background: url(<%= asset_path 'insta-green.png' %>) no-repeat center !important;
+				background-size: contain !important;
 			}
 		}
 		// &.yt {
@@ -227,7 +255,7 @@ body{
 }
 .matching,
 .network {
-	height: 500px;
+	height: 650px;
 	position: relative;
 	img {
 		position: absolute;
@@ -246,9 +274,9 @@ body{
 		}
 	}
 	&.network {
-		height: 560px;
+		// height: 560px;
 		img {
-			max-width: 350px;
+			max-width: 400px;
 				@media #{$small-only} {
 					height: 300px;
 				}
@@ -256,13 +284,13 @@ body{
 	}
 }
 .chatting {
-	height: 500px;
+	height: 600px;
 	position: relative;
 	img {
 		position: absolute;
 		bottom: 0px;
 		left: 5%;
-		max-width: 350px;
+		max-width: 400px;
 	}
 	@media #{$medium-up} {
 		.chats-img {
@@ -348,7 +376,7 @@ body{
 		background-position: cover;
 		padding-bottom: 50px;
 		@media #{$medium-up} {
-			margin-top: -70px;
+			margin-top: -65px;
 			height: 670px;
 			padding-top: 40px;
 		}
@@ -366,7 +394,7 @@ body{
 }
 
 .details {
-	margin-top: 15%;
+	margin-top: 18%;
 	p {
 		line-height: 2;
 	}

@@ -37,5 +37,48 @@ $(window).resize(function(event) {
 	}
 });
 
+function scrollHeader(){
+
+	if($(window).width() > 768  ){
+
+		var homeHeader = $('.home .contain-to-grid');
+		var logoImg = $('.home .home-link img');
+		var logoSource = logoImg.attr('src');
+		var newSource = '/assets/Logo_green.png';
+
+		var social = $('.ig, .fb, .tw');
+
+
+		// add class on page load, swap img src
+		homeHeader.addClass('transparent');
+		logoImg.attr('src', newSource );
+		social.addClass('green')
+
+		$(window).scroll(function(event) {
+			/* Act on the event */
+
+			var top = $(window).scrollTop();
+
+			console.log('top = '+top);
+			if ( top > 150 ){
+				homeHeader.removeClass('transparent');
+				logoImg.attr('src', logoSource );
+				social.removeClass('green');
+
+			}else {
+				homeHeader.addClass('transparent');
+				logoImg.attr('src', newSource );
+				social.addClass('green')
+			}
+
+		});
+	}
+	// alert(logoImg.attr('src'));
+
+
+}
+
+scrollHeader();
+
 // console.log('I\'m here!');
 
