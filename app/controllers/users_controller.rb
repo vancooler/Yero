@@ -229,9 +229,11 @@ class UsersController < ApplicationController
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
         json.accepted venue["accepted"]
-        json.viewed venue["viewed"]
+        json.viewed venue["viewed"].to_i
         json.created_date venue["created_date"]
         json.whisper_id venue["whisper_id"]
+        json.message "Welcome to " + venue_obj["name"] + "! Open this chat to learn more about tonight. (swipe to view message)"
+        json.notification_type = venue["notification_type"].to_i
       end
     end
 
@@ -259,6 +261,7 @@ class UsersController < ApplicationController
     return_data = same_venue_users + different_venue_users + no_badge_users + venues
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
+    users = users.reverse
     render json: success(users, "users")
   end
 
