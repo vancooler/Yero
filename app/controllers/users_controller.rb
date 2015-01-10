@@ -182,6 +182,8 @@ class UsersController < ApplicationController
       
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
+    notifications = WhisperNotification.get_info(current_user)
+    p notifications.inspect
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
