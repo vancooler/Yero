@@ -231,11 +231,11 @@ class UsersController < ApplicationController
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
         json.accepted venue["accepted"]
-        json.viewed venue["viewed"].to_i
+        json.viewed venue["viewed"]
         json.created_date venue["created_date"]
         json.whisper_id venue["whisper_id"]
         json.message "Welcome to " + venue_obj["name"] + "! Open this chat to learn more about tonight. (swipe to view message)"
-        json.notification_type = venue["notification_type"].to_i
+        json.notification_type  1
       end
     end
 
