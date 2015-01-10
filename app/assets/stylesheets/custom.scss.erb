@@ -14,7 +14,10 @@ body{
 }
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center;
-	background-position: cover;
+	background-size: cover;
+	@media #{$large-up}{
+		height: 850px
+	}
 }
 .hero h5,
 .feature h3,
@@ -28,7 +31,8 @@ body{
 	}
 	p {
 		letter-spacing: 0.1em;
-		font-family: "GothamThin";
+		font-family: "GothamBook";
+		line-height: 3;
 	}
 }
 .feature h4 {
@@ -353,6 +357,9 @@ body{
 			text-transform: uppercase;
 		}
 	}
+	.details p {
+		line-height: 3;
+	}
 }
 .grey {
 	background-color: #f4f4f4;
@@ -361,7 +368,7 @@ body{
 .details {
 	margin-top: 15%;
 	p {
-		line-height: 3;
+		line-height: 2;
 	}
 }
 
@@ -532,6 +539,9 @@ label {
 			background-color: transparent;
 			&:hover {
 				background-color: transparent;
+			}
+			&:focus {
+				outline: none;
 			}
 		}
 		.active {
