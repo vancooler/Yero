@@ -179,9 +179,11 @@ class UsersController < ApplicationController
 
   def friends
     
-      
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
+
+    p "Return venues"
+    p return_venues.inspect
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
@@ -224,14 +226,18 @@ class UsersController < ApplicationController
       json.array! return_venues.each do |venue|
         venue_obj = Venue.find(venue["venue_id"])
         venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+        if venue_avatar 
+          json.venue_avatar venue_avatar["avatar"]
+        end
+        
         json.venue_name venue_obj["name"]
-        json.venue_avatar venue_avatar["avatar"]
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
         json.accepted venue["accepted"]
         json.viewed venue["viewed"]
         json.created_date venue["created_date"]
         json.whisper_id venue["whisper_id"]
+        json.notification_type  1
       end
     end
 
@@ -255,10 +261,11 @@ class UsersController < ApplicationController
     venues_array.each do |v|
       venues << v
     end
- 
+
     return_data = same_venue_users + different_venue_users + no_badge_users + venues
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
+    users = users.reverse
     render json: success(users, "users")
   end
 
