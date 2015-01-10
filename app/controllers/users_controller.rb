@@ -179,10 +179,8 @@ class UsersController < ApplicationController
 
   def friends
     
-      
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    notifications = WhisperNotification.get_info(current_user)
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
@@ -258,12 +256,6 @@ class UsersController < ApplicationController
     venues_array.each do |v|
       venues << v
     end
- 
-    p "notifications"
-    p notifications.inspect
-    p "venues"
-    p return_venues.inspect
-
 
     return_data = same_venue_users + different_venue_users + no_badge_users + venues
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
