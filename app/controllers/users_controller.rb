@@ -179,7 +179,6 @@ class UsersController < ApplicationController
 
   def friends
     
-      
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
 
@@ -257,7 +256,7 @@ class UsersController < ApplicationController
     venues_array.each do |v|
       venues << v
     end
- 
+
     return_data = same_venue_users + different_venue_users + no_badge_users + venues
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
