@@ -23,14 +23,19 @@
   </head>
 
   <body data-no-turbolink class="<%= yield (:body_class) %>" >
-    <div class="contain-to-grid sticky top-header">
+    <div class="contain-to-grid top-header <% if current_page?('/for-venues') %>transparent<% else %>sticky<% end %>">
       <nav class="top-bar" data-topbar data-options="sticky_on: large" role="nagivation">
         <ul class="title-area">
           <li class="name">
             <!-- <h1><a href="/">YERO</a></h1> -->
             <h1>
             <%= link_to('/', :class=>'home-link') do %>
-              <%= image_tag("YERO-logo.png", :alt => "logo", :class => "logo") %>
+              <% if current_page?('/for-venues') %>
+                <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo show-for-small") %>
+                <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small") %>
+              <% else %>
+              <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo") %>
+              <% end %>
               <span>YERO</span>
             <% end %>
             </h1>
@@ -46,24 +51,25 @@
             <%# else %>
               <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
-             <% if current_page?('/for-venues') %>
-              <li>Already a partner?
+             <% if current_page?('/for-venues') ||  current_page?('/venues-thankyou') || current_page?('/get-in-touch') %>
+              <li class="nav-alt">Already a partner?
                 <%= link_to('Sign In', '/venue-login', :class=>'nav-item sign-in')%>
               </li>
             <% elsif current_page?('/venue-login') %>
-              <li>Don't have an account?
+              <li class="nav-alt">Don't have an account?
                 <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
               </li>
             <% else %>
               <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
-            <!-- <li><%= link_to('How It Works', '/how-it-works', :class=>'nav-item '+check_active('/how-it-works')) %></li> -->
               <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
               <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
             <% end %>
-            <li class="divider"></li>
-            <li class="social-link"><a href="https://twitter.com/yeroapp" class="tw"></a></li>
-            <li class="social-link"><a href="https://www.facebook.com/yeroapp" class="fb"></a></li>
-            <li class="social-link"><a href="http://instagram.com/yeroapp" class="ig"></a></li>
+             <% if !current_page?('/for-venues') || !current_page?('/venue-login') %>
+              <li class="divider"></li>
+              <li class="social-link"><a href="https://twitter.com/yeroapp" class="tw"></a></li>
+              <li class="social-link"><a href="https://www.facebook.com/yeroapp" class="fb"></a></li>
+              <li class="social-link"><a href="http://instagram.com/yeroapp" class="ig"></a></li>
+            <% end %>
             <!-- <li class="social-link"><a href="" class="yt"></a></li> -->
           </ul>
         </section>
@@ -73,18 +79,21 @@
 
     <%= yield %>
 
+    <% if !current_page?('/venue-login') and !current_page?('/beta-signup') %>
     <footer class="page-footer">
       <div class="row">
         <div class="medium-8 medium-centered columns">
           <ul class="footer-links medium-text-center">
             <li><%= link_to('About', '/about', :class=>'nav-item '+check_active('/about')) %></li>
-            <li><%= link_to('We\'re Hiring', '/careers', :class=>'nav-item '+check_active('/careers')) %></li>
+            <li><%= link_to('Careers', '/careers', :class=>'nav-item '+check_active('/careers')) %></li>
             <li><%= link_to('Terms of Use', '/terms-of-use', :class=>'nav-item '+check_active('/terms-of-use')) %></li>
             <li><%= link_to('Privacy Policy', '/privacy', :class=>'nav-item '+check_active('/privacy')) %></li>
           </ul>
         </div>
       </div>
     </footer>
+
+    <% end %>
 
     </main>
     <%= javascript_include_tag "application" %>

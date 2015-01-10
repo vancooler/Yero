@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141230220602) do
+ActiveRecord::Schema.define(version: 20150108231755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -157,6 +157,14 @@ ActiveRecord::Schema.define(version: 20141230220602) do
     t.boolean  "viewed",   default: false
   end
 
+  create_table "prospect_city_clients", force: true do |t|
+    t.string   "email"
+    t.float    "longitude"
+    t.float    "latitude"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "read_notifications", force: true do |t|
     t.integer  "user_id"
     t.boolean  "before_sending_whisper_notification", default: false
@@ -221,10 +229,19 @@ ActiveRecord::Schema.define(version: 20141230220602) do
     t.boolean  "exclusive",         default: false
     t.boolean  "active",            default: true
     t.boolean  "accept_contract",   default: false
+    t.string   "instagram_id"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["key"], name: "index_users_on_key", unique: true, using: :btree
+
+  create_table "venue_avatars", force: true do |t|
+    t.integer  "venue_id"
+    t.string   "avatar"
+    t.boolean  "default"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false

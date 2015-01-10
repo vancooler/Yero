@@ -52,6 +52,9 @@ jQuery(function ()
 			<p>Want to learn what Yero can do for your venue?<br>
 				Submit your information below and we'll get back to you within 48 business hours.
 			</p>
+			<%if params.has_key?(:phone) and !(/\A[+-]?\d+\z/ === params[:phone])%>
+				<div style="background-color:orange">Please enter number in [0-9] in Phone field.</div>
+			<%end%>
 		</div>
 		<%= form_for(@early_venue) do |f| %>
 		<div class="medium-4 medium-centered columns email-form">
@@ -72,10 +75,10 @@ jQuery(function ()
 					<%= f.email_field :email, :placeholder => "Email", :required => true %>
 				</div>
 				<div class="phone-input phone-number">
-					<%= f.text_field :phone, :placeholder => "Phone Number", :required => true %>
+					<%= f.text_field :phone, :placeholder => "Phone Number", :required => true, :pattern => "[0-9]*", :oninvalid => "setCustomValidity('Please enter numbers in 0-9.')", :onchange => "try{setCustomValidity('')}catch(e){}" %>
 				</div>
 				<div class="">
-					<%= f.submit "Contact Me", :class=>"button expand" %>
+					<%= f.submit "Submit", :class=>"button expand" %>
 				</div>
 			</div>
 		</div>
