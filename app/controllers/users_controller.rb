@@ -182,6 +182,9 @@ class UsersController < ApplicationController
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
 
+    p "Return venues"
+    p return_venues.inspect
+
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
