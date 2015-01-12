@@ -76,21 +76,21 @@ jQuery(function ()
 		</div>
 		<%= form_for @beta_signup_user, :html => { :honeypot => true } do |f| -%>
 
-		<div class="medium-8 medium-centered columns email-form">
+		<div class="medium-4 medium-centered columns email-form">
 			<div class="form">
 				<%= f.hidden_field :phone_model, :value => @beta_signup_user.phone_model %>
 				<%= f.hidden_field :phone_type, :value => @beta_signup_user.phone_type %>
-				<div class="medium-5 columns city-input">
+				<div class="city-input">
 					<!-- <input type="text" placeholder="City"> -->
 					<%= f.text_field :city, :id =>"cityAjax", :placeholder => "City", :required => true  %>
 				</div>
-				<div class="medium-5 columns email-input">
+				<div class="email-input">
 					<!-- <input type="email" placeholder="Email"> -->
 					<%= f.email_field :email, :placeholder => "Email",:required => true %>
 				</div>
-				<div class="medium-2 columns">
+				<div class="">
 					<!-- <input type="submit" value="Submit" class="button small"> -->
-					<%= f.submit "Submit", :class => 'button small' %>
+					<%= f.submit "Submit", :class => 'button small expand' %>
 				</div>
 			</div>
 			<div class="medium-12 medium-centered columns">
