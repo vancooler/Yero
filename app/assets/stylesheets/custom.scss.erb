@@ -285,45 +285,49 @@ body{
 	}
 }
 .chatting {
-	height: 600px;
-	position: relative;
-	img {
-		position: absolute;
-		bottom: 0px;
-		left: 5%;
-		max-width: 400px;
-	}
-	@media #{$medium-up} {
-		.chats-img {
-			left: 20%;
-		}
-		.chatting-img {
-			left: 25%;
-		}
-	}
-	@media only screen and (min-width: 41em) and (max-width: 55em) {
-		.chats-img {
-			left: 1%;
-		}
-		.chatting-img {
-			left: 10%;
-		}
-	}
-	@media #{$small-only} {
-		height: 600px;
-		img {
-			bottom: 0px;
-			height: 300px;
-			width: auto;
-		}
-		.chats-img {
-			left: 5%;
-		}
-		.chatting-img {
-			right: 2%;
-		}
+	.details{
+		margin-top: 9%;
 	}
 }
+// 	height: 600px;
+// 	position: relative;
+// 	img {
+// 		position: absolute;
+// 		bottom: 0px;
+// 		left: 5%;
+// 		max-width: 400px;
+// 	}
+// 	@media #{$medium-up} {
+// 		// .chats-img {
+// 		// 	left: 20%;
+// 		// }
+// 		.chatting-img {
+// 			left: 25%;
+// 		}
+// 	}
+// 	@media only screen and (min-width: 41em) and (max-width: 55em) {
+// 		.chats-img {
+// 			left: 1%;
+// 		}
+// 		.chatting-img {
+// 			left: 10%;
+// 		}
+// 	}
+// 	@media #{$small-only} {
+// 		height: 600px;
+// 		img {
+// 			bottom: 0px;
+// 			height: 300px;
+// 			width: auto;
+// 		}
+// 		// .chats-img {
+// 		// 	left: 5%;
+// 		// }
+// 		.chatting-img {
+// 			right: 2%;
+// 		}
+// 	}
+// }
 .what-is {
 	padding-bottom: 0px;
 	height: 600px;
@@ -407,7 +411,10 @@ body{
 	margin-bottom: 50px;
 }
 .details {
-	margin-top: 18%;
+	margin-top: 25px;
+	@media #{$medium-up} {
+		margin-top: 20%;
+	}
 	p {
 		line-height: 2;
 	}
