@@ -56,6 +56,8 @@ class WhispersController < ApplicationController
     notification_type = params[:notification_type].to_s
     if params[:message].nil? and notification_type == "2"
       message = current_user.first_name + " just whispered you! (swipe to view profile)" 
+      p "message1"
+      p message.inspect    
     else
       message = params[:message]
     end
@@ -77,6 +79,8 @@ class WhispersController < ApplicationController
       # current_user.save
     end
     n.send_push_notification_to_target_user(message)
+    p "message2"
+    p message.inspect    
     render json: success
   end
 
