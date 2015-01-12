@@ -182,9 +182,6 @@ class UsersController < ApplicationController
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
 
-    p "Return venues"
-    p return_venues.inspect
-
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
@@ -229,7 +226,7 @@ class UsersController < ApplicationController
         if venue_avatar 
           json.venue_avatar venue_avatar["avatar"]
         end
-        
+
         json.venue_name venue_obj["name"]
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
