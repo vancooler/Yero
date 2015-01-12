@@ -77,8 +77,7 @@ class WhispersController < ApplicationController
       # current_user.save
     end
     n.send_push_notification_to_target_user(message)
-    p "message2"
-    p message.inspect    
+      
     render json: success
   end
 
