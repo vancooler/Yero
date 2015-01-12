@@ -227,6 +227,9 @@ body{
 .email-signup,
 .padding {
 	padding: 100px 0;
+	@media #{$small-only} {
+		padding: 50px 0;
+	}
 }
 .no-bottom {
 	padding-bottom: 0px;
@@ -256,7 +259,7 @@ body{
 }
 .matching,
 .network {
-	height: 650px;
+	height: 540px;
 	position: relative;
 	img {
 		position: absolute;
@@ -275,7 +278,7 @@ body{
 		}
 	}
 	&.network {
-		// height: 560px;
+		height: 650px;
 		img {
 			max-width: 400px;
 				@media #{$small-only} {
@@ -286,7 +289,16 @@ body{
 }
 .chatting {
 	.details{
-		margin-top: 9%;
+		@media #{$medium-up} {
+			margin-top: 9%;
+		}
+	}
+}
+.matching {
+	.details{
+		@media #{$medium-up} {
+			margin-top: 16%;
+		}
 	}
 }
 // 	height: 600px;
