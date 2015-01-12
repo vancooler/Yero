@@ -713,7 +713,7 @@ h5 {
 .checkbox {
 	label {
 		position: relative;
-		padding-left: 10px;
+		padding-left: 20px;
 	}
 	input[type=checkbox] {
 		position: absolute;
@@ -726,12 +726,15 @@ h5 {
 		// background-color: #fff;
 		border: 1px solid #000;
 		position: absolute;
-		left: -10px;
-		top: 0px;
+		left: 10px;
+		top: 2px;
 	}
-	input[type=checkbox]:checked  label {
-		background: url(<% asset_path 'lock.png' %>) no-repeat;
+	input[type=checkbox]:checked ~ div label {
+		background: #000; //url(<% asset_path 'check.png' %>) no-repeat;
 		background-size: 100%;
+	}
+	span {
+		padding-left: 10px;
 	}
 }
 
