@@ -59,14 +59,11 @@
               <li class="nav-alt">Don't have an account?
                 <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
               </li>
-            <% else %>
-              <% if !current_page?('/android')%>
-                <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
-                <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
-                <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
-              <%end%>
             <% end %>
-             <% if !current_page?('/for-venues') and !current_page?('/venue-login') and !current_page?('/android')%>
+             <% if !current_page?('/for-venues') and !current_page?('/venue-login') and !current_page?('/android') and !current_page?('/beta-signup') %>
+              <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
+              <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
+              <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
               <li class="divider"></li>
               <li class="social-link"><a href="https://twitter.com/yeroapp" class="tw"></a></li>
               <li class="social-link"><a href="https://www.facebook.com/yeroapp" class="fb"></a></li>

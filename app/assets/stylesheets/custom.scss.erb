@@ -66,7 +66,7 @@ body{
 	@media #{$medium-up}{
 		background: transparent;
 		.title-area {
-
+			margin-left: 200px;
 		}
 		.contain-to-grid,
 		.top-bar {
@@ -81,6 +81,7 @@ body{
 		}
 
 		.top-bar-section {
+			// margin-right: 100px;
 			ul li {
 				background: transparent;
 
@@ -327,6 +328,11 @@ body{
 	padding-bottom: 0px;
 	height: 600px;
 	position: relative;
+	@media #{$medium-up} {
+		.text-content {
+			margin-top: 8%;
+		}
+	}
 	.image {
 		position: absolute;
 		bottom: 0px;
@@ -389,10 +395,17 @@ body{
 		line-height: 3;
 	}
 }
+.macbook {
+	position: relative;
+	bottom: -10px;
+}
 .grey {
 	background-color: #f4f4f4;
 }
 
+.bottom-50 {
+	margin-bottom: 50px;
+}
 .details {
 	margin-top: 18%;
 	p {
@@ -408,7 +421,7 @@ body{
 
 .hero-download-link {
 	display: block;
-	margin-top: 4rem;
+	margin-top: 10rem;
 	margin-bottom: 2rem;
 	@media #{$small-only} {
 		margin-top: 10px;
