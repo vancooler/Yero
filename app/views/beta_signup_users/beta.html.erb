@@ -47,7 +47,7 @@ jQuery(function ()
 
 
 <% body_class "beta-signup" %>
-<% content_for :title , "Beta Signup" %>
+<% content_for :title , "Yero for iOS" %>
 <!-- <header class="page-header">
 	<div class="row">
 		<div class="medium-12 columns">
@@ -62,7 +62,7 @@ jQuery(function ()
 
 			<%- # image_tag "shades.png", :class=>'shades-img' -%>
 
-			<p>YERO for iOS is currently in private beta.</p>
+			<p>Yero for iOS is currently in private beta.</p>
 		</div>
 
 		<div class="medium-3 medium-centered columns">
@@ -76,27 +76,27 @@ jQuery(function ()
 		</div>
 		<%= form_for @beta_signup_user, :html => { :honeypot => true } do |f| -%>
 
-		<div class="medium-8 medium-centered columns email-form">
+		<div class="medium-4 medium-centered columns email-form">
 			<div class="form">
 				<%= f.hidden_field :phone_model, :value => @beta_signup_user.phone_model %>
 				<%= f.hidden_field :phone_type, :value => @beta_signup_user.phone_type %>
-				<div class="medium-5 columns city-input">
+				<div class="city-input">
 					<!-- <input type="text" placeholder="City"> -->
 					<%= f.text_field :city, :id =>"cityAjax", :placeholder => "City", :required => true  %>
 				</div>
-				<div class="medium-5 columns email-input">
+				<div class="email-input">
 					<!-- <input type="email" placeholder="Email"> -->
 					<%= f.email_field :email, :placeholder => "Email",:required => true %>
 				</div>
-				<div class="medium-2 columns">
+				<div class="">
 					<!-- <input type="submit" value="Submit" class="button small"> -->
-					<%= f.submit "Submit", :class => 'button small' %>
+					<%= f.submit "Submit", :class => 'button small expand' %>
 				</div>
 			</div>
 			<div class="medium-12 medium-centered columns">
 				<label>
 					<input type="checkbox">
-					Yes, I want to participate in YERO beta testing.
+					Yes, I want to participate in Yero beta testing.
 				</label>
 			</div>
 

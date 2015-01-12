@@ -109,7 +109,7 @@ $header-text-rendering: optimizeLegibility;
 
 // We use these to control header font sizes
 // $h1-font-size: rem-calc(44);
-// $h2-font-size: rem-calc(37);
+$h2-font-size: rem-calc(38);
 // $h3-font-size: rem-calc(27);
 // $h4-font-size: rem-calc(23);
 // $h5-font-size: rem-calc(18);
@@ -145,7 +145,7 @@ $header-text-rendering: optimizeLegibility;
 // We use these to style anchors
 // $anchor-text-decoration: none;
 $anchor-font-color: $secondary-color;
-// $anchor-font-color-hover: scale-color($primary-color, $lightness: -14%);
+$anchor-font-color-hover: $primary-color; //scale-color($primary-color, $lightness: -14%);
 
 // We use these to style the <hr> element
 // $hr-border-width: 1px;
@@ -1176,7 +1176,7 @@ $topbar-link-color-active: #111; //#fff;
 // $topbar-link-weight: normal;
 // $topbar-link-font-size: rem-calc(13);
 // $topbar-link-hover-lightness: -10%; // Darken by 10%
-$topbar-link-bg-hover: $primary-color; //#272727;
+$topbar-link-bg-hover: transparent; //$primary-color; //#272727;
 // $topbar-link-bg-active: $primary-color;
 $topbar-link-bg-active-hover: scale-color($secondary-color, $lightness: -14%);
 // $topbar-link-font-family: $body-font-family;

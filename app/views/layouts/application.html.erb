@@ -51,7 +51,7 @@
             <%# else %>
               <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
-             <% if current_page?('/for-venues') ||  current_page?('/venues-thankyou') || current_page?('/get-in-touch') %>
+             <% if current_page?('/for-venues') ||  current_page?('/venues-thankyou') ||  current_page?('/android-thankyou')  || current_page?('/get-in-touch') %>
               <li class="nav-alt">Already a partner?
                 <%= link_to('Sign In', '/venue-login', :class=>'nav-item sign-in')%>
               </li>
@@ -59,12 +59,11 @@
               <li class="nav-alt">Don't have an account?
                 <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
               </li>
-            <% else %>
+            <% end %>
+             <% if !current_page?('/for-venues') and !current_page?('/venue-login') and !current_page?('/android') and !current_page?('/beta-signup') and !current_page?('/get-in-touch') and !current_page?('/venues-thankyou') and !current_page?('/android-thankyou') %>
               <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
               <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
               <li><%= link_to('For Venues', '/for-venues', :class=>'nav-item '+check_active('/for-venues')) %></li>
-            <% end %>
-             <% if !current_page?('/for-venues') || !current_page?('/venue-login') %>
               <li class="divider"></li>
               <li class="social-link"><a href="https://twitter.com/yeroapp" class="tw"></a></li>
               <li class="social-link"><a href="https://www.facebook.com/yeroapp" class="fb"></a></li>

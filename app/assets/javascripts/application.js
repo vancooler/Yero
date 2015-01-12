@@ -22,6 +22,8 @@ var header = $('.for-venues .contain-to-grid');
 if($(window).width() < 768  ){
 	header.addClass('sticky fixed')
 	$('body').addClass('f-topbar-fixed');
+}else {
+
 }
 
 
@@ -36,6 +38,68 @@ $(window).resize(function(event) {
 		$('body').removeClass('f-topbar-fixed');
 	}
 });
+
+function scrollHeader(){
+
+	var homeHeader = $('.home .contain-to-grid');
+	var logoImg = $('.home .home-link img');
+	var logoSource = '/assets/Logo_black.png';
+	var newSource = '/assets/Logo_green.png';
+
+	var social = $('.home .ig, .home .fb, .home .tw');
+
+
+	if($(window).width() > 768  ){
+
+		// add class on page load, swap img src
+		homeHeader.addClass('transparent');
+		logoImg.attr('src', newSource );
+	}else{
+		homeHeader.addClass('fixed');
+	}
+
+	$(window).scroll(function(event) {
+			/* Act on the event */
+
+
+			if($(window).width() > 768  ){
+				var top = $(window).scrollTop();
+				// console.log('top = '+top);
+				if ( top > 150 ){
+					homeHeader.removeClass('transparent');
+					logoImg.attr('src', logoSource );
+					social.removeClass('green');
+
+				}else {
+					homeHeader.addClass('transparent');
+					logoImg.attr('src', newSource );
+					social.addClass('green')
+				}
+			}
+
+		});
+
+
+
+	// alert(logoImg.attr('src'));
+	$(window).resize(function(event) {
+		/* Act on the event */
+		if($(window).width() < 768  ){
+			homeHeader.addClass('sticky fixed');
+			$('body').addClass('f-topbar-fixed ');
+			social.removeClass('green')
+			logoImg.attr('src', logoSource );
+		}else{
+
+			logoImg.attr('src', newSource );
+			social.addClass('green');
+			homeHeader.addClass('transparent');
+		}
+	});
+
+}
+
+scrollHeader();
 
 // console.log('I\'m here!');
 
