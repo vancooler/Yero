@@ -421,8 +421,7 @@ class WhisperNotification < AWS::Record::HashModel
           chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number
       }
-    p 'The notification data'
-    p notification.inspect  
+
     # And... sent! That's all it takes.
     apn.push(notification)
 
