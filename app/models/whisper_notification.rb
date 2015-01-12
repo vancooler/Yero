@@ -424,7 +424,7 @@ class WhisperNotification < AWS::Record::HashModel
     p 'The notification data'
     p notification.inspect  
     # And... sent! That's all it takes.
-    p apn.push(notification)
+    apn.push(notification)
 
   end
 
