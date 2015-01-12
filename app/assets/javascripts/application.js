@@ -86,11 +86,10 @@ function scrollHeader(){
 		/* Act on the event */
 		if($(window).width() < 768  ){
 			homeHeader.addClass('sticky fixed');
-			$('body').addClass('f-topbar-fixed ');
+			$('body').removeClass('f-topbar-fixed ');
 			social.removeClass('green')
 			logoImg.attr('src', logoSource );
 		}else{
-
 			logoImg.attr('src', newSource );
 			social.addClass('green');
 			homeHeader.addClass('transparent');

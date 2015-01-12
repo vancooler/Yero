@@ -119,6 +119,10 @@ body{
 	-moz-transition: all .1s linear;
 	transition: all .1s linear;
 
+	@media #{$medium-up} {
+		padding-top: 13px;
+	}
+
 	&.divider {
 		width: 30px;
 		background: none !important;
@@ -132,13 +136,17 @@ body{
 		margin-top: 12px;
 		border-radius: 5px;
 		background: transparent;
-
+		@media #{$medium-up} {
+			display: inline;
+		}
 		-webkit-transition: color .5s ease;
 		-moz-transition: color .5s ease;
 		transition: color .5s ease;
 	}
 	a.active {
 		border: 1px solid #111;
+		display: inline-block;
+		margin-top: 0px;
 	}
 	a.sign-in {
 		display: inline;
