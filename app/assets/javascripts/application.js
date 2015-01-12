@@ -46,7 +46,7 @@ function scrollHeader(){
 	var logoSource = '/assets/Logo_black.png';
 	var newSource = '/assets/Logo_green.png';
 
-	var social = $('.ig, .fb, .tw');
+	var social = $('.home .ig, .home .fb, .home .tw');
 
 
 	if($(window).width() > 768  ){
