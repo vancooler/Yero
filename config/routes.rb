@@ -86,7 +86,7 @@ Rails.application.routes.draw do
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
-  post 'api/v1/friends', to: 'users#friends'
+  post 'api/v1/requests', to: 'users#requests'
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
   resources :whispers, only: [:new, :create]
