@@ -110,7 +110,9 @@ class WhisperNotification < AWS::Record::HashModel
         if target_id > 0
           user = User.find(target_id)
           h['target_user'] = user
-          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          if user.main_avatar
+            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          end
         else
           h['target_user'] = ''
         end
