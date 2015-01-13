@@ -177,7 +177,7 @@ class UsersController < ApplicationController
     render json: success(users, "users") #Return users
   end
 
-  def friends
+  def requests
     
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
