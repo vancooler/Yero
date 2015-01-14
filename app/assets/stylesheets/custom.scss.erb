@@ -119,9 +119,18 @@ body{
 .logo {
 	@media #{$small-only} {
 		max-width: 120px;
+		margin-left: 10px;
+		padding-top: 10px;
 	}
 	max-width: 195px;
 	height: auto;
+
+	img {
+		width: 170px;
+		@media #{$medium-up}{
+			width: 200px;
+		}
+	}
 }
 
 .top-bar-section ul li:not(.has-form) {
@@ -236,8 +245,11 @@ body{
 .top-bar .name h1 {
 	a.home-link {
 		padding: 0px;
+		width: 150px;
+		padding-top: 10px;
 	}
 }
+
 
 .page-content {
 	min-height: 800px;
@@ -409,7 +421,8 @@ body{
 	// 	}
 	// }
 	h1 img.logo {
-		margin-top: 10px;
+		// margin-top: 10px;
+		// padding-top: 5px;
 	}
 	.top-bar .toggle-topbar.menu-icon {
 		margin-top: -25px;

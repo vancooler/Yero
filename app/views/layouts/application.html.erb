@@ -31,10 +31,11 @@
             <h1>
             <%= link_to('/', :class=>'home-link') do %>
               <% if current_page?('/for-venues') %>
-                <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo show-for-small") %>
-                <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small") %>
+                <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo show-for-small logo-black") %>
+                <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small logo-black") %>
               <% else %>
-              <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo") %>
+              <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo hide-for-small logo-black") %>
+              <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo show-for-small logo-green") %>
               <% end %>
               <span>YERO</span>
             <% end %>
