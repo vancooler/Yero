@@ -158,8 +158,12 @@ class WhispersController < ApplicationController
       elsif params[:declined] == 1
         state = 'declined'
       end
-      whisper = WhisperNotification.find_whisper(whisperId, state)
+      if whisper = WhisperNotification.find_whisper(whisperId, state)
+        render json: success
+      else
+        render json: error('There was an error..')
     end
+    render json: success
   end
 
   def all_my_chat_requests
