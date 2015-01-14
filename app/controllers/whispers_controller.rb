@@ -145,13 +145,20 @@ class WhispersController < ApplicationController
           render json: error('Could not accept/decline the chat request.')
         end
       else
-        render json: error('Request not fount')
+        render json: error('Request not found')
       end
     end
   end
 
   def whisper_request_state
-    
+    whisperId = params[:whisper_id]
+    if params[:accepted] or params[:declined]
+      if params[:accepted] == 1
+        state = 'accepted'
+      elsif params[:declined] == 1
+        state = 'declined'
+      whisper = WhisperNotification.find_whisper(whisperId, state)
+    end
   end
 
   def all_my_chat_requests

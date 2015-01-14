@@ -66,7 +66,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/update-apn',             to: 'users#update_apn'
   get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
   get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list
-  post  'api/v1/venues/prospect',              to: 'venues#prospect'
+  post 'api/v1/venues/prospect',              to: 'venues#prospect'
   get  'api/v1/profile',                      to: 'users#get_profile'
   get  'api/v1/lottery/show',                 to: 'users#get_lotto'
   post 'api/v1/users/poke',                   to: 'users#poke'
@@ -97,6 +97,7 @@ Rails.application.routes.draw do
   post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
   post 'api/v1/notification/get_info', to: 'whispers#get_info'
   post 'api/v1/whisper/chat_request_history', to: 'whispers#chat_request_history'
+  post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
   post 'api/v1/notification/delete', to: 'whispers#api_delete'
   post 'api/v1/notification/decline_all_chat', to: 'whispers#api_decline_all_chat'
 
