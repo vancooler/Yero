@@ -386,11 +386,8 @@ class WhisperNotification < AWS::Record::HashModel
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
-    p 'self'
-    p self
     token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    p 'token'
-    p token
+
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
@@ -427,9 +424,6 @@ class WhisperNotification < AWS::Record::HashModel
           chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number
       }
-
-    p 'notifications'
-    p notification
 
     # And... sent! That's all it takes.
     apn.push(notification)

@@ -263,7 +263,7 @@ class UsersController < ApplicationController
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
     users = users.reverse
-    render json: success(users, "users")
+    render json: success(users, "data")
   end
 
   def update_profile
