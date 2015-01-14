@@ -424,6 +424,9 @@ class WhisperNotification < AWS::Record::HashModel
           venue_greeting_number: venue_greeting_number
       }
 
+    p 'notifications'
+    p notification
+
     # And... sent! That's all it takes.
     apn.push(notification)
 
