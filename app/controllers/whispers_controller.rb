@@ -157,6 +157,7 @@ class WhispersController < ApplicationController
         state = 'accepted'
       elsif params[:declined] == 1
         state = 'declined'
+      end
       whisper = WhisperNotification.find_whisper(whisperId, state)
     end
   end
