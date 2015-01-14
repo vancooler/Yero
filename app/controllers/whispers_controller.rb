@@ -150,6 +150,9 @@ class WhispersController < ApplicationController
     end
   end
 
+  def whisper_request_state
+    
+  end
 
   def all_my_chat_requests
     # role = params[:role] # "origin", "target", "both"
