@@ -58,7 +58,7 @@ gem 'aws-sdk'
 gem 'geocoder'
 gem 'sidekiq'
 gem 'kaminari'
-gem 'certified'
+
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
 gem 'redis'
