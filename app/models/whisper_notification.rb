@@ -370,7 +370,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def find_whisper(whisper_id, state)
+  def self.find_whisper(whisper_id, state)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
