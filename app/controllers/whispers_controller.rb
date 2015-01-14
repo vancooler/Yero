@@ -177,6 +177,3 @@ class WhispersController < ApplicationController
     render json: success(items)
   end
 end
-
-
-# "whisper"=>{"target_id"=>"162",
