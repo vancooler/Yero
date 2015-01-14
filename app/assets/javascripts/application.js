@@ -43,8 +43,8 @@ function scrollHeader(){
 
 	var homeHeader = $('.home .contain-to-grid');
 	var logoImg = $('.home .home-link img');
-	var logoSource = '/assets/Logo_black.png';
-	var newSource = '/assets/Logo_green.png';
+	var logoSource = '/assets/yero-black-vector.svg';
+	var newSource = '/assets/yero-green-vector.svg';
 
 	var social = $('.home .ig, .home .fb, .home .tw');
 
