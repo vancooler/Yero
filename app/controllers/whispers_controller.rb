@@ -160,6 +160,7 @@ class WhispersController < ApplicationController
       elsif params[:declined] == 1
         state = 'declined'
       end
+      p state
       if WhisperNotification.find_whisper(whisperId, state)
         render json: success
       else
