@@ -150,21 +150,22 @@ class WhispersController < ApplicationController
     end
   end
 
-  # def whisper_request_state
-  #   whisperId = params[:whisper_id]
-  #   if params[:accepted] or params[:declined]
-  #     if params[:accepted] == 1
-  #       state = 'accepted'
-  #     elsif params[:declined] == 1
-  #       state = 'declined'
-  #     end
-  #     if whisper = WhisperNotification.find_whisper(whisperId, state)
-  #       render json: success
-  #     else
-  #       render json: error('There was an error.')
-  #   end
-  #   render json: success
-  # end
+  def whisper_request_state
+    whisperId = params[:whisper_id]
+    if params[:accepted] or params[:declined]
+      if params[:accepted] == 1
+        state = 'accepted'
+      elsif params[:declined] == 1
+        state = 'declined'
+      end
+      if whisper = WhisperNotification.find_whisper(whisperId, state)
+        render json: success
+      else
+        render json: error('There was an error.')
+      end
+    end
+    render json: success
+  end
 
   def all_my_chat_requests
     # role = params[:role] # "origin", "target", "both"
