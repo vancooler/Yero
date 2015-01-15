@@ -158,7 +158,8 @@ class WhispersController < ApplicationController
       elsif params[:declined] == 1
         state = 'declined'
       end
-      if whisper = WhisperNotification.find_whisper(whisperId, state)
+      whisper = WhisperNotification.find_by_dynamodb_id(whisperId)
+      if whisper.find_whisper(whisperId, state)
         render json: success
       else
         render json: error('There was an error.')

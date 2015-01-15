@@ -370,17 +370,20 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  # def self.find_whisper(whisper_id, state)
-  #   dynamo_db = AWS::DynamoDB.new
-  #   table = dynamo_db.tables['WhisperNotification']
-  #   table.load_schema
-  #   items = table.items.where(:id).equals(whisper_id)
-  #   if state == 'accepted'
-  #     items.set 'accepted' => 1
-  #   elsif state == 'declined'
-  #     items.set 'declined' => 1
-  #   end
-  # end
+  def self.find_whisper(whisper_id, state)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:id).equals(whisper_id)
+    if state == 'accepted'
+      items.set 'accepted' => 1
+      return true
+    elsif state == 'declined'
+      items.set 'declined' => 1
+      return true
+    end
+    return false
+  end
 
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
