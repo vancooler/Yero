@@ -376,10 +376,14 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     item = WhisperNotification.find_by_dynamodb_id(whisper_id.to_s)
     if state == 'accepted'
-      item.set 'accepted' => 1
+      item.attributes.update do |u|
+          u.set 'accepted' => 1
+      end
       return true
     elsif state == 'declined'
-      item.set 'declined' => 1
+      item.attributes.update do |u|
+          u.set 'declined' => 1
+      end
       return true
     end
     return false
