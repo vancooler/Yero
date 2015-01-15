@@ -157,13 +157,13 @@ class WhispersController < ApplicationController
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       if params[:accepted] == 1
         state = 'accepted'
+        p state
+        WhisperNotification.find_whisper(whisperId, state)
+        render json: success
       elsif params[:declined] == 1
         state = 'declined'
-      end
-      p state
-      if WhisperNotification.find_whisper(whisperId, state)
-        render json: success
-      else
+        p state
+        WhisperNotification.find_whisper(whisperId, state)
         render json: error('There was an error.')
       end
     end
