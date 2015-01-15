@@ -164,7 +164,6 @@ class WhispersController < ApplicationController
         render json: error('There was an error.')
       end
     end
-    render json: success
   end
 
   def all_my_chat_requests
