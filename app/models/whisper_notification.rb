@@ -374,12 +374,12 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:id).equals(whisper_id.to_s)
+    item = WhisperNotification.find_by_dynamodb_id(whisper_id.to_s)
     if state == 'accepted'
-      items.set 'accepted' => 1
+      item.set 'accepted' => 1
       return true
     elsif state == 'declined'
-      items.set 'declined' => 1
+      item.set 'declined' => 1
       return true
     end
     return false
