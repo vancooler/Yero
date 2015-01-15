@@ -154,7 +154,7 @@ class WhispersController < ApplicationController
     whisperId = params[:whisper_id]
     p "whisperID"
     p whisperId
-    if params[:accepted] or params[:declined]
+    if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       if params[:accepted] == 1
         state = 'accepted'
       elsif params[:declined] == 1
