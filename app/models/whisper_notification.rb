@@ -141,11 +141,12 @@ class WhisperNotification < AWS::Record::HashModel
     p 'friends'
     p friends.inspect
     if friends and friends.count > 0
+      'Before the ifs'
       friends.each do |friend|
         attributes = friend.attributes.to_h
         friend_id = attributes['target_id'].to_i
         h = Hash.new
-        'Before the ifs'
+        p 'in the loop'
         p friend_id
         if friends_array.include? friend_id
           p 'in the array'
