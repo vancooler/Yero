@@ -168,8 +168,6 @@ class WhisperNotification < AWS::Record::HashModel
           users = Array.new
           users = friends_array
           users = users.sort_by { |hsh| hsh[:timestamp] }
-          p "users#afd"
-          p users
           return users.reverse
         end 
       end
