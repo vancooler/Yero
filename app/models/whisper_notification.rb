@@ -138,14 +138,17 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema 
     friends = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals("1")
     friends_array = Array.new
+    p 'friends'
+    p friends.inspect
     if friends and friends.count > 0
       friends.each do |friend|
         attributes = friend.attributes.to_h
         friend_id = attributes['target_id'].to_i
         h = Hash.new
         if friends_array.include? friend_id
+          p 'in the array'
         else
-          if target_id > 0
+          if friend_id > 0
             user = User.find(target_id)
             h['target_user'] = user
             if user.main_avatar
