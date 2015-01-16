@@ -145,6 +145,8 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = friend.attributes.to_h
         friend_id = attributes['target_id'].to_i
         h = Hash.new
+        'Before the ifs'
+        p friend_id
         if friends_array.include? friend_id
           p 'in the array'
         else
