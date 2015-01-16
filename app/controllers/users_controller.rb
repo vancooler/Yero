@@ -137,6 +137,9 @@ class UsersController < ApplicationController
           json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
           json.created_at     user.created_at
           json.updated_at     user.updated_at
+          json.wechat_id      user.wechat_id
+          json.snapchat_id    user.snapchat_id
+          json.instagram_id   user.instagram_id
 
           json.apn_token      user.apn_token
           
