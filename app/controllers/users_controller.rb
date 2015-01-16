@@ -283,9 +283,9 @@ class UsersController < ApplicationController
     render json: success(users, "data")
   end
 
-  def myfriends
-    friends = WhisperNotification.myfriends(current_user.id)
-  end
+  # def myfriends
+  #   friends = WhisperNotification.myfriends(current_user.id)
+  # end
 
   def update_profile
     if current_user.update(introduction_1: CGI.unescape(params[:introduction_1]), introduction_2: CGI.unescape(params[:introduction_2]))
