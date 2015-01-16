@@ -185,7 +185,53 @@ class UsersController < ApplicationController
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
 
-    users = requests_and_friends_json(return_users)
+    users = Jbuilder.encode do |json|
+      json.array! return_users.each do |user|
+        avatar_array = Array.new
+        avatar_array[0] = {
+              avatar: user["target_user_main"],
+              default: true
+            }
+        avatar_array[1] = {
+              avatar: user["target_user_secondary1"],
+              default: false
+            }
+        avatar_array[2] = {
+              avatar: user["target_user_secondary2"],
+              default: false
+            }
+        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
+        json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
+        json.actual_distance           current_user.actual_distance(user["target_user"])
+        json.id             user["target_user"]["id"]
+        json.first_name     user["target_user"]["first_name"]
+        json.key            user["target_user"]["key"]
+        json.last_active    user["target_user"]["last_active"]
+        json.last_activity  user["target_user"]["last_activity"]
+        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
+        json.birthday       user["target_user"]["birthday"]
+        json.gender         user["target_user"]["gender"]
+        json.distance       current_user.distance_label(user["target_user"])
+        json.created_at     user["target_user"]["created_at"]
+        json.updated_at     user["target_user"]["updated_at"]
+        json.avatar_thumbnail user["target_user_thumb"] 
+        json.avatar         avatar_array
+        json.apn_token      user["target_user"].apn_token
+        json.notification_read  user["notification_read"]
+        json.email  user["target_user"]["email"]
+        json.instagram_id  user["target_user"]["instagram_id"]
+        json.snapchat_id  user["target_user"]["snapchat_id"]
+        json.wechat_id  user["target_user"]["wechat_id"]
+        json.timestamp  user["timestamp"]
+        json.whisper_id  user["whisper_id"]
+
+        json.latitude       user["target_user"].latitude  
+        json.longitude      user["target_user"].longitude 
+
+        json.introduction_1 user["target_user"].introduction_1
+        json.introduction_2 user["target_user"].introduction_2
+      end         
+    end  
 
     venues_array = Jbuilder.encode do |json|
       #Loop through the return_venues ids and do a find to get the object
@@ -239,8 +285,6 @@ class UsersController < ApplicationController
 
   def myfriends
     friends = WhisperNotification.myfriends(current_user.id)
-
-
   end
 
   def update_profile
@@ -565,57 +609,6 @@ class UsersController < ApplicationController
   # end
 
   private
-
-  def requests_and_friends_json(return_users)
-    users = Jbuilder.encode do |json|
-      json.array! return_users.each do |user|
-        avatar_array = Array.new
-        avatar_array[0] = {
-              avatar: user["target_user_main"],
-              default: true
-            }
-        avatar_array[1] = {
-              avatar: user["target_user_secondary1"],
-              default: false
-            }
-        avatar_array[2] = {
-              avatar: user["target_user_secondary2"],
-              default: false
-            }
-        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
-        json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
-        json.actual_distance           current_user.actual_distance(user["target_user"])
-        json.id             user["target_user"]["id"]
-        json.first_name     user["target_user"]["first_name"]
-        json.key            user["target_user"]["key"]
-        json.last_active    user["target_user"]["last_active"]
-        json.last_activity  user["target_user"]["last_activity"]
-        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
-        json.birthday       user["target_user"]["birthday"]
-        json.gender         user["target_user"]["gender"]
-        json.distance       current_user.distance_label(user["target_user"])
-        json.created_at     user["target_user"]["created_at"]
-        json.updated_at     user["target_user"]["updated_at"]
-        json.avatar_thumbnail user["target_user_thumb"] 
-        json.avatar         avatar_array
-        json.apn_token      user["target_user"].apn_token
-        json.notification_read  user["notification_read"]
-        json.email  user["target_user"]["email"]
-        json.instagram_id  user["target_user"]["instagram_id"]
-        json.snapchat_id  user["target_user"]["snapchat_id"]
-        json.wechat_id  user["target_user"]["wechat_id"]
-        json.timestamp  user["timestamp"]
-        json.whisper_id  user["whisper_id"]
-
-        json.latitude       user["target_user"].latitude  
-        json.longitude      user["target_user"].longitude 
-
-        json.introduction_1 user["target_user"].introduction_1
-        json.introduction_2 user["target_user"].introduction_2
-      end         
-    end
-    return users  
-  end
 
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
