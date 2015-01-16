@@ -238,6 +238,8 @@ class UsersController < ApplicationController
   end
 
   def myfriends
+    p 'user_id'
+    p current_user.id
     friends = WhisperNotification.myfriends(current_user.id)
     users = requests_friends_json(friends)
     users = JSON.parse(users).delete_if(&:blank?)
