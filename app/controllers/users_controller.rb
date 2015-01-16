@@ -187,15 +187,15 @@ class UsersController < ApplicationController
 
         avatar_array = Array.new
         avatar_array[0] = {
-              avatar: user["target_user_main"] 
+              avatar: user["target_user_main"],
               default: true
             }
         avatar_array[1] = {
-              avatar: user["target_user_secondary1"]
+              avatar: user["target_user_secondary1"],
               default: false
             }
         avatar_array[2] = {
-              avatar: user["target_user_secondary2"]
+              avatar: user["target_user_secondary2"],
               default: false
             }
 
