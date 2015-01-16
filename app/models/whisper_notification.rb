@@ -164,9 +164,9 @@ class WhisperNotification < AWS::Record::HashModel
           end
           h['timestamp'] = attributes['timestamp'].to_i
           h['whisper_id'] = attributes['id']
-          origin_user_array << h  
+          friends_array << h  
           users = Array.new
-          users = origin_user_array
+          users = friends_array
           users = users.sort_by { |hsh| hsh[:timestamp] }
           p "users#afd"
           p users
