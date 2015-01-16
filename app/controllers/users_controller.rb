@@ -239,6 +239,26 @@ class UsersController < ApplicationController
 
   def myfriends
     friends = WhisperNotification.myfriends(current_user.id)
+    users = requests_friends_json(return_users)
+    users = JSON.parse(users).delete_if(&:blank?)
+    users.each do |u|
+      if u['different_venue_badge'].to_s == "true"
+        different_venue_users << u
+      elsif u['same_venue_badge'].to_s == "true"
+        same_venue_users << u
+      else
+        no_badge_users << u
+      end
+    end
+    venues_array.each do |v|
+      venues << v
+    end
+
+    return_data = same_venue_users + different_venue_users + no_badge_users 
+    users = return_data.sort_by { |hsh| hsh[:timestamp] }
+    users = users.reverse
+    p users
+    render json: success(users, "data")
   end
 
   def update_profile
