@@ -140,7 +140,7 @@ class WhisperNotification < AWS::Record::HashModel
     friends_array = Array.new
     p 'friends'
     p friends.count.inspect
-    if friends and friends.count > 0
+    if friends
       'Before the ifs'
       friends.each do |friend|
         attributes = friend.attributes.to_h
