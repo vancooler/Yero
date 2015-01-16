@@ -184,7 +184,6 @@ class UsersController < ApplicationController
 
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
-
         avatar_array = Array.new
         avatar_array[0] = {
               avatar: user["target_user_main"],
@@ -198,7 +197,6 @@ class UsersController < ApplicationController
               avatar: user["target_user_secondary2"],
               default: false
             }
-
         json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
         json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
         json.actual_distance           current_user.actual_distance(user["target_user"])
@@ -214,7 +212,6 @@ class UsersController < ApplicationController
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user_thumb"] 
-        json.avatar_main user["target_user_main"] 
         json.avatar         avatar_array
         json.apn_token      user["target_user"].apn_token
         json.notification_read  user["notification_read"]
