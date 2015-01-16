@@ -614,7 +614,7 @@ class UsersController < ApplicationController
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user_thumb"] 
-        json.avatar         avatar_array
+        json.avatars         avatar_array
         json.apn_token      user["target_user"].apn_token
         json.notification_read  user["notification_read"]
         json.email  user["target_user"]["email"]
