@@ -628,7 +628,7 @@ class UsersController < ApplicationController
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
         json.accepted   user["accepted"]
-        json.decline   user["declined"]
+        json.declined   user["declined"]
         json.whisper_id  user["whisper_id"]
 
         json.latitude       user["target_user"].latitude  
