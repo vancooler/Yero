@@ -243,6 +243,11 @@ class UsersController < ApplicationController
     friends = WhisperNotification.myfriends(current_user.id)
     users = requests_friends_json(friends)
     users = JSON.parse(users).delete_if(&:blank?)
+    
+    same_venue_users = []
+    different_venue_users = [] 
+    no_badge_users = []
+
     users.each do |u|
       if u['different_venue_badge'].to_s == "true"
         different_venue_users << u
