@@ -243,7 +243,7 @@ class UsersController < ApplicationController
     friends = WhisperNotification.myfriends(current_user.id)
     users = requests_friends_json(friends)
     users = JSON.parse(users).delete_if(&:blank?)
-    
+
     same_venue_users = []
     different_venue_users = [] 
     no_badge_users = []
@@ -627,6 +627,8 @@ class UsersController < ApplicationController
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
+        json.accepted   user["accepted"]
+        json.decline   user["declined"]
         json.whisper_id  user["whisper_id"]
 
         json.latitude       user["target_user"].latitude  
