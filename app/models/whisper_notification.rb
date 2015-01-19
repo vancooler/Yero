@@ -107,7 +107,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes.to_h
         sender_id = attributes['origin_id'].to_i
         h = Hash.new
-        if target_id > 0
+        if sender_id > 0
           user = User.find(sender_id)
           h['target_user'] = user
           if user.main_avatar
