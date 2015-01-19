@@ -431,6 +431,7 @@ class WhisperNotification < AWS::Record::HashModel
     if state == 'accepted'
       item.attributes.update do |u|
           u.set 'accepted' => 1
+          u.set 'viewed' => 0
       end
       item = item.attributes.to_h
       return item
