@@ -175,7 +175,7 @@ class UsersController < ApplicationController
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
     else
-      users = []
+      users = ActiveInVenueNetwork.count
     end
     render json: success(users, "users") #Return users
   end
