@@ -99,15 +99,16 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
-    origin_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:declined).not_equal_to(1)
-    origin_user_array = Array.new
-    if origin_items and origin_items.count > 0
-      origin_items.each do |i|
+    # Target_id is the receiver of the messages
+    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:declined).not_equal_to(1)
+    receiver_items_array = Array.new
+    if receiver_items and receiver_items.count > 0
+      receiver_items.each do |i|
         attributes = i.attributes.to_h
-        target_id = attributes['origin_id'].to_i
+        sender_id = attributes['origin_id'].to_i
         h = Hash.new
         if target_id > 0
-          user = User.find(target_id)
+          user = User.find(sender_id)
           h['target_user'] = user
           if user.main_avatar
             h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
@@ -124,7 +125,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['accepted'] = attributes['accepted'].to_i
         h['declined'] = attributes['declined'].to_i
         h['whisper_id'] = attributes['id']
-        origin_user_array << h
+        receiver_items_array << h
       end
     end
     users = Array.new
