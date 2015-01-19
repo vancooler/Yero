@@ -432,7 +432,7 @@ class WhisperNotification < AWS::Record::HashModel
       item.attributes.update do |u|
           u.set 'accepted' => 1
       end
-      return item.attributes
+      return item
     elsif state == 'declined'
       item.attributes.update do |u|
           u.set 'declined' => 1
