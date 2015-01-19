@@ -159,7 +159,7 @@ class WhispersController < ApplicationController
         p 'find'
         p n.inspect
         # n.send_accept_notification_to_target_user(message)
-        render json: success(n)
+        render json: success
       elsif params[:declined].to_i == 1
         state = 'declined'
         WhisperNotification.find_whisper(whisperId, state)
