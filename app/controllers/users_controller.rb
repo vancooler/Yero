@@ -323,7 +323,11 @@ class UsersController < ApplicationController
 
       render json: success(response)
     else
-      render json: error(JSON.parse(user.errors.messages.to_json))
+      if user.errors.on(:email)
+        render json: error("This email has already been taken.")
+      else
+        render json: error(JSON.parse(user.errors.messages.to_json))
+      end
     end
   end
 
