@@ -507,20 +507,20 @@ class WhisperNotification < AWS::Record::HashModel
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
     p hash.inspect
-    if self.origin_id != "0"
-      origin_user = User.find(self.origin_id) 
+    if hash["origin_id"] != "0"
+      origin_user = User.find(hash["origin_id"]) 
       origin_user_key = origin_user.key
     else
       origin_user_key = "SYSTEM"
     end
-    target_user = User.find(self.target_id) 
+    target_user = User.find(hash["target_id"]) 
 
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
-    token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    message = "has accepted your whisper request"
+    token = User.find(hash["target_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+    message = target_user.first_name+" has accepted your whisper request"
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
@@ -529,8 +529,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    chat_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
+    greeting_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
     chat_request_number = 0
     venue_greeting_number = 0
     if chat_items.present?
@@ -541,19 +542,19 @@ class WhisperNotification < AWS::Record::HashModel
     end
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number)
+    notification.badge = (chat_request_number+venue_greeting_number+accept_items)
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
     notification.custom_data = {
-          whisper_id: self.id,
-          origin_user: origin_user_key,
-          target_user: target_user.key,
-          timestamp: self.timestamp,
+          whisper_id: hash["id"],
+          origin_user: target_user.key,
+          target_user: origin_user_key,
+          timestamp: hash["timestamp"],
           target_apn: token,
-          viewed: self.viewed,
-          accepted: self.accepted,
-          type: self.notification_type.to_i,
+          viewed: hash["viewed"],
+          accepted: hash["accepted"],
+          type: hash["notification_type"].to_i,
           chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number
       }
