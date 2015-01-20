@@ -503,10 +503,10 @@ class WhisperNotification < AWS::Record::HashModel
     apn.push(notification)
   end
 
-  def send_accept_notification_to_sender
+  def send_accept_notification_to_sender(hash)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
-    p n.inspect
+    p hash.inspect
     if self.origin_id != "0"
       origin_user = User.find(self.origin_id) 
       origin_user_key = origin_user.key
