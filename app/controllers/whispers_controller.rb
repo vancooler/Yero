@@ -178,4 +178,9 @@ class WhispersController < ApplicationController
     items = WhisperNotification.my_chat_request_history(current_user)
     render json: success(items)
   end
+
+  def decline_whisper_requests
+    whispers_delete = Whisper.delete_whispers
+    render json: success(whispers_delete)
+  end
 end
