@@ -180,7 +180,10 @@ class WhispersController < ApplicationController
   end
 
   def decline_whisper_requests
-    whispers_delete = Whisper.delete_whispers
+    array = params[:array].to_a
+    p "array"
+    p array.inspect
+    # whispers_delete = Whisper.delete_whispers
     render json: success(whispers_delete)
   end
 end
