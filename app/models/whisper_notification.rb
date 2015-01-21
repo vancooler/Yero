@@ -540,16 +540,13 @@ class WhisperNotification < AWS::Record::HashModel
     if greeting_items.present?
       venue_greeting_number = greeting_items.count
     end
+    if accept_items.present?
+      accept_number = accept_items.count
+    end
 
-    p "chat"
-    p chat_items
-    p "greeting"
-    p greeting_items
-    p "accept"
-    p accept_items
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number+accept_items)
+    notification.badge = (chat_request_number+venue_greeting_number+accept_number)
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
