@@ -41,7 +41,7 @@ class Whisper < ActiveRecord::Base
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
     whisper_array.each do |id|
-      item = WhisperNotification.find_by_dynamodb_id(id.to_s)
+      item = WhisperNotification.find_by_dynamodb_id(id[1].to_s)
       item.attributes.update do |u|
           u.set 'declined' => 1
       end
