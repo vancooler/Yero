@@ -184,7 +184,7 @@ class WhispersController < ApplicationController
     p array.inspect
     array.each do |thing|
       p 'thing'
-      p thing
+      p thing[1]
     end
     # whispers_delete = Whisper.delete_whispers
     render json: success(whispers_delete)
