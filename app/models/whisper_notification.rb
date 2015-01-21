@@ -560,7 +560,8 @@ class WhisperNotification < AWS::Record::HashModel
           accepted: hash["accepted"],
           type: hash["notification_type"].to_i,
           chat_request_number: chat_request_number,
-          venue_greeting_number: venue_greeting_number
+          venue_greeting_number: venue_greeting_number,
+          accept_number: accept_number
       }
 
     # And... sent! That's all it takes.
