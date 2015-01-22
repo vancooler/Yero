@@ -33,23 +33,6 @@ class WhispersController < ApplicationController
   end
 
   def api_create
-    # @whisper = Whisper.new(origin_id: current_user.id, target_id: params[:target_id])
-    # # if read_notification = current_user.read_notification
-    # # else
-    # #   read_notification = ReadNotification.new
-    # #   read_notification.user = current_user
-    # # end
-
-    # # read_notification.before_sending_whisper_notification = true
-    # # read_notification.save
-    
-    # if @whisper.save
-    #   render json: success(@whisper.to_json)
-    # else
-    #   render json: error(@whisper.errors.to_json)
-    # end
-    # 
-
     target_id = params[:target_id]
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
@@ -69,12 +52,6 @@ class WhispersController < ApplicationController
       if record_found.count <= 0
         WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
       end
-      # if current_user.notification_read.nil? or current_user.notification_read == 0
-      #   current_user.notification_read = 1
-      # else
-      #   current_user.notification_read += 1
-      # end
-      # current_user.save
     end
     n.send_push_notification_to_target_user(message)
       
