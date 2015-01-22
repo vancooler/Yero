@@ -415,7 +415,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:target_id).equals(target_user.id.to_s).where(:origin_id).equals(origin_user.id.to_s).where(:notification_type).equals("2")
+    items = table.items.where(:target_id).equals(target_user.id.to_s).where(:origin_id).equals(origin_user.id.to_s).where(:notification_type).equals("2").where(:created_date).equals(Date.today.to_s)
     if items.present? and items.count > 0
       return true
     else
