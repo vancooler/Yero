@@ -139,25 +139,27 @@ body{
 .top-bar .toggle-topbar.menu-icon a::after{
 	box-shadow: none;
 }
-.top-bar.expanded .toggle-topbar.menu-icon a::after{
-	box-shadow: none;
-}
+
+// this is needed locally... not on server???
+// .top-bar.expanded .toggle-topbar.menu-icon a::after{
+// 	box-shadow: none;
+// }
 .top-bar.expanded .toggle-topbar.menu-icon a span{
 	box-shadow: none;
 }
 
-// missing from staging site...???
-.top-bar .toggle-topbar.menu-icon a span::after {
-	content: "";
-	position: absolute;
-	display: block;
-	height: 0;
-	top: 50%;
-	margin-top: -8px;
-	right: 16.25px;
-	box-shadow: 0 0px 0 1px #888888, 0 7px 0 1px #888888, 0 14px 0 1px #888888;
-	width: 16px;
-}
+// // missing from staging site...???
+// .top-bar .toggle-topbar.menu-icon a span::after {
+// 	content: "";
+// 	position: absolute;
+// 	display: block;
+// 	height: 0;
+// 	top: 50%;
+// 	margin-top: -8px;
+// 	right: 16.25px;
+// 	box-shadow: 0 0px 0 1px #888888, 0 7px 0 1px #888888, 0 14px 0 1px #888888;
+// 	width: 16px;
+// }
 
 .top-bar-section ul li:not(.has-form) {
 	margin-right: 5px;
