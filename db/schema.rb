@@ -246,7 +246,11 @@ ActiveRecord::Schema.define(version: 20150108231755) do
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
+<<<<<<< HEAD
     t.datetime "enter_time", default: '2014-12-11 18:32:22', null: false
+=======
+    t.datetime "enter_time", default: '2014-10-27 19:50:59', null: false
+>>>>>>> 811322e65b6a6c3941a301693b87b2b3f3b961f9
   end
 
   create_table "venue_networks", force: true do |t|
@@ -323,7 +327,11 @@ ActiveRecord::Schema.define(version: 20150108231755) do
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
+<<<<<<< HEAD
     t.datetime "whisper_time",   default: '2014-12-11 18:32:22', null: false
+=======
+    t.datetime "whisper_time",   default: '2014-10-27 19:50:59', null: false
+>>>>>>> 811322e65b6a6c3941a301693b87b2b3f3b961f9
   end
 
   create_table "whispers", force: true do |t|

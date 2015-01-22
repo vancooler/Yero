@@ -123,7 +123,7 @@ body{
 	@media #{$small-only} {
 		max-width: 120px;
 		margin-left: 10px;
-		padding-top: 10px;
+		// padding-top: 10px;
 	}
 	max-width: 195px;
 	height: auto;
@@ -135,6 +135,31 @@ body{
 		}
 	}
 }
+
+.top-bar .toggle-topbar.menu-icon a::after{
+	box-shadow: none;
+}
+
+// this is needed locally... not on server???
+// .top-bar.expanded .toggle-topbar.menu-icon a::after{
+// 	box-shadow: none;
+// }
+.top-bar.expanded .toggle-topbar.menu-icon a span{
+	box-shadow: none;
+}
+
+// // missing from staging site...???
+// .top-bar .toggle-topbar.menu-icon a span::after {
+// 	content: "";
+// 	position: absolute;
+// 	display: block;
+// 	height: 0;
+// 	top: 50%;
+// 	margin-top: -8px;
+// 	right: 16.25px;
+// 	box-shadow: 0 0px 0 1px #888888, 0 7px 0 1px #888888, 0 14px 0 1px #888888;
+// 	width: 16px;
+// }
 
 .top-bar-section ul li:not(.has-form) {
 	margin-right: 5px;
@@ -249,7 +274,7 @@ body{
 	a.home-link {
 		padding: 0px;
 		width: 150px;
-		padding-top: 10px;
+		// padding-top: 10px;
 	}
 }
 
@@ -424,8 +449,10 @@ body{
 	// 	}
 	// }
 	h1 img.logo {
-		// margin-top: 10px;
-		// padding-top: 5px;
+			margin-top: 10px;
+		@media #{$small-only} {
+			padding-top: 10px;
+		}
 	}
 	.top-bar .toggle-topbar.menu-icon {
 		margin-top: -25px;
@@ -770,5 +797,13 @@ h5 {
 
 	h2 {
 		text-transform: none;
+	}
+}
+
+
+.android,
+.beta-signup {
+	.menu-icon {
+		display: none;
 	}
 }
