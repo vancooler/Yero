@@ -139,6 +139,12 @@ body{
 .top-bar .toggle-topbar.menu-icon a::after{
 	box-shadow: none;
 }
+.top-bar.expanded .toggle-topbar.menu-icon a::after{
+	box-shadow: none;
+}
+.top-bar.expanded .toggle-topbar.menu-icon a span{
+	box-shadow: none;
+}
 
 .top-bar-section ul li:not(.has-form) {
 	margin-right: 5px;
@@ -257,10 +263,6 @@ body{
 	}
 }
 
-.top-bar.expanded .toggle-topbar a span,
-.top-bar.expanded .toggle-topbar a::after {
-	box-shadow: none !important;
-}
 
 .page-content {
 	min-height: 800px;
