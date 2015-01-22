@@ -32,10 +32,9 @@
             <%= link_to('/', :class=>'home-link') do %>
               <% if current_page?('/for-venues') %>
                 <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo show-for-small logo-black") %>
-                <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small logo-black") %>
+                <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small logo-green") %>
               <% else %>
-              <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo hide-for-small logo-black") %>
-              <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo show-for-small logo-green") %>
+               <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo logo-black") %>
               <% end %>
               <span>YERO</span>
             <% end %>
