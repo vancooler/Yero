@@ -72,7 +72,7 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    if ActiveInVenueNetwork.count > 10
+    if ActiveInVenueNetwork.count > 1000
       users = Jbuilder.encode do |json|
         if !params[:page].blank? and !params[:per_page].blank?
           #fellow_participants basically returns all users that are out or in your particular venue
