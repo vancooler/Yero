@@ -74,6 +74,7 @@ Rails.application.routes.draw do
   get  'api/v1/users/favourite_venues',       to: 'users#favourite_venues'
   post 'api/v1/users/add_favourite_venue',    to: 'users#add_favourite_venue'
   post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
+  get 'api/v1/venues/venue_location', to: 'venues#venue_location'
   get  'api/v1/venues/people', to: 'venues#people'
   get  'api/v1/venues/active_users', to: 'venues#active_users'
 

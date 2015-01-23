@@ -19,7 +19,7 @@ module PurpleOctopus
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
-
+    config.middleware.use Oink::Middleware, :logger => Hodel3000CompliantLogger.new(STDOUT)
     config.assets.precompile += %w( vendor/modernizr )
 
     config.before_configuration do

@@ -3,6 +3,12 @@ class VenuesController < ApplicationController
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list, :people]
 
+  def venue_location
+
+    r = Geocoder.search("44.981667,-93.27833")
+    raise r[0].inspect
+  end
+
   def nightly
     @nightlies = current_venue.nightlies.order("created_at DESC")
   end

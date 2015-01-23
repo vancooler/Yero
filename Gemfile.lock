@@ -164,6 +164,7 @@ GEM
     highline (1.6.21)
     hike (1.2.3)
     hitimes (1.2.2)
+    hodel_3000_compliant_logger (0.1.1)
     houston (2.2.1)
       commander (~> 4.1)
       json
@@ -207,7 +208,11 @@ GEM
       net-ssh (>= 1.99.1)
     net-ssh (2.9.2)
     netrc (0.10.2)
+    newrelic_rpm (3.9.9.275)
     nokogiri (1.5.11)
+    oink (0.10.1)
+      activerecord
+      hodel_3000_compliant_logger
     orm_adapter (0.5.0)
     pg (0.18.1)
     phonelib (0.4.0)
@@ -357,6 +362,8 @@ DEPENDENCIES
   migration_data
   mini_magick (~> 3.7.0)
   minitest
+  newrelic_rpm
+  oink
   pg
   phonelib
   rails (= 4.1.0)

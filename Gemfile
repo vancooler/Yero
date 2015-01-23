@@ -58,6 +58,8 @@ gem 'aws-sdk'
 gem 'geocoder'
 gem 'sidekiq'
 gem 'kaminari'
+gem 'newrelic_rpm'
+gem 'oink'
 
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
