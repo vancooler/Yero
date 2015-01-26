@@ -84,7 +84,11 @@ class UsersController < ApplicationController
           return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         end
         reten = Time.now
-        
+        dbtime = reten-retus
+        puts "The dbtime is: "
+        puts dbtime.inspect 
+
+        json_s = Time.now
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
@@ -152,7 +156,10 @@ class UsersController < ApplicationController
           json.introduction_2 user.introduction_2
 
         end
-        
+        json_e = Time.now
+        j_time = json_e-json_s
+        p "Json time:"
+        p j_time.inspect
       end
       users = JSON.parse(users).delete_if(&:empty?)
       different_venue_users = [] # Make a empty array for users in the different venue
@@ -173,11 +180,11 @@ class UsersController < ApplicationController
       # diff_2 = final_time - end_time
       e_time = Time.now
       runtime = e_time - s_time
-      dbtime = reten-retus
+      
       puts "The runtime is: "
       puts runtime.inspect
       puts "The dbtime is: "
-      pputs dbtime.inspect 
+      puts dbtime.inspect 
       logger.info "NEWTIME: " + diff_1.to_s 
     else
       users = ActiveInVenueNetwork.count
