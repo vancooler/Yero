@@ -74,6 +74,7 @@ class UsersController < ApplicationController
     s_time = Time.now
     if ActiveInVenueNetwork.count > 10
       users = Jbuilder.encode do |json|
+        retus = Time.now
         if !params[:page].blank? and !params[:per_page].blank?
           #fellow_participants basically returns all users that are out or in your particular venue
           return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
@@ -82,7 +83,9 @@ class UsersController < ApplicationController
         else
           return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         end
-        
+        reten = Time.Now
+        puts "The dbtime is: "
+        p reten-retus
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
