@@ -83,7 +83,7 @@ class UsersController < ApplicationController
         else
           return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
         end
-        reten = Time.Now
+        reten = Time.now
         puts "The dbtime is: "
         p reten-retus
         json.array! return_users do |user|
