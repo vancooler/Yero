@@ -85,8 +85,7 @@ class UsersController < ApplicationController
         end
         reten = Time.now
         dbtime = reten-retus
-        puts "The dbtime is: "
-        puts dbtime.inspect 
+        
 
         json_s = Time.now
         json.array! return_users do |user|
@@ -158,6 +157,8 @@ class UsersController < ApplicationController
         end
         json_e = Time.now
         j_time = json_e-json_s
+        puts "The dbtime is: "
+        puts dbtime.inspect 
         p "Json time:"
         p j_time.inspect
       end
