@@ -26,8 +26,8 @@ class WhispersController < ApplicationController
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
     message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
-    intro = params[:intro].nil? ? "" : params[:intro]
-    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+
+    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
 
     n.send_push_notification_to_target_user(message)
   end
@@ -37,7 +37,6 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
-    intro = params[:intro].nil? ? "" : params[:intro]
     if params[:message].nil? and notification_type == "2"
       message = current_user.first_name + " just whispered you! (swipe to view profile)"    
     else
@@ -47,10 +46,9 @@ class WhispersController < ApplicationController
     if notification_type == "2"
       origin_id = current_user.id.to_s
     end
-    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type)
     if n and notification_type == "2"
-      record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i).where(:created_date).equals(Date.today.to_s)
-    if items.present? and items.count > 0
+      record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
       if record_found.count <= 0
         WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
       end
