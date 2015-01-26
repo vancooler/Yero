@@ -183,8 +183,6 @@ class UsersController < ApplicationController
       
       puts "The runtime is: "
       puts runtime.inspect
-      puts "The dbtime is: "
-      puts dbtime.inspect 
       logger.info "NEWTIME: " + diff_1.to_s 
     else
       users = ActiveInVenueNetwork.count
