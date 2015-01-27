@@ -326,7 +326,7 @@ class WhisperNotification < AWS::Record::HashModel
     # users = target_user_array + origin_user_array
     # users = target_user_array.zip(origin_user_array).flatten.compact
     # users = users.sort_by { |hsh| hsh[:timestamp] }
-    users = (target_user_array + origin_user_array).sort_by(&:timestamp)
+    users = (target_user_array + origin_user_array).sort_by(:timestamp)
     return users
   end
 
