@@ -175,7 +175,7 @@ class User < ActiveRecord::Base
 =end
     users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     if !gender.nil? || gender != "A"
-      if gender.downcase == "male" or gender.downcase == "female" or gender.upcase == "M" or gender.upcase == "F"
+      if gender.upcase == "M" or gender.upcase == "F"
         users = users.where(:gender => gender) #Filter by gender
       end
     end
