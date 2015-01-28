@@ -413,7 +413,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   # Function signifies whether the user has sent a whisper to the target user
-  def self.whisper_sent(origin_user_id, target_user_id)
+  def self.whisper_sent(origin_user, target_user)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
