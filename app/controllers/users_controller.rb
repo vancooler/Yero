@@ -131,26 +131,19 @@ class UsersController < ApplicationController
           diff_1 += (end_time - start_time)
           json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
           json.different_venue_badge     current_user.different_venue_as?(user.id)
-          json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-          json.actual_distance           current_user.actual_distance(user) # Returns the distance of current user from the target user
           json.id             user.id
           json.first_name     user.first_name
           json.key            user.key
           json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
           json.birthday       user.birthday
-          json.gender         user.gender
-          json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
-          json.created_at     user.created_at
-          json.updated_at     user.updated_at
+          # json.gender         user.gender
+          # json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
           json.wechat_id      user.wechat_id
           json.snapchat_id    user.snapchat_id
           json.instagram_id   user.instagram_id
-
           json.apn_token      user.apn_token
-          
           json.latitude       user.latitude  
           json.longitude      user.longitude 
-
           json.introduction_1 user.introduction_1
           json.introduction_2 user.introduction_2
 
