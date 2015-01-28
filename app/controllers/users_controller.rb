@@ -192,7 +192,11 @@ class UsersController < ApplicationController
   end
 
   def whispered
-    
+    state = WhisperNotification.whisper_sent(params[:current_user_id], params[:user_id])
+    if state
+      render json: success(true)
+    else
+      render json: error("There was an error. Please try again.")
   end 
 
   def requests
