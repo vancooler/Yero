@@ -18,7 +18,7 @@ class WhisperNotification < AWS::Record::HashModel
 
 
   #create user's Notification log in AWS DynamoDB
-  def self.create_in_aws(target_id, origin_id, venue_id, notification_type, intro="")
+  def self.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
 
     n = WhisperNotification.new
     n.target_id = target_id
