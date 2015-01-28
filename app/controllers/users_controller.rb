@@ -86,7 +86,6 @@ class UsersController < ApplicationController
         reten = Time.now
         dbtime = reten-retus
         
-
         json_s = Time.now
         json.array! return_users do |user|
           next unless user.user_avatars.present?
