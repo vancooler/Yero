@@ -84,6 +84,7 @@ Rails.application.routes.draw do
   post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
   post 'api/v1/user/update_profile',       to: 'users#update_profile'
   post 'api/v1/user/show',                 to: 'users#show'
+  post 'api/v1/user/whispered',         to: 'user#whispered'
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
