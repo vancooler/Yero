@@ -197,6 +197,7 @@ class UsersController < ApplicationController
       render json: success(true)
     else
       render json: error("There was an error. Please try again.")
+    end
   end 
 
   def requests
