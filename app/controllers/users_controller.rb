@@ -191,7 +191,7 @@ class UsersController < ApplicationController
     render json: success(users, "users") #Return users
   end
 
-  def whispered
+  def whisper_sent
     state = WhisperNotification.whisper_sent(params[:current_user_id], params[:user_id])
     if state
       render json: success(true)
