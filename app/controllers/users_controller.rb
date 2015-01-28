@@ -126,7 +126,7 @@ class UsersController < ApplicationController
           end
 
           start_time = Time.now
-          json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
+          # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
           end_time = Time.now
           diff_1 += (end_time - start_time)
           json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
