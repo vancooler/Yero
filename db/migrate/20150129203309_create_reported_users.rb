@@ -5,6 +5,7 @@ class CreateReportedUsers < ActiveRecord::Migration
     	t.string :key
     	t.string :apn_token
     	t.string :email
+        t.integer :count
     	t.references :user, index: true
     	t.timestamps
     end
