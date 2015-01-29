@@ -253,6 +253,8 @@ class UsersController < ApplicationController
   end
 
   def report
+    p 'reported_params'
+    p reported_params.inspect
     if ReportedUser.create(reported_params)
       render json: success(true)
     else
