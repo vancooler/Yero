@@ -189,7 +189,7 @@ class UsersController < ApplicationController
     if state
       render json: success(true)
     else
-      render json: error("There was an error. Please try again.")
+      render json: success(false)
     end
   end 
 
