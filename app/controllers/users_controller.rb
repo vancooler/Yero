@@ -253,7 +253,9 @@ class UsersController < ApplicationController
   end
 
   def report
+    p 'report'
     if ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email])
+      p 'created'
       render json: success(true)
     else
       render json: success(false)
