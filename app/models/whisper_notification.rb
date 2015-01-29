@@ -283,7 +283,6 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2")
     origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2")
-    target_user_array = Array.new
     origin_user_array = Array.new
     if target_items and target_items.count > 0
       target_items.each do |i|
@@ -325,10 +324,7 @@ class WhisperNotification < AWS::Record::HashModel
       end
       # return origin_user_array
     end
-    users = Array.new
-    # users = target_user_array + origin_user_array
-    users = target_user_array.zip(origin_user_array).flatten.compact
-    users = origin_user_array.sort_by { |hsh| hsh[:timestamp] }
+    users = origin_user_array.sort_by { |hsh| -hsh[:timestamp] }
     return users
   end
 
