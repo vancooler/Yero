@@ -30,10 +30,12 @@ class RoomsController < ApplicationController
       # n1.send_push_notification_to_target_user(greeting_message)
       
       first_entry_flag = 1
-      p "hit the thing"
+      p "venue message"
       venue_message = "welcome to " + beacon.room.venue.name + "! Open this chat to learn more about tonight. (swipe to view message)"
+      p venue_mssage
       n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1", venue_message)
-      
+      p "n2"
+      p n2.inspect
       # number of notification to read for this user: +1
       if current_user.notification_read.nil? or current_user.notification_read == 0
         current_user.notification_read = 1

@@ -32,6 +32,9 @@ class WhisperNotification < AWS::Record::HashModel
     n.accepted = false
     n.save!
 
+    p "n:"
+    p n.inspect
+
     return n
   end
 
@@ -450,6 +453,9 @@ class WhisperNotification < AWS::Record::HashModel
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
 
+    p 'push notification'
+    p message.inspect
+
     if self.origin_id != "0"
       origin_user = User.find(self.origin_id) 
       origin_user_key = origin_user.key
@@ -463,9 +469,12 @@ class WhisperNotification < AWS::Record::HashModel
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-
+    p 'the token'
+    p token.inspect
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
+    p "notification before message"
+    p notification.inspect
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
     
     #get badge number
@@ -500,6 +509,9 @@ class WhisperNotification < AWS::Record::HashModel
           chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number
       }
+
+    p "Notification object"
+    p notification.inspect
 
     # And... sent! That's all it takes.
     apn.push(notification)
