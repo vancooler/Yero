@@ -253,8 +253,7 @@ class UsersController < ApplicationController
   end
 
   def report
-    report_user = {first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email]}
-    if ReportedUser.create(report_user)
+    if ReportedUser.create(reported_params)
       render json: success(true)
     else
       render json: success(false)
@@ -672,6 +671,10 @@ class UsersController < ApplicationController
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
+  end
+
+  def reported_params
+    params.require(:reported_user).permit(:first_name, :apn_token, :email, :key)
   end
 
   def login_params
