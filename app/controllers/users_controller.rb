@@ -255,7 +255,7 @@ class UsersController < ApplicationController
   def report
     report_user = ReportedUser.find_by(key: params[:key])
     if report_user
-      report_user.count++
+      report_user.count = report_user.count.to_i + 1
       report_user.save!
       render json: success(true)
     elsif ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email], count: 1, user_id: params[:user_id])
