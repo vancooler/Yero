@@ -324,7 +324,7 @@ class WhisperNotification < AWS::Record::HashModel
       end
       # return origin_user_array
     end
-    users = origin_user_array.sort_by { |hsh| -hsh[:timestamp] }
+    users = origin_user_array.sort_by { |hsh| hsh[:timestamp] }
     users = users.sort_by.reverse
     return users
   end
