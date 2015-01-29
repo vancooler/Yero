@@ -301,7 +301,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['whisper_id'] = attributes['id']
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'target_user'
-        target_user_array << h
+        origin_user_array << h
       end
       # return target_user_array
     end
@@ -328,7 +328,7 @@ class WhisperNotification < AWS::Record::HashModel
     users = Array.new
     # users = target_user_array + origin_user_array
     users = target_user_array.zip(origin_user_array).flatten.compact
-    users = users.sort_by { |hsh| hsh[:timestamp] }
+    users = origin_user_array.sort_by { |hsh| hsh[:timestamp] }
     return users
   end
 
