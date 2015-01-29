@@ -257,7 +257,7 @@ class UsersController < ApplicationController
     if report_user
       report_user.count++
       report_user.save!
-      render json :success(true)
+      render json: success(true)
     elsif ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email], count: 1)
       render json: success(true)
     else
