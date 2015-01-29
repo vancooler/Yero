@@ -252,6 +252,15 @@ class UsersController < ApplicationController
     render json: success(users, "data")
   end
 
+  def report
+    report_user = {first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email]}
+    if ReportedUser.create(report_user)
+      render json: success(true)
+    else
+      render json: success(false)
+    end
+  end
+
   def myfriends
     p 'user_id'
     p current_user.id
