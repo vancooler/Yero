@@ -39,6 +39,7 @@ gem 'phonelib'
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin]
 
+gem "json"
 gem 'sass-rails', '4.0.3'
 gem 'sass', '~> 3.2.0'
 gem 'sprockets', '2.11.0'
