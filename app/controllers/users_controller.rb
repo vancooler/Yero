@@ -125,6 +125,9 @@ class UsersController < ApplicationController
             end
           end
 
+          if collected_whispers.include? user.id
+            p "yay"
+          end
           start_time = Time.now
           # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
           end_time = Time.now
@@ -179,8 +182,6 @@ class UsersController < ApplicationController
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
-      puts "collected whispers:"
-      p collected_whispers.inspect
     else
       users = ActiveInVenueNetwork.count
     end
