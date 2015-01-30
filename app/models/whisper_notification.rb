@@ -27,6 +27,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.notification_type = notification_type
     p "intro"
     p "\"ggg\""
+    p notification_type.inspect
     p intro.inspect
     n.intro = JSON.parse(intro).to_s
     n.timestamp = Time.now
