@@ -426,7 +426,7 @@ class WhisperNotification < AWS::Record::HashModel
       return_array << p.hash_value
     end
     if items.present? and items.count > 0
-      return items
+      return return_array
     else
       return []
     end
