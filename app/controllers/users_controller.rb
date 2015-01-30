@@ -87,7 +87,7 @@ class UsersController < ApplicationController
         dbtime = reten-retus
         
         json_s = Time.now
-        collected_whispers = WhisperNotification.collected_whispers(current_user)
+        collected_whispers = WhisperNotification.collect_whispers(current_user)
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
