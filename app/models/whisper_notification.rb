@@ -319,12 +319,12 @@ class WhisperNotification < AWS::Record::HashModel
         h['whisper_id'] = attributes['id']
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'origin_user'
-         h['timestamp'] = Time.at(attributes['timestamp'].to_i).utc
+        h['timestamp'] = Time.at(attributes['timestamp'].to_i).utc
         origin_user_array << h
       end
       # return origin_user_array
     end
-    users = origin_user_array.sort_by! {&:timestamp}
+    users = origin_user_array.sort_by! { |hsh| hsh[:timestamp] }
     users = users.reverse!
     return users
   end
