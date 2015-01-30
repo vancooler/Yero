@@ -27,7 +27,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.notification_type = notification_type
     p "intro"
     p intro.inspect
-    n.intro = intro
+    n.intro = intro.to_s
     n.timestamp = Time.now
     n.created_date = Date.today.to_s
     n.viewed = false
