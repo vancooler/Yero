@@ -37,7 +37,7 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
-    intro = params[:intro].blank? ? "" : params[:intro].to_s
+    intro = params[:intro].blank? ? "" : JSON.parse(params[:intro])
     
     if params[:message].nil? and notification_type == "2"
       message = current_user.first_name + " just whispered you! (swipe to view profile)"    
@@ -49,8 +49,8 @@ class WhispersController < ApplicationController
       origin_id = current_user.id.to_s
     end
 
-    p "intro"
-    p intro.inspect
+    # p "intro"
+    # p intro.inspect
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
     if n and notification_type == "2"
       record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
