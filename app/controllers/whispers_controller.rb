@@ -37,7 +37,7 @@ class WhispersController < ApplicationController
     origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
-    intro = params[:intro].blank? ? "" : JSON.parse(params[:intro])
+    intro = params[:intro].blank? ? "" : params[:intro].to_json
     
     if params[:message].nil? and notification_type == "2"
       message = current_user.first_name + " just whispered you! (swipe to view profile)"    
