@@ -289,6 +289,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes.to_h
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
+        a = Array.new
         if origin_id > 0
           user = User.find(origin_id)
           h['origin_user'] = user
@@ -300,7 +301,8 @@ class WhisperNotification < AWS::Record::HashModel
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'target_user'
         h['timestamp'] = Time.at(attributes['timestamp'].to_i).utc
-        origin_user_array << h
+        a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << a
       end
       # return target_user_array
     end
@@ -308,7 +310,8 @@ class WhisperNotification < AWS::Record::HashModel
       origin_items.each do |i|
         attributes = i.attributes.to_h
         target_id = attributes['target_id'].to_i
-        h = Array.new
+        h = Hash.new
+        a = Array.new
         if target_id > 0
           user = User.find(target_id)
           h['target_user'] = user
@@ -320,11 +323,12 @@ class WhisperNotification < AWS::Record::HashModel
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'origin_user'
         h['timestamp'] = Time.at(attributes['timestamp'].to_i).utc
-        origin_user_array << h
+        a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << a
       end
       # return origin_user_array
     end
-    users = origin_user_array.sort_by! { |hsh| hsh[:timestamp] }
+    users = origin_user_array.sort_by! { |hsh| hsh[1] }
     users = users.reverse!
     return users
   end
