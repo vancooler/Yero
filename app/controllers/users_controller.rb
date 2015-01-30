@@ -127,7 +127,7 @@ class UsersController < ApplicationController
           end
 
           if collected_whispers.include? user.id
-            count++
+            count = count + 1
           end
           start_time = Time.now
           # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
