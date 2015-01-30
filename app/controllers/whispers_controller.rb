@@ -26,7 +26,7 @@ class WhispersController < ApplicationController
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
     message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
-    intro = params[:intro].nil? ? "" : params[:intro]
+    intro = params[:intro].nil? ? "" : params[:intro].to_s
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
 
     n.send_push_notification_to_target_user(message)
