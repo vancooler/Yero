@@ -424,7 +424,6 @@ class WhisperNotification < AWS::Record::HashModel
     items = items.select(:target_id) {|data| p data.attributes["target_id"]}
     p "items"
     p items
-    break
     if items.present? and items.count > 0
       return items
     else
