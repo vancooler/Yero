@@ -180,7 +180,7 @@ class UsersController < ApplicationController
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
       puts "collected whispers:"
-      collect_whispers.each do |p|
+      collected_whispers.each do |p|
         puts p.inspect
       end
     else
