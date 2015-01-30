@@ -73,6 +73,7 @@ class UsersController < ApplicationController
     diff_2 = 0
     s_time = Time.now
     if ActiveInVenueNetwork.count > 10
+      collected_whispers = WhisperNotification.collect_whispers(current_user)
       users = Jbuilder.encode do |json|
         retus = Time.now
         if !params[:page].blank? and !params[:per_page].blank?
@@ -87,7 +88,6 @@ class UsersController < ApplicationController
         dbtime = reten-retus
         
         json_s = Time.now
-        collected_whispers = WhisperNotification.collect_whispers(current_user)
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
@@ -179,6 +179,8 @@ class UsersController < ApplicationController
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
+      puts "collected whispers:"
+      puts collect_whispers.inspect
     else
       users = ActiveInVenueNetwork.count
     end
