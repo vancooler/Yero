@@ -180,7 +180,9 @@ class UsersController < ApplicationController
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
       puts "collected whispers:"
-      puts collected_whispers.inspect
+      collect_whispers.each do |p|
+        puts p.inspect
+      end
     else
       users = ActiveInVenueNetwork.count
     end
