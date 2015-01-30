@@ -288,7 +288,7 @@ class WhisperNotification < AWS::Record::HashModel
       target_items.each do |i|
         attributes = i.attributes.to_h
         origin_id = attributes['origin_id'].to_i
-        h = Hash.new
+        h = Array.new
         if origin_id > 0
           user = User.find(origin_id)
           h['origin_user'] = user
@@ -308,7 +308,7 @@ class WhisperNotification < AWS::Record::HashModel
       origin_items.each do |i|
         attributes = i.attributes.to_h
         target_id = attributes['target_id'].to_i
-        h = Hash.new
+        h = Array.new
         if target_id > 0
           user = User.find(target_id)
           h['target_user'] = user
