@@ -74,6 +74,8 @@ class UsersController < ApplicationController
     s_time = Time.now
     if ActiveInVenueNetwork.count > 10
       collected_whispers = WhisperNotification.collect_whispers(current_user)
+      p 'CW'
+      p collected_whispers.inspect
       counting = 0
       users = Jbuilder.encode do |json|
         retus = Time.now
