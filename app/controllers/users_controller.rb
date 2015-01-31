@@ -74,7 +74,7 @@ class UsersController < ApplicationController
     s_time = Time.now
     if ActiveInVenueNetwork.count > 10
       collected_whispers = WhisperNotification.collect_whispers(current_user)
-      count = 0
+      counting = 0
       users = Jbuilder.encode do |json|
         retus = Time.now
         if !params[:page].blank? and !params[:per_page].blank?
@@ -127,7 +127,7 @@ class UsersController < ApplicationController
           end
 
           if collected_whispers.include? user.id
-            count = count + 1
+            counting = counting + 1
           end
           start_time = Time.now
           # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
