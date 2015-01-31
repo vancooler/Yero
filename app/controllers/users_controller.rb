@@ -184,6 +184,7 @@ class UsersController < ApplicationController
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
       p "The count is:"
+      p collected_whispers.inspect
       p counting.inspect
     else
       users = ActiveInVenueNetwork.count
