@@ -5,6 +5,7 @@ class WhisperNotification < AWS::Record::HashModel
   integer_attr :timestamp
   string_attr :created_date
   string_attr :venue_id
+  string_attr :intro
   string_attr :notification_type
               # '0' => welcome
               # '1' => enter venue greeting
@@ -25,11 +26,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.origin_id = origin_id
     n.venue_id = venue_id
     n.notification_type = notification_type
-    p "intro"
-    p "\"ggg\""
-    p notification_type.inspect
-    p intro.inspect
-    n.intro = "introduciton"
+    n.intro = intro
     n.timestamp = Time.now
     n.created_date = Date.today.to_s
     n.viewed = false
