@@ -130,7 +130,7 @@ class UsersController < ApplicationController
 
           collected_whispers.each do |cwid|
             if cwid.to_s == user.id.to_s
-              counting = counting + 1
+              json.whisper_sent true
             end
           end
           start_time = Time.now
@@ -187,9 +187,7 @@ class UsersController < ApplicationController
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
-      p "The count is:"
-      p collected_whispers.inspect
-      p counting.inspect
+      
     else
       users = ActiveInVenueNetwork.count
     end
