@@ -301,7 +301,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['whisper_id'] = attributes['id']
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'target_user'
-        h['timestamp'] = attributes['timestamp']
+        h['timestamp'] = attributes['timestamp'].to_i
         a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << a
       end
@@ -320,10 +320,10 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['target_user'] = ''
         end
-        h['whisper_id'] = attributes['id']
+        h['whisper_id'] = attributes['id'].to_i
         h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'origin_user'
-        h['timestamp'] = Time.at(attributes['timestamp'].to_i).utc
+        h['timestamp'] = attributes['timestamp'].to_i
         a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << a
       end
