@@ -128,8 +128,10 @@ class UsersController < ApplicationController
             end
           end
 
-          if collected_whispers.include? user.id
-            counting = counting + 1
+          collected_whispers.each do |cwid|
+            if cwid.to_s == user.id.to_s
+              counting = counting + 1
+            end
           end
           start_time = Time.now
           # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
