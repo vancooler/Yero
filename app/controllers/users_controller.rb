@@ -128,7 +128,7 @@ class UsersController < ApplicationController
             end
           end
 
-          if collected_whispers.include? user.id
+          if collected_whispers.include? user.id.to_h
             counting = counting + 1
           end
           start_time = Time.now
