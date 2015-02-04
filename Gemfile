@@ -61,6 +61,7 @@ gem 'sidekiq'
 gem 'kaminari'
 gem 'newrelic_rpm'
 gem 'oink', '~> 0.10'
+gem 'mixpanel-ruby'
 
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'

@@ -203,6 +203,7 @@ GEM
     mini_magick (3.7.0)
       subexec (~> 0.2.1)
     minitest (5.5.1)
+    mixpanel-ruby (1.6.0)
     multi_json (1.10.1)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
@@ -363,6 +364,7 @@ DEPENDENCIES
   migration_data
   mini_magick (~> 3.7.0)
   minitest
+  mixpanel-ruby
   newrelic_rpm
   oink (~> 0.10)
   pg
