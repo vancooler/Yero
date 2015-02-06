@@ -42,7 +42,7 @@ Rails.application.routes.draw do
   get 'faq', to: 'home#faq'
   get 'how-it-works', to: 'home#how-it-works'
   get 'contact', to: 'home#contact'
-  get 'for-venues', to: 'home#for-venues'
+  get 'venues', to: 'home#for-venues'
   get 'privacy', to: 'home#privacy'
   get 'about', to: 'home#about'
   get 'terms-of-use', to: 'home#terms-of-use'

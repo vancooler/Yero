@@ -19,7 +19,7 @@
       bh.src = '//www.bugherd.com/sidebarv2.js?apikey=jthfoxltd4tnadqxdcbahq';
       s.parentNode.insertBefore(bh, s);
       })(document, 'script');
-      
+
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -30,14 +30,14 @@
   </head>
 
   <body data-no-turbolink class="<%= yield (:body_class) %>" >
-    <div class="contain-to-grid top-header <% if current_page?('/for-venues') %>transparent<% else %>sticky<% end %>">
+    <div class="contain-to-grid top-header <% if current_page?('/venues') %>transparent<% else %>sticky<% end %>">
       <nav class="top-bar" data-topbar data-options="sticky_on: large" role="nagivation">
         <ul class="title-area">
           <li class="name">
             <!-- <h1><a href="/">YERO</a></h1> -->
             <h1>
             <%= link_to('/', :class=>'home-link') do %>
-              <% if current_page?('/for-venues') %>
+              <% if current_page?('/venues') %>
                 <%= image_tag("Logo_black.png", :alt => "logo", :class => "logo show-for-small logo-black") %>
                 <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small logo-green") %>
               <% else %>
@@ -58,7 +58,7 @@
             <%# else %>
               <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
-             <% if current_page?('/for-venues') ||  current_page?('/venues-thankyou') ||  current_page?('/android-thankyou')  || current_page?('/get-in-touch') %>
+             <% if current_page?('/venues') ||  current_page?('/venues-thankyou') ||  current_page?('/android-thankyou')  || current_page?('/get-in-touch') %>
               <li class="nav-alt">Already a partner?
                 <%= link_to('Sign In', '/venue-login', :class=>'nav-item sign-in')%>
               </li>
@@ -67,7 +67,7 @@
                 <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
               </li>
             <% end %>
-             <% if !current_page?('/for-venues') and !current_page?('/venue-login') and !current_page?('/android') and !current_page?('/beta-signup') and !current_page?('/get-in-touch') and !current_page?('/venues-thankyou') and !current_page?('/android-thankyou') %>
+             <% if !current_page?('/venues') and !current_page?('/venue-login') and !current_page?('/android') and !current_page?('/beta-signup') and !current_page?('/get-in-touch') and !current_page?('/venues-thankyou') and !current_page?('/android-thankyou') %>
               <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
               <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
               <li><%= link_to('For Venues', '/venues', :class=>'nav-item '+check_active('/venues')) %></li>
