@@ -452,6 +452,7 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     item = table.items.where(:id).equals(whisper_id.to_s).where(:created_date).equals(Date.today.to_s)
     if state == 'accepted'
+      puts item.inspect
       item.attributes.update do |u|
           u.set 'accepted' => 1
           u.set 'viewed' => 0
@@ -459,6 +460,7 @@ class WhisperNotification < AWS::Record::HashModel
       item = item.attributes.to_h
       return item
     elsif state == 'declined'
+      puts item.inspect
       item.attributes.update do |u|
           u.set 'declined' => 1
       end
