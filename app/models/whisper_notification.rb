@@ -452,6 +452,9 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     item = table.items.where(:id).equals(whisper_id.to_s)
     puts item.count.inspect
+    if items and items.count > 0
+      item = items.first
+    end
     if state == 'accepted'
       item.attributes.update do |u|
           u.set 'accepted' => 1
