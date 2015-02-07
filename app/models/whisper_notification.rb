@@ -450,8 +450,8 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    item = table.items.where(:id).equals(whisper_id.to_s)
-    puts item.count.inspect
+    items = table.items.where(:id).equals(whisper_id.to_s)
+    puts items.count.inspect
     if items and items.count > 0
       item = items.first
     end
