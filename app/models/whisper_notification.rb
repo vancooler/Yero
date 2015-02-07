@@ -450,7 +450,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    item = table.items.where(:id).equals(whisper_id.to_s).where(:created_date).equals(Date.today.to_s)
+    item = table.items.where(:id).equals(whisper_id.to_s)
     puts item.count.inspect
     if state == 'accepted'
       item.attributes.update do |u|
