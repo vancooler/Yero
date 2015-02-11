@@ -173,7 +173,8 @@ class User < ActiveRecord::Base
       active_users_id << id_activity[0] if qualified
     end
 =end
-    users = User.where(id: active_users_id) #Find all the users with the id's in the array.
+    # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
+    user = User.all.near(self, 50, unit: :km)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
         users = users.where(:gender => gender) #Filter by gender
