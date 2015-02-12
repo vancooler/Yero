@@ -611,13 +611,13 @@ class WhisperNotification < AWS::Record::HashModel
     app_local_path = Rails.root
    
     origin_user_key = "SYSTEM"
-    target_user = User.find(hash["target_id"]) 
+    target_user = User.find(self.target_id) 
 
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
-    token = User.find(hash["target_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+    token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
     message = "Welcome to Yero"
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
