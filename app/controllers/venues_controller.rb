@@ -97,7 +97,8 @@ class VenuesController < ApplicationController
       json.array! venues do |v|
         puts "venue id:" 
         puts v.id
-        images = VenuePicture.where(venue_id: v.id).to_a
+        images = VenuePicture.where(venue_id: v.id)
+        puts images.to_a
         json.id v.id
         json.name v.name
         json.address v.address_line_one
