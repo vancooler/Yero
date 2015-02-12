@@ -1,0 +1,2 @@
+module VenuePortalsHelper
+end
