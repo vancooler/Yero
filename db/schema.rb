@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150108231755) do
+ActiveRecord::Schema.define(version: 20150212000523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,6 +174,19 @@ ActiveRecord::Schema.define(version: 20150108231755) do
 
   add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
 
+  create_table "reported_users", force: true do |t|
+    t.string   "first_name"
+    t.string   "key"
+    t.string   "apn_token"
+    t.string   "email"
+    t.integer  "count"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "reported_users", ["user_id"], name: "index_reported_users_on_user_id", using: :btree
+
   create_table "rooms", force: true do |t|
     t.integer "venue_id"
     t.string  "name"
@@ -246,17 +259,20 @@ ActiveRecord::Schema.define(version: 20150108231755) do
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
-<<<<<<< HEAD
     t.datetime "enter_time", default: '2014-12-11 18:32:22', null: false
-=======
-    t.datetime "enter_time", default: '2014-10-27 19:50:59', null: false
->>>>>>> 811322e65b6a6c3941a301693b87b2b3f3b961f9
   end
 
   create_table "venue_networks", force: true do |t|
     t.string   "city"
     t.integer  "area"
     t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "venue_pictures", force: true do |t|
+    t.string   "pic_location"
+    t.integer  "venue_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -327,11 +343,7 @@ ActiveRecord::Schema.define(version: 20150108231755) do
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
-<<<<<<< HEAD
     t.datetime "whisper_time",   default: '2014-12-11 18:32:22', null: false
-=======
-    t.datetime "whisper_time",   default: '2014-10-27 19:50:59', null: false
->>>>>>> 811322e65b6a6c3941a301693b87b2b3f3b961f9
   end
 
   create_table "whispers", force: true do |t|
