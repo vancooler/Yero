@@ -640,10 +640,10 @@ class WhisperNotification < AWS::Record::HashModel
           viewed: self.viewed,
           accepted: self.accepted,
           type: 1
-      }
+    }
 
     # And... sent! That's all it takes.
-    apn.
+    apn.push(notification)
   end
 
 end
