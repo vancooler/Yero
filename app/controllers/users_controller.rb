@@ -360,7 +360,7 @@ class UsersController < ApplicationController
       # 
 
       n = WhisperNotification.create_in_aws(user.id, "SYSTEM", 0, 1, intro)
-      n.self_welcome_notification_from_yero
+      n.welcome_notification_from_yero
 
       render json: success(response)
     else
