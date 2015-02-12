@@ -358,7 +358,11 @@ class UsersController < ApplicationController
       # render json: user_registration.to_json.inspect
       # render json: user_avatar.to_json.inspect
       # 
-      puts user_registration
+      puts "user registration:"
+      puts user_registration[:id]
+      puts "users"
+      puts user.id
+
       n = WhisperNotification.create_in_aws(user_registration.id, "SYSTEM", 0, 1, intro)
       n.welcome_notification_from_yero
 
