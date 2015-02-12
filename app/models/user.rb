@@ -337,7 +337,4 @@ class User < ActiveRecord::Base
   def update_activity
     self.last_activity = Time.now
   end
-
-  push(notification)
-  end
 end
