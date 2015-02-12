@@ -90,14 +90,14 @@ class VenuesController < ApplicationController
     end
 
     data = Jbuilder.encode do |json|
-      # images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 
-      #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image2.png", 
-      #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
+      images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 
+        "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image2.png", 
+        "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
 
       json.array! venues do |v|
         puts "venue id:" 
         puts v.id
-        images = VenuePicture.where(venue_id: v.id).to_a
+        # images = VenuePicture.where(venue_id: v.id).to_a
         json.id v.id
         json.name v.name
         json.address v.address_line_one
