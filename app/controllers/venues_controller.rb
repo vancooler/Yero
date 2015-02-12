@@ -95,6 +95,8 @@ class VenuesController < ApplicationController
         "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
 
       json.array! venues do |v|
+        puts "venue id:" 
+        puts v.id
         json.id v.id
         json.name v.name
         json.address v.address_line_one
