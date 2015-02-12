@@ -359,23 +359,8 @@ class User < ActiveRecord::Base
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    chat_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    greeting_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
-    chat_request_number = 0
-    venue_greeting_number = 0
-    if chat_items.present?
-      chat_request_number = chat_items.count
-    end
-    if greeting_items.present?
-      venue_greeting_number = greeting_items.count
-    end
-    if accept_items.present?
-      accept_number = accept_items.count
-    end
-
+    
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number+accept_number)
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
