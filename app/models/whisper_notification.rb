@@ -214,7 +214,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   # For yero introduction whisper when the user first signs in
-  def self.yero_notificaiton(user_id)
+  def self.yero_notification(user_id)
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
