@@ -207,7 +207,7 @@ class UsersController < ApplicationController
     
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    yero_notify = WhisperNotification.yero_notification(self.id)
+    yero_notify = WhisperNotification.yero_notification(current_user.id)
 
     users = requests_friends_json(return_users)
 
