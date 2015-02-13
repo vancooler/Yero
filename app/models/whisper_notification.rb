@@ -192,14 +192,13 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
     venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1")
-    puts "venue items:"
-    puts venue_items.inspect
     venue = Array.new # Make a new hash object
     venue_items.each do |i| # For each item
       attributes = i.attributes.to_h # Turn each item into a hash
       venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
+      yero = attributes['origin_id'].to_i
       h = Hash.new # Make a new hash object
-      if venue_id > 0 
+      if venue_id > 0 or yero == 0
         if venue.include? venue_id #venue id already in there, then do nothing
         else
           h['venue_id'] = attributes['venue_id']
