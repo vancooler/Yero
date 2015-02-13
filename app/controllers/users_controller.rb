@@ -233,7 +233,7 @@ class UsersController < ApplicationController
       end
     end
 
-    yero_message = Jbuilder.encode do |yero|
+    yero_message = Jbuilder.encode do |json|
       json.array! yero_notify.each do |y|
         json.yero_message "Welcome to Yero"
         json.timestamp yero["timestamp"]
