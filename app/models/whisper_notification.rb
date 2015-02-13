@@ -541,7 +541,7 @@ class WhisperNotification < AWS::Record::HashModel
     apn.push(notification)
   end
 
-  def self.send_accept_notification_to_sender(hash)
+  def send_accept_notification_to_sender(hash)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
     p hash.inspect
