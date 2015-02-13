@@ -72,10 +72,11 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    if ActiveInVenueNetwork.count > 10
+    if ActiveInVenueNetwork.count > 100
       collected_whispers = WhisperNotification.collect_whispers(current_user)
-      
-      
+      p 'CW'
+      p collected_whispers.inspect
+      counting = 0
       users = Jbuilder.encode do |json|
         retus = Time.now
         if !params[:page].blank? and !params[:per_page].blank?
@@ -90,7 +91,6 @@ class UsersController < ApplicationController
         dbtime = reten-retus
         
         json_s = Time.now
-        counting = 0
         json.array! return_users do |user|
           next unless user.user_avatars.present?
           next unless user.main_avatar.present?
@@ -136,7 +136,6 @@ class UsersController < ApplicationController
           start_time = Time.now
           # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
           end_time = Time.now
-          counting = counting + 1
           diff_1 += (end_time - start_time)
           json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
           json.different_venue_badge     current_user.different_venue_as?(user.id)
@@ -156,7 +155,7 @@ class UsersController < ApplicationController
           json.longitude      user.longitude 
           json.introduction_1 user.introduction_1
           json.introduction_2 user.introduction_2
-          json.count          counting
+          json.count          num_count
 
         end
         json_e = Time.now
