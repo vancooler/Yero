@@ -346,12 +346,6 @@ class UsersController < ApplicationController
       # The way in one step
       response = user.to_json(true)
       user_info = user
-      p 'here is user:'
-      p user_info.inspect
-      p 'here is user id:'
-      p user_info.id.inspect
-      p 'here is response:'
-      p response.inspect
       
       thumb = response["avatars"].first['avatar']
       if thumb
