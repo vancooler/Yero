@@ -320,7 +320,7 @@ class UsersController < ApplicationController
     
     user = user_registration.user
 
-    if ur = user_registration.create
+    if user_registration.create
       # #signup with the avatar id
       # avatar_id = sign_up_params[:avatar_id]
       # response = user.to_json(true)
@@ -347,10 +347,11 @@ class UsersController < ApplicationController
       response = user.to_json(true)
       p 'here is user:'
       p user.inspect
+      p 'here is user:'
+      p user.id.inspect
       p 'here is response:'
       p response.inspect
-      p 'here is id:'
-      p response.id.inspect
+
       
       thumb = response["avatars"].first['avatar']
       if thumb
@@ -362,7 +363,7 @@ class UsersController < ApplicationController
       # render json: user_avatar.to_json.inspect
       
       
-      n = WhisperNotification.create_in_aws(ur.id, "SYSTEM", 0, 1, intro)
+      n = WhisperNotification.create_in_aws(user.id, "SYSTEM", 0, 1, intro)
       n.welcome_notification_from_yero
 
       render json: success(response)
