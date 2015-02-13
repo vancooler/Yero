@@ -345,13 +345,11 @@ class UsersController < ApplicationController
       
       # The way in one step
       response = user.to_json(true)
+      user_info = user.to_a
       p 'here is user:'
-      p user.inspect
-      p 'here is user:'
-      p user[0].inspect
-      p 'here is user:'
-      p user[0].id.inspect
-
+      p user_info.inspect
+      p 'here is user id:'
+      p user_info["id"].inspect
       p 'here is response:'
       p response.inspect
 
