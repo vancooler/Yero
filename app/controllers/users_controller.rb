@@ -348,7 +348,9 @@ class UsersController < ApplicationController
       p 'here is response:'
       p response.inspect
       p 'here is id:'
-      p response.to_h.id.inspect
+      p response.to_a.id.inspect
+      p 'here is user:'
+      p user.inspect
       thumb = response["avatars"].first['avatar']
       if thumb
         response["avatars"].first['thumbnail'] = thumb
