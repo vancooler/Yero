@@ -72,11 +72,9 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    if ActiveInVenueNetwork.count > 10
+    if ActiveInVenueNetwork.count > 100
       collected_whispers = WhisperNotification.collect_whispers(current_user)
-      p 'CW'
-      p collected_whispers.inspect
-      counting = 0
+      
       users = Jbuilder.encode do |json|
         retus = Time.now
         if !params[:page].blank? and !params[:per_page].blank?
@@ -155,7 +153,6 @@ class UsersController < ApplicationController
           json.longitude      user.longitude 
           json.introduction_1 user.introduction_1
           json.introduction_2 user.introduction_2
-          json.count          num_count
 
         end
         json_e = Time.now

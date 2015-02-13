@@ -1,7 +1,7 @@
 class VenuePortalsController < ApplicationController
 	
-	def edit
+	# def edit
 		
-	end
+	# end
 
 end
