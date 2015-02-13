@@ -348,7 +348,10 @@ class UsersController < ApplicationController
       p 'here is user:'
       p user.inspect
       p 'here is user:'
-      p user.id.inspect
+      p user[0].inspect
+      p 'here is user:'
+      p user[0].id.inspect
+
       p 'here is response:'
       p response.inspect
 
