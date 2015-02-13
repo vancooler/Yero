@@ -352,8 +352,6 @@ class UsersController < ApplicationController
       p user_info["id"].inspect
       p 'here is response:'
       p response.inspect
-
-      break
       
       thumb = response["avatars"].first['avatar']
       if thumb
