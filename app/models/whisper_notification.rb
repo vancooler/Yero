@@ -606,7 +606,7 @@ class WhisperNotification < AWS::Record::HashModel
     apn.push(notification)
   end
 
-  def self.welcome_notification_from_yero
+  def welcome_notification_from_yero
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
    
