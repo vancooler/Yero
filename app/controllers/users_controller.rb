@@ -345,8 +345,8 @@ class UsersController < ApplicationController
       
       # The way in one step
       response = user.to_json(true)
-      # p 'here is response:'
-      # p response.inspect
+      p 'here is response:'
+      p response.inspect
       thumb = response["avatars"].first['avatar']
       if thumb
         response["avatars"].first['thumbnail'] = thumb
@@ -355,7 +355,7 @@ class UsersController < ApplicationController
       
       # render json: user_registration.to_json.inspect
       # render json: user_avatar.to_json.inspect
-      # 
+      
       
       n = WhisperNotification.create_in_aws(ur.id, "SYSTEM", 0, 1, intro)
       n.welcome_notification_from_yero
