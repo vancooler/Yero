@@ -345,12 +345,13 @@ class UsersController < ApplicationController
       
       # The way in one step
       response = user.to_json(true)
+      p 'here is user:'
+      p user.inspect
       p 'here is response:'
       p response.inspect
       p 'here is id:'
-      p response.to_a.id.inspect
-      p 'here is user:'
-      p user.inspect
+      p response.id.inspect
+      
       thumb = response["avatars"].first['avatar']
       if thumb
         response["avatars"].first['thumbnail'] = thumb
