@@ -196,9 +196,8 @@ class WhisperNotification < AWS::Record::HashModel
     venue_items.each do |i| # For each item
       attributes = i.attributes.to_h # Turn each item into a hash
       venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
-      yero = attributes['origin_id'].to_i
       h = Hash.new # Make a new hash object
-      if venue_id > 0 or yero == 0
+      if venue_id > 0 
         if venue.include? venue_id #venue id already in there, then do nothing
         else
           h['venue_id'] = attributes['venue_id']
@@ -212,6 +211,33 @@ class WhisperNotification < AWS::Record::HashModel
       end
     end
     return venue
+  end
+
+  # For yero introduction whisper when the user first signs in
+  def self.yero_notificaiton(user_id)
+    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table.load_schema 
+    # Retrieve the system notifications that were sent by the venue, with notification_type = 1
+    yero_notes = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:origin_id).equals("0")
+    yero_ret = Array.new # Make a new hash object
+    yero_notes.each do |i| # For each item
+      attributes = i.attributes.to_h # Turn each item into a hash
+      yero = attributes['origin_id'].to_i
+      h = Hash.new # Make a new hash object
+      if yero == 0
+        if yero_ret.include? yero #yero id already in there, then do nothing
+        else
+          h['timestamp'] = attributes['timestamp'].to_i
+          h['accepted'] = attributes['accepted']
+          h['viewed'] = attributes['viewed']
+          h['created_date'] = attributes['created_date']
+          h['whisper_id'] = attributes['id']
+          yero_ret << h # Throw yero_id into the array
+        end
+      end
+    end
+    return yero_ret
   end
 
   def self.chat_action(id, handle_action)
@@ -602,47 +628,6 @@ class WhisperNotification < AWS::Record::HashModel
           venue_greeting_number: venue_greeting_number,
           accept_number: accept_number
       }
-
-    # And... sent! That's all it takes.
-    apn.push(notification)
-  end
-
-  def welcome_notification_from_yero
-    #this shall be refactored once we have more phones to test with
-    app_local_path = Rails.root
-   
-    origin_user_key = "SYSTEM"
-    target_user = User.find(self.target_id) 
-
-    apn = Houston::Client.development
-    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    message = "Welcome to Yero"
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
-    
-    #get badge number
-    dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
-    table.load_schema
-    
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    notification.custom_data = {
-          whisper_id: self.id,
-          origin_user: target_user.key,
-          target_user: origin_user_key,
-          timestamp: self.timestamp,
-          target_apn: token,
-          viewed: self.viewed,
-          accepted: self.accepted,
-          type: 1
-    }
 
     # And... sent! That's all it takes.
     apn.push(notification)

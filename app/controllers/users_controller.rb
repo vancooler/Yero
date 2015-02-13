@@ -207,6 +207,7 @@ class UsersController < ApplicationController
     
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
+    yero_notify = WhisperNotification.yero_notification(self.id)
 
     users = requests_friends_json(return_users)
 
@@ -232,9 +233,21 @@ class UsersController < ApplicationController
       end
     end
 
+    yero_message = Jbuilder.encode do |yero|
+      json.array! yero_notify.each do |y|
+        json.yero_message "Welcome to Yero"
+        json.timestamp venue["timestamp"]
+        json.viewed venue["viewed"]
+        json.created_date venue["created_date"]
+        json.whisper_id venue["whisper_id"]
+        json.notification_type  1
+      end
+    end
+
     users = JSON.parse(users).delete_if(&:blank?)
     venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
-    
+    yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+
     same_venue_users = []
     different_venue_users = [] 
     no_badge_users = []
@@ -253,7 +266,7 @@ class UsersController < ApplicationController
       venues << v
     end
 
-    return_data = same_venue_users + different_venue_users + no_badge_users + venues
+    return_data = same_venue_users + different_venue_users + no_badge_users + venues + yero_message
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
     
