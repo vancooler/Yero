@@ -345,14 +345,15 @@ class UsersController < ApplicationController
       
       # The way in one step
       response = user.to_json(true)
-      # user_info = user.to_a
-      # # p 'here is user:'
-      # # p user_info.inspect
-      # # p 'here is user id:'
-      # # p user_info["id"].inspect
-      # # p 'here is response:'
-      # # p response.inspect
+      user_info = user.to_a
+      p 'here is user:'
+      p user_info.inspect
+      p 'here is user id:'
+      p user_info["id"].inspect
+      p 'here is response:'
+      p response.inspect
 
+      break
       
       thumb = response["avatars"].first['avatar']
       if thumb
@@ -364,7 +365,7 @@ class UsersController < ApplicationController
       # render json: user_avatar.to_json.inspect
       
       
-      n = WhisperNotification.create_in_aws(current_user.id, "SYSTEM", 0, 1, intro)
+      n = WhisperNotification.create_in_aws(user.id, "SYSTEM", 0, 1, intro)
       n.welcome_notification_from_yero
 
       render json: success(response)
