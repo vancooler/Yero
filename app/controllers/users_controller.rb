@@ -236,10 +236,10 @@ class UsersController < ApplicationController
     yero_message = Jbuilder.encode do |json|
       json.array! yero_notify.each do |y|
         json.yero_message "Welcome to Yero"
-        json.timestamp yero["timestamp"]
-        json.viewed yero["viewed"]
-        json.created_date yero["created_date"]
-        json.whisper_id yero["whisper_id"]
+        json.timestamp y["timestamp"]
+        json.viewed y["viewed"]
+        json.created_date y["created_date"]
+        json.whisper_id y["whisper_id"]
         json.notification_type  1
       end
     end
