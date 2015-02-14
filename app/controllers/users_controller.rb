@@ -188,6 +188,8 @@ class UsersController < ApplicationController
       
     else
       users = ActiveInVenueNetwork.count
+      puts "The count is:"
+      puts users
     end
     render json: success(users, "users") #Return users
   end
