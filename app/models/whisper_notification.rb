@@ -219,7 +219,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
-    yero_notes = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:origin_id).equals("0")
+    yero_notes = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:origin_id).equals("SYSTEM")
     yero_ret = Array.new # Make a new hash object
     yero_notes.each do |i| # For each item
       attributes = i.attributes.to_h # Turn each item into a hash
