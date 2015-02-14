@@ -72,7 +72,7 @@ class UsersController < ApplicationController
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
-    if ActiveInVenueNetwork.count > 1000
+    if ActiveInVenueNetwork.count > 10000
       collected_whispers = WhisperNotification.collect_whispers(current_user)
       
       users = Jbuilder.encode do |json|
