@@ -268,6 +268,7 @@ class UsersController < ApplicationController
 
     return_data = same_venue_users + different_venue_users + no_badge_users + venues + yero_message
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
+    puts yero_messages.inspect
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
     
     render json: success(users, "data")
