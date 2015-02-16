@@ -90,70 +90,71 @@ class UsersController < ApplicationController
         
         json_s = Time.now
         json.array! return_users do |user|
-          next unless user.user_avatars.present?
-          next unless user.main_avatar.present?
-          main_avatar   =  user.user_avatars.find_by(default:true)
-          other_avatars =  user.user_avatars.where.not(default:true)
-          avatar_array = Array.new
-          avatar_array[0] = {
-                thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
-              }
-          avatar_array[1] = {
-                avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
-                avatar_id: main_avatar.nil? ? '' : main_avatar.id,
-                default: true
-              }
-          if other_avatars.count > 0
-            avatar_array[2] = {
-                  avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-                  avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                  default: false
+          if user.id != current_user.id
+            next unless user.user_avatars.present?
+            next unless user.main_avatar.present?
+            main_avatar   =  user.user_avatars.find_by(default:true)
+            other_avatars =  user.user_avatars.where.not(default:true)
+            avatar_array = Array.new
+            avatar_array[0] = {
+                  thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
                 }
-            if other_avatars.count > 1
-              avatar_array[3] = {
-                    avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-                    avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+            avatar_array[1] = {
+                  avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
+                  avatar_id: main_avatar.nil? ? '' : main_avatar.id,
+                  default: true
+                }
+            if other_avatars.count > 0
+              avatar_array[2] = {
+                    avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
+                    avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
                     default: false
                   }
+              if other_avatars.count > 1
+                avatar_array[3] = {
+                      avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
+                      avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                      default: false
+                    }
+              end
             end
-          end
-          json.avatars do |a|
-            json.array! avatar_array do |avatar|
-              a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-              a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-              a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-              a.default     avatar[:default]   if !avatar[:default].nil?
+            json.avatars do |a|
+              json.array! avatar_array do |avatar|
+                a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
+                a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+                a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+                a.default     avatar[:default]   if !avatar[:default].nil?
+              end
             end
-          end
 
-          collected_whispers.each do |cwid|
-            if cwid.to_s == user.id.to_s
-              json.whisper_sent true
+            collected_whispers.each do |cwid|
+              if cwid.to_s == user.id.to_s
+                json.whisper_sent true
+              end
             end
+            start_time = Time.now
+            # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
+            end_time = Time.now
+            diff_1 += (end_time - start_time)
+            json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.different_venue_badge     current_user.different_venue_as?(user.id)
+            json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.id             user.id
+            json.first_name     user.first_name
+            json.key            user.key
+            json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+            json.birthday       user.birthday
+            # json.gender         user.gender
+            # json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
+            json.wechat_id      user.wechat_id
+            json.snapchat_id    user.snapchat_id
+            json.instagram_id   user.instagram_id
+            json.apn_token      user.apn_token
+            json.latitude       user.latitude  
+            json.longitude      user.longitude 
+            json.introduction_1 user.introduction_1
+            json.introduction_2 user.introduction_2
           end
-          start_time = Time.now
-          # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
-          end_time = Time.now
-          diff_1 += (end_time - start_time)
-          json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-          json.different_venue_badge     current_user.different_venue_as?(user.id)
-          json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-          json.id             user.id
-          json.first_name     user.first_name
-          json.key            user.key
-          json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-          json.birthday       user.birthday
-          # json.gender         user.gender
-          # json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
-          json.wechat_id      user.wechat_id
-          json.snapchat_id    user.snapchat_id
-          json.instagram_id   user.instagram_id
-          json.apn_token      user.apn_token
-          json.latitude       user.latitude  
-          json.longitude      user.longitude 
-          json.introduction_1 user.introduction_1
-          json.introduction_2 user.introduction_2
-
         end
         json_e = Time.now
         j_time = json_e-json_s
