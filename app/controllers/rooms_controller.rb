@@ -23,12 +23,6 @@ class RoomsController < ApplicationController
     first_entry_flag = 0
     #check whether the user entered this venue today, if not push greeting notification
     if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
-      
-      # Remove the system welcome notification which is type '0'
-      # n1 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "0")
-      # greeting_message = "Welcome " + current_user.first_name + "!"
-      # n1.send_push_notification_to_target_user(greeting_message)
-      
       first_entry_flag = 1
       p "venue message"
       venue_message = "welcome to " + beacon.room.venue.name + "! Open this chat to learn more about tonight. (swipe to view message)"
