@@ -132,6 +132,7 @@ class WhispersController < ApplicationController
 
   def whisper_request_state
     whisperId = params[:whisper_id]
+    puts "Just the whisper"
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       puts "Before if else"
       if params[:accepted].to_i == 1
