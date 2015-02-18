@@ -141,14 +141,14 @@ class WhispersController < ApplicationController
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       puts "Before if else"
       if params[:accepted].to_i == 1
-        state = 'accepted'
+        state = 'accepted state:'
         puts state
         n = WhisperNotification.find_whisper(whisperId, state)
+        puts "n inspect"
         puts n.inspect
-        # WhisperNotification.send_accept_notification_to_sender(n)
-        # puts state
-        # puts 'WhisperNotification'
-        # puts n.inspect
+        WhisperNotification.send_accept_notification_to_sender(n)
+        puts 'WhisperNotification'
+        puts n.inspect
 
         render json: success
       elsif params[:declined].to_i == 1
