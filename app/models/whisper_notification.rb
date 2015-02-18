@@ -16,6 +16,10 @@ class WhisperNotification < AWS::Record::HashModel
               # 0 => nothing
               # 1 => accepted
               # 2 => declined
+  integer_attr :declined
+              # 0 => nothing
+              # 1 => accepted
+              # 2 => declined
 
 
   #create user's Notification log in AWS DynamoDB
