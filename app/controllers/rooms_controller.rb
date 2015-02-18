@@ -32,7 +32,7 @@ class RoomsController < ApplicationController
       first_entry_flag = 1
       p "venue message"
       venue_message = "welcome to " + beacon.room.venue.name + "! Open this chat to learn more about tonight. (swipe to view message)"
-      p venue_mssage
+      p venue_message
       n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1", venue_message)
       p "n2"
       p n2.inspect
