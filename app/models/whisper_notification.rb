@@ -456,6 +456,7 @@ class WhisperNotification < AWS::Record::HashModel
     if item.count == 1
       item.each do |i|
         if state == 'accepted'
+          puts "updating accepted"
           i.attributes.update do |u|
               u.set 'accepted' => 1
               u.set 'viewed' => 0
@@ -463,6 +464,7 @@ class WhisperNotification < AWS::Record::HashModel
           item_info = i.attributes.to_h
           return item_info
         elsif state == 'declined'
+          puts "updating declined"
           i.attributes.update do |u|
               u.set 'declined' => 1
           end
