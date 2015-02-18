@@ -146,7 +146,7 @@ class WhispersController < ApplicationController
         n = WhisperNotification.find_whisper(whisperId, state)
         puts "n inspect"
         puts n.inspect
-        WhisperNotification.send_accept_notification_to_sender(n)
+        # WhisperNotification.send_accept_notification_to_sender(n)
         puts 'WhisperNotification'
         puts n.inspect
 
