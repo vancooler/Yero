@@ -132,6 +132,8 @@ class WhispersController < ApplicationController
 
   def whisper_request_state
     whisperId = params[:whisper_id]
+    puts "whisper_id"
+    puts params[:whisper_id]
     puts "accepted"
     puts params[:accepted]
     puts "declined"
