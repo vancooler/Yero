@@ -548,10 +548,11 @@ class WhisperNotification < AWS::Record::HashModel
     apn.push(notification)
   end
 
-  def self.send_accept_notification_to_sender(hash)
+  def self.send_accept_notification_to_sender(whisper_id)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
     p "Send accept notification to sender - hash:"
+    hash = WhisperNotification.find_by_dynamodb_id(whisper_id)
     p hash.inspect
     if hash["origin_id"] != "0"
       origin_user = User.find(hash["origin_id"]) 
