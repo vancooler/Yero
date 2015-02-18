@@ -150,6 +150,8 @@ class WhispersController < ApplicationController
       else
         render json: error('There was an error.')
       end
+    else
+      render json: error('There was an error.')
     end
   end
 
