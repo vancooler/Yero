@@ -213,33 +213,6 @@ class WhisperNotification < AWS::Record::HashModel
     return venue
   end
 
-  # For yero introduction whisper when the user first signs in
-  def self.yero_notification(user_id)
-    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
-    table.load_schema 
-    # Retrieve the system notifications that were sent by the venue, with notification_type = 1
-    yero_notes = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:origin_id).equals("SYSTEM")
-    yero_ret = Array.new # Make a new hash object
-    yero_notes.each do |i| # For each item
-      attributes = i.attributes.to_h # Turn each item into a hash
-      yero = attributes['origin_id'].to_i
-      h = Hash.new # Make a new hash object
-      if yero == 0
-        if yero_ret.include? yero #yero id already in there, then do nothing
-        else
-          h['timestamp'] = attributes['timestamp'].to_i
-          h['accepted'] = attributes['accepted']
-          h['viewed'] = attributes['viewed']
-          h['created_date'] = attributes['created_date']
-          h['whisper_id'] = attributes['id']
-          yero_ret << h # Throw yero_id into the array
-        end
-      end
-    end
-    return yero_ret
-  end
-
   def self.chat_action(id, handle_action)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
