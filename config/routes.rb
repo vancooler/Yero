@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
 
+  resources :venue_portals
   resources :early_venues
 
   resources :beta_signup_users

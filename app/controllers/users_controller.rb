@@ -208,7 +208,7 @@ class UsersController < ApplicationController
     
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
-    yero_notify = WhisperNotification.yero_notification(current_user.id)
+    # yero_notify = WhisperNotification.yero_notification(current_user.id)
 
     users = requests_friends_json(return_users)
 
@@ -234,20 +234,20 @@ class UsersController < ApplicationController
       end
     end
 
-    yero_message = Jbuilder.encode do |json|
-      json.array! yero_notify.each do |y|
-        json.yero_message "Welcome to Yero"
-        json.timestamp y["timestamp"]
-        json.viewed y["viewed"]
-        json.created_date y["created_date"]
-        json.whisper_id y["whisper_id"]
-        json.notification_type  1
-      end
-    end
+    # yero_message = Jbuilder.encode do |json|
+    #   json.array! yero_notify.each do |y|
+    #     json.yero_message "Welcome to Yero"
+    #     json.timestamp y["timestamp"]
+    #     json.viewed y["viewed"]
+    #     json.created_date y["created_date"]
+    #     json.whisper_id y["whisper_id"]
+    #     json.notification_type  1
+    #   end
+    # end
 
     users = JSON.parse(users).delete_if(&:blank?)
     venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
-    yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+    # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
 
     same_venue_users = []
     different_venue_users = [] 
@@ -267,10 +267,9 @@ class UsersController < ApplicationController
       venues << v
     end
 
-    return_data = same_venue_users + different_venue_users + no_badge_users + venues + yero_message
+    return_data = same_venue_users + different_venue_users + no_badge_users + venues 
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
-    puts "The count of yero_message is:"
-    puts yero_message.count
+    
     users = return_data.sort_by { |hsh| hsh[:timestamp] }
     
     render json: success(users, "data")
