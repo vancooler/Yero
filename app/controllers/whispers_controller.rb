@@ -143,7 +143,7 @@ class WhispersController < ApplicationController
       if params[:accepted].to_i == 1
         state = 'accepted'
         n = WhisperNotification.find_whisper(whisperId, state)
-        WhisperNotification.send_accept_notification_to_sender(n)
+        n.send_accept_notification_to_sender(n)
         puts state
         puts 'WhisperNotification'
         puts n.inspect
