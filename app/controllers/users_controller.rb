@@ -372,8 +372,8 @@ class UsersController < ApplicationController
       # render json: user_avatar.to_json.inspect
       
       intro = "Welcome to Yero"
-      n = WhisperNotification.create_in_aws(user_info.id, "SYSTEM", 0, 1, intro)
-
+      n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
+      
       render json: success(response)
     else
       if user.errors.on(:email)
