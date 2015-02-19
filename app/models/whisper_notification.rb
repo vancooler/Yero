@@ -567,7 +567,7 @@ class WhisperNotification < AWS::Record::HashModel
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(hash["target_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    message = target_user.first_name+" has accepted your whisper request"
+    message = target_user.first_name+" is now your friend!"
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
@@ -599,8 +599,8 @@ class WhisperNotification < AWS::Record::HashModel
     notification.content_available = true
     notification.custom_data = {
           whisper_id: hash["id"],
-          origin_user: target_user.key,
-          target_user: origin_user_key,
+          origin_user: origin_user_key,
+          target_user: target_user.key,
           timestamp: hash["timestamp"],
           target_apn: token,
           viewed: hash["viewed"],
