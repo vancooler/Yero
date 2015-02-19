@@ -173,7 +173,7 @@ class UsersController < ApplicationController
         elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
           same_venue_users << u # Throw the user into the array
         else 
-          different_venue_users << u
+          different_venue_users << u # Users who are not in a venue also thrown into here.
         end
       end
       
