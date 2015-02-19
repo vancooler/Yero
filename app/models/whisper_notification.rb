@@ -463,7 +463,6 @@ class WhisperNotification < AWS::Record::HashModel
           puts "updating accepted"
           i.attributes.update do |u|
               u.set 'accepted' => 1
-              u.set 'viewed' => 1
           end
           item_info = i.attributes.to_h
           return item_info
@@ -471,7 +470,6 @@ class WhisperNotification < AWS::Record::HashModel
           puts "updating declined"
           i.attributes.update do |u|
               u.set 'declined' => 1
-              u.set 'viewed' => 1
           end
           return true
         end
@@ -556,13 +554,16 @@ class WhisperNotification < AWS::Record::HashModel
     hash = WhisperNotification.find_by_dynamodb_id(whisper_id)
     p "The hash is"
     p hash.inspect
-    p "Before hash origin id"
+    p "origin id"
+    p hash["origin_id"]
     if hash["origin_id"] != "0"
       origin_user = User.find(hash["origin_id"]) 
       origin_user_key = origin_user.key
     else
       origin_user_key = "SYSTEM"
     end
+    p "target_id"
+    p hash["target_id"]
     target_user = User.find(hash["target_id"]) 
 
     apn = Houston::Client.development
