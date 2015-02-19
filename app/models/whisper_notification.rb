@@ -455,15 +455,12 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
     item = table.items.where(:id).equals(whisper_id.to_s)
-    puts "find_whisper - the count:"
     puts item.count.inspect
     if item.count == 1
       item.each do |i|
         if state == 'accepted'
-          puts "updating accepted"
           i.attributes.update do |u|
               u.set 'accepted' => 1
-              p "updated accepted"
           end
           item_info = i.attributes.to_h
           return item_info
@@ -550,27 +547,17 @@ class WhisperNotification < AWS::Record::HashModel
   def self.send_accept_notification_to_sender(whisper_id)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
-    p "Send accept notification to sender - hash:"
-    puts whisper_id
-
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
     hash = table.items.where(:id).equals(whisper_id.to_s)
     hash = hash.first.attributes
-
-    p "The hash is"
-    p hash.inspect
-    p "origin id"
-    p hash["origin_id"]
     if hash["origin_id"] != "0"
       origin_user = User.find(hash["origin_id"]) 
       origin_user_key = origin_user.key
     else
       origin_user_key = "SYSTEM"
     end
-    p "target_id"
-    p hash["target_id"]
     target_user = User.find(hash["target_id"]) 
 
     apn = Houston::Client.development
