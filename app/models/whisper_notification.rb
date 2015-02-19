@@ -551,7 +551,12 @@ class WhisperNotification < AWS::Record::HashModel
     app_local_path = Rails.root
     p "Send accept notification to sender - hash:"
     puts whisper_id
-    hash = WhisperNotification.find_by_dynamodb_id(whisper_id)
+
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    hash = table.items.where(:id).equals(id.to_s)
+
     p "The hash is"
     p hash.inspect
     p "origin id"
