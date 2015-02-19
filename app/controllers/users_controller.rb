@@ -173,12 +173,12 @@ class UsersController < ApplicationController
         elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
           same_venue_users << u # Throw the user into the array
         else 
-          no_badge_users << u
+          different_venue_users << u
         end
       end
-      different_and_no_badge = different_venue_users.zip + no_badge_users
+      
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_and_no_badge.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
+      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
       final_time = Time.now
       # diff_2 = final_time - end_time
       e_time = Time.now
