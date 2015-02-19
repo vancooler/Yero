@@ -147,8 +147,6 @@ class WhispersController < ApplicationController
         puts "n inspect"
         puts n.inspect
         WhisperNotification.send_accept_notification_to_sender(whisperId)
-        puts 'WhisperNotification'
-        puts n.inspect
 
         render json: success
       elsif params[:declined].to_i == 1
