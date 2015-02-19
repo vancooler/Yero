@@ -293,6 +293,8 @@ class UsersController < ApplicationController
     p 'user_id'
     p current_user.id
     friends = WhisperNotification.myfriends(current_user.id)
+    puts "friends123: "
+    puts friends.inspect
     users = requests_friends_json(friends)
     users = JSON.parse(users).delete_if(&:blank?)
 
