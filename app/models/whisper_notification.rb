@@ -555,7 +555,7 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    hash = table.items.where(:id).equals(id.to_s)
+    hash = table.items.where(:id).equals(whisper_id.to_s)
 
     p "The hash is"
     p hash.inspect
