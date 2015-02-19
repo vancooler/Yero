@@ -554,7 +554,9 @@ class WhisperNotification < AWS::Record::HashModel
     p "Send accept notification to sender - hash:"
     puts whisper_id
     hash = WhisperNotification.find_by_dynamodb_id(whisper_id)
+    p "The hash is"
     p hash.inspect
+    p "Before hash origin id"
     if hash["origin_id"] != "0"
       origin_user = User.find(hash["origin_id"]) 
       origin_user_key = origin_user.key
