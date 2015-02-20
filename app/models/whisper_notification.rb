@@ -109,7 +109,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
     # Target_id is the receiver of the messages
-    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:declined).not_equal_to(1)..where(:viewed).equals(0)
+    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:declined).not_equal_to(1).where(:viewed).equals(0)
     receiver_items_array = Array.new
     if receiver_items and receiver_items.count > 0
       receiver_items.each do |i|
