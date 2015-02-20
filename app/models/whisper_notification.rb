@@ -605,8 +605,8 @@ class WhisperNotification < AWS::Record::HashModel
     notification.content_available = true
     notification.custom_data = {
           whisper_id: hash["id"],
-          origin_user: target_user.key,
-          target_user: origin_user_key,
+          origin_user: origin_user_key,
+          target_user: target_user.key,
           timestamp: hash["timestamp"],
           target_apn: token,
           viewed: hash["viewed"],
