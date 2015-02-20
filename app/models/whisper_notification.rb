@@ -134,6 +134,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['accepted'] = attributes['accepted'].to_i
         h['declined'] = attributes['declined'].to_i
         h['whisper_id'] = attributes['id']
+        h['intro'] = attributes['intro']
         receiver_items_array << h
       end
     end

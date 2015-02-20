@@ -690,6 +690,7 @@ class UsersController < ApplicationController
         json.accepted   user["accepted"]
         json.declined   user["declined"]
         json.whisper_id  user["whisper_id"]
+        json.intro_message user["intro"]
 
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
