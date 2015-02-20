@@ -554,6 +554,7 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     hash = table.items.where(:id).equals(whisper_id.to_s)
     hash = hash.first.attributes
+
     if hash["origin_id"] != "0"
       origin_user = User.find(hash["origin_id"]) 
       origin_user_key = origin_user.key
@@ -561,6 +562,11 @@ class WhisperNotification < AWS::Record::HashModel
       origin_user_key = "SYSTEM"
     end
     target_user = User.find(hash["target_id"]) 
+
+    p "The origin key is"
+    p origin_user_key
+    p "The target key is"
+    p target_user.key
 
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
