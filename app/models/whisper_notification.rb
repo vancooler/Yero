@@ -456,11 +456,14 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
     item = table.items.where(:id).equals(whisper_id.to_s)
+    p "The item:"
+    p item.inspect
     puts item.count.inspect
     if item.count == 1
       item.each do |i|
         if state == 'accepted'
           i.attributes.update do |u|
+
               u.set 'accepted' => 1
               u.set 'viewed' => 1
           end
