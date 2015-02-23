@@ -569,11 +569,6 @@ class WhisperNotification < AWS::Record::HashModel
     end
     target_user = User.find(hash["target_id"]) 
 
-    p "The origin key is"
-    p origin_user_key
-    p "The target key is"
-    p target_user.key
-
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
@@ -626,4 +621,30 @@ class WhisperNotification < AWS::Record::HashModel
     # And... sent! That's all it takes.
     apn.push(notification)
   end
+
+  # def self.send_nightopen_notification(user)
+    
+
+  #   apn = Houston::Client.development
+  #   apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+
+  #   # An example of the token sent back when a device registers for notifications
+  #   token = User.find(hash["origin_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+   
+  #   # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+  #   notification = Houston::Notification.new(device: token)
+  #   notification.alert = "Yero will open in 5 minutes"
+    
+  #   # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+  #   notification.sound = "sosumi.aiff"
+  #   notification.category = "INVITE_CATEGORY"
+  #   notification.content_available = true
+  #   notification.custom_data = {         
+  #         timestamp: hash["timestamp"],
+  #         target_apn: token
+  #   }
+
+  #   # And... sent! That's all it takes.
+  #   apn.push(notification)
+  # end
 end
