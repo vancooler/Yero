@@ -463,7 +463,9 @@ class WhisperNotification < AWS::Record::HashModel
       item.each do |i|
         if state == 'accepted'
           i.attributes.update do |u|
-
+              hash = i.attributes.to_h
+              UserFriends.create_in_aws(hash["target_id"], hash["origin_id"])
+              UserFriends.create_in_aws(hash["origin_id"], hash["target_id"])
               u.set 'accepted' => 1
               u.set 'viewed' => 1
           end
