@@ -400,9 +400,9 @@ class UsersController < ApplicationController
     user = User.find_by_key(params[:key])
     # user.assign_attributes(sign_up_params)
 
-    if user.update(exclusive: params[:exclusive], discovery: params[:discovery])
+    if user.update(exclusive: params[:exclusive])
       u = Hash.new
-      u = {exclusive: user.exclusive, discovery: user.discovery}
+      u = {exclusive: user.exclusive}
       render json: success(u)
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
@@ -703,7 +703,7 @@ class UsersController < ApplicationController
   end
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :discovery, :exclusive, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :exclusive, user_avatars_attributes: [:avatar])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 
