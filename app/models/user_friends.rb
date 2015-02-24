@@ -15,7 +15,7 @@ class UserFriends < AWS::Record::HashModel
 		return n
 	end
 
-	def return_friends(current_user_id)
+	def self.return_friends(current_user_id)
 		dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
 	    table = dynamo_db.tables['UserFriends'] # Choose the 'WhisperNotification' table
 	    table.load_schema 
