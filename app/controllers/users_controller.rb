@@ -292,7 +292,7 @@ class UsersController < ApplicationController
   def myfriends
     p 'user_id'
     p current_user.id
-    friends = WhisperNotification.myfriends(current_user.id)
+    friends = UserFriends.return_friends(current_user.id)
     puts "friends123: "
     puts friends.inspect
     if !friends.blank?
