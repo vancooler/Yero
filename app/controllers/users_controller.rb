@@ -685,16 +685,16 @@ class UsersController < ApplicationController
         json.avatar_thumbnail user["target_user_thumb"] 
         json.avatars         avatar_array
         json.apn_token      user["target_user"].apn_token
-        json.notification_read  user["notification_read"]
+        json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
         json.email  user["target_user"]["email"]
         json.instagram_id  user["target_user"]["instagram_id"]
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
-        json.accepted   user["accepted"]
-        json.declined   user["declined"]
-        json.whisper_id  user["whisper_id"]
-        json.intro_message user["intro"]
+        json.accepted   user["accepted"].blank? ? nil : user["accepted"]
+        json.declined   user["declined"].blank? ? nil : user["declined"]
+        json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
+        json.intro_message user["intro"].blank? ? nil : user["intro"]
 
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
