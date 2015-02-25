@@ -21,7 +21,6 @@ class UserFriends < AWS::Record::HashModel
 	    table.load_schema 
 	    friends = table.items.where(:user_id).equals(current_user_id)
 	    friends_array = Array.new
-	    friends_intro_whisper = WhisperNotification.collect_whispers(current_user)
 	    if friends and friends.count > 0
 	    	friends.each do |friend|
 	    		attributes = friend.attributes.to_h
