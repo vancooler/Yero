@@ -24,7 +24,6 @@ class UsersController < ApplicationController
       id: current_user.id,
       first_name: current_user.first_name,
       introduction_1: current_user.introduction_1,
-      introduction_2: current_user.introduction_2,
       key: current_user.key,
       since_1970: (current_user.last_active - Time.new('1970')).seconds.to_i, #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
       birthday: current_user.birthday,
@@ -153,7 +152,6 @@ class UsersController < ApplicationController
             json.latitude       user.latitude  
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1
-            json.introduction_2 user.introduction_2
             json.exclusive      user.exclusive
           end
         end
@@ -331,7 +329,7 @@ class UsersController < ApplicationController
   end
 
   def update_profile
-    if current_user.update(introduction_1: CGI.unescape(params[:introduction_1]), introduction_2: CGI.unescape(params[:introduction_2]))
+    if current_user.update(introduction_1: CGI.unescape(params[:introduction_1]))
       render json: success(current_user)
     else
       render json: error(current_user.errors)
@@ -707,7 +705,6 @@ class UsersController < ApplicationController
         json.longitude      user["target_user"].longitude 
 
         json.introduction_1 user["target_user"].introduction_1
-        json.introduction_2 user["target_user"].introduction_2
       end         
     end
     return users 
