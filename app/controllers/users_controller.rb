@@ -154,6 +154,7 @@ class UsersController < ApplicationController
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1
             json.introduction_2 user.introduction_2
+            json.exclusive      user.exclusive
           end
         end
         json_e = Time.now
@@ -168,12 +169,18 @@ class UsersController < ApplicationController
       same_venue_users = [] #Make a empty array for users in the same venue
       no_badge_users = [] # Make an empty array for no badge users
       users.each do |u| # Go through the users
-        if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-          different_venue_users << u # Throw the user into the array
-        elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-          same_venue_users << u # Throw the user into the array
-        else 
-          different_venue_users << u # Users who are not in a venue also thrown into here.
+        if u['exclusive'] == true
+          if u['same_venue_badge'].to_s == "true"
+             same_venue_users << u # Throw the user into the array
+          end
+        else
+          if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+            different_venue_users << u # Throw the user into the array
+          elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+            same_venue_users << u # Throw the user into the array
+          else 
+            different_venue_users << u # Users who are not in a venue also thrown into here.
+          end
         end
       end
       
@@ -298,7 +305,7 @@ class UsersController < ApplicationController
     if !friends.blank?
       users = requests_friends_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
-      
+
       same_venue_users = []
       different_venue_users = [] 
       no_badge_users = []
