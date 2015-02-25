@@ -435,6 +435,7 @@ class WhisperNotification < AWS::Record::HashModel
       return return_array
     else
       return []
+    end
   end
 
   def self.collect_whispers(current_user)
