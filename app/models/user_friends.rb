@@ -32,6 +32,7 @@ class UserFriends < AWS::Record::HashModel
 		        else
 		          if friend_id > 0
 		            user = User.find(friend_id)
+		            h['intro'] = user.introduction_1
 		            h['target_user'] = user
 		            if user.main_avatar
 		              h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
@@ -45,6 +46,7 @@ class UserFriends < AWS::Record::HashModel
 		            h['target_user'] = ''
 		          end
 		          h['timestamp'] = attributes['timestamp'].to_i
+		          
 		          friends_array << h  
 		          users = Array.new
 		          users = friends_array

@@ -422,22 +422,6 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
-  def return_friends_collect_info(current_user)
-    dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
-    table.load_schema
-    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2")
-    return_array = Array.new
-    items.each do |p|
-      return_array << p.hash_value
-    end
-    if items.present? and items.count > 0
-      return return_array
-    else
-      return []
-    end
-  end
-
   def self.collect_whispers(current_user)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
