@@ -298,6 +298,9 @@ class UsersController < ApplicationController
     if !friends.blank?
       users = requests_friends_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
+      friends_info = return_friends_collect_info(current_user)
+      p "friends_info"
+      p friends_info.inspect
 
       same_venue_users = []
       different_venue_users = [] 
