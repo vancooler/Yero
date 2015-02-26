@@ -4,6 +4,8 @@ class UsersController < ApplicationController
 
   def show
     # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
+    puts "THE ID"
+    puts current_user.id
     avatar_array = Array.new
     avatar_array[0] = {
           avatar: current_user.main_avatar.avatar.url,
