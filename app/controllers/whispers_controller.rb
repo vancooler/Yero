@@ -112,7 +112,7 @@ class WhispersController < ApplicationController
     handle_action = params[:handle_action]
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
-      render json: error('Request not fount')
+      render json: error('Request not found')
     else
       attributes = item.attributes.to_h
       notification_type = attributes['notification_type'].to_s

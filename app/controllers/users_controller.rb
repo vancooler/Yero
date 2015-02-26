@@ -169,12 +169,12 @@ class UsersController < ApplicationController
       users.each do |u| # Go through the users
         puts "BOOL"
         puts u['exclusive']
-        if u['exclusive'] == true
+        if u['exclusive'].to_bool == true
           if u['same_venue_badge'].to_s == "true"
              same_venue_users << u # Throw the user into the array
           end
         else
-          if u['exclusive'] != true
+          if u['exclusive'].to_bool != true
             if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
               different_venue_users << u # Throw the user into the array
             elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
@@ -689,7 +689,7 @@ class UsersController < ApplicationController
         json.birthday       user["target_user"]["birthday"]
         json.gender         user["target_user"]["gender"]
         json.distance       current_user.distance_label(user["target_user"])
-        
+
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user_thumb"] 
