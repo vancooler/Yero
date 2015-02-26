@@ -683,12 +683,14 @@ class UsersController < ApplicationController
         json.id             user["target_user"]["id"]
         json.first_name     user["target_user"]["first_name"]
         json.key            user["target_user"]["key"]
-        json.last_active    user["target_user"]["last_active"]
+        json.last_active    
         json.last_activity  user["target_user"]["last_activity"]
         json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
         json.birthday       user["target_user"]["birthday"]
         json.gender         user["target_user"]["gender"]
         json.distance       current_user.distance_label(user["target_user"])
+        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i, #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
+      
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user_thumb"] 
