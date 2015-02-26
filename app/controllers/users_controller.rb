@@ -169,12 +169,12 @@ class UsersController < ApplicationController
       users.each do |u| # Go through the users
         puts "BOOL"
         puts u['exclusive']
-        if u['exclusive'].to_bool == true
+        if !!u['exclusive'] == true
           if u['same_venue_badge'].to_s == "true"
              same_venue_users << u # Throw the user into the array
           end
         else
-          if u['exclusive'].to_bool != true
+          if !!u['exclusive'] != true
             if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
               different_venue_users << u # Throw the user into the array
             elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
