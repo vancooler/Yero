@@ -683,7 +683,7 @@ class UsersController < ApplicationController
         json.id             user["target_user"]["id"]
         json.first_name     user["target_user"]["first_name"]
         json.key            user["target_user"]["key"]
-        json.last_active    
+        json.last_active    user["target_user"]["last_active"] 
         json.last_activity  user["target_user"]["last_activity"]
         json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
         json.birthday       user["target_user"]["birthday"]
