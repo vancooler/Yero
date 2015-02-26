@@ -185,8 +185,6 @@ class UsersController < ApplicationController
       end
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      p "Current user exclusivity"
-      p current_user 
       if !!current_user.exclusive == true
         users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] }
       else
