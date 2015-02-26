@@ -51,7 +51,9 @@ class User < ActiveRecord::Base
       fellow_participant_venue = fellow_participant.current_venue
       self_venue = self.current_venue
 
-      if !fellow_participant_venue.nil? && !self_venue.nil?
+      if !fellow_participant_venue.nil? && self_venue.nil?
+        return true
+      elsif !fellow_participant_venue.nil? && !self_venue.nil?
         if self.current_venue.id != fellow_participant.current_venue.id
           return true
         end
