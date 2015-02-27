@@ -187,11 +187,9 @@ class UsersController < ApplicationController
       end
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      if !!current_user.exclusive == true
-        users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] }
-      else
-        users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
-      end
+      
+      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
+      
       final_time = Time.now
       # diff_2 = final_time - end_time
       e_time = Time.now
