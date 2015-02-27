@@ -19,12 +19,12 @@ class UserFriends < AWS::Record::HashModel
 		dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
 	    table = dynamo_db.tables['UserFriends'] # Choose the 'WhisperNotification' table
 	    table.load_schema # Load the table
-	    friends = table.items.where(:friend_id).equals(current_user_id)
-	    friends_array = Array.new
+	    friends = table.items.where(:friend_id).equals(current_user_id) # Select all users who's friend_id equals current user
+	    friends_array = Array.new 
 	    if friends and friends.count > 0
 	    	friends.each do |friend|
-	    		attributes = friend.attributes.to_h
-        		friend_id = attributes['friend_id'].to_i
+	    		attributes = friend.attributes.to_h # Get attributes
+        		friend_id = attributes['user_id'].to_i # Get the users_id (your friend's id)
 	    		h = Hash.new
 	    		if friend_id > 0
 		            user = User.find(friend_id)
