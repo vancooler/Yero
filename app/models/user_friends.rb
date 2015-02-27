@@ -49,7 +49,7 @@ class UserFriends < AWS::Record::HashModel
 	        users = users.sort_by { |hsh| hsh[:timestamp] }
 	        p "users#afd"
 	        p users.inspect
-	        return users.reverse
+	        return users
 	    end
 	end
 end
