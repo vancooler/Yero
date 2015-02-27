@@ -153,7 +153,7 @@ class UsersController < ApplicationController
             json.apn_token      user.apn_token
             json.latitude       user.latitude  
             json.longitude      user.longitude 
-            json.introduction_1 user.introduction_1
+            json.introduction_1 user.introduction_1.blank? ? nil : user.introduction_1
             json.exclusive      user.exclusive
           end
         end
@@ -711,7 +711,7 @@ class UsersController < ApplicationController
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
 
-        json.introduction_1 user["target_user"].introduction_1
+        json.introduction_1 user["target_user"].introduction_1.blank? ? nil : user["target_user"].introduction_1
       end         
     end
     return users 
