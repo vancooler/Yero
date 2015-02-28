@@ -42,7 +42,6 @@ class UserFriends < AWS::Record::HashModel
 		            h['target_user'] = ''
 		        end
 		          h['timestamp'] = attributes['timestamp'].to_i
-		          
 		          friends_array << h     
 	    	end
 	    	users = Array.new
