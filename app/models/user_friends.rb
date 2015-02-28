@@ -42,7 +42,7 @@ class UserFriends < AWS::Record::HashModel
 		            h['target_user'] = ''
 		        end
 		          h['timestamp'] = attributes['timestamp'].to_i
-		          h['timestamp_read'] = Date.parse(attributes['timestamp']).strftime("%d-%m-%Y-%I:%M%p")
+		          h['timestamp_read'] = Date.parse(attributes['timestamp'].to_s).strftime("%d-%m-%Y-%I:%M%p")
 		          friends_array << h     
 	    	end
 	    	users = Array.new
