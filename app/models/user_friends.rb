@@ -41,7 +41,8 @@ class UserFriends < AWS::Record::HashModel
 		        else
 		            h['target_user'] = ''
 		        end
-		          h['timestamp'] = attributes['timestamp'].to_i
+		          h['timestamp'] = attributes['timestamp'].to_formatted_s(:number) 
+		          h['timestamp_read'] = attributes['timestamp'].strftime("Printed on %m/%d/%Y at %I:%M%p")
 		          friends_array << h     
 	    	end
 	    	users = Array.new
