@@ -727,18 +727,3 @@ class UsersController < ApplicationController
     params.require(:user).permit(:email, :password, :key)
   end
 end
-
-
-# i = 1
-# while i < 31 do
-#   u = User.new
-#   u.birthday = "1993-09-09"
-#   u.first_name = "TEST_" + i.to_s
-
-#   u.gender = "Male"
-#   u.latitude = rand 49.0..50.0
-#   u.longitude = rand -124.0..-123.0
-#   u.key = SecureRandom.urlsafe_base64(nil, false)
-#   u.save
-#   i = i+1
-# end
