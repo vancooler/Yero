@@ -4,9 +4,12 @@ class VenuesController < ApplicationController
   before_action :authenticate_api, only: [:list, :people]
 
   def venue_location
-
     r = Geocoder.search("44.981667,-93.27833")
     raise r[0].inspect
+  end
+
+  def venue_open
+    timezone_city
   end
 
   def nightly
