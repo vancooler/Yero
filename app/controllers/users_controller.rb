@@ -479,7 +479,7 @@ class UsersController < ApplicationController
       UserMailer.forget_password(@user).deliver
       render json: success(true)
     else
-      render json: error(JSON.parse(user.errors.messages.to_json))
+      render json: error("The email you have used is not valid."))
     end
   end
 

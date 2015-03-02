@@ -10,7 +10,13 @@ class VenuesController < ApplicationController
 
   def venue_open
     timezone = Venue.new
-    timezone.timezone_city
+    places = timezone.timezone_city
+    time = Array.new
+    place.each do |p|
+      # Get time
+      
+    end
+    render nothing: true 
   end
 
   def nightly
