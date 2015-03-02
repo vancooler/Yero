@@ -12,9 +12,9 @@ class VenuesController < ApplicationController
     timezone = Venue.new
     places = timezone.timezone_city
     time = Array.new
-    place.each do |p|
+    places.each do |p|
       # Get time
-      
+
     end
     render nothing: true 
   end
