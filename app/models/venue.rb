@@ -31,6 +31,12 @@ class Venue < ActiveRecord::Base
     JSON.parse(data)
   end
 
+  def timezone_city
+    distinct_cities = Venue.select(:city, :state).distinct
+    puts "DC"
+    puts distinct_cities.inspect
+  end
+
   def address
     [self.address_line_one, self.city, self.state, self.country].compact.join(', ')
   end
