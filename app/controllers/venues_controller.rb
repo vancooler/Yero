@@ -9,7 +9,7 @@ class VenuesController < ApplicationController
   end
 
   def venue_open
-    timezone_city
+    Venue.timezone_city
   end
 
   def nightly
