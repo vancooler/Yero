@@ -17,7 +17,7 @@ class VenuesController < ApplicationController
       if !p["city"].blank?
         puts p["city"]
         # Get time
-        time = Net::HTTP.get_response(URI.parse("http://api.timezdb.com/?q=getByCityName&apiKey="+ENV['TIMEZDB_API_KEY']+"&cityName="+p["city"]])).body
+        time = Net::HTTP.get_response(URI.parse("http://api.timezdb.com/?q=getByCityName&apiKey="+ENV['TIMEZDB_API_KEY']+"&cityName="+p["city"])).body
         puts "Time time"
         puts time
       end
