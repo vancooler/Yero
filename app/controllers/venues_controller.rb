@@ -16,7 +16,7 @@ class VenuesController < ApplicationController
     places.each do |p|
       puts "P is: "
       puts p.inspect
-      if !p.city.blank?
+      if !p["city"].blank?
         puts p["city"]
         # Get time
         time = Net::HTTP.get_response(URI.parse("http://api.timezdb.com/?q=getByCityName&apiKey="+ENV['TIMEZDB_API_KEY']+"&cityName="+p.city)).body
