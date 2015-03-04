@@ -650,7 +650,7 @@ class UsersController < ApplicationController
 
   def network_open
     p "Time zone is:"
-    p Time.now.in_time_zone("Vancouver")
+    p Time.now.in_time_zone("British Columbia")
 
     # network = User.new
     # places = network.user_locaiton
