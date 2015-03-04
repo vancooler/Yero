@@ -33,8 +33,7 @@ class Venue < ActiveRecord::Base
 
   def timezone_city
     distinct_cities = Venue.select(:city, :state).distinct
-    puts "DC"
-    puts distinct_cities.inspect
+    return distinct_cities
   end
 
   def address
