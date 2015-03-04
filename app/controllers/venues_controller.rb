@@ -12,9 +12,11 @@ class VenuesController < ApplicationController
     timezone = Venue.new
     places = timezone.timezone_city
     time = Array.new
+    puts places
     places.each do |p|
       puts "P is: "
-      puts p["city"]
+      puts p.inspect
+      puts p[0]["city"]
       # Get time
       time = Net::HTTP.get_response(URI.parse("http://api.timezdb.com/?q=getByCityName&apiKey="+ENV['TIMEZDB_API_KEY']+"&cityName="+p.city)).body
       puts "Time time"
