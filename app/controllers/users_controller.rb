@@ -648,18 +648,25 @@ class UsersController < ApplicationController
     end
   end
 
-  # def read_notification_update
-  #   if current_user.read_notification.nil?
-  #     read_notification = ReadNotification.create(user: current_user)
-  #   else
-  #     read_notification = current_user.read_notification
-  #   end
-  #   if read_notification.update(before_sending_whisper_notification:true)
-  #     render json: success
-  #   else
-  #     render json: error("could not update read notification")
-  #   end
-  # end
+  def network_open
+    p "Time zone is:"
+    p Time.now.in_time_zone("Vancouver")
+
+    # network = User.new
+    # places = network.user_locaiton
+    # time = Array.new
+    # puts places
+    # places.each do |p|
+    #   if !p["city"].blank?
+    #     puts p["city"]
+    #     # Get time
+    #     time = Net::HTTP.get_response(URI.parse("http://api.timezdb.com/?q=getByCityName&apiKey="+ENV['TIMEZDB_API_KEY']+"&cityName="+p["city"])).body
+    #     puts "Time time"
+    #     puts time
+    #   end
+    # end
+    render nothing: true 
+  end
 
   private
 

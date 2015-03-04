@@ -258,6 +258,11 @@ class User < ActiveRecord::Base
     return result_users
   end
 
+  def user_location
+    latlong = Venue.select(:latitide, :longitude).distinct
+    return latlong
+  end
+
   def distance_label(user)
     distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
     case distance 

@@ -65,6 +65,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
   post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
   post 'api/v1/users/update-apn',             to: 'users#update_apn'
+  post 'api/v1/users/network_open',           to: 'users#network_open'
   get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
   get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list
   post 'api/v1/venues/prospect',              to: 'venues#prospect'
