@@ -39,6 +39,14 @@ module PurpleOctopus
       g.view_specs false
       g.helper_specs false
     end
+
+    Timezone::Configure.begin do |c|
+      c.username = 'your_geonames_username_goes_here'
+    end
+
+    Timezone::Configure.begin do |c|
+      c.google_api_key = 'AIzaSyCN5wCxkgGWj9v9hr0auqmEGi1I-nxSoUQ'
+    end
     
   end
 end
