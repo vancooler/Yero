@@ -651,7 +651,7 @@ class UsersController < ApplicationController
   def network_open
     p "Time zone is:"
     
-    times_result = TimeZonePlace.connection.select_all("select * from time_zone_places")
+    times_result = TimeZonePlace.connection.select_all("select 'timezone' from time_zone_places")
     times_result.each do |time|
       puts time
    
