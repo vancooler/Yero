@@ -650,11 +650,14 @@ class UsersController < ApplicationController
 
   def network_open
     p "Time zone is:"
-    
     times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
-    times_result.each do |time|
-      puts time
-   
+    times_array = Array.new
+    times_result.each do |timezone|
+      puts "Time time at timezone:"
+      puts timezone.time
+      open_network_tz = Array(timezone, timezone.time)
+      puts "The open_network"
+      puts open_network_tz.inspect
     end
     render nothing: true 
   end
