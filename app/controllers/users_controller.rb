@@ -654,7 +654,7 @@ class UsersController < ApplicationController
     times_array = Array.new
     times_result.each do |timezone|
       puts "Time time at timezone:"
-      puts timezone.time
+      puts timezone["timezone"].time
       open_network_tz = Array(timezone, timezone.time)
       puts "The open_network"
       puts open_network_tz.inspect
