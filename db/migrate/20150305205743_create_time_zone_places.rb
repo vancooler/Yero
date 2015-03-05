@@ -110,7 +110,7 @@ class CreateTimeZonePlaces < ActiveRecord::Migration
     TimeZonePlace.create(timezone: "Asia/Krasnoyarsk")
     TimeZonePlace.create(timezone: "Asia/Shanghai")
     TimeZonePlace.create(timezone: "Asia/Chongqing")
-    TimeZonePlace.create(timezone: "Asia/Hong_kong")
+    TimeZonePlace.create(timezone: "Asia/Hong_Kong")
     TimeZonePlace.create(timezone: "Asia/Ulaanbaatar")
     TimeZonePlace.create(timezone: "Asia/Seoul")
     TimeZonePlace.create(timezone: "Asia/Tokyo")
