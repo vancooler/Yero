@@ -666,6 +666,7 @@ class UsersController < ApplicationController
     #     puts time
     #   end
     # end
+    end
     render nothing: true 
   end
 
