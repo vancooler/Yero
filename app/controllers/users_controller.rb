@@ -650,7 +650,7 @@ class UsersController < ApplicationController
 
   def network_open
     p "Time zone is:"
-    times = Timezone.select(:timezone)
+    times = Timezone.find(:all)
     times.each do |time|
       puts time
     # network = User.new
