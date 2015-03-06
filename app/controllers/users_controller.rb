@@ -669,11 +669,11 @@ class UsersController < ApplicationController
         attributes = user.attributes.to_h
         puts attributes["user_id"]
         
-        if times_array.include? attributes["user_id"]
+        if times_array.include? attributes["user_id"].to_i
           "entered the if"
           times_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
         else
-          times_array[attributes["user_id"]] = attributes
+          times_array[attributes["user_id"].to_i] = attributes
         end
       end
       puts "times array"
