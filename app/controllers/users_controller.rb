@@ -655,13 +655,13 @@ class UsersController < ApplicationController
     times_result.each do |timezone|
       Time.zone = timezone["timezone"]
       # if Time.zone.now.strftime("%H:%M") == "17:00"
-        open_network_tz = [Time.zone.to_s, Time.zone.now.strftime("%H:%M")]
+        open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
         puts open_network_tz.inspect
       #   times_array << open_network_tz
       # end
     end
     times_array.each do |timezone|
-      
+
     end
     render nothing: true 
   end
