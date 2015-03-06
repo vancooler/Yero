@@ -665,6 +665,7 @@ class UsersController < ApplicationController
       puts "usersInTimezone"
       puts usersInTimezone.inspect
       usersInTimezone.each do |user|
+        puts "There once was a sponge that lived under the sea"
         puts user.attributes.to_h
       end
     # end
