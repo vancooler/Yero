@@ -668,6 +668,7 @@ class UsersController < ApplicationController
         puts "There once was a sponge that lived under the sea"
         attributes = user.attributes.to_h
         puts attributes["timezone"]
+        times_array << attributes
         if times_array.include? attributes["user_id"]
           idx = times_array.index { |o| o.id == attributes["user_id"]}
           puts "index"
