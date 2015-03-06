@@ -651,7 +651,7 @@ class UsersController < ApplicationController
   def network_open
     # p "Time zone is:"
     # times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
-    # times_array = Array.new
+    times_array = Array.new
     # times_result.each do |timezone|
     #   Time.zone = timezone["timezone"]
     #   # if Time.zone.now.strftime("%H:%M") == "17:00"
@@ -668,6 +668,11 @@ class UsersController < ApplicationController
         puts "There once was a sponge that lived under the sea"
         attributes = user.attributes.to_h
         puts attributes["timezone"]
+        if times_array.include? attributes["user_id"]
+          idx = times_array.index { |o| o.id == attributes["user_id"]}
+          puts "index"
+          puts idx
+        end
       end
     # end
     render nothing: true 
