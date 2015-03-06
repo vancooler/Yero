@@ -670,6 +670,7 @@ class UsersController < ApplicationController
         puts attributes["timezone"]
         
         if times_array.include? attributes["user_id"]
+          "entered the if"
           times_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
         else
           times_array << attributes
