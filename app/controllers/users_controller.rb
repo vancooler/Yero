@@ -653,9 +653,9 @@ class UsersController < ApplicationController
     times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
     times_array = Array.new
     times_result.each do |timezone|
-      puts timezone
+      puts timezone[:timezone]
       Time.zone = timezone["timezone"]
-      open_network_tz = [Time.zone.to_s, Time.zone.now.strftime("%H:%M")]
+      open_network_tz = [timezone[:timezone].to_s, Time.zone.now.strftime("%H:%M")]
       puts open_network_tz.inspect
     end
     render nothing: true 
