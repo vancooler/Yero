@@ -649,21 +649,27 @@ class UsersController < ApplicationController
   end
 
   def network_open
-    p "Time zone is:"
-    times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
-    times_array = Array.new
-    times_result.each do |timezone|
-      Time.zone = timezone["timezone"]
-      # if Time.zone.now.strftime("%H:%M") == "17:00"
-        open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
-        puts open_network_tz.inspect
-      #   times_array << open_network_tz
-      # end
-    end
-    times_array.each do |timezone|
-
-    end
-    render nothing: true 
+    # p "Time zone is:"
+    # times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
+    # times_array = Array.new
+    # times_result.each do |timezone|
+    #   Time.zone = timezone["timezone"]
+    #   # if Time.zone.now.strftime("%H:%M") == "17:00"
+    #     open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
+    #     puts open_network_tz.inspect
+    #   #   times_array << open_network_tz
+    #   # end
+    # end
+    # times_array.each do |timezone|
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone)
+      puts "usersInTimezone"
+      puts usersInTimezone.inspect
+    #   usersInTimezone.each do |user|
+    #     if times_array.include? user
+    #     end
+    #   end
+    # end
+    # render nothing: true 
   end
 
   private
