@@ -665,7 +665,7 @@ class UsersController < ApplicationController
       puts "usersInTimezone"
       puts usersInTimezone.inspect
       usersInTimezone.each do |user|
-        puts user.inspect
+        puts user.attributes.to_h
       end
     # end
     render nothing: true 
