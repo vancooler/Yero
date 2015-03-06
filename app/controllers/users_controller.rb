@@ -656,10 +656,10 @@ class UsersController < ApplicationController
       # puts "Time time at timezone:"
       # puts timezone["timezone"].inspect
       Time.zone = timezone["timezone"]
-      # puts Time.zone.now
-      open_network_tz = Array.new(timezone["timezone"], Time.zone.now)
+      puts Time.zone.now
+      # open_network_tz = Array.new(timezone["timezone"], Time.zone.now)
       # puts "The open_network"
-      puts open_network_tz.inspect
+      # puts open_network_tz.inspect
     end
     render nothing: true 
   end
