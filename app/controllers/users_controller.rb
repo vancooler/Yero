@@ -656,7 +656,7 @@ class UsersController < ApplicationController
       Time.zone = timezone["timezone"]
       open_network_tz = [Time.zone.to_s, Time.zone.now.strftime("%H:%M")]
       puts open_network_tz.inspect
-      if Time.zone.now.strftime("%H:%M") == "16:37"
+      if Time.zone.now.strftime("%H:%M") == "17:00"
         puts "5pm in:"
         puts Time.zone.to_s
       end
