@@ -656,7 +656,7 @@ class UsersController < ApplicationController
      
       Time.zone = timezone["timezone"]
       
-      open_network_tz = Array.new(Time.zone, Time.zone.now)
+      open_network_tz = [Time.zone.to_s, Time.zone.now.to_s]
 
       puts open_network_tz.inspect
     end
