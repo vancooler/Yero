@@ -667,7 +667,7 @@ class UsersController < ApplicationController
       usersInTimezone.each do |user|
         puts "There once was a sponge that lived under the sea"
         attributes = user.attributes.to_h
-        puts attributes["timezone"]
+        puts attributes["user_id"]
         
         if times_array.include? attributes["user_id"]
           "entered the if"
