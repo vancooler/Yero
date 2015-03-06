@@ -654,12 +654,14 @@ class UsersController < ApplicationController
     times_array = Array.new
     times_result.each do |timezone|
       Time.zone = timezone["timezone"]
-      open_network_tz = [Time.zone.to_s, Time.zone.now.strftime("%H:%M")]
-      puts open_network_tz.inspect
-      if Time.zone.now.strftime("%H:%M") == "17:00"
-        puts "5pm in:"
-        puts Time.zone.to_s
-      end
+      # if Time.zone.now.strftime("%H:%M") == "17:00"
+        open_network_tz = [Time.zone.to_s, Time.zone.now.strftime("%H:%M")]
+        puts open_network_tz.inspect
+      #   times_array << open_network_tz
+      # end
+    end
+    times_array.each do |timezone|
+      
     end
     render nothing: true 
   end

@@ -17,4 +17,16 @@ class UserLocation < AWS::Record::HashModel
 
     return l
   end
+
+  def self.find_by_dynamodb_timezone(timezone)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['UserLocation']
+    table.load_schema
+    items = table.items.where(:timezone).equals(timezone.to_s)
+    if items and items.count > 0
+      return items
+    else
+      return nil
+    end
+  end
 end
