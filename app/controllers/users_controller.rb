@@ -668,13 +668,15 @@ class UsersController < ApplicationController
         puts "There once was a sponge that lived under the sea"
         attributes = user.attributes.to_h
         puts attributes["timezone"]
-        times_array << attributes
+        
         if times_array.include? attributes["user_id"]
-          idx = times_array.index { |o| o.id == attributes["user_id"]}
-          puts "index"
-          puts idx
+          times_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
+        else
+          times_array << attributes
         end
       end
+      puts "times array"
+      puts times_array
     # end
     render nothing: true 
   end
