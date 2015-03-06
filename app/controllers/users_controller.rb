@@ -664,10 +664,9 @@ class UsersController < ApplicationController
       usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los Angeles")
       puts "usersInTimezone"
       puts usersInTimezone.inspect
-    #   usersInTimezone.each do |user|
-    #     if times_array.include? user
-    #     end
-    #   end
+      usersInTimezone.each do |user|
+        puts user.inspect
+      end
     # end
     render nothing: true 
   end
