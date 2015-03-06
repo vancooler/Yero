@@ -669,7 +669,7 @@ class UsersController < ApplicationController
     #     end
     #   end
     # end
-    # render nothing: true 
+    render nothing: true 
   end
 
   private
