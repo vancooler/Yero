@@ -665,6 +665,7 @@ class UsersController < ApplicationController
       
       usersInTimezone.each do |user|
         attributes = user.attributes.to_h
+        p attributes["user_id"].to_i
         if times_array.include? attributes["user_id"].to_i
           p "Replace:"
           p attributes["user_id"]
