@@ -656,16 +656,15 @@ class UsersController < ApplicationController
       Time.zone = timezone["timezone"]
       # if Time.zone.now.strftime("%H:%M") == "17:00"
         open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
-        puts open_network_tz.inspect
         times_array << open_network_tz
       # end
     end
     times_array.each do |timezone|
+      puts timezone
       usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles")
       
       usersInTimezone.each do |user|
         attributes = user.attributes.to_h
-        p attributes["user_id"].to_i
         if times_array.include? attributes["user_id"].to_i
           p "Replace:"
           p attributes["user_id"]
