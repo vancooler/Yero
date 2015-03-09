@@ -9,10 +9,10 @@ module Clockwork
   #   puts "Running #{job}, at #{time}"
   # end
 
-  every(10.seconds, 'frequent.job')
-  every(3.minutes, 'less.frequent.job')
-  every(1.hour, 'hourly.job')
-
-  every(1.day, 'midnight.job', :at => '00:00')
+  
+  every(15.minutes, 'less.frequent.job') do
+    User.network_open
+  end
+  
 end
 
