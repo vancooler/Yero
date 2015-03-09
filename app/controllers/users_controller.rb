@@ -660,7 +660,10 @@ class UsersController < ApplicationController
       # end
     end
     times_array.each do |timezone|
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0].to_s)
+      
+      puts timezone[0]
+
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles")
       
       usersInTimezone.each do |user|
         attributes = user.attributes.to_h
@@ -671,7 +674,7 @@ class UsersController < ApplicationController
         else
           times_array[attributes["user_id"].to_i] = attributes
         end
-      end
+      end 
     end
     render nothing: true 
   end
