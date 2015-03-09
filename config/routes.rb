@@ -46,7 +46,7 @@ Rails.application.routes.draw do
   get 'venues', to: 'home#for-venues'
   get 'privacy', to: 'home#privacy'
   get 'about', to: 'home#about'
-  get 'terms-of-use', to: 'home#terms-of-use'
+  get 'terms', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
   get 'get-in-touch', to: 'early_venues#new', as: :get_in_touch
   get 'venue-login', to: 'home#venue-login'
