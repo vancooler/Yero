@@ -662,15 +662,10 @@ class UsersController < ApplicationController
     # end
     # times_array.each do |timezone|
       usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los Angeles")
-      puts "usersInTimezone"
-      puts usersInTimezone.inspect
+      
       usersInTimezone.each do |user|
-        puts "There once was a sponge that lived under the sea"
         attributes = user.attributes.to_h
-        puts attributes["user_id"]
-        
         if times_array.include? attributes["user_id"].to_i
-          "entered the if"
           times_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
         else
           times_array[attributes["user_id"].to_i] = attributes
