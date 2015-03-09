@@ -677,6 +677,10 @@ class UsersController < ApplicationController
         end
       end 
     end
+
+    people_array.each do |user|
+      WhisperNotification.send_nightopen_notification(user["user_id"].to_i)  
+    end
     render nothing: true 
   end
 
