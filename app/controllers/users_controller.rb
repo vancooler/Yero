@@ -673,8 +673,7 @@ class UsersController < ApplicationController
           times_array[attributes["user_id"].to_i] = attributes
         end
       end
-      puts "times array"
-      puts times_array
+      
     end
     render nothing: true 
   end
