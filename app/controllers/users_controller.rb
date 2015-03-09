@@ -666,8 +666,12 @@ class UsersController < ApplicationController
       usersInTimezone.each do |user|
         attributes = user.attributes.to_h
         if times_array.include? attributes["user_id"].to_i
+          p "Replace:"
+          p attributes["user_id"]
           times_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
         else
+          p "Add:"
+          p attributes["user_id"]
           times_array[attributes["user_id"].to_i] = attributes
         end
       end
