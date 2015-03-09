@@ -1,18 +1,18 @@
 require 'clockwork'
-require 'config/boot'
-require 'config/environment'
 module Clockwork
-	handler do |job|
-		puts "Running #{job}"
-	end
+  handler do |job|
+    puts "Running #{job}"
+  end
 
-	# handler receives the time when job is prepared to run in the 2nd argument
-  	# handler do |job, time|
-  	#   puts "Running #{job}, at #{time}"
-  	# end
+  # handler receives the time when job is prepared to run in the 2nd argument
+  # handler do |job, time|
+  #   puts "Running #{job}, at #{time}"
+  # end
 
-  	every(15.minutes, 'Push.Notifications') {User.network_open}
-  	
+  every(10.seconds, 'frequent.job')
+  every(3.minutes, 'less.frequent.job')
+  every(1.hour, 'hourly.job')
 
-  	# "clockwork clock.rb" in terminal to run the clockwork executable.
+  every(1.day, 'midnight.job', :at => '00:00')
 end
+
