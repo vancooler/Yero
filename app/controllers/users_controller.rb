@@ -661,8 +661,7 @@ class UsersController < ApplicationController
     end
     people_array = Array.new
     times_array.each do |timezone|
-      puts timezone[0]
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles")
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0].to_s)
       
       usersInTimezone.each do |user|
         attributes = user.attributes.to_h
