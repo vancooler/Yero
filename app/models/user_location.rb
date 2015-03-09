@@ -29,4 +29,21 @@ class UserLocation < AWS::Record::HashModel
       return nil
     end
   end
+
+  def self.find_if_user_exist(id, latitude, longitude)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['UserLocation']
+    table.load_schema
+    items = table.items.where(:user_id).equals(id.to_s)
+    if item.count > 0
+      item.each do |i|
+        i.attributes.update do |u|
+          u.set 'latitude' => 'latitude'
+          u.set 'longitude' => 'longitude'
+        end
+      end
+    end
+    
+  end
+
 end

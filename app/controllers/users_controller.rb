@@ -661,14 +661,13 @@ class UsersController < ApplicationController
     end
     people_array = Array.new
     times_array.each do |timezone|
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0].to_s)
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0])
       
       if !usersInTimezone.blank?
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h
           if people_array.include? attributes["user_id"].to_i
-            p "The arrayP:"
-            p attributes["user_id"]
+            
             people_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
           else
             p "The arrayE:"

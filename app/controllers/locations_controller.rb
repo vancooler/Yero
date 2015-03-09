@@ -12,8 +12,10 @@ class LocationsController < ApplicationController
       user.latitude = params[:latitude].to_f
       user.longitude = params[:longitude].to_f
 
-      # if location_history.save && user.save
-      if user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f)
+      if user.save and UserLocation.find_if_user_exist(current_user.id)
+        render json: success
+      # elsif location_history.save && user.save
+      elsif user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f)
         render json: success
       else
         render json: error("Could not save location.")
