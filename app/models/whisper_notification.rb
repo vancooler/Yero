@@ -12,6 +12,7 @@ class WhisperNotification < AWS::Record::HashModel
               # '2' => chat request
               # '3' => lottery
   boolean_attr :viewed
+  boolean_attr :not_viewed_by_sender
   integer_attr :accepted
               # 0 => nothing
               # 1 => accepted
@@ -585,7 +586,7 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     chat_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     greeting_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
+    accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(1).where(:not_viewed_by_sender).equals(0)
     chat_request_number = 0
     venue_greeting_number = 0
     if chat_items.present?
@@ -615,7 +616,7 @@ class WhisperNotification < AWS::Record::HashModel
           type: hash["notification_type"].to_i,
           chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number,
-          accept_number: accept_number
+          accepted_request_number: accept_number
       }
 
     # And... sent! That's all it takes.
