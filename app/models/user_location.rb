@@ -38,8 +38,8 @@ class UserLocation < AWS::Record::HashModel
     if items.count > 0
       items.each do |i|
         i.attributes.update do |u|
-          u.set 'latitude' => 'latitude'
-          u.set 'longitude' => 'longitude'
+          u.set 'latitude' => latitude
+          u.set 'longitude' => longitude
         end
       end
       return items
