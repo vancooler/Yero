@@ -42,8 +42,9 @@ class UserLocation < AWS::Record::HashModel
           u.set 'longitude' => 'longitude'
         end
       end
+      return item
+    else
+      return false
     end
-    
   end
-
 end
