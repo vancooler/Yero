@@ -35,14 +35,14 @@ class UserLocation < AWS::Record::HashModel
     table = dynamo_db.tables['UserLocation']
     table.load_schema
     items = table.items.where(:user_id).equals(id.to_s)
-    if item.count > 0
-      item.each do |i|
+    if items.count > 0
+      items.each do |i|
         i.attributes.update do |u|
           u.set 'latitude' => 'latitude'
           u.set 'longitude' => 'longitude'
         end
       end
-      return item
+      return items
     else
       return false
     end
