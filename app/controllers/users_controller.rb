@@ -676,8 +676,10 @@ class UsersController < ApplicationController
     puts "people_array"
     puts people_array.inspect
     people_array.each do |person|
-      p "Jeremy Clarkson"
-      p person.inspect
+      if !person.blank?
+        p "Jeremy Clarkson"
+        p person.inspect
+      end
       # WhisperNotification.send_nightopen_notification(user["user_id"].to_i)  
     end
     render nothing: true 
