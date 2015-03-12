@@ -666,11 +666,8 @@ class UsersController < ApplicationController
       if !usersInTimezone.blank? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
-          if people_array.include? attributes["user_id"].to_i # If the array includes the guy's id
-            people_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)} # do some updates
-          else
-            people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
-          end
+          people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
+            
         end
       end 
     end
