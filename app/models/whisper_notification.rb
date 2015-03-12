@@ -624,6 +624,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.send_nightopen_notification(id)
+    app_local_path = Rails.root
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
