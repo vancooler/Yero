@@ -675,6 +675,8 @@ class UsersController < ApplicationController
 
     people_array.each do |person|
       if !person.blank?
+        p "Jeremy Clarkson"
+        p person.to_i.inspect
         WhisperNotification.send_nightopen_notification(person.to_i)  
       end
     end
