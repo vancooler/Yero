@@ -238,6 +238,7 @@ class UsersController < ApplicationController
         json.venue_name venue_obj["name"]
         json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
+        json.timestamp_read Time.at(venue['timestamp'])
         json.accepted venue["accepted"]
         json.viewed venue["viewed"]
         json.created_date venue["created_date"]
