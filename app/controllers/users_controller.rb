@@ -654,14 +654,14 @@ class UsersController < ApplicationController
     times_array = Array.new
     times_result.each do |timezone|
       Time.zone = timezone["timezone"]
-      # if Time.zone.now.strftime("%H:%M") == "17:00"
+      if Time.zone.now.strftime("%H:%M") == "17:00"
         open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
         times_array << open_network_tz
-      # end
+      end
     end
     people_array = Array.new
     times_array.each do |timezone|
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0])
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles")
       
       if !usersInTimezone.blank?
         usersInTimezone.each do |user|
