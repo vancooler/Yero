@@ -671,7 +671,7 @@ class UsersController < ApplicationController
           else
             p "The arrayE:"
             p attributes["user_id"]
-            people_array[attributes["user_id"].to_i] = attributes #Assign new attributes
+            people_array[attributes["user_id"].to_i] = attributes[] #Assign new attributes
           end
         end
       end 
