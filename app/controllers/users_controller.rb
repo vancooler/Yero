@@ -669,14 +669,14 @@ class UsersController < ApplicationController
           if people_array.include? attributes["user_id"].to_i # If the array includes the guy's id
             people_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)} # do some updates
           else
-            p "The arrayE:"
-            p attributes["user_id"]
             people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
           end
         end
       end 
     end
 
+    puts "people_array"
+    puts people_array.inspect
     people_array.each do |person|
       p "Jeremy Clarkson"
       p person.inspect
