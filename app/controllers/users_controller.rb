@@ -659,7 +659,7 @@ class UsersController < ApplicationController
       end
     end
     people_array = Array.new 
-    times_array["America/LA"] = "what"
+    times_array << ["America/Los_Angeles", "17:00"]
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
       usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles") #Find users of that timezone
       
