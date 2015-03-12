@@ -666,7 +666,7 @@ class UsersController < ApplicationController
       if !usersInTimezone.blank? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
-          if attributes["user_id"].blank?
+          if !attributes["user_id"].blank?
             people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
           end  
         end
