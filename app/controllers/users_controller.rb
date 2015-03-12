@@ -715,7 +715,7 @@ class UsersController < ApplicationController
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
-        json.timestamp_read  user["timestamp_read"]
+        json.timestamp_read  Time.at(user["timestamp_read"])
         json.accepted   user["accepted"].blank? ? nil : user["accepted"]
         json.declined   user["declined"].blank? ? nil : user["declined"]
         json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
