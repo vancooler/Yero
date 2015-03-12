@@ -279,10 +279,10 @@ class UsersController < ApplicationController
       venues << v
     end
 
-    return_data = same_venue_users + different_venue_users + no_badge_users + venues 
+    return_data = same_venue_users + different_venue_users + no_badge_users 
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     
-    users = return_data.sort_by { |hsh| hsh[:timestamp] }
+    users = return_data.sort_by { |hsh| hsh[:timestamp] } + venues.sort_by { |hsh| hsh[:timestamp]}
     
     render json: success(users, "data")
   end
@@ -648,6 +648,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # This code is attached to the CRON module Clockwork in clock.rb
   def network_open
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
