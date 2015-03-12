@@ -246,17 +246,6 @@ class UsersController < ApplicationController
       end
     end
 
-    # yero_message = Jbuilder.encode do |json|
-    #   json.array! yero_notify.each do |y|
-    #     json.yero_message "Welcome to Yero"
-    #     json.timestamp y["timestamp"]
-    #     json.viewed y["viewed"]
-    #     json.created_date y["created_date"]
-    #     json.whisper_id y["whisper_id"]
-    #     json.notification_type  1
-    #   end
-    # end
-
     users = JSON.parse(users).delete_if(&:blank?)
     venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
     # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
@@ -281,7 +270,8 @@ class UsersController < ApplicationController
 
     return_data = same_venue_users + different_venue_users + no_badge_users 
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
-    
+    puts "return data"
+    puts return_data.inspect
     users = return_data.sort_by { |hsh| hsh[:timestamp] } + venues.sort_by { |hsh| hsh[:timestamp]}
     
     render json: success(users, "data")
