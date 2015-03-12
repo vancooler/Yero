@@ -650,7 +650,7 @@ class UsersController < ApplicationController
 
   def network_open
     # p "Time zone is:"
-    times_result = TimeZonePlace.connection.select_all("select timezone from time_zone_places")
+    times_result = TimeZonePlace.select(:timezone)
     times_array = Array.new
     times_result.each do |timezone|
       Time.zone = timezone["timezone"]
@@ -679,7 +679,7 @@ class UsersController < ApplicationController
     end
 
     people_array.each do |user|
-      
+
       WhisperNotification.send_nightopen_notification(user["user_id"].to_i)  
     end
     render nothing: true 
