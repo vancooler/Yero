@@ -649,30 +649,28 @@ class UsersController < ApplicationController
   end
 
   def network_open
-    # p "Time zone is:"
-    times_result = TimeZonePlace.select(:timezone)
-    times_array = Array.new
-    times_result.each do |timezone|
-      Time.zone = timezone["timezone"]
-      if Time.zone.now.strftime("%H:%M") == "17:00"
-        open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")]
-        times_array << open_network_tz
+    times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
+    times_array = Array.new # Make a new array to hold the times that are at 5:00pm
+    times_result.each do |timezone| # Check each timezone
+      Time.zone = timezone["timezone"] # Assign timezone
+      if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
+        open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")] #format it
+        times_array << open_network_tz #Throw into array
       end
     end
-    people_array = Array.new
-    times_array.each do |timezone|
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles")
+    people_array = Array.new 
+    times_array.each do |timezone| #Each timezone that we found to be at 17:00
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone("America/Los_Angeles") #Find users of that timezone
       
-      if !usersInTimezone.blank?
+      if !usersInTimezone.blank? # If there are people in that timezone
         usersInTimezone.each do |user|
-          attributes = user.attributes.to_h
-          if people_array.include? attributes["user_id"].to_i
-            
-            people_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)}
+          attributes = user.attributes.to_h # Turn the people into usable attributes
+          if people_array.include? attributes["user_id"].to_i # If the array includes the guy's id
+            people_array.select{ |s| s["timestamp"].to_i < attributes["timestamp"].to_i}.each{|s| s.replace(attributes)} # do some updates
           else
             p "The arrayE:"
             p attributes["user_id"]
-            people_array[attributes["user_id"].to_i] = attributes
+            people_array[attributes["user_id"].to_i] = attributes #Assign new attributes
           end
         end
       end 
@@ -681,7 +679,7 @@ class UsersController < ApplicationController
     people_array.each do |user|
       p "Jeremy Clarkson"
       p user["user_id"]
-      WhisperNotification.send_nightopen_notification(user["user_id"].to_i)  
+      # WhisperNotification.send_nightopen_notification(user["user_id"].to_i)  
     end
     render nothing: true 
   end
