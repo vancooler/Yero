@@ -62,7 +62,6 @@ gem 'kaminari'
 gem 'newrelic_rpm'
 gem 'oink', '~> 0.10'
 gem 'mixpanel-ruby'
-gem 'clockwork'
 gem 'timezone'
 
 # gem 'carrierwave_direct'

@@ -641,7 +641,7 @@ class UsersController < ApplicationController
     end
   end
 
-  # This code is attached to the CRON module Clockwork in clock.rb
+  # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def network_open
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
