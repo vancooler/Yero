@@ -266,10 +266,10 @@ class UsersController < ApplicationController
       end
     end
     venues_array.each do |v|
-      no_badge_users << v
+      venues << v
     end
 
-    return_data = same_venue_users + different_venue_users + no_badge_users 
+    return_data = same_venue_users + different_venue_users + no_badge_users + venues.reverse
     # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
     puts "return data"
     puts return_data.inspect
