@@ -274,10 +274,8 @@ class UsersController < ApplicationController
     result_array.each do |r|
       return_data << r
     end 
-    # users = venues.sort_by { |hsh| hsh[:timestamp] } + same_venue_users.sort_by { |hsh| hsh[:timestamp] } + different_venue_users.sort_by { |hsh| hsh[:timestamp] } + no_badge_users.sort_by { |hsh| hsh[:timestamp] }
-    puts "return data"
-    puts return_data.inspect
-    users = return_data.sort_by { |hsh| hsh[:timestamp] }
+    
+    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }
     
     render json: success(users, "data")
   end
