@@ -277,6 +277,7 @@ class UsersController < ApplicationController
     
     users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
     users.each do |whisp|
+      puts "Whisper id is:"
       puts whisp["whisper_id"]
     end
     
