@@ -276,6 +276,9 @@ class UsersController < ApplicationController
     end 
     
     users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
+    users.each do |whisp|
+      puts whisp["whisper_id"]
+    end
     
     render json: success(users, "data")
   end
@@ -672,6 +675,7 @@ class UsersController < ApplicationController
         WhisperNotification.send_nightopen_notification(person.to_i)  
       end
     end
+
     render nothing: true 
   end
 
