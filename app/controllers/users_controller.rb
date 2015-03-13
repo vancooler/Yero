@@ -275,7 +275,7 @@ class UsersController < ApplicationController
       return_data << r
     end 
     
-    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }
+    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
     
     render json: success(users, "data")
   end
