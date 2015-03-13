@@ -30,7 +30,7 @@ class UserLocation < AWS::Record::HashModel
     end
   end
 
-  def self.find_if_user_exist(id, latitude, longitude)
+  def self.find_if_user_exist(id, latitude, longitude, timezone)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['UserLocation']
     table.load_schema
@@ -40,6 +40,7 @@ class UserLocation < AWS::Record::HashModel
         i.attributes.update do |u|
           u.set 'latitude' => latitude
           u.set 'longitude' => longitude
+          u.set 'timezone' => timezone
         end
       end
       return items
