@@ -290,7 +290,8 @@ class UsersController < ApplicationController
       whispers_array << whisp
     end
     
-    users["unviewed_badge"] = unviewed_badge.to_s
+    p "unviewed_badge"
+    p unviewed_badge.inspect
 
     render json: success(users, "data")
   end
