@@ -22,6 +22,13 @@ task :venue_locs => :environment do
   puts "Done"
 end
 
+desc "CRON Job, 15 min - Network Open task"
+task :network_open => :environment do
+  puts "Checking for networks approaching 5pm"
+  User.network_open
+  puts "Done."
+end
+
 #cleanup for user activity in venue and venue network
 namespace :cleanup do
 include ActionView::Helpers::DateHelper
