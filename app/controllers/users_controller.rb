@@ -273,7 +273,7 @@ class UsersController < ApplicationController
     end
     venues_array.each do |v|
       venues << v
-      if u["not_viewed_by_sender"].blank?
+      if v["not_viewed_by_sender"].blank?
         unviewed_badge++ 
       end
     end
