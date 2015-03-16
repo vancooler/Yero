@@ -265,14 +265,19 @@ class UsersController < ApplicationController
       else
         no_badge_users << u
       end
+      puts "not_viewed_by_sender"
+      puts u["not_viewed_by_sender"]
     end
     venues_array.each do |v|
       venues << v
+      puts "not_viewed_by_sender"
+      puts v["not_viewed_by_sender"]
     end
 
     result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
     return_data = Array.new
     result_array.each do |r|
+
       return_data << r
     end 
     
