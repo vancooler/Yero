@@ -293,7 +293,8 @@ class UsersController < ApplicationController
     end
     
     unviewed_badge = Jbuilder.encode do |json|
-      json.unviewed_badge unviewed_badge.to_json
+      json.array!
+      json.unviewed_badge unviewed_badge
     end
     p "unviewed_badge"
     p unviewed_badge.inspect
