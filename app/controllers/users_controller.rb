@@ -274,7 +274,7 @@ class UsersController < ApplicationController
     venues_array.each do |v|
       venues << v
       if v["not_viewed_by_sender"].blank?
-        uunviewed_badge = unviewed_badge + 1
+        unviewed_badge = unviewed_badge + 1
       end
     end
 
