@@ -292,8 +292,9 @@ class UsersController < ApplicationController
       whispers_array << whisp
     end
     
+    unviewed_badge = Jbuilder.encode(unviewed_badge)
     p "unviewed_badge"
-    p unviewed_badge.inspect
+    users << unviewed_badge
 
     render json: success(users, "data")
   end
