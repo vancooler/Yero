@@ -63,7 +63,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.viewed_by_sender(whispers)
-    whispsers.each do |w|
+    whispers.each do |w|
       whisp = WhisperNotification.find_by_dynamodb_id(w)
       if item.nil?
         return false
@@ -80,6 +80,7 @@ class WhisperNotification < AWS::Record::HashModel
           return true
         end
       end
+    end
   end
 
   def self.venue_info(id)
