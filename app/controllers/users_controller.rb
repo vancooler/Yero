@@ -267,7 +267,7 @@ class UsersController < ApplicationController
       else
         no_badge_users << u
       end
-      if u["not_viewed_by_sender"].blank?
+      if u["not_viewed_by_sender"] == 0
         p 'entered into users'
         unviewed_badge = unviewed_badge + 1
       end
