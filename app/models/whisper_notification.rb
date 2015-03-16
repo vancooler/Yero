@@ -45,11 +45,6 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.read_notification(id, user)
-    # mark as 'viewed' in aws dynamoDB notification table
-    # dynamo_db = AWS::DynamoDB.new
-    # table = dynamo_db.tables['WhisperNotification']
-    # table.load_schema
-    # item = table.items.where(:id).equals(id.to_s).first
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       return false
@@ -61,24 +56,33 @@ class WhisperNotification < AWS::Record::HashModel
           u.set 'viewed' => 1
         end
         return true
-        # number of notification to read for this user: -1
-        # if user.notification_read.nil? or user.notification_read <= 0
-        #   user.notification_read = 0
-        # else
-        #   user.notification_read = user.notification_read - 1
-        # end
-        # return user.save
       else
         return true
       end
     end
   end
 
+  def self.viewed_by_sender(whispers)
+    whispsers.each do |w|
+      whisp = WhisperNotification.find_by_dynamodb_id(w)
+      if item.nil?
+        return false
+      else
+        attributes = item.attributes.to_h
+        notification_type = attributes['notification_type'].to_s
+        if notification_type != "0"
+          item.attributes.update do |u|
+            u.set 'viewed' => 1
+            u.set 'not_viewed_by_sender' => 1
+          end
+          return true
+        else
+          return true
+        end
+      end
+  end
+
   def self.venue_info(id)
-    # dynamo_db = AWS::DynamoDB.new
-    # table = dynamo_db.tables['WhisperNotification']
-    # table.load_schema
-    # item = table.items.where(:id).equals(id.to_s).first
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
       return nil
@@ -135,6 +139,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['accepted'] = attributes['accepted'].to_i
         h['declined'] = attributes['declined'].to_i
         h['whisper_id'] = attributes['id']
+        h['not_viewed_by_sender'] = attributes['not_viewed_by_sender'].to_i
         h['intro'] = attributes['intro']
         receiver_items_array << h
       end
@@ -210,6 +215,7 @@ class WhisperNotification < AWS::Record::HashModel
           h['timestamp'] = attributes['timestamp'].to_i
           h['accepted'] = attributes['accepted']
           h['viewed'] = attributes['viewed']
+          h['not_viewed_by_sender'] = attributes['not_viewed_by_sender']
           h['created_date'] = attributes['created_date']
           h['whisper_id'] = attributes['id']
           venue << h # Throw venue_id into the array

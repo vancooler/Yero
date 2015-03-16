@@ -241,6 +241,7 @@ class UsersController < ApplicationController
         json.timestamp_read Time.at(venue['timestamp'])
         json.accepted venue["accepted"]
         json.viewed venue["viewed"]
+        json.not_viewed_by_sender venue["not_viewed_by_sender"]
         json.created_date venue["created_date"]
         json.whisper_id venue["whisper_id"]
         json.notification_type  1
@@ -275,10 +276,10 @@ class UsersController < ApplicationController
       return_data << r
     end 
     
+    whispers_array = Array.new
     users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
     users.each do |whisp|
-      puts "Whisper id is:"
-      puts whisp["whisper_id"]
+      whispers_array << whisp
     end
     
     render json: success(users, "data")
@@ -727,6 +728,7 @@ class UsersController < ApplicationController
         json.declined   user["declined"].blank? ? nil : user["declined"]
         json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
         json.intro_message user["intro"].blank? ? nil : user["intro"]
+        json.not_viewed_by_sender user["not_viewed_by_sender"].blank? 0 : user["not_viewed_by_sender"]
 
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
