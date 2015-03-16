@@ -340,7 +340,7 @@ class User < ActiveRecord::Base
   end
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
-  def self.network_open
+  def network_open
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
