@@ -298,7 +298,7 @@ class UsersController < ApplicationController
     # end
     p "unviewed_badge"
     p unviewed_badge.inspect
-    users << {"unviewed_badge" : unviewed_badge}
+    users << {"unviewed_badge" => unviewed_badge}
 
     render json: success(users, "data")
   end
