@@ -728,7 +728,7 @@ class UsersController < ApplicationController
         json.declined   user["declined"].blank? ? nil : user["declined"]
         json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
         json.intro_message user["intro"].blank? ? nil : user["intro"]
-        json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"].to_i
+        json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
 
         json.latitude       user["target_user"].latitude  
         json.longitude      user["target_user"].longitude 
