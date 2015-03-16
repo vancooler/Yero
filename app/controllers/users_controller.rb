@@ -291,13 +291,7 @@ class UsersController < ApplicationController
     users.each do |whisp|
       whispers_array << whisp
     end
-    
-    # unviewed_badge = Jbuilder.encode do |json|
-    #   json.array!
-    #   json.unviewed_badge unviewed_badge
-    # end
-    p "unviewed_badge"
-    p unviewed_badge.inspect
+    WhisperNotification.viewed_by_sender(whispers_array)
     users << {"unviewed_badge" => unviewed_badge}
 
     render json: success(users, "data")
