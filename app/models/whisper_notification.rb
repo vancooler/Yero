@@ -64,7 +64,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.viewed_by_sender(whispers)
     whispers.each do |w|
-      whisp = WhisperNotification.find_by_dynamodb_id(w)
+      item = WhisperNotification.find_by_dynamodb_id(w)
       if item.nil?
         return false
       else
