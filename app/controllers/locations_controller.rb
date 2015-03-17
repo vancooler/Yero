@@ -3,7 +3,8 @@ class LocationsController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def create
-    if current_user && params[:latitude].present? && params[:longitude].present? && params[:timezone].present?
+    # Add && params[:timezone].present? when we are doing timezones
+    if current_user && params[:latitude].present? && params[:longitude].present? 
       # location_history = current_user.locations.new(
       #   latitude: params[:latitude].to_f,
       #   longitude: params[:longitude].to_f)
