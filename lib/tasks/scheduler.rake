@@ -25,8 +25,7 @@ end
 desc "CRON Job, 15 min - Network Open task"
 task :network_open => :environment do
   puts "Checking for networks approaching 5pm"
-  user = User.new
-  user.network_open
+  User.network_open
   puts "Done."
 end
 
