@@ -291,8 +291,8 @@ class UsersController < ApplicationController
     users.each do |whisp|
       whispers_array << whisp
     end
-    WhisperNotification.viewed_by_sender(whispers_array)
-    users << {"unviewed_badge" => unviewed_badge}
+    # WhisperNotification.viewed_by_sender(whispers_array)
+    # users << {"unviewed_badge" => unviewed_badge}
 
     render json: success(users, "data")
   end
