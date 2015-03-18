@@ -370,8 +370,6 @@ class User < ActiveRecord::Base
         WhisperNotification.send_nightopen_notification(person.to_i)  
       end
     end
-
-    render nothing: true 
   end
 
 end
