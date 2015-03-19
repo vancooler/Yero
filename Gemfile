@@ -63,6 +63,7 @@ gem 'newrelic_rpm'
 gem 'oink', '~> 0.10'
 gem 'mixpanel-ruby'
 gem 'timezone'
+gem 'tzinfo'
 
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
