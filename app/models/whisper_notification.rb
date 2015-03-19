@@ -455,7 +455,8 @@ class WhisperNotification < AWS::Record::HashModel
     puts "whisper sent"
     if items.count == 1
       items.each do |i|
-        puts i.attributes.to_h
+        hash = i.attributes.to_h
+        puts hash["timestamp"]
       end
     end
     if items.present? and items.count > 0
