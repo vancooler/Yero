@@ -495,6 +495,23 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  def self.accept_friend_viewed_by_sender(whispers)
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
+    if items.count > 0
+      items.each do |i|
+        i.attributes.update do |u|
+            u.set 'viewed' => 1
+        end
+        item_info = i.attributes.to_h
+        return item_info
+      end
+    end
+    return false
+  end
+
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
