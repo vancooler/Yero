@@ -62,27 +62,6 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.viewed_by_sender(whispers)
-    whispers.each do |w|
-      item = WhisperNotification.find_by_dynamodb_id(w)
-      if item.nil?
-        return false
-      else
-        attributes = item.attributes.to_h
-        notification_type = attributes['notification_type'].to_s
-        if notification_type != "0"
-          item.attributes.update do |u|
-            u.set 'viewed' => 1
-            u.set 'not_viewed_by_sender' => 1
-          end
-          return true
-        else
-          return true
-        end
-      end
-    end
-  end
-
   def self.venue_info(id)
     item = WhisperNotification.find_by_dynamodb_id(id)
     if item.nil?
@@ -471,9 +450,6 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
     item = table.items.where(:id).equals(whisper_id.to_s)
-    p "The item:"
-    p item.inspect
-    puts item.count.inspect
     if item.count == 1
       item.each do |i|
         if state == 'accepted'
@@ -497,6 +473,26 @@ class WhisperNotification < AWS::Record::HashModel
       end
     end
     return false
+  end
+
+  def self.viewed_by_sender(whispers)
+    whispers.each do |w|
+      item = WhisperNotification.find_by_dynamodb_id(w)
+      if item.nil?
+        return false
+      else
+        attributes = item.attributes.to_h
+        notification_type = attributes['notification_type'].to_s
+        if notification_type != "0"
+          item.attributes.update do |u|
+            u.set 'viewed' => 1
+          end
+          return true
+        else
+          return true
+        end
+      end
+    end
   end
 
   def send_push_notification_to_target_user(message)
