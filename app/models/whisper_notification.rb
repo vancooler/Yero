@@ -495,11 +495,11 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.accept_friend_viewed_by_sender
+  def self.accept_friend_viewed_by_sender(id)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
+    items = table.items.where(:origin_id).equals(id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
     if items.count > 0
       items.each do |i|
         i.attributes.update do |u|
