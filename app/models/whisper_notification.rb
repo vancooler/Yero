@@ -643,7 +643,7 @@ class WhisperNotification < AWS::Record::HashModel
    
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
-    notification.alert = "Yero network is now online"
+    notification.alert = "Yero is now online. Connect to your city's network."
     
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
     notification.sound = "sosumi.aiff"
