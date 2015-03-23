@@ -327,10 +327,10 @@ class User < ActiveRecord::Base
     end
     people_array = Array.new
     puts "The open network" 
-    puts times_array
+    
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
       usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
-      
+      puts timezone[0]
       if !usersInTimezone.blank? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
