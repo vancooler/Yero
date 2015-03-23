@@ -337,9 +337,8 @@ class UsersController < ApplicationController
       end
       
       return_data = same_venue_users + different_venue_users + no_badge_users 
-      users = return_data
-      
-      p users
+      users = return_data.sort_by { |hsh| hsh[:timestamp] }
+
       render json: success(users, "data")
     else
       render json: success("User has no friends")
