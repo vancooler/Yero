@@ -149,32 +149,7 @@ class User < ActiveRecord::Base
         end
       end
     end
-=begin
-    venue_activities = []
 
-    Venue.all.each do |venue|
-      venue_activities << Activity.at_venue_tonight(venue.id)
-    end
-    venue_activities.flatten!
-    
-    active_users_id = []
-
-    activities_grouped_by_user_ids = venue_activities.group_by { |a| a[:user_id] }
-    activities_grouped_by_user_ids.delete(self.id) #remove current_user id from the list
-    activities_grouped_by_user_ids.each do |id_activity|
-      ordered_user_activity = id_activity[1].sort_by!{|t| t[:created_at]}
-      if ordered_user_activity.last.action == "Enter Beacon"
-        qualified = true
-      elsif ordered_user_activity.last.action == "Exit Beacon"
-        qualified = false
-      # todo
-      # elsif exit && before timeout 
-      else
-        qualified = false
-      end
-      active_users_id << id_activity[0] if qualified
-    end
-=end
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     max_distance = max_distance.blank? ? 20 : max_distance
     users = User.near(self, max_distance, :units => :km)
@@ -345,13 +320,14 @@ class User < ActiveRecord::Base
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
-      if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
+      # if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
         open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")] #format it
         times_array << open_network_tz #Throw into array
-      end
+      # end
     end
-    people_array = Array.new 
-    
+    people_array = Array.new
+    puts "The open network" 
+    puts open_network_tz
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
       usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
       
