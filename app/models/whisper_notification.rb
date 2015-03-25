@@ -438,13 +438,11 @@ class WhisperNotification < AWS::Record::HashModel
       items.each do |i|
         hash = i.attributes.to_h
         limit_time = hash["timestamp"].to_i + (12 * 3600)
-        
         if  Time.now.to_i > limit_time # If it has been 12hrs+ since you last whispered this person 
-          puts "12hrs+"
+          return false # You can whisper again
         else
-          put "Still waiting"
+          return true # You can't whisper yet.
         end
-        # puts hash["timestamp"]
       end
     elsif items.count == 2
       return true
