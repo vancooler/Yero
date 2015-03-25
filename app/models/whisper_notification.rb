@@ -445,7 +445,6 @@ class WhisperNotification < AWS::Record::HashModel
         end
         # puts hash["timestamp"]
       end
-    end
     elsif items.count == 2
       return true
     end
