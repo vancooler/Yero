@@ -437,7 +437,7 @@ class WhisperNotification < AWS::Record::HashModel
     if items.count == 1
       items.each do |i|
         hash = i.attributes.to_h
-        limit_time = Time.parse(hash["timestamp"]).to_i + (12 * 3600)
+        limit_time = hash["timestamp"].to_i + (12 * 3600)
         puts 'the timestamp'
         puts hash["timestamp"]
         puts 'limit time'
