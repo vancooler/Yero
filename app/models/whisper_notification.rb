@@ -444,7 +444,7 @@ class WhisperNotification < AWS::Record::HashModel
           return true # You can't whisper yet.
         end
       end
-    elsif items.count == 2
+    elsif items.count == 2 #Reached the max quota of whispers today
       return true
     end
     
