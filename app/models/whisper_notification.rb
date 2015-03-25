@@ -430,14 +430,11 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    puts Date.today.to_s
-    items = table.items.where(:target_id).equals(target_user_id.to_s).where(:origin_id).equals(origin_user_id.to_s).where(:notification_type).equals("2")
+    items = table.items.where(:target_id).equals(target_user_id.to_s).where(:origin_id).equals(origin_user_id.to_s).where(:notification_type).equals("2").where(:created_date).equals(Date.today.to_s)
     puts "whisper sent"
     puts items.count.inspect
     if items.count == 1
-      puts 'do i get here?'
       items.each do |i|
-        puts 'or here?'
         hash = i.attributes.to_h
         puts hash["timestamp"]
       end
