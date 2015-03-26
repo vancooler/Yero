@@ -64,6 +64,7 @@ gem 'oink', '~> 0.10'
 gem 'mixpanel-ruby'
 gem 'timezone'
 gem 'tzinfo'
+gem 'bcrypt', '3.1.7'
 
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'

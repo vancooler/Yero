@@ -24,6 +24,7 @@ class User < ActiveRecord::Base
     where.not(last_active: nil).
     order("last_active desc") 
   }
+  has_secure_password
 
   def main_avatar
     user_avatars.find_by(default: true)
