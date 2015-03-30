@@ -401,7 +401,8 @@ class WhisperNotification < AWS::Record::HashModel
       # check whether is in the array params
       if ids_array.include?(id) 
         item.attributes.update do |u|
-          u.set 'accepted' => 2          
+          u.set 'accepted' => 2 
+          u.set 'declined' => 1         
         end
       end
     end
