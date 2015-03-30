@@ -321,16 +321,14 @@ class User < ActiveRecord::Base
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
-      # if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
+      if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
         open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")] #format it
         times_array << open_network_tz #Throw into array
-      # end
+      end
     end
     people_array = Array.new 
     # times_array << "America/Los_Angeles"
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
-      puts "timezoneish"
-      puts timezone[0]
       usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
       
       if !usersInTimezone.blank? # If there are people in that timezone
