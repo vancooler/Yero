@@ -359,7 +359,7 @@ class UsersController < ApplicationController
     # Rails.logger.debug params.inspect
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
-    
+    puts sign_up_params.inspect
     user_registration = UserRegistration.new(sign_up_params)
     
     user = user_registration.user
@@ -424,7 +424,6 @@ class UsersController < ApplicationController
 
   def update_settings
     user = User.find_by_key(params[:key])
-    # user.assign_attributes(sign_up_params)
 
     if user.update(exclusive: params[:exclusive])
       u = Hash.new
