@@ -295,7 +295,7 @@ class UsersController < ApplicationController
       whispers_array << whisp["whisper_id"]
     end
     puts "Whispers:"
-    puts whispers_array
+    puts return_data
 
     WhisperNotification.viewed_by_sender(whispers_array)
     
