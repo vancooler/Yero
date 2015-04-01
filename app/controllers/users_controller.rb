@@ -291,7 +291,9 @@ class UsersController < ApplicationController
     users.each do |whisp|
       whispers_array << whisp
     end
-    
+    puts whispers_array
+    puts "USERS"
+    puts users
     WhisperNotification.viewed_by_sender(whispers_array)
     
 
