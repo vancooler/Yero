@@ -494,6 +494,7 @@ class WhisperNotification < AWS::Record::HashModel
       else
         attributes = item.attributes.to_h
         notification_type = attributes['notification_type'].to_s
+        puts attributes['id'].to_s
         if notification_type != "0"
           item.attributes.update do |u|
             u.set 'viewed' => 1
