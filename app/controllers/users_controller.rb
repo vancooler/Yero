@@ -289,11 +289,11 @@ class UsersController < ApplicationController
     whispers_array = Array.new
     users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
     users.each do |whisp|
-      whispers_array << whisp
+      whispers_array << whisp["whisper_id"]
     end
+    puts "Whispers:"
     puts whispers_array
-    puts "USERS"
-    puts users
+
     WhisperNotification.viewed_by_sender(whispers_array)
     
 
