@@ -487,10 +487,11 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.viewed_by_sender(whispers)
+    result = true
     whispers.each do |w|
       item = WhisperNotification.find_by_dynamodb_id(w)
       if item.nil?
-        return false
+        result = false && result
       else
         attributes = item.attributes.to_h
         notification_type = attributes['notification_type'].to_s
@@ -499,12 +500,13 @@ class WhisperNotification < AWS::Record::HashModel
           item.attributes.update do |u|
             u.set 'viewed' => 1
           end
-          return true
+          result = result && true
         else
-          return true
+          result = result && true
         end
       end
     end
+    return result
   end
 
   def self.accept_friend_viewed_by_sender(id)
