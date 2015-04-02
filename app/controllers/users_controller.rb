@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_api, except: [:sign_up]
+  before_action :authenticate_api, except: [:sign_up, :reset_password]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -364,7 +364,7 @@ class UsersController < ApplicationController
     # Rails.logger.debug params.inspect
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
-    puts sign_up_params.inspect
+
     user_registration = UserRegistration.new(sign_up_params)
     
     user = user_registration.user
@@ -488,8 +488,12 @@ class UsersController < ApplicationController
     end
   end
 
+  def reset_password
+    
+  end
+
   def forgot_password
-    @user = User.find_by_key(params[:key])
+    @user = User.find_by_email(params[:email])
     if (params[:email] == @user.email)
       UserMailer.forget_password(@user).deliver
       render json: success(true)
