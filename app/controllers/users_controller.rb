@@ -276,10 +276,10 @@ class UsersController < ApplicationController
     end
     venues_array.each do |v|
       venues << v
+      unviewed_whispers << v
       if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
         p 'entered into venues'
         unviewed_badge = unviewed_badge + 1
-        unviewed_whispers << v
       end
     end
 
