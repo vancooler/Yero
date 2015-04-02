@@ -207,7 +207,12 @@ class UsersController < ApplicationController
   end
 
   def whisper_sent
-    state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id])
+    if params[:timestamp].nil?
+      timestamp = Time.now.to_i
+    else
+      timestamp = params[:timestamp].to_i
+    end
+    state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id], timestamp)
     p 'state'
     p state
     if state == true

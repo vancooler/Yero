@@ -428,11 +428,11 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   # Function signifies whether the user has sent a whisper to the target user
-  def self.whisper_sent(origin_user_id, target_user_id)
+  def self.whisper_sent(origin_user_id, target_user_id, timestamp)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:target_id).equals(target_user_id.to_s).where(:origin_id).equals(origin_user_id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(Time.now.to_i - 12*3600)
+    items = table.items.where(:target_id).equals(target_user_id.to_s).where(:origin_id).equals(origin_user_id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600)
     puts "whisper sent"
     puts items.count.inspect
     # A whisper lasts 12 hours, so in one day, we can have at most 2 whispers.
