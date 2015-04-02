@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  before_action :authenticate_api, except: [:sign_up]
+  before_action :authenticate_api, except: [:sign_up, :login, :forgot_password]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -419,12 +419,28 @@ class UsersController < ApplicationController
   end
 
   def login
-    user = User.find_by_key(params[:key])
-    if (params[:email] == user.email and user.authenticate(params[:password]))
-      render json: success(user.to_json(true))
+    if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty? or params[:token].nil? or params[:token].empty?
+      render json: error("Login information missing.")
     else
-      render json: error(JSON.parse(user.errors.messages.to_json))
-    end  
+      user = User.find_by_email(params[:email]) # find by email, skip key
+      if !user.nil? and user.authenticate(params[:password])
+        # Authenticated successfully
+        # Check token change, do update for both token and key
+        if user.apn_token != params[:token]
+          # generate a new key
+          user.key = loop do
+            random_token = SecureRandom.urlsafe_base64(nil, false)
+            break random_token unless User.exists?(key: random_token)
+          end
+          # update token
+          user.token = params[:token]
+          user.save!
+        end
+        render json: success(user.to_json(true))
+      else
+        render json: error(JSON.parse(user.errors.messages.to_json))
+      end  
+    end
   end
 
   def update_settings
@@ -488,9 +504,10 @@ class UsersController < ApplicationController
     end
   end
 
+  # change to find by email
   def forgot_password
-    @user = User.find_by_key(params[:key])
-    if (params[:email] == @user.email)
+    @user = User.find_by_email(params[:email])
+    if !@user.nil?
       UserMailer.forget_password(@user).deliver
       render json: success(true)
     else
@@ -762,7 +779,7 @@ class UsersController < ApplicationController
   end
 
   def login_params
-    params.require(:user).permit(:email, :password, :key)
+    params.require(:user).permit(:email, :password, :token)
   end
 end
 
