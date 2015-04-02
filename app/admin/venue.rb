@@ -1,6 +1,16 @@
 ActiveAdmin.register Venue do
   permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude
+  
+  # batch_action :delete_venues do |selection|
+  #   Venue.find(selection).each do |venue|
+  #     # venue.status = 0
+  #     # venue.save!
+  #   end
+  #   redirect_to :back
+  # end
+
   index do
+    selectable_column
   	column :id
     column :email
     column "Name", :name
