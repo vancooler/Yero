@@ -16,6 +16,15 @@ class Venue < ActiveRecord::Base
 
   validates_presence_of :venue_network, :name
 
+  def country_name
+    if !country.nil?
+      country_code = ISO3166::Country[country]
+      if !country_code.nil?
+        country_code.translations[I18n.locale.to_s] || country_code.name
+      end
+    end
+  end
+
   def tonightly
     Nightly.today_or_create(self)
   end
