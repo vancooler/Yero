@@ -35,6 +35,7 @@ class WhisperNotification < AWS::Record::HashModel
     n.timestamp = Time.now
     n.created_date = Date.today.to_s
     n.viewed = false
+    n.not_viewed_by_sender = true
     n.accepted = false
     n.save!
 
@@ -498,6 +499,7 @@ class WhisperNotification < AWS::Record::HashModel
         if notification_type != "0"
           item.attributes.update do |u|
             u.set 'viewed' => 1
+            u.set 'not_viewed_by_sender' => 0
           end
           result = result && true
         else

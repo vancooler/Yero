@@ -223,7 +223,7 @@ class UsersController < ApplicationController
     # yero_notify = WhisperNotification.yero_notification(current_user.id)
 
     users = requests_friends_json(return_users)
-
+    puts return_venues
     venues_array = Jbuilder.encode do |json|
       #Loop through the return_venues ids and do a find to get the object
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
@@ -276,7 +276,7 @@ class UsersController < ApplicationController
     end
     venues_array.each do |v|
       venues << v
-      if v["not_viewed_by_sender"].blank?
+      if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
         p 'entered into venues'
         unviewed_badge = unviewed_badge + 1
         unviewed_whispers << v
