@@ -1,5 +1,5 @@
 ActiveAdmin.register Venue do
-  permit_params :email, :name, :venue_type, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude
+  permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude
   index do
   	column :id
     column :email

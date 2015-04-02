@@ -7,45 +7,46 @@ class RoomsController < ApplicationController
   def user_enter
     beacon = Beacon.find_by(key: params[:beacon_key])
     if beacon.blank?
-      beacon = BeaconInitialization.new(params[:beacon_key])
-      beacon.create
-      beacon = Beacon.find_by(key: params[:beacon_key])
-    end
-    puts params[:beacon_key]
-    beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
-    
-    
-    #log the last active time for venue and venue network
-    result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
-
-    #log in aws dynamoDB
-    UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
-    first_entry_flag = 0
-    #check whether the user entered this venue today, if not push greeting notification
-    if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
-      first_entry_flag = 1
-      p "venue message"
-      venue_message = "Welcome to " + beacon.room.venue.name + "! Open this to learn more about tonight."
-      p venue_message
-      n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1", venue_message)
-      p "n2"
-      p n2.inspect
-      # number of notification to read for this user: +1
-      if current_user.notification_read.nil? or current_user.notification_read == 0
-        current_user.notification_read = 1
-      else
-        current_user.notification_read += 1
-      end
-      current_user.save
-      n2.send_push_notification_to_target_user(venue_message)
-    end
-    first_entry = Hash.new
-    first_entry = {"First in this venue tonight" => first_entry_flag}
-
-    if result
-      render json: success(first_entry)
-    else
       render json: error("Could not enter.")
+      # beacon = BeaconInitialization.new(params[:beacon_key])
+      # beacon.create
+      # beacon = Beacon.find_by(key: params[:beacon_key])
+    else
+      puts params[:beacon_key]
+      beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
+      
+      #log the last active time for venue and venue network
+      result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
+
+      #log in aws dynamoDB
+      UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
+      first_entry_flag = 0
+      #check whether the user entered this venue today, if not push greeting notification
+      if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
+        first_entry_flag = 1
+        p "venue message"
+        venue_message = "Welcome to " + beacon.room.venue.name + "! Open this to learn more about tonight."
+        p venue_message
+        n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1", venue_message)
+        p "n2"
+        p n2.inspect
+        # number of notification to read for this user: +1
+        if current_user.notification_read.nil? or current_user.notification_read == 0
+          current_user.notification_read = 1
+        else
+          current_user.notification_read += 1
+        end
+        current_user.save
+        n2.send_push_notification_to_target_user(venue_message)
+      end
+      first_entry = Hash.new
+      first_entry = {"First in this venue tonight" => first_entry_flag}
+
+      if result
+        render json: success(first_entry)
+      else
+        render json: error("Could not enter.")
+      end
     end
 
 
