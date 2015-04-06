@@ -511,7 +511,7 @@ class UsersController < ApplicationController
   end
 
   def reset_password
-    @user = User.find_by_email(params[:email])
+    @user = User.find_by_key(params[:key])
     
   end
 
