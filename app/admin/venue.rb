@@ -74,10 +74,20 @@ ActiveAdmin.register Venue do
       row :age_requirement
       row :venue_type
       row :venue_network
-      row("Avatar ID") { |venue| venue.default_avatar.id if !venue.default_avatar.nil?}
-      row("Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
       row :longitude
       row :latitude
+      row("Default Avatar ID") { |venue| venue.default_avatar.id if !venue.default_avatar.nil?}
+      row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
+
+      table_for venue.secondary_avatars.order('id ASC') do
+        column "Secondary Avatars ID" do |a|
+          link_to a.id, [ :admin, a ]
+        end
+        column "Secondary Avatars" do |a|
+          image_tag(a.avatar)
+        end
+      end
+
     end
   end
 end
