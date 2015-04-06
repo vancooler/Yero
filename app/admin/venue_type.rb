@@ -1,4 +1,5 @@
 ActiveAdmin.register VenueType do
+  menu :parent => "VENUE"
   permit_params :name
   index do
   	column :id

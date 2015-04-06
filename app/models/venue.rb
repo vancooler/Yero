@@ -6,6 +6,7 @@ class Venue < ActiveRecord::Base
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
+  has_many :venue_avatars
   belongs_to :web_user
   belongs_to :venue_network
   belongs_to :venue_type
@@ -23,6 +24,14 @@ class Venue < ActiveRecord::Base
         country_code.translations[I18n.locale.to_s] || country_code.name
       end
     end
+  end
+
+  def default_avatar
+    self.venue_avatars.where(default: true).first
+  end
+
+  def secondary_avatars
+    self.venue_avatars.where.not(default: true)
   end
 
   def tonightly
