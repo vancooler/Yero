@@ -208,7 +208,7 @@ class UsersController < ApplicationController
 
   def whisper_sent
     if params[:timestamp].nil?
-      timestamp = (Time.now.to_f * 1000).to_i
+      timestamp = Time.now.to_i
     else
       timestamp = params[:timestamp].to_i
     end
@@ -512,7 +512,7 @@ class UsersController < ApplicationController
 
   def reset_password
     @user = User.find_by_email(params[:email])
-    raise params[:email].inspcet
+    
   end
 
   # change to find by email
