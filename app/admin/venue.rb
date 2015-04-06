@@ -1,4 +1,5 @@
 ActiveAdmin.register Venue do
+  menu :parent => "VENUE"
   permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude
   
   # batch_action :delete_venues do |selection|
@@ -72,9 +73,21 @@ ActiveAdmin.register Venue do
       row :phone
       row :age_requirement
       row :venue_type
+      row :venue_network
       row :longitude
       row :latitude
-      row :venue_network
+      row("Default Avatar ID") { |venue| venue.default_avatar.id if !venue.default_avatar.nil?}
+      row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
+
+      table_for venue.secondary_avatars.order('id ASC') do
+        column "Secondary Avatars ID" do |a|
+          link_to a.id, [ :admin, a ]
+        end
+        column "Secondary Avatars" do |a|
+          image_tag(a.avatar)
+        end
+      end
+
     end
   end
 end

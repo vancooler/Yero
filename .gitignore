@@ -14,6 +14,7 @@
 # Ignore all logfiles and tempfiles.
 /log/*.log
 /tmp
+/public
 .idea/*
 config/local_env.yml
 dump.rdb
