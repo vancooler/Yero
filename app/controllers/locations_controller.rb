@@ -14,7 +14,7 @@ class LocationsController < ApplicationController
       user.longitude = params[:longitude].to_f
 
       puts 'current_user'
-      puts current_user
+      puts current_user.to_h
 
       puts 'long and lat'
       puts user.latitude
