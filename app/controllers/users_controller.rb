@@ -539,7 +539,7 @@ class UsersController < ApplicationController
   end
 
   def password_reset
-    
+    params[:user].inspect
   end
 
   # change to find by email
