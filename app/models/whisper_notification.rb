@@ -416,7 +416,8 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    timestamp = Time.now.to_i
+    timestamp = (Time.now.to_f * 1000).to_i
+    puts timestamp
     items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600)
     return_array = Array.new
     items.each do |p|
