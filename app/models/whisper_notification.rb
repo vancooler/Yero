@@ -411,11 +411,13 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
+  # Function that gets all the users received whisper from current user
   def self.collect_whispers(current_user)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:created_date).equals(Date.today.to_s)
+    timestamp = Time.now
+    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600)
     return_array = Array.new
     items.each do |p|
       return_array << p.hash_value
