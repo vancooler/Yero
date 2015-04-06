@@ -512,7 +512,7 @@ class UsersController < ApplicationController
 
   def reset_password
     @user = User.find_by_email(params[:email])
-    
+    raise params[:email].inspcet
   end
 
   # change to find by email
