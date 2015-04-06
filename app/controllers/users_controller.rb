@@ -265,8 +265,6 @@ class UsersController < ApplicationController
 
     unviewed_badge = 0
     unviewed_whispers = []
-    puts "USERS:"
-    puts users
     users.each do |u|
       if u['different_venue_badge'].to_s == "true"
         different_venue_users << u
@@ -281,16 +279,18 @@ class UsersController < ApplicationController
         unviewed_whispers << u
       end
     end
+    puts "USERS:"
+    puts unviewed_whispers
     venues_array.each do |v|
       venues << v
       unviewed_whispers << v
-      if v["viewed"].nil? or v["viewed"].to_i != 0
+      if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
         p 'entered into venues'
         unviewed_badge = unviewed_badge + 1
       end
     end
 
-    result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
+    # result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
     return_data = Array.new
     unviewed_whispers.each do |r|
       return_data << r
