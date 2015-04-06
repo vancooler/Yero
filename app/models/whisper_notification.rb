@@ -11,8 +11,8 @@ class WhisperNotification < AWS::Record::HashModel
               # '1' => enter venue greeting
               # '2' => chat request
               # '3' => lottery
-  boolean_attr :viewed
-  boolean_attr :not_viewed_by_sender
+  boolean_attr :viewed                 #0->1
+  boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
               # 0 => nothing
               # 1 => accepted
