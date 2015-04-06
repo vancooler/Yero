@@ -1,4 +1,6 @@
 ActiveAdmin.register BetaSignupUser do
+  menu :parent => "USERS"
+
   actions :index, :show
   index do
   	column :id
