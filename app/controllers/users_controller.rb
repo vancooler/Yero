@@ -309,17 +309,40 @@ class UsersController < ApplicationController
     render json: success(users, "data")
   end
 
+
+  ########################
+  # To report a user
+  # Params: [:key, user_id, type_id, :reason]
+  #
+  #########################
   def report
-    report_user = ReportedUser.find_by(key: params[:key])
-    if report_user
-      report_user.count = report_user.count.to_i + 1
-      report_user.save!
-      render json: success(true)
-    elsif ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email], count: 1, user_id: params[:user_id])
-      render json: success(true)
+    reporting_user = User.find_by_key(params[:key])
+    reported_user = User.find(params[:user_id])
+    report_type = ReportType.find(params[:type_id])
+    if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
+      rep = ReportUserHistory.new
+      rep.reporting_user_id = reporting_user.id
+      rep.reported_user_id = reported_user.id
+      rep.report_type_id = report_type.id
+      rep.reason = params[:reason]
+      if rep.save!
+        render json: success(true)
+      else
+        render json: success(false)
+      end
     else
       render json: success(false)
     end
+    # report_user = ReportedUser.find_by(key: params[:key])
+    # if report_user
+    #   report_user.count = report_user.count.to_i + 1
+    #   report_user.save!
+    #   render json: success(true)
+    # elsif ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email], count: 1, user_id: params[:user_id])
+    #   render json: success(true)
+    # else
+    #   render json: success(false)
+    # end
   end
 
   def myfriends
