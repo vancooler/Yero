@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     puts "THE ID"
     puts current_user.id
     avatar_array = Array.new
-    if current_user.account_status == 1
+    if current_user.account_status == 1 or !current_user.default_avatar.nil?
       avatar_array[0] = {
             avatar: current_user.main_avatar.avatar.url,
             avatar_id: current_user.main_avatar.id,
