@@ -273,7 +273,7 @@ class UsersController < ApplicationController
       else
         no_badge_users << u
       end
-      if u["viewed"] == 0
+      if u["viewed"].to_i == 0
         p 'entered into users'
         unviewed_badge = unviewed_badge + 1
         unviewed_whispers << u
