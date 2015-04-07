@@ -10,7 +10,7 @@ ActiveAdmin.register User do
     column :first_name
     column :gender
     column :apn_token
-
+    column :account_status
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
     # end

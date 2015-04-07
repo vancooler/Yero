@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :login, :forgot_password,:reset_password]
+  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password,:reset_password]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -222,6 +222,7 @@ class UsersController < ApplicationController
     end
   end 
 
+  # TODO: only hide accepted/declined whisper
   def requests
     
     return_users = current_user.whisper_friends
@@ -385,6 +386,43 @@ class UsersController < ApplicationController
       render json: success(current_user)
     else
       render json: error(current_user.errors)
+    end
+  end
+
+  ####################################
+  #
+  # Signup user without avatar
+  #
+  ####################################
+  def sign_up_without_avatar
+    user_registration = UserRegistration.new(sign_up_without_avatar_params)
+    
+    user = user_registration.user
+
+    if user_registration.create
+      
+      response = user.to_json(true)
+      user_info = user
+      
+      # thumb = response["avatars"].first['avatar']
+      # if thumb
+      #   response["avatars"].first['thumbnail'] = thumb
+      #   response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+      # end
+      
+      # render json: user_registration.to_json.inspect
+      # render json: user_avatar.to_json.inspect
+      
+      intro = "Welcome to Yero"
+      n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
+      
+      render json: success(response)
+    else
+      if user.errors.on(:email)
+        render json: error("This email has already been taken.")
+      else
+        render json: error(JSON.parse(user.errors.messages.to_json))
+      end
     end
   end
 
@@ -814,6 +852,11 @@ class UsersController < ApplicationController
 
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar])
+    # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
+  end
+
+  def sign_up_without_avatar_params
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive)
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 
