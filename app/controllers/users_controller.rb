@@ -582,6 +582,12 @@ class UsersController < ApplicationController
   end
 
   def password_reset
+    puts "parmams users"
+    puts params[:user]
+    puts "keys"
+    puts params[:user][:key]
+
+
     @user = User.find_by_key(params[:user])
     puts "the user is"
     puts @user
