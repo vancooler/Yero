@@ -585,7 +585,13 @@ class UsersController < ApplicationController
 
   def password_reset
     @user = User.find_by_key(params[:user][:key])
-    puts @user
+    @user.password = params[:user][:password]
+    @user.password_confirmation = params[:user][:password_confirmation]
+    if @user.save == false
+      flash[:danger] = "Your password and password confirmation does not match!"
+    else
+      flash[:success] = "Password Change succeeded"
+    end
   end
 
   # change to find by email
