@@ -279,6 +279,8 @@ class UsersController < ApplicationController
       if u["viewed"].to_i == 0
         p 'entered into users'
         unviewed_badge = unviewed_badge + 1
+      end
+      if u["accepted"].to_i == 0 and u["declined"].to_i == 0
         unviewed_whispers << u
       end
     end
