@@ -391,11 +391,11 @@ class UsersController < ApplicationController
     end
   end
 
-  ####################################
+  ##########################################
   #
-  # Signup user without avatar
-  #
-  ####################################
+  # Temporary signup user without avatar
+  # (NO use anymore)
+  ##########################################
   def sign_up_without_avatar
     user_registration = UserRegistration.new(sign_up_without_avatar_params)
     
@@ -465,11 +465,13 @@ class UsersController < ApplicationController
       # The way in one step
       response = user.to_json(true)
       user_info = user
-      
-      thumb = response["avatars"].first['avatar']
-      if thumb
-        response["avatars"].first['thumbnail'] = thumb
-        response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+
+      if !response["avatars"].empty?
+        thumb = response["avatars"].first['avatar']
+        if thumb
+          response["avatars"].first['thumbnail'] = thumb
+          response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+        end
       end
       
       # render json: user_registration.to_json.inspect
