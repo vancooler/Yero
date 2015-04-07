@@ -582,7 +582,8 @@ class UsersController < ApplicationController
   end
 
   def password_reset
-    @user = params[:user].inspect
+    @user = User.find_by_key(params[:key])
+    
   end
 
   # change to find by email
