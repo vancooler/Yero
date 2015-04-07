@@ -10,7 +10,7 @@ ActiveAdmin.register User do
     column :first_name
     column :gender
     column :apn_token
-
+    column :account_status
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
     # end
@@ -32,6 +32,17 @@ ActiveAdmin.register User do
       row :snapchat_id
       row :wechat_id
       row :instagram_id
+      row("Default Avatar ID") { |ad| ad.default_avatar.id if !ad.default_avatar.nil?}
+      row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar) if !ad.default_avatar.nil?}
+
+      table_for ad.secondary_avatars.order('id ASC') do
+        column "Secondary Avatars ID" do |a|
+          a.id
+        end
+        column "Secondary Avatars" do |a|
+          image_tag(a.avatar)
+        end
+      end
     end
   end
 end
