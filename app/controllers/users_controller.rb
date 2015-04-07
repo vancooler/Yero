@@ -583,10 +583,8 @@ class UsersController < ApplicationController
 
   def password_reset
     @user = User.find_by_key(params[:user])
-    puts "user"  
-    puts params[:user]
-    puts "key"
-    puts params[:user][0]["key"]
+    puts "the user is"
+    puts @user
   end
 
   # change to find by email
