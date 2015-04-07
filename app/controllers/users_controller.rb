@@ -8,21 +8,23 @@ class UsersController < ApplicationController
     puts "THE ID"
     puts current_user.id
     avatar_array = Array.new
-    avatar_array[0] = {
-          avatar: current_user.main_avatar.avatar.url,
-          avatar_id: current_user.main_avatar.id,
-          default: true
-        }
-    avatar_array[1] = {
-          avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
-          avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
-          default: false
-        }
-    avatar_array[2] = {
-          avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
-          avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
-          default: false
-        }
+    if current_user.account_status == 1
+      avatar_array[0] = {
+            avatar: current_user.main_avatar.avatar.url,
+            avatar_id: current_user.main_avatar.id,
+            default: true
+          }
+      avatar_array[1] = {
+            avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
+            avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
+            default: false
+          }
+      avatar_array[2] = {
+            avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
+            avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
+            default: false
+          }
+    end
     user = {
       id: current_user.id,
       first_name: current_user.first_name,
