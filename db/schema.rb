@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326214805) do
+ActiveRecord::Schema.define(version: 20150408144409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -34,16 +34,16 @@ ActiveRecord::Schema.define(version: 20150326214805) do
   create_table "active_in_venue_networks", force: true do |t|
     t.integer  "venue_network_id",                                 null: false
     t.integer  "user_id",                                          null: false
-    t.datetime "last_activity",    default: '2014-12-11 18:32:22', null: false
-    t.datetime "enter_time",       default: '2014-12-11 18:32:22', null: false
+    t.datetime "last_activity",    default: '2014-09-05 19:48:39', null: false
+    t.datetime "enter_time",       default: '2014-09-05 19:48:39', null: false
     t.integer  "active_status",    default: 1
   end
 
   create_table "active_in_venues", force: true do |t|
     t.integer  "venue_id",                                      null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-12-11 18:32:22', null: false
-    t.datetime "enter_time",    default: '2014-12-11 18:32:22', null: false
+    t.datetime "last_activity", default: '2014-09-05 19:26:31', null: false
+    t.datetime "enter_time",    default: '2014-09-05 19:26:31', null: false
     t.integer  "beacon_id"
   end
 
@@ -145,15 +145,15 @@ ActiveRecord::Schema.define(version: 20150326214805) do
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
-    t.datetime "last_activity", default: '2014-12-11 18:32:21', null: false
-    t.datetime "enter_time",    default: '2014-12-11 18:32:21', null: false
+    t.datetime "last_activity", default: '2014-09-02 20:49:09', null: false
+    t.datetime "enter_time",    default: '2014-09-02 20:49:09', null: false
     t.integer  "temperature"
   end
 
   create_table "pokes", force: true do |t|
     t.integer  "poker_id"
     t.integer  "pokee_id"
-    t.datetime "poked_at", default: '2014-12-11 18:32:21'
+    t.datetime "poked_at", default: '2014-09-02 20:49:09'
     t.boolean  "viewed",   default: false
   end
 
@@ -173,6 +173,21 @@ ActiveRecord::Schema.define(version: 20150326214805) do
   end
 
   add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
+
+  create_table "report_types", force: true do |t|
+    t.string   "report_type_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "report_user_histories", force: true do |t|
+    t.integer  "reporting_user_id"
+    t.integer  "reported_user_id"
+    t.integer  "report_type_id"
+    t.text     "reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "reported_users", force: true do |t|
     t.string   "first_name"
@@ -223,6 +238,7 @@ ActiveRecord::Schema.define(version: 20150326214805) do
     t.boolean  "processing"
     t.boolean  "image_processed"
     t.boolean  "avatar_processing"
+    t.boolean  "is_active",         default: true
   end
 
   create_table "users", force: true do |t|
@@ -243,13 +259,13 @@ ActiveRecord::Schema.define(version: 20150326214805) do
     t.string   "email"
     t.string   "snapchat_id"
     t.string   "wechat_id"
-    t.string   "password"
     t.boolean  "discovery",         default: true
     t.boolean  "exclusive",         default: false
     t.boolean  "active",            default: true
     t.boolean  "accept_contract",   default: false
     t.string   "instagram_id"
     t.string   "password_digest"
+    t.integer  "account_status"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -266,7 +282,7 @@ ActiveRecord::Schema.define(version: 20150326214805) do
   create_table "venue_entered_todays", force: true do |t|
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
-    t.datetime "enter_time", default: '2014-12-11 18:32:22', null: false
+    t.datetime "enter_time", default: '2014-09-19 01:04:34', null: false
   end
 
   create_table "venue_networks", force: true do |t|
@@ -302,7 +318,7 @@ ActiveRecord::Schema.define(version: 20150326214805) do
     t.string   "phone"
     t.string   "dress_code"
     t.integer  "age_requirement"
-    t.integer  "venue_type_id"
+    t.string   "venue_type_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.float    "longitude"
@@ -350,7 +366,7 @@ ActiveRecord::Schema.define(version: 20150326214805) do
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
-    t.datetime "whisper_time",   default: '2014-12-11 18:32:22', null: false
+    t.datetime "whisper_time",   default: '2014-09-25 23:02:29', null: false
   end
 
   create_table "whispers", force: true do |t|
