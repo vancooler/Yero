@@ -399,24 +399,8 @@ class UsersController < ApplicationController
   # (NO use anymore)
   ##########################################
   def sign_up_without_avatar
-
-    puts "CHECK PARAM"
-    puts params[:birthday]
-    puts params[:email]
-    puts params[:first_name]
-    puts params[:password]
-    puts params[:password_confirmation]
-    puts params[:nonce]
-    puts params[:gender]
-    puts params[:instagram_id]
-    puts params[:snapchat_id]
-    puts params[:wechat_id]
-    puts params[:exclusive]
-
     if params[:email].empty? or params[:password].empty? or params[:birthday].empty? or params[:first_name].empty? or params[:gender].empty?
       render json: error("Required fields cannot be blank")
-    elsif params[:password_confirmation] != params[:password]
-      render json: error("Password doesn't match confirmation")
     else
       # good to signup
       @user = User.new(:email => params[:email],
