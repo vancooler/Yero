@@ -326,15 +326,21 @@ class UsersController < ApplicationController
     reported_user = User.find(params[:user_id])
     report_type = ReportType.find(params[:type_id])
     if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
-      rep = ReportUserHistory.new
-      rep.reporting_user_id = reporting_user.id
-      rep.reported_user_id = reported_user.id
-      rep.report_type_id = report_type.id
-      rep.reason = params[:reason]
-      if rep.save!
-        render json: success(true)
+      record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id(reporting_user.id, reported_user.id)
+      # no report record found
+      if record.nil?
+        rep = ReportUserHistory.new
+        rep.reporting_user_id = reporting_user.id
+        rep.reported_user_id = reported_user.id
+        rep.report_type_id = report_type.id
+        rep.reason = params[:reason]
+        if rep.save!
+          render json: success(true)
+        else
+          render json: success(false)
+        end
       else
-        render json: success(false)
+
       end
     else
       render json: success(false)

@@ -282,6 +282,10 @@ class User < ActiveRecord::Base
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
+  def name
+    first_name + ' (' + id.to_s + ')'
+  end
+
   def to_json(with_key)
     data = Jbuilder.encode do |json|
       json.id id
