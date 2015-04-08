@@ -594,7 +594,7 @@ class UsersController < ApplicationController
         flash[:danger] = "Your password and password confirmation does not match "
       end
     else
-      flash[:danger] = "Your password is too short (min. 6 characters)!"
+      flash[:danger] = "Incorrect Email or Your password is too short (min. 6 characters)!"
     end
   end
 
