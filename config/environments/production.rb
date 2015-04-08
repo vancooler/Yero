@@ -77,7 +77,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_options = {from: 'no-reply@example.com'}
-  config.action_mailer.default_url_options = { host: 'http://purpleoctopus-staging.herokuapp.com' }
+  config.action_mailer.default_url_options = { host: 'http://yero.co' }
   config.action_mailer.default :charset => "utf-8"
   # config.action_mailer.smtp_settings = {
   #   user_name: ENV['SENDGRID_USERNAME'],

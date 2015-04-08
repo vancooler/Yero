@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password,:reset_password, :password_reset]
+  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset]
   skip_before_filter  :verify_authenticity_token
 
   def show
