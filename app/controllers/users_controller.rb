@@ -599,6 +599,7 @@ class UsersController < ApplicationController
   # Renders a page for user to change password
   def reset_password
     @user = User.find_by_key(params[:key])
+    render "reset_password"
   end
 
   def password_reset
