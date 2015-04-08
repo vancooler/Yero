@@ -497,6 +497,8 @@ class UsersController < ApplicationController
       render json: error("Login information missing.")
     else
       user = User.find_by_email(params[:email]) # find by email, skip key
+      puts "The user"
+      puts user
       if !user.nil? and user.authenticate(params[:password])
         # Authenticated successfully
         # Check token change, do update for both token and key
