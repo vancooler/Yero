@@ -605,6 +605,10 @@ class UsersController < ApplicationController
   def password_reset
     puts params[:user][:password].length
     @user = User.find_by_key(params[:user][:key])
+    puts "email equals"
+    puts @user.email == params[:user][:email]
+    puts "password greater than 6"
+    puts params[:user][:password].length >= 6
     if (@user.email == params[:user][:email]) && (params[:user][:password].length >= 6)
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
