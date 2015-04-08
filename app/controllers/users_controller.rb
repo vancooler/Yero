@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :login, :forgot_password,:reset_password, :password_reset]
+  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password,:reset_password, :password_reset]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -399,33 +399,58 @@ class UsersController < ApplicationController
   # (NO use anymore)
   ##########################################
   def sign_up_without_avatar
-    user_registration = UserRegistration.new(sign_up_params)
-    
-    user = user_registration.user
 
-    if user_registration.create
-      
-      response = user.to_json(true)
-      user_info = user
-      
-      # thumb = response["avatars"].first['avatar']
-      # if thumb
-      #   response["avatars"].first['thumbnail'] = thumb
-      #   response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-      # end
-      
-      # render json: user_registration.to_json.inspect
-      # render json: user_avatar.to_json.inspect
-      
-      intro = "Welcome to Yero"
-      n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
-      
-      render json: success(response)
+    puts "CHECK PARAM"
+    puts params[:birthday]
+    puts params[:email]
+    puts params[:first_name]
+    puts params[:password]
+    puts params[:password_confirmation]
+    puts params[:nonce]
+    puts params[:gender]
+    puts params[:instagram_id]
+    puts params[:snapchat_id]
+    puts params[:wechat_id]
+    puts params[:exclusive]
+
+    if params[:email].empty? or params[:password].empty? or params[:birthday].empty? or params[:first_name].empty? or params[:gender].empty?
+      render json: error("Required fields cannot be blank")
+    elsif params[:password_confirmation] != params[:password]
+      render json: error("Password doesn't match confirmation")
     else
-      if user.errors.on(:email)
-        render json: error("This email has already been taken.")
+      # good to signup
+      @user = User.new(:email => params[:email],
+                       :password => params[:password],
+                       :birthday => params[:birthday],
+                       :first_name => params[:first_name],
+                       :gender => params[:gender])
+                       
+      @user.nonce = params[:nonce] if params[:nonce].present?
+      @user.instagram_id = params[:instagram_id] if params[:instagram_id].present?
+      @user.wechat_id = params[:wechat_id] if params[:wechat_id].present?
+      @user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
+      @user.exclusive = params[:exclusive] if params[:exclusive].present?
+      # create user key
+      @user.key = loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless User.exists?(key: random_token)
+      end
+
+      @user.last_active = Time.now
+      @user.account_status = 0  # inactive without avatar
+      if @user.save
+        response = @user.to_json(true)
+        
+        intro = "Welcome to Yero"
+        n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
+        
+        render json: success(response)
       else
-        render json: error(JSON.parse(user.errors.messages.to_json))
+        if @user.errors.on(:email)
+          render json: error("This email has already been taken.")
+        else
+          render json: error(JSON.parse(@user.errors.messages.to_json))
+        end
       end
     end
   end
@@ -436,9 +461,7 @@ class UsersController < ApplicationController
     # Rails.logger.debug params.inspect
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
-    puts "CHECK PARAM"
-    puts params[:user]
-    puts params['user[email]']
+    
 
     user_registration = UserRegistration.new(sign_up_params)
     
