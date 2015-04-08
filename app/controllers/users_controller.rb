@@ -496,7 +496,9 @@ class UsersController < ApplicationController
   end
 
   def login
+    puts "made it to login"
     if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty? or params[:token].nil? or params[:token].empty?
+      puts "inside if"
       render json: error("Login information missing.")
     else
       user = User.find_by_email(params[:email]) # find by email, skip key
