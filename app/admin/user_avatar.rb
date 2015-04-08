@@ -1,5 +1,7 @@
 ActiveAdmin.register UserAvatar do
   menu :parent => "USERS"
+  permit_params :user, :default, :avatar, :user_id, :is_active
+
   actions :index, :show
   batch_action :destroy, false
   batch_action :disable, :confirm => "Are you sure you want to disable all of these avatars?" do |selection|
