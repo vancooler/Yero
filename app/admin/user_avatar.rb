@@ -21,13 +21,14 @@ ActiveAdmin.register UserAvatar do
   index do
     selectable_column
   	column :id
-    column :user
+    column "User (ID)", :user
     column "Is default", :default
     column :is_active
     actions
   end
   filter :id
-  filter :user
+  # filter :user
+  filter :user, as: :select, collection: UserAvatar.includes(:user).where.not(user_id: nil).order(:user_id).collect { |cat| [cat.user.name, cat.user.id] if !cat.user.nil? }
   filter :default
   filter :is_active
 
