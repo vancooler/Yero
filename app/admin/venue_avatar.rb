@@ -1,6 +1,7 @@
 ActiveAdmin.register VenueAvatar do
   menu :parent => "VENUE"
   permit_params :venue, :default, :avatar, :venue_id
+  
   index do
   	column :id
     column :venue
