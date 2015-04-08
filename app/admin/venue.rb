@@ -76,7 +76,7 @@ ActiveAdmin.register Venue do
       row :venue_network
       row :longitude
       row :latitude
-      row("Default Avatar ID") { |venue| venue.default_avatar.id if !venue.default_avatar.nil?}
+      row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.nil?}
       row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
 
       table_for venue.secondary_avatars.order('id ASC') do
