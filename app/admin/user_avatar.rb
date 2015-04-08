@@ -28,7 +28,7 @@ ActiveAdmin.register UserAvatar do
   end
   filter :id
   # filter :user
-  filter :user, as: :select, collection: UserAvatar.includes(:user).order(:user_id).collect { |cat| [cat.user.name, cat.user.id] if !cat.user.nil? }
+  filter :user, as: :select, collection: UserAvatar.includes(:user).where.not(user_id: nil).order(:user_id).collect { |cat| [cat.user.name, cat.user.id] if !cat.user.nil? }
   filter :default
   filter :is_active
 
