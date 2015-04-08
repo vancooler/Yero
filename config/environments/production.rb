@@ -68,7 +68,7 @@ Rails.application.configure do
     address: 'smtp.gmail.com',
     port: 587, 
     domain: ENV['DOMAIN'],
-    user_name: "noreply@yero.co",
+    user_name: ENV['MAILER_USERNAME'],
     password: ENV['MAILER_PASSWORD'],
     authentication: 'plain',
     enable_starttls_auto: true
@@ -77,7 +77,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default_options = {from: 'no-reply@example.com'}
-  config.action_mailer.default_url_options = { host: 'http://purpleoctopus-staging.herokuapp.com/' }
+  config.action_mailer.default_url_options = { host: 'http://purpleoctopus-staging.herokuapp.com' }
   config.action_mailer.default :charset => "utf-8"
   # config.action_mailer.smtp_settings = {
   #   user_name: ENV['SENDGRID_USERNAME'],

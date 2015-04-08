@@ -1,5 +1,4 @@
 class User < ActiveRecord::Base
-
   has_many :traffics
   has_many :winners
   has_many :pokes, foreign_key: "pokee_id"
