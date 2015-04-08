@@ -32,17 +32,18 @@ ActiveAdmin.register User do
       row :snapchat_id
       row :wechat_id
       row :instagram_id
-      row("Default Avatar ID") { |ad| ad.default_avatar.id if !ad.default_avatar.nil?}
+      row("Default Avatar ID") { |ad| link_to ad.default_avatar.id, [ :admin, ad.default_avatar ] if !ad.default_avatar.nil?}
       row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar) if !ad.default_avatar.nil?}
 
       table_for ad.secondary_avatars.order('id ASC') do
         column "Secondary Avatars ID" do |a|
-          a.id
+          link_to a.id, [ :admin, a ]
         end
         column "Secondary Avatars" do |a|
           image_tag(a.avatar)
         end
       end
+
     end
   end
 end
