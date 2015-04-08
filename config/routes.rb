@@ -56,6 +56,9 @@ Rails.application.routes.draw do
   get 'beta-thankyou', to: 'home#beta-thankyou', as: :beta_thankyou
   get 'android-thankyou', to: 'home#android-thankyou', as: :android_thankyou
   get 'venues-thankyou', to: 'home#venues-thankyou', as: :venues_thankyou
+  get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
+  post 'api/v1/users/password_reset',         to: 'users#password_reset', as: "password_reset"
+
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
@@ -66,8 +69,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
   post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
-  get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
-  post 'api/v1/users/password_reset',         to: 'users#password_reset', as: "password_reset"
+  
   post 'api/v1/users/update-apn',             to: 'users#update_apn'
   post 'api/v1/users/network_open',           to: 'users#network_open'
   get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
