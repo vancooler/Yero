@@ -7,10 +7,10 @@ class WhisperNotification < AWS::Record::HashModel
   string_attr :venue_id
   string_attr :intro
   string_attr :notification_type
-              # '0' => welcome
+
               # '1' => enter venue greeting
-              # '2' => chat request
-              # '3' => lottery
+              # '2' => chat whisper request
+              # '3' => accept whisper request
   boolean_attr :viewed                 #0->1
   boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
@@ -603,7 +603,9 @@ class WhisperNotification < AWS::Record::HashModel
     p notification.inspect
 
     # And... sent! That's all it takes.
-    apn.push(notification)
+    if !token.nil? and !token.empty?
+      apn.push(notification)
+    end
   end
 
   def self.send_accept_notification_to_sender(whisper_id)
@@ -673,7 +675,9 @@ class WhisperNotification < AWS::Record::HashModel
       }
 
     # And... sent! That's all it takes.
-    apn.push(notification)
+    if !token.nil? and !token.empty?
+      apn.push(notification)
+    end
   end
 
   def self.send_nightopen_notification(id)
@@ -697,6 +701,8 @@ class WhisperNotification < AWS::Record::HashModel
     }
 
     # And... sent! That's all it takes.
-    apn.push(notification)
+    if !token.nil? and !token.empty?
+      apn.push(notification)
+    end
   end
 end

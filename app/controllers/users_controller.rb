@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password,:reset_password, :password_reset]
+  before_action :authenticate_api, except: [:sign_up, :login, :forgot_password,:reset_password, :password_reset]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -399,7 +399,7 @@ class UsersController < ApplicationController
   # (NO use anymore)
   ##########################################
   def sign_up_without_avatar
-    user_registration = UserRegistration.new(sign_up_without_avatar_params)
+    user_registration = UserRegistration.new(sign_up_params)
     
     user = user_registration.user
 
@@ -871,27 +871,7 @@ class UsersController < ApplicationController
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 
-  def sign_up_without_avatar_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive)
-    # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
-  end
-
   def login_params
     params.require(:user).permit(:email, :password, :token)
   end
 end
-
-
-# i = 1
-# while i < 31 do
-#   u = User.new
-#   u.birthday = "1993-09-09"
-#   u.first_name = "TEST_" + i.to_s
-
-#   u.gender = "Male"
-#   u.latitude = rand 49.0..50.0
-#   u.longitude = rand -124.0..-123.0
-#   u.key = SecureRandom.urlsafe_base64(nil, false)
-#   u.save
-#   i = i+1
-# end
