@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150326214805) do
+ActiveRecord::Schema.define(version: 20150408144409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,6 +174,21 @@ ActiveRecord::Schema.define(version: 20150326214805) do
 
   add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
 
+  create_table "report_types", force: true do |t|
+    t.string   "report_type_name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "report_user_histories", force: true do |t|
+    t.integer  "reporting_user_id"
+    t.integer  "reported_user_id"
+    t.integer  "report_type_id"
+    t.text     "reason"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "reported_users", force: true do |t|
     t.string   "first_name"
     t.string   "key"
@@ -223,6 +238,7 @@ ActiveRecord::Schema.define(version: 20150326214805) do
     t.boolean  "processing"
     t.boolean  "image_processed"
     t.boolean  "avatar_processing"
+    t.boolean  "is_active",         default: true
   end
 
   create_table "users", force: true do |t|
@@ -243,13 +259,13 @@ ActiveRecord::Schema.define(version: 20150326214805) do
     t.string   "email"
     t.string   "snapchat_id"
     t.string   "wechat_id"
-    t.string   "password"
     t.boolean  "discovery",         default: true
     t.boolean  "exclusive",         default: false
     t.boolean  "active",            default: true
     t.boolean  "accept_contract",   default: false
     t.string   "instagram_id"
     t.string   "password_digest"
+    t.integer  "account_status"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
