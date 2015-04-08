@@ -500,6 +500,8 @@ class UsersController < ApplicationController
       render json: error("Login information missing.")
     else
       user = User.find_by_email(params[:email]) # find by email, skip key
+      puts "The user"
+      puts user
       if !user.nil? and user.authenticate(params[:password])
         # Authenticated successfully
         # Check token change, do update for both token and key
@@ -587,16 +589,18 @@ class UsersController < ApplicationController
   end
 
   def password_reset
+    puts params[:user][:password].length
     @user = User.find_by_key(params[:user][:key])
-    if @user.email.to_s == params[:user][:email].to_s
+    if (@user.email == params[:user][:email]) && (params[:user][:password].length >= 6)
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
-        flash[:success] = "Password Change succeeded"
+        flash[:success] = "Password Change Succeeded"
       else
-        
-        flash[:danger] = "Your password and password confirmation does not match or your password is too short (min. 6 characters)!"
+        flash[:danger] = "Your password and password confirmation does not match "
       end
+    else
+      flash[:danger] = "Incorrect Email or Your password is too short (min. 6 characters)!"
     end
   end
 
