@@ -439,7 +439,7 @@ class UsersController < ApplicationController
     puts "CHECK PARAM"
     puts params[:user]
     puts params['user[email]']
-    
+
     user_registration = UserRegistration.new(sign_up_params)
     
     user = user_registration.user
@@ -878,3 +878,8 @@ class UsersController < ApplicationController
     params.require(:user).permit(:email, :password, :token)
   end
 end
+
+
+# NOTES:
+# whisper badge number  = notification unviewed number + # friend
+# College: 
