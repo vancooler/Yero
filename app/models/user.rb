@@ -13,8 +13,7 @@ class User < ActiveRecord::Base
   has_one :read_notification, dependent: :destroy
   has_one :active_in_venue, dependent: :destroy
   has_one :active_in_venue_network, dependent: :destroy
-  validates :password, length: { minimum: 5 }
-
+  
   reverse_geocoded_by :latitude, :longitude
 
   # mount_uploader :avatar, AvatarUploader
