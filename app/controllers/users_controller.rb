@@ -493,12 +493,20 @@ class UsersController < ApplicationController
   end
 
   def login
+    puts "made it to login"
     if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty?
+      puts "inside if"
+      puts "email"
+      puts params[:email]
+      puts "password"
+      puts params[:password]
+      puts "token"
+      puts params[:token]
       render json: error("Login information missing.")
     else
       user = User.find_by_email(params[:email]) # find by email, skip key
       puts "The user"
-      puts user
+      puts user.authenticate(params[:password])
       if !user.nil? and user.authenticate(params[:password])
         # Authenticated successfully
         # Check token change, do update for both token and key
