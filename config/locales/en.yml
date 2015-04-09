@@ -20,8 +20,20 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  errors:
+  	format: "%{message}"
   activerecord:
-      attributes:
-        venue:
-          name: "Venue"
+    errors:
+      models:
+        user:
+          email:
+            blank: Email can't be blank
+            invalid: Email is invalid
+            taken: Email has already been taken
+          password:
+            blank: Password can't be blank
+            too_short: Password is too short (minimum is 6 characters)
+          password_confirmation:
+            blank: Password can't be blank
+            too_short: Password is too short (minimum is 6 characters)
+
