@@ -619,46 +619,46 @@ class UsersController < ApplicationController
       @user = User.find_by_key(params[:user][:key])
       puts "params[:user].blank"
       puts @user.inspect
-      error = Array.new
+      @error = Array.new
       if @user.email.to_s.downcase != params[:user][:email].to_s.downcase 
         flash[:danger] = true 
-        error << "Email given does not match email from password recovery."
+        @error << "Email given does not match email from password recovery."
         puts "Email given does not match email from password recovery."
         email_mismatch = false
       end
       if params[:user][:email].blank?
         flash[:danger] = true
-        error << "Email cannot be blank."
+        @error << "Email cannot be blank."
         puts "Email cannot be blank."
         email_blank = false
       end
       if params[:user][:password].blank?
         flash[:danger] = true 
-        error << "Password cannot be empty."
+        @error << "Password cannot be empty."
         puts "Password cannot be empty."
         password_blank = false
       end
       if params[:user][:password_confirmation].blank?
         flash[:danger] = true
-        error << "Password confirmation cannot be empty."
+        @error << "Password confirmation cannot be empty."
         puts "Password confirmation cannot be empty."
         password_conf_empty = false
       end
       if params[:user][:password].length < 6
         flash[:danger]= true
-        error << "Password is too short (minimum is 6 characters)."
+        @error << "Password is too short (minimum is 6 characters)."
         puts "Password is too short (minimum is 6 characters)."
         password_short = false
       end
       if params[:user][:password] != params[:user][:password_confirmation]
         flash[:danger] = true 
-        error << "Passwords do not match."
+        @error << "Passwords do not match."
         puts "Passwords do not match."
         password_mismatch = false
       end
       if !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
         flash[:danger] = true 
-        error << "Email is invalid" 
+        @error << "Email is invalid" 
         puts "Email is invalid"
         email_invalid = false
       end
