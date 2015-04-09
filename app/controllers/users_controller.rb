@@ -500,7 +500,7 @@ class UsersController < ApplicationController
       
       render json: success(response)
     else
-      if user.errors.on(:email)
+      if !user.errors.messages[:email][0].nil? and user.errors.messages[:email][0] == "has already been taken"
         render json: error("This email has already been taken.")
       else
         render json: error(JSON.parse(user.errors.messages.to_json))
