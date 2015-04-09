@@ -452,12 +452,23 @@ class UsersController < ApplicationController
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
     
-
+    # Parameters: {"birthday"=>"Apr 9, 1997", "email"=>"gfdertyu@c.nnn", "first_name"=>"f", "gender"=>"M", "instagram_id"=>"p", "password"=>"[FILTERED]", "snapchat_id"=>"", "wechat_id"=>"g", "user"=>{"user_avatars_attributes"=>{"0"=>{"avatar"=>#<ActionDispatch::Http::UploadedFile:0x007f195557e660 @tempfile=#<Tempfile:/tmp/RackMultipart20150409-6-l8lq>, @original_filename="avatar.jpg", @content_type="image/jpeg", @headers="Content-Disposition: form-data; name=\"user[user_avatars_attributes][0][avatar]\"; filename=\"avatar.jpg\"\r\nContent-Type: image/jpeg\r\n">}}}}
     user_registration = UserRegistration.new(sign_up_params)
     
-    user = user_registration.user
+    user_registration.user.email = params[:email] if params[:email].present?
+    user_registration.user.password = params[:password] if params[:password].present?
+    user_registration.user.birthday = params[:birthday] if params[:birthday].present?
+    user_registration.user.first_name = params[:first_name] if params[:first_name].present?
+    user_registration.user.gender = params[:gender] if params[:gender].present?                       
+    user_registration.user.nonce = params[:nonce] if params[:nonce].present?
+    user_registration.user.instagram_id = params[:instagram_id] if params[:instagram_id].present?
+    user_registration.user.wechat_id = params[:wechat_id] if params[:wechat_id].present?
+    user_registration.user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
+    user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
     if user_registration.create
+      user = user_registration.user
+      
       # #signup with the avatar id
       # avatar_id = sign_up_params[:avatar_id]
       # response = user.to_json(true)
