@@ -242,28 +242,36 @@ class User < ActiveRecord::Base
   end
 
   def distance_label(user)
-    distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
-    case distance 
-    when 0..2    
-      return "Within 2km" 
-    when 2..5    
-      return "Within 5km" 
-    when 5..10    
-      return "Within 10km" 
-    when 10..20    
-      return "Within 20km" 
-    when 20..40    
-      return "Within 40km" 
-    when 40..61    
-      return "Within 60km" 
-    else
+    if user.latitude.nil? or user .longitude.nil?
       return "More than 60km"
+    else
+      distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
+      case distance 
+      when 0..2    
+        return "Within 2km" 
+      when 2..5    
+        return "Within 5km" 
+      when 5..10    
+        return "Within 10km" 
+      when 10..20    
+        return "Within 20km" 
+      when 20..40    
+        return "Within 40km" 
+      when 40..61    
+        return "Within 60km" 
+      else
+        return "More than 60km"
+      end
     end
   end
 
   def actual_distance(user)
-    distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
-    return distance
+    if user.latitude.nil? or user .longitude.nil?
+      return 10000
+    else
+      distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
+      return distance
+    end
   end
 
   def last_activity
