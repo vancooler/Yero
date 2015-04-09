@@ -4,10 +4,15 @@ ActiveAdmin.register VenueAvatar do
   
   index do
   	column :id
+    column :avatar do |avatar|
+      image_tag avatar.avatar.url
+    end
     column :venue
     column "Is default", :default
   	actions
   end
+  filter :venue
+  filter :default
 
   form do |f|
     f.inputs "Details" do
@@ -18,8 +23,6 @@ ActiveAdmin.register VenueAvatar do
     end
     f.actions
   end
-  filter :venue
-  filter :default
 
   show do |venue|
     attributes_table_for venue do
