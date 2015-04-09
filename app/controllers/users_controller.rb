@@ -619,24 +619,31 @@ class UsersController < ApplicationController
     if @user.email.to_s.downcase != params[:user][:email].to_s.downcase 
       flash[:danger] = "Email given does not match email from password recovery."
       email_mismatch = false
+    end
     if params[:user][:email].blank?
       flash[:danger] = "Email cannot be blank."
       email_blank = false
+    end
     if params[:user][:password].blank?
       flash[:danger] = "Password cannot be empty."
       password_blank = false
+    end
     if params[:user][:password][:confirmation].blank?
       flash[:danger] = "Password confirmation cannot be empty."
       password_conf_empty = false
+    end
     if params[:user][:password].length < 6
       flash[:danger] = "Password is too short (minimum is 6 characters)."
       password_short = false
+    end
     if params[:user][:password] != params[:user][:password_confirmation]
       flash[:danger] = "Passwords do not match."
       password_mismatch = false
+    end
     if !email.match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
       flash[:danger] = "Email is invalid" 
       email_invalid = false
+    end
 
     if email_mismatch && email_blank && password_blank && password_conf_empty && password_short && password_mismatch && email_invalid
       @user.password = params[:user][:password]
