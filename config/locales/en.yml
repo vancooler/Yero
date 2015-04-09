@@ -28,13 +28,12 @@ en:
         user:
           attributes:
             email:
-              blank: Email can't be blank
-              invalid: Email is invalid
-              taken: Email has already been taken
+              blank: Email can't be blank!
+              invalid: Email is invalid!
             password:
-              blank: Password can't be blank
-              too_short: Password is too short (minimum is 6 characters)
+              blank: New password(s) cannot be empty.
+              too_short: Password is too short (minimum is 6 characters)!
             password_confirmation:
-              blank: Password can't be blank
-              confirmation: Password doesn't match confirmation
+              blank: New password(s) cannot be empty.
+              confirmation: Password doesn't match confirmation!
 
