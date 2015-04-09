@@ -705,4 +705,31 @@ class WhisperNotification < AWS::Record::HashModel
       apn.push(notification)
     end
   end
+
+  # Send notification when the avatar is disabled by admin
+  def self.send_avatar_disabled_notification(id)
+    app_local_path = Rails.root
+    apn = Houston::Client.development
+    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+
+    # An example of the token sent back when a device registers for notifications
+    token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+   
+    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    notification = Houston::Notification.new(device: token)
+    notification.alert = "Your main avatar looks not so good... Please use another one as your main avatar."
+    
+    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+    notification.sound = "sosumi.aiff"
+    notification.category = "INVITE_CATEGORY"
+    notification.content_available = true
+    notification.custom_data = {         
+          target_apn: token
+    }
+
+    # And... sent! That's all it takes.
+    if !token.nil? and !token.empty?
+      apn.push(notification)
+    end
+  end
 end
