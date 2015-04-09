@@ -599,30 +599,23 @@ class UsersController < ApplicationController
   # Renders a page for user to change password
   def reset_password
     @user = User.find_by_key(params[:key])
-    render "reset_password"
+    
   end
 
   def password_reset
-    puts params[:user][:password].length
     @user = User.find_by_key(params[:user][:key])
-    puts "email - db"
-    puts @user.email.to_s.downcase
-    puts "email - input"
-    puts params[:user][:email].to_s.downcase
-    puts "email equals"
-    puts @user.email.to_s.downcase == params[:user][:email].to_s.downcase
-    puts "password greater than 6"
-    puts params[:user][:password].length >= 6
     if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
         flash[:success] = "Password Change Succeeded"
       else
-        flash[:danger] = "Your password and password confirmation does not match "
+        flash[:danger] = "Your password and password confirmation does not match"
+        render "reset_password"
       end
     else
       flash[:danger] = "Incorrect Email or Your password is too short (min. 6 characters)!"
+      render "reset_password"
     end
   end
 
