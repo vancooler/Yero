@@ -634,7 +634,7 @@ class UsersController < ApplicationController
         puts "Password cannot be empty."
         password_blank = false
       end
-      if params[:user][:password][:confirmation].blank?
+      if params[:user][:password][:password_confirmation].blank?
         flash[:danger] = "Password confirmation cannot be empty."
         puts "Password confirmation cannot be empty."
         password_conf_empty = false
