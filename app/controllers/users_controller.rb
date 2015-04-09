@@ -649,7 +649,7 @@ class UsersController < ApplicationController
         puts "Passwords do not match."
         password_mismatch = false
       end
-      if !email.match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
+      if !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
         flash[:danger] = "Email is invalid" 
         puts "Email is invalid"
         email_invalid = false
