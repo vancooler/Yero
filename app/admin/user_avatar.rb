@@ -7,7 +7,10 @@ ActiveAdmin.register UserAvatar do
   batch_action :disable, :confirm => "Are you sure you want to disable all of these avatars?" do |selection|
     UserAvatar.find(selection).each do |ua|
       ua.is_active = false
-      ua.save!
+      if ua.save! and !ua.user_id.nil?
+        # notification
+        WhisperNotification.send_avatar_disabled_notification(ua.user_id)
+      end
     end
     redirect_to :back, :notice => "Selected avatars are disabled"
   end
@@ -35,6 +38,7 @@ ActiveAdmin.register UserAvatar do
   # filter :user, as: :select, collection: UserAvatar.includes(:user).where.not(user_id: nil).order(:user_id).reverse.uniq.collect { |cat| [cat.user.name, cat.user.id] if !cat.user.nil? }
   filter :default
   filter :is_active
+  filter :updated_at
 
   # form do |f|
   #   f.inputs "Details" do
