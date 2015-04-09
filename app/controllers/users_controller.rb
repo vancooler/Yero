@@ -616,16 +616,35 @@ class UsersController < ApplicationController
 
   def password_reset
     @user = User.find_by_key(params[:user][:key])
-    # if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
+    if @user.email.to_s.downcase != params[:user][:email].to_s.downcase 
+      flash[:danger] = "Email given does not match email from password recovery."
+      email_mismatch = false
+    if params[:user][:email].blank?
+      flash[:danger] = "Email cannot be blank."
+      email_blank = false
+    if params[:user][:password].blank?
+      flash[:danger] = "Password cannot be empty."
+      password_blank = false
+    if params[:user][:password][:confirmation].blank?
+      flash[:danger] = "Password confirmation cannot be empty."
+      password_conf_empty = false
+    if params[:user][:password].length < 6
+      flash[:danger] = "Password is too short (minimum is 6 characters)."
+      password_short = false
+    if params[:user][:password] != params[:user][:password_confirmation]
+      flash[:danger] = "Passwords do not match."
+      password_mismatch = false
+    if !email.match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
+      flash[:danger] = "Email is invalid" 
+      email_invalid = false
+
+    if email_mismatch && email_blank && password_blank && password_conf_empty && password_short && password_mismatch && email_invalid
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
         flash[:success] = "Password Change Succeeded"
-      else
-        flash[:danger] = "Your password and password confirmation does not match"
       end
-    # else
-    # end
+    end
   end
 
   # change to find by email
