@@ -606,11 +606,11 @@ class UsersController < ApplicationController
     puts params[:user][:password].length
     @user = User.find_by_key(params[:user][:key])
     puts "email - db"
-    @user.email.to_s.downcase
+    puts @user.email.to_s.downcase
     puts "email - input"
-    params[:user][:email].to_s.downcase
+    puts params[:user][:email].to_s.downcase
     puts "email equals"
-    @user.email.to_s.downcase == params[:user][:email].to_s.downcas
+    @user.email.to_s.downcase == params[:user][:email].to_s.downcase
     puts "password greater than 6"
     puts params[:user][:password].length >= 6
     if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
