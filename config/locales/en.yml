@@ -21,7 +21,7 @@
 
 en:
   errors:
-  	format: "%{message}"
+    format: "%{message}"
   activerecord:
     errors:
       models:
