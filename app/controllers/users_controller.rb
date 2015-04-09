@@ -616,19 +616,16 @@ class UsersController < ApplicationController
 
   def password_reset
     @user = User.find_by_key(params[:user][:key])
-    if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
+    # if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
       @user.password = params[:user][:password]
       @user.password_confirmation = params[:user][:password_confirmation]
       if @user.save
         flash[:success] = "Password Change Succeeded"
       else
         flash[:danger] = "Your password and password confirmation does not match"
-        render "reset_password"
       end
-    else
-      flash[:danger] = "Incorrect Email or Your password is too short (min. 6 characters)!"
-      render "reset_password"
-    end
+    # else
+    # end
   end
 
   # change to find by email
