@@ -36,5 +36,5 @@ en:
               too_short: Password is too short (minimum is 6 characters)
             password_confirmation:
               blank: Password can't be blank
-              too_short: Password is too short (minimum is 6 characters)
+              confirmation: Password doesn't match confirmation
 
