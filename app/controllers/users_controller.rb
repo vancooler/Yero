@@ -224,7 +224,7 @@ class UsersController < ApplicationController
     end
   end 
 
-  # TODO: only hide accepted/declined whisper
+
   def requests
     
     return_users = current_user.whisper_friends
@@ -401,8 +401,8 @@ class UsersController < ApplicationController
 
   ##########################################
   #
-  # Temporary signup user without avatar
-  # (NO use anymore)
+  # Signup user without avatar
+  # 
   ##########################################
   def sign_up_without_avatar
     if params[:email].empty? or params[:password].empty? or params[:birthday].empty? or params[:first_name].empty? or params[:gender].empty?
@@ -517,15 +517,16 @@ class UsersController < ApplicationController
       puts user.authenticate(params[:password])
       if !user.nil? and user.authenticate(params[:password])
         # Authenticated successfully
-        # Check token change, do update for both token and key
+        # Check token change, do update for both token and key 
+        # (TODO: change to another field to identify a new device)
         if user.apn_token != params[:token]
-          # generate a new key
-          user.key = loop do
-            random_token = SecureRandom.urlsafe_base64(nil, false)
-            break random_token unless User.exists?(key: random_token)
-          end
-          # update token
-          user.token = params[:token]
+          # # generate a new key
+          # user.key = loop do
+          #   random_token = SecureRandom.urlsafe_base64(nil, false)
+          #   break random_token unless User.exists?(key: random_token)
+          # end
+          # # update token
+          # # user.token = params[:token]
           user.save!
         end
         render json: success(user.to_json(true))

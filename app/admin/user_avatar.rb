@@ -21,6 +21,9 @@ ActiveAdmin.register UserAvatar do
   index do
     selectable_column
   	column :id
+    column :avatar do |avatar|
+      image_tag avatar.avatar.url
+    end
     column "User (ID)", :user
     column "Is default", :default
     column :is_active
