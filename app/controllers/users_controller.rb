@@ -610,7 +610,7 @@ class UsersController < ApplicationController
     puts "email - input"
     puts params[:user][:email].to_s.downcase
     puts "email equals"
-    @user.email.to_s.downcase == params[:user][:email].to_s.downcase
+    puts @user.email.to_s.downcase == params[:user][:email].to_s.downcase
     puts "password greater than 6"
     puts params[:user][:password].length >= 6
     if (@user.email.to_s.downcase == params[:user][:email].to_s.downcase) && (params[:user][:password].length >= 6)
