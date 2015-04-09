@@ -56,8 +56,8 @@ Rails.application.routes.draw do
   get 'beta-thankyou', to: 'home#beta-thankyou', as: :beta_thankyou
   get 'android-thankyou', to: 'home#android-thankyou', as: :android_thankyou
   get 'venues-thankyou', to: 'home#venues-thankyou', as: :venues_thankyou
-  get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
-  post 'users/password_reset',                to: 'users#password_reset', as: "password_reset"
+  # get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
+  match 'users/password_reset/:key',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
 
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
