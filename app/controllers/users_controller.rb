@@ -629,38 +629,38 @@ class UsersController < ApplicationController
       end
       if params[:user][:email].blank?
         flash[:danger] = true
-        @error << "Email cannot be blank."
+        @error << "Please complete all fields"
         puts "Email cannot be blank."
         email_blank = false
       end
       if params[:user][:password].blank?
         flash[:danger] = true 
-        @error << "Password cannot be empty."
+        @error << "Please complete all fields"
         puts "Password cannot be empty."
         password_blank = false
       end
       if params[:user][:password_confirmation].blank?
         flash[:danger] = true
-        @error << "Password confirmation cannot be empty."
+        @error << "Please complete all fields"
         puts "Password confirmation cannot be empty."
         password_conf_empty = false
       end
       if params[:user][:password].length < 6
         flash[:danger]= true
-        @error << "Password is too short (minimum is 6 characters)."
+        @error << "Your new password must be at least 6 characters."
         puts "Password is too short (minimum is 6 characters)."
         password_short = false
       end
       if params[:user][:password] != params[:user][:password_confirmation]
         flash[:danger] = true 
-        @error << "Passwords do not match."
-        puts "Passwords do not match."
+        @error << "Your new passwords do not match"
+        puts "Your new passwords do not match"
         password_mismatch = false
       end
       if !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
         flash[:danger] = true 
-        @error << "Email is invalid" 
-        puts "Email is invalid"
+        @error << "Please enter a valid email address" 
+        puts "Please enter a valid email address"
         email_invalid = false
       end
 
