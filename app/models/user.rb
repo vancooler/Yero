@@ -357,29 +357,31 @@ class User < ActiveRecord::Base
       end 
     end
 
-    batch = AWS::DynamoDB::BatchWrite.new
-    notification_array = Array.new
-    people_array.each do |person|
-      if !person.blank?
-        request = Hash.new()
-        request["target_id"] = person.to_s
-        request["timestamp"] = Time.now.to_i
-        request["origin_id"] = '0'
-        request["created_date"] = Date.today.to_s
-        request["venue_id"] = '0'
-        request["notification_type"] = '0'
-        request["intro"] = "Yero is now online. Connect to your city's network."
-        request["viewed"] = 0
-        request["not_viewed_by_sender"] = 1
-        request["accepted"] = 0
-        notification_array << request
-        # TODO: use job queue?
-        WhisperNotification.send_nightopen_notification(person.to_i)  
+    people_array.each_slice(25) do |people_group|
+      batch = AWS::DynamoDB::BatchWrite.new
+      notification_array = Array.new
+      people_group.each do |person|
+        if !person.blank?
+          request = Hash.new()
+          request["target_id"] = person.to_s
+          request["timestamp"] = Time.now.to_i
+          request["origin_id"] = '0'
+          request["created_date"] = Date.today.to_s
+          request["venue_id"] = '0'
+          request["notification_type"] = '0'
+          request["intro"] = "Yero is now online. Connect to your city's network."
+          request["viewed"] = 0
+          request["not_viewed_by_sender"] = 1
+          request["accepted"] = 0
+          notification_array << request
+          # TODO: use job queue?
+          WhisperNotification.send_nightopen_notification(person.to_i)  
+        end
       end
-    end
-    if notification_array.count > 0
-      batch.put('WhisperNotification', notification_array)
-      batch.process!
+      if notification_array.count > 0
+        batch.put('WhisperNotification', notification_array)
+        batch.process!
+      end
     end
   end
 
