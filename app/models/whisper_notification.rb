@@ -132,50 +132,88 @@ class WhisperNotification < AWS::Record::HashModel
     return users.reverse
   end
 
+  # TODO: use it for friends request
   def self.myfriends(user_id)
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
-    friends = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1)
+    friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3")
+    friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3")
     friends_array = Array.new
-    if friends and friends.count > 0
-      friends.each do |friend|
+    friends_id_array = Array.new
+    if friends_accepted and friends_accepted.count > 0
+      friends_accepted.each do |friend|
         attributes = friend.attributes.to_h
         friend_id = attributes['target_id'].to_i
         h = Hash.new
         p 'in the loop'
         p friend_id
-        if friends_array.include? friend_id
+        if friends_id_array.include? friend_id
           p 'in the array'
         else
+          friends_id_array << friend_id
           if friend_id > 0
-            user = User.find(friend_id)
-            h['target_user'] = user
-            if user.main_avatar
-              h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-              h['target_user_main'] = user.main_avatar.avatar.url
-              if user.secondary_avatars
-                h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-                h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+              user = User.find(friend_id)
+              h['intro'] = user.introduction_1
+              h['target_user'] = user
+              if user.main_avatar
+                h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+                h['target_user_main'] = user.main_avatar.avatar.url
+                if user.secondary_avatars
+                  h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+                  h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+                end
               end
-            end
           else
-            h['target_user'] = ''
+              h['target_user'] = ''
           end
           h['timestamp'] = attributes['timestamp'].to_i
-          h['accepted'] = attributes['accepted'].to_i
-          h['declined'] = attributes['declined'].to_i
-          h['whisper_id'] = attributes['id']
+          h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
           friends_array << h  
-          users = Array.new
-          users = friends_array
-          users = users.sort_by { |hsh| hsh[:timestamp] }
-          p "users#afd"
-          p users.inspect
-          return users.reverse
         end 
       end
     end
+
+    if friends_whispered and friends_whispered.count > 0
+      friends_whispered.each do |friend|
+        attributes = friend.attributes.to_h
+        friend_id = attributes['origin_id'].to_i
+        h = Hash.new
+        p 'in the loop'
+        p friend_id
+        if friends_id_array.include? friend_id
+          p 'in the array'
+        else
+          friends_id_array << friend_id
+          if friend_id > 0
+              user = User.find(friend_id)
+              h['intro'] = user.introduction_1
+              h['target_user'] = user
+              if user.main_avatar
+                h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+                h['target_user_main'] = user.main_avatar.avatar.url
+                if user.secondary_avatars
+                  h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+                  h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+                end
+              end
+          else
+              h['target_user'] = ''
+          end
+          h['timestamp'] = attributes['timestamp'].to_i
+          h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
+          friends_array << h  
+        end 
+      end
+    end
+    
+    users = Array.new
+    users = friends_array
+    users = users.sort_by { |hsh| hsh[:timestamp] }
+    p "users#afd"
+    p users.inspect
+    return users.reverse
+
   end
 
   def self.system_notification(user_id)
@@ -478,8 +516,8 @@ class WhisperNotification < AWS::Record::HashModel
         if state == 'accepted'
           i.attributes.update do |u|
               hash = i.attributes.to_h
-              UserFriends.create_in_aws(hash["target_id"], hash["origin_id"])
-              UserFriends.create_in_aws(hash["origin_id"], hash["target_id"])
+              # UserFriends.create_in_aws(hash["target_id"], hash["origin_id"])
+              # UserFriends.create_in_aws(hash["origin_id"], hash["target_id"])
               u.set 'accepted' => 1
               u.set 'viewed' => 1
           end
@@ -525,17 +563,16 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    items = table.items.where(:origin_id).equals(id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
+    items = table.items.where(:target_id).equals(id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
     if items.count > 0
       items.each do |i|
         i.attributes.update do |u|
             u.set 'viewed' => 1
         end
         item_info = i.attributes.to_h
-        return item_info
       end
     end
-    return false
+    return true
   end
 
   def send_push_notification_to_target_user(message)
@@ -572,33 +609,48 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    accept_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
     chat_request_number = 0
     venue_greeting_number = 0
+    chat_accept_number = 0
     if chat_items.present?
       chat_request_number = chat_items.count
     end
     if greeting_items.present?
       venue_greeting_number = greeting_items.count
     end
+    if accept_items.present?
+      chat_accept_number = accept_items.count
+    end
 
     # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number)
+    notification.badge = (chat_request_number+venue_greeting_number+chat_accept_number)
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
-    notification.custom_data = {
-          whisper_id: self.id,
-          origin_user: origin_user_key,
-          target_user: target_user.key,
-          timestamp: self.timestamp,
-          target_apn: token,
-          viewed: self.viewed,
-          accepted: self.accepted,
+    if self.notification_type.to_i == 1
+      notification.custom_data = {
+          # whisper_id: self.id,
+          # origin_user: origin_user_key,
+          # target_user: target_user.key,
+          # timestamp: self.timestamp,
+          # target_apn: token,
+          # viewed: self.viewed,
+          # accepted: self.accepted,
           type: self.notification_type.to_i,
-          chat_request_number: chat_request_number,
           venue_greeting_number: venue_greeting_number
       }
-
+    elsif self.notification_type.to_i == 2
+      notification.custom_data = {
+          type: self.notification_type.to_i,
+          chat_request_number: chat_request_number,
+      }
+    elsif self.notification_type.to_i == 3
+      notification.custom_data = {
+          type: self.notification_type.to_i,
+          chat_accept_number: chat_accept_number,
+      }
+    end
     p "Notification object"
     p notification.inspect
 
@@ -608,6 +660,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  # not use it from April 9th 2015
   def self.send_accept_notification_to_sender(whisper_id)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root

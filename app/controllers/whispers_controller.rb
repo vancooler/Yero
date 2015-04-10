@@ -136,10 +136,21 @@ class WhispersController < ApplicationController
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       if params[:accepted].to_i == 1
         state = 'accepted'
-        n = WhisperNotification.find_whisper(whisperId, state)
-        WhisperNotification.send_accept_notification_to_sender(whisperId)
+        WhisperNotification.find_whisper(whisperId, state)
+        old_n = WhisperNotification.find_by_dynamodb_id(whisperId) 
+        n = WhisperNotification.create_in_aws(old_n.origin_id, old_n.target_id, old_n.venue_id, "3", "")
+        # WhisperNotification.send_accept_notification_to_sender(whisperId)
+        if old_n.origin_id.to_i <= 0 
+          render json: success
+        elsif !n.nil?
+          user = User.find(old_n.target_id.to_i)
+          message = user.first_name + " is now your friend!"
+          n.send_push_notification_to_target_user(message)
 
-        render json: success
+          render json: success
+        else
+          render json: error('There was an error.')
+        end
       elsif params[:declined].to_i == 1
         state = 'declined'
         WhisperNotification.find_whisper(whisperId, state)
