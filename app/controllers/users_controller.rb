@@ -669,7 +669,7 @@ class UsersController < ApplicationController
       else 
         password_mismatch = true
       end
-      if !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
+      if !params[:user][:email].blank? && !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
         flash[:danger] = true 
         @error << "Please enter a valid email address." 
         puts "Please enter a valid email address"
