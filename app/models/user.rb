@@ -342,7 +342,7 @@ class User < ActiveRecord::Base
       end
     end
     people_array = Array.new 
-    times_array << "America/Vancouver" if times_array.include? ["America/Los_Angeles"]
+    times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
       usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
       
