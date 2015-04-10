@@ -7,7 +7,7 @@ class WhisperNotification < AWS::Record::HashModel
   string_attr :venue_id
   string_attr :intro
   string_attr :notification_type
-
+              # '0' => System notification
               # '1' => enter venue greeting
               # '2' => chat whisper request
               # '3' => accept whisper request

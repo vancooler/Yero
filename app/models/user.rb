@@ -335,7 +335,8 @@ class User < ActiveRecord::Base
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
-      if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 1700 and int_time < 1709 # If time is 17:00 ~ 17:09
         open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")] #format it
         times_array << open_network_tz #Throw into array
       end
@@ -345,20 +346,39 @@ class User < ActiveRecord::Base
     times_array.each do |timezone| #Each timezone that we found to be at 17:00
       usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
       
-      if !usersInTimezone.blank? # If there are people in that timezone
+      if !usersInTimezone.nil? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
-          if !attributes["user_id"].blank?
-            people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
+          if !attributes["user_id"].nil?
+            people_array << attributes["user_id"].to_i #Assign new attributes
           end  
         end
       end 
     end
 
+    batch = AWS::DynamoDB::BatchWrite.new
+    notification_array = Array.new
     people_array.each do |person|
       if !person.blank?
+        request = Hash.new()
+        request["target_id"] = person.to_s
+        request["timestamp"] = Time.now.to_i
+        request["origin_id"] = '0'
+        request["created_date"] = Date.today.to_s
+        request["venue_id"] = '0'
+        request["notification_type"] = '0'
+        request["intro"] = "Yero is now online. Connect to your city's network."
+        request["viewed"] = 0
+        request["not_viewed_by_sender"] = 1
+        request["accepted"] = 0
+        notification_array << request
+        # TODO: use job queue?
         WhisperNotification.send_nightopen_notification(person.to_i)  
       end
+    end
+    if notification_array.count > 0
+      batch.put('WhisperNotification', notification_array)
+      batch.process!
     end
   end
 
