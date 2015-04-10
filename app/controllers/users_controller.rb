@@ -939,8 +939,9 @@ class UsersController < ApplicationController
         json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i
         json.birthday       user["target_user"]["birthday"]
         json.gender         user["target_user"]["gender"]
-        json.distance       current_user.distance_label(user["target_user"])
-
+        if user["target_user"]["id"].to_i != 307
+          json.distance       current_user.distance_label(user["target_user"])
+        end
         json.created_at     user["target_user"]["created_at"]
         json.updated_at     user["target_user"]["updated_at"]
         json.avatar_thumbnail user["target_user_thumb"] 
