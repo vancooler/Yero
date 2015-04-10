@@ -676,6 +676,7 @@ class UsersController < ApplicationController
     else
       @user = User.find_by_key(params[:key])
       @error = Array.new
+      flash[:danger] = nil
       puts "we got into else"
     end
   end
