@@ -684,6 +684,7 @@ class UsersController < ApplicationController
         @user.password_confirmation = params[:user][:password_confirmation]
         if @user.save
           puts "saved"
+          flash[:danger] = nil
           flash[:success] = "Password Change Succeeded"
         end
       end
