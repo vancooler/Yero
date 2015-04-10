@@ -674,6 +674,7 @@ class UsersController < ApplicationController
       end
     else
       @user = User.find_by_key(params[:key])
+      @error = Array.new
       puts "we got into else"
     end
   end
