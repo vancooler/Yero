@@ -10,7 +10,6 @@ ActiveAdmin.register User do
     column :first_name
     column :gender
     column :apn_token
-    column :account_status
     column :is_connected
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
@@ -30,6 +29,7 @@ ActiveAdmin.register User do
       row :first_name
       row :gender
       row :apn_token
+      row :is_connected
       row :snapchat_id
       row :wechat_id
       row :instagram_id
