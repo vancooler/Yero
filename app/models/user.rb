@@ -152,7 +152,7 @@ class User < ActiveRecord::Base
     end
 
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
-    max_distance = max_distance.blank? ? 20 : max_distance
+    max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
     # only return users with avatar near current user
     users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
 
