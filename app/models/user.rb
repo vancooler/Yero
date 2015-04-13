@@ -153,8 +153,10 @@ class User < ActiveRecord::Base
 
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
-    # only return users with avatar near current user
+    # only return users with avatar near current user 
     users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
+    # filter for is_connected 
+    # users = User.includes(:user_avatars).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
 
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
@@ -392,7 +394,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 500 and int_time < 509 # If time is 17:00 ~ 17:09
+      if int_time >= 500 and int_time < 509 # If time is 5:00 ~ 5:09
         open_network_tz = [Time.zone.name.to_s] #format it
         times_array << open_network_tz #Throw into array
       end
