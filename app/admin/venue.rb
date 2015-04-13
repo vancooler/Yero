@@ -54,6 +54,11 @@ ActiveAdmin.register Venue do
       f.input :phone
       # f.input :dress_code
       f.input :age_requirement
+<<<<<<< HEAD
+=======
+      # f.input :longitude
+      # f.input :latitude
+>>>>>>> d0f2680d7b099f81c0dbae0e392d43426e373026
     end
     f.actions
   end
