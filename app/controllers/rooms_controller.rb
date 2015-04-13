@@ -13,7 +13,7 @@ class RoomsController < ApplicationController
       # beacon = Beacon.find_by(key: params[:beacon_key])
     else
       puts params[:beacon_key]
-      beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
+      # beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
       
       #log the last active time for venue and venue network
       result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
@@ -39,11 +39,13 @@ class RoomsController < ApplicationController
         current_user.save
         n2.send_push_notification_to_target_user(venue_message)
       end
-      first_entry = Hash.new
-      first_entry = {"First in this venue tonight" => first_entry_flag}
+      # first_entry = Hash.new
+      # first_entry = {"First in this venue tonight" => first_entry_flag}
 
-      if result
-        render json: success(first_entry)
+      if result and n2
+        render json: success("Success")
+      elsif result and !n2
+        render json: success("Entered but something wrong when pushing notificaiton")
       else
         render json: error("Could not enter.")
       end

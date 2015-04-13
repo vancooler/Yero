@@ -385,4 +385,35 @@ class User < ActiveRecord::Base
     end
   end
 
+  # This code for usage with a CRON job. Currently done using Heroku Scheduler
+  def self.network_close
+    times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
+    times_array = Array.new # Make a new array to hold the times that are at 5:00pm
+    times_result.each do |timezone| # Check each timezone
+      Time.zone = timezone["timezone"] # Assign timezone
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 500 and int_time < 509 # If time is 17:00 ~ 17:09
+        open_network_tz = [Time.zone.name.to_s] #format it
+        times_array << open_network_tz #Throw into array
+      end
+    end
+    puts times_array
+    people_array = Array.new 
+    times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
+    times_array.each do |timezone| #Each timezone that we found to be at 17:00
+      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
+      
+      if !usersInTimezone.nil? # If there are people in that timezone
+        usersInTimezone.each do |user|
+          attributes = user.attributes.to_h # Turn the people into usable attributes
+          if !attributes["user_id"].nil?
+            people_array << attributes["user_id"].to_i #Assign new attributes
+          end  
+        end
+      end 
+    end
+
+    User.where(id: people_array).update_all(is_connected: false)
+  end
+
 end

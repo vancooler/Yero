@@ -453,7 +453,6 @@ class UsersController < ApplicationController
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
     
-    # Parameters: {"birthday"=>"Apr 9, 1997", "email"=>"gfdertyu@c.nnn", "first_name"=>"f", "gender"=>"M", "instagram_id"=>"p", "password"=>"[FILTERED]", "snapchat_id"=>"", "wechat_id"=>"g", "user"=>{"user_avatars_attributes"=>{"0"=>{"avatar"=>#<ActionDispatch::Http::UploadedFile:0x007f195557e660 @tempfile=#<Tempfile:/tmp/RackMultipart20150409-6-l8lq>, @original_filename="avatar.jpg", @content_type="image/jpeg", @headers="Content-Disposition: form-data; name=\"user[user_avatars_attributes][0][avatar]\"; filename=\"avatar.jpg\"\r\nContent-Type: image/jpeg\r\n">}}}}
     user_registration = UserRegistration.new(sign_up_params)
     
     user_registration.user.email = params[:email] if params[:email].present?
@@ -724,9 +723,23 @@ class UsersController < ApplicationController
   def update_apn
     user = User.find_by_key(params[:key])
     user.apn_token = params[:token]
-    user.save
+    if user.save
+      render json: success() #
+    else
+      render json: error()
+    end
+  end
 
-    render json: success() #
+  # When user clicked "Connect" button, update field is_connect to true
+  def connect
+    user = User.find_by_key(params[:key])
+    user.is_connected = true
+    
+    if user.save
+      render json: success() #
+    else
+      render json: error()
+    end
   end
 
   def get_profile
