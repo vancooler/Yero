@@ -453,7 +453,6 @@ class UsersController < ApplicationController
     # tmp_params = sign_up_params
     # tmp_params.delete('avatar_id')
     
-    # Parameters: {"birthday"=>"Apr 9, 1997", "email"=>"gfdertyu@c.nnn", "first_name"=>"f", "gender"=>"M", "instagram_id"=>"p", "password"=>"[FILTERED]", "snapchat_id"=>"", "wechat_id"=>"g", "user"=>{"user_avatars_attributes"=>{"0"=>{"avatar"=>#<ActionDispatch::Http::UploadedFile:0x007f195557e660 @tempfile=#<Tempfile:/tmp/RackMultipart20150409-6-l8lq>, @original_filename="avatar.jpg", @content_type="image/jpeg", @headers="Content-Disposition: form-data; name=\"user[user_avatars_attributes][0][avatar]\"; filename=\"avatar.jpg\"\r\nContent-Type: image/jpeg\r\n">}}}}
     user_registration = UserRegistration.new(sign_up_params)
     
     user_registration.user.email = params[:email] if params[:email].present?

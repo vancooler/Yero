@@ -13,7 +13,7 @@ class RoomsController < ApplicationController
       # beacon = Beacon.find_by(key: params[:beacon_key])
     else
       puts params[:beacon_key]
-      beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
+      # beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
       
       #log the last active time for venue and venue network
       result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
