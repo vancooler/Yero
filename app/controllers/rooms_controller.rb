@@ -39,11 +39,11 @@ class RoomsController < ApplicationController
         current_user.save
         n2.send_push_notification_to_target_user(venue_message)
       end
-      first_entry = Hash.new
-      first_entry = {"First in this venue tonight" => first_entry_flag}
+      # first_entry = Hash.new
+      # first_entry = {"First in this venue tonight" => first_entry_flag}
 
       if result and n2
-        render json: success(first_entry)
+        render json: success("Success")
       elsif result and !n2
         render json: success("Entered but something wrong when pushing notificaiton")
       else
