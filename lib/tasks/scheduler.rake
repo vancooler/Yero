@@ -29,6 +29,13 @@ task :network_open => :environment do
   puts "Done."
 end
 
+
+task :network_close => :environment do
+  puts "Checking for networks approaching 5pm"
+  User.network_close
+  puts "Done."
+end
+
 #cleanup for user activity in venue and venue network
 namespace :cleanup do
 include ActionView::Helpers::DateHelper

@@ -723,9 +723,23 @@ class UsersController < ApplicationController
   def update_apn
     user = User.find_by_key(params[:key])
     user.apn_token = params[:token]
-    user.save
+    if user.save
+      render json: success() #
+    else
+      render json: error()
+    end
+  end
 
-    render json: success() #
+  # When user clicked "Connect" button, update field is_connect to true
+  def connect
+    user = User.find_by_key(params[:key])
+    user.is_connected = true
+    
+    if user.save
+      render json: success() #
+    else
+      render json: error()
+    end
   end
 
   def get_profile
