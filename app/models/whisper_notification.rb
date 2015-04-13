@@ -575,6 +575,8 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
+
+  #<Houston::Notification:0x007f1ebb6890f8 @token=\"a75d03d83efbcba0b2c56b444b278de14c303a4cee24c1d4bedd2a6ec026808b\", @alert=\"Welcome to YJ's Place! Open this to learn more about tonight.\", @badge=2, @sound=\"sosumi.aiff\", @category=\"INVITE_CATEGORY\", @expiry=nil, @id=nil, @priority=nil, @content_available=true, @custom_data={:type=>1, :venue_greeting_number=>1}>
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
@@ -582,12 +584,12 @@ class WhisperNotification < AWS::Record::HashModel
     p 'push notification'
     p message.inspect
 
-    if self.origin_id != "0"
-      origin_user = User.find(self.origin_id) 
-      origin_user_key = origin_user.key
-    else
-      origin_user_key = "SYSTEM"
-    end
+    # if self.origin_id != "0"
+    #   origin_user = User.find(self.origin_id) 
+    #   origin_user_key = origin_user.key
+    # else
+    #   origin_user_key = "SYSTEM"
+    # end
     target_user = User.find(self.target_id) 
 
     apn = Houston::Client.development
@@ -643,20 +645,28 @@ class WhisperNotification < AWS::Record::HashModel
     elsif self.notification_type.to_i == 2
       notification.custom_data = {
           type: self.notification_type.to_i,
-          chat_request_number: chat_request_number,
+          chat_request_number: chat_request_number
       }
     elsif self.notification_type.to_i == 3
       notification.custom_data = {
           type: self.notification_type.to_i,
-          chat_accept_number: chat_accept_number,
+          chat_accept_number: chat_accept_number
       }
     end
     p "Notification object"
     p notification.inspect
 
     # And... sent! That's all it takes.
+
     if !token.nil? and !token.empty?
-      apn.push(notification)
+      begin  
+        apn.push(notification)
+        return true  
+      rescue  
+        return false 
+      end  
+    else
+      return false
     end
   end
 

@@ -42,8 +42,10 @@ class RoomsController < ApplicationController
       first_entry = Hash.new
       first_entry = {"First in this venue tonight" => first_entry_flag}
 
-      if result
+      if result and n2
         render json: success(first_entry)
+      elsif result and !n2
+        render json: success("Entered but something wrong when pushing notificaiton")
       else
         render json: error("Could not enter.")
       end
