@@ -977,6 +977,7 @@ class UsersController < ApplicationController
         json.longitude      user["target_user"].longitude 
 
         json.introduction_1 user["target_user"].introduction_1.blank? ? nil : user["target_user"].introduction_1
+        json.notification_type 2
       end         
     end
     return users 
