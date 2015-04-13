@@ -394,7 +394,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 500 and int_time < 509 # If time is 17:00 ~ 17:09
+      if int_time >= 500 and int_time < 509 # If time is 5:00 ~ 5:09
         open_network_tz = [Time.zone.name.to_s] #format it
         times_array << open_network_tz #Throw into array
       end
