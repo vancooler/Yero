@@ -74,19 +74,26 @@ class VenuesController < ApplicationController
   # List of venues
   # TODO Refactor out the JSON builder into venue.rb
   def list
-    venues = Venue.all
-
-    if params[:after]
-      new_list = []
-
-      venues.each do |venue|
-        if venue.tonightly.updated_at > Time.at(params[:after].to_i)
-          new_list << venue
-        end
-      end
-
-      venues = new_list
+    if params[:distance].nil? and params.[:distance].to_i > 0
+      distance = params.[:distance].to_i
+    else
+      distance = 10000
     end
+    user = User.find_by_key(params[:key])
+
+    venues = Venue.near_venus(user, distance)
+
+    # if params[:after]
+    #   new_list = []
+
+    #   venues.each do |venue|
+    #     if venue.tonightly.updated_at > Time.at(params[:after].to_i)
+    #       new_list << venue
+    #     end
+    #   end
+
+    #   venues = new_list
+    # end
 
     data = Jbuilder.encode do |json|
       # images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 

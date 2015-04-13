@@ -26,6 +26,14 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  def self.near_venus(user, distance)
+    if user.latitude.nil? or user.longitude.nil?
+      return Venue.geocoded.near([49, -123], distance, units: :km)
+    else
+      return Venue.geocoded.near([user.latitude, user.longitude], distance, units: :km)
+    end
+  end
+
   def default_avatar
     self.venue_avatars.where(default: true).first
   end
