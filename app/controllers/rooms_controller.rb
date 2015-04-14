@@ -6,7 +6,7 @@ class RoomsController < ApplicationController
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
     beacon = Beacon.find_by(key: params[:beacon_key])
-    if beacon.blank?
+    if beacon.blank? or beacon.venue.nil?
       render json: error("Could not enter.")
       # beacon = BeaconInitialization.new(params[:beacon_key])
       # beacon.create
@@ -16,18 +16,18 @@ class RoomsController < ApplicationController
       # beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
       
       #log the last active time for venue and venue network
-      result = ActiveInVenue.enter_venue(beacon.room.venue, current_user, beacon)
+      result = ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
 
       #log in aws dynamoDB
       UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
       first_entry_flag = 0
       #check whether the user entered this venue today, if not push greeting notification
-      if VenueEnteredToday.enter_venue_today(beacon.room.venue, current_user)
+      if VenueEnteredToday.enter_venue_today(beacon.venue, current_user)
         first_entry_flag = 1
         p "venue message"
-        venue_message = "Welcome to " + beacon.room.venue.name + "! Open this to learn more about tonight."
+        venue_message = "Welcome to " + beacon.venue.name + "! Open this to learn more about tonight."
         p venue_message
-        n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.room.venue.id, "1", venue_message)
+        n2 = WhisperNotification.create_in_aws(current_user.id, 0, beacon.venue.id, "1", venue_message)
         p "n2"
         p n2.inspect
         # number of notification to read for this user: +1
@@ -87,16 +87,21 @@ class RoomsController < ApplicationController
   end
 
   def user_leave
-    beacon = Beacon.find_or_create_by(key: params[:beacon_key]) 
-    
-    result = ActiveInVenue.leave_venue(beacon.room.venue, current_user)
-    #log in aws dynamoDB
-    UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
-    if result
-      render json: success
-    else
+    beacon = Beacon.find_by(key: params[:beacon_key]) 
+    if beacon.nil? or beacon.venue.nil?
       render json: error("Could not leave.")
+    else
+      result = ActiveInVenue.leave_venue(beacon.venue, current_user)
+      #log in aws dynamoDB
+      UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
+      if result
+        render json: success
+      else
+        render json: error("Could not leave.")
+      end
     end
+
+
     # activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
     # if activity_item.create
     #   render json: success(beacon.to_json)

@@ -1,6 +1,7 @@
 ActiveAdmin.register Venue do
   menu :parent => "VENUE"
-  permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude
+  permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude,
+                beacons_attributes: [:id, :key, :venue_id, :_destroy]
   
   batch_action :do_something do |selection|
     Venue.find(selection).each do |venue|
@@ -31,7 +32,7 @@ ActiveAdmin.register Venue do
     column :age_requirement
     column :longitude
     column :latitude
-    
+    column :beacons
   	actions
   end
   filter :id
@@ -57,6 +58,11 @@ ActiveAdmin.register Venue do
       # f.input :longitude
       # f.input :latitude
     end
+    f.inputs do
+      f.has_many :beacons, heading: 'Places', allow_destroy: true, new_record: true do |b|
+        b.input :key
+      end
+    end
     f.actions
   end
 
@@ -77,6 +83,7 @@ ActiveAdmin.register Venue do
       row :venue_network
       row :longitude
       row :latitude
+      row :beacons
       row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.nil?}
       row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
 
