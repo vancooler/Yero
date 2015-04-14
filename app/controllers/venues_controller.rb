@@ -80,8 +80,8 @@ class VenuesController < ApplicationController
       distance = 10000
     end
     user = User.find_by_key(params[:key])
-
-    venues = Venue.near_venus(user, distance)
+    venues = Venue.all
+    # venues = Venue.near_venus(user, distance)
 
     # if params[:after]
     #   new_list = []
