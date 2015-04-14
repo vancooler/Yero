@@ -74,8 +74,8 @@ class VenuesController < ApplicationController
   # List of venues
   # TODO Refactor out the JSON builder into venue.rb
   def list
-    if !params[:distance].nil? and params.[:distance].to_i > 0
-      distance = params.[:distance].to_i
+    if !params[:distance].nil? and params[:distance].to_i > 0
+      distance = params[:distance].to_i
     else
       distance = 10000
     end
