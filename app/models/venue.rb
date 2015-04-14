@@ -59,6 +59,10 @@ class Venue < ActiveRecord::Base
   end
 
   def address
-    [self.address_line_one, self.city, self.state, self.country].compact.join(', ')
+    if !self.address_line_one.nil? and !self.address_line_one.empty?
+      [self.address_line_one, self.city, self.state, self.country].compact.join(', ')
+    else
+      "375 Water St,Vancouver,BC,CA"
+    end
   end
 end
