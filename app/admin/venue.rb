@@ -28,11 +28,15 @@ ActiveAdmin.register Venue do
     # column :country
     # column :zipcode
     column :phone
-    # column :dress_code
+
     column :age_requirement
     column :longitude
     column :latitude
-    column :beacons
+    column "Place Key" do |v|
+      if Beacon.where("venue_id = ?", v.id).size > 0
+        ("&bull;"+(Beacon.where("venue_id = ?", v.id).collect{|g| g.key}.join "<br/>&bull;")).html_safe
+      end
+    end
   	actions
   end
   filter :id
@@ -83,9 +87,14 @@ ActiveAdmin.register Venue do
       row :venue_network
       row :longitude
       row :latitude
-      row :beacons
       row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.nil?}
       row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
+
+      table_for venue.beacons do
+        column "Places" do |b|
+          b.key
+        end
+      end
 
       table_for venue.secondary_avatars.order('id ASC') do
         column "Secondary Avatars ID" do |a|
