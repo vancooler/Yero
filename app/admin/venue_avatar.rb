@@ -17,7 +17,7 @@ ActiveAdmin.register VenueAvatar do
   form do |f|
     f.inputs "Details" do
       f.input :venue
-      f.input :avatar
+      f.input :avatar, :image_preview => true
       f.input :default
       
     end
