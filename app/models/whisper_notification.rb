@@ -541,7 +541,12 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
+    puts "Read time: "
+    time_0 = Time.now
     items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0")
+    time_1 = Time.now
+    runtime = time_1 - time_0
+    puts runtime.inspect
 
     items.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
@@ -565,13 +570,15 @@ class WhisperNotification < AWS::Record::HashModel
           notification_array << request 
         end
       end
-      puts notification_array
       if notification_array.count > 0
         batch.put('WhisperNotification', notification_array)
         batch.process!
       end
     end
-
+    puts "Write time: "
+    time_2 = Time.now
+    runtime = time_2 - time_1
+    puts runtime.inspect
     # items.each do |w|
     #     attributes = w.attributes.to_h
     #     w.attributes.update do |u|
