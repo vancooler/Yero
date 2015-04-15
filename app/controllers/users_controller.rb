@@ -226,7 +226,7 @@ class UsersController < ApplicationController
 
 
   def requests
-    tome_0 = Time.now
+    time_0 = Time.now
     return_users = current_user.whisper_friends
     time_1 = Time.now
     runtime = time_1 - time_0
