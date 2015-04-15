@@ -99,13 +99,21 @@ class VenuesController < ApplicationController
       # images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image2.png", 
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
-
+      host = 'http://www.yero.co'
+      if !request.protocol.nil? and !request.host.nil?
+        host = request.protocol + request.host
+        if !request.port.nil?
+          host += ':' + request.port.to_s
+        end
+      end
       json.array! venues do |v|
         puts "venue id:" 
         puts v.id
-        images = VenuePicture.where(venue_id: v.id).pluck(:pic_location).to_a
+        images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
+        puts images
         json.id v.id
         json.name v.name
+        json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
         json.address v.address_line_one
         json.city v.city
         json.state v.state
@@ -113,8 +121,15 @@ class VenuesController < ApplicationController
         json.latitude v.latitude
         json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
         if !images.empty?
+          avatars = Array.new
+          images.each do |i|
+            avatar = Hash.new
+            avatar['url'] = host + i.avatar.url
+            avatar['default'] = i.default
+            avatars << avatar
+          end
           json.images do
-            json.array! images
+            json.array! avatars
           end
         end
 
