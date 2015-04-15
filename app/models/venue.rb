@@ -11,6 +11,7 @@ class Venue < ActiveRecord::Base
   belongs_to :venue_network
   belongs_to :venue_type
   accepts_nested_attributes_for :beacons, allow_destroy: true
+  accepts_nested_attributes_for :venue_avatars, allow_destroy: true
 
   # Address is geocoded so it can be returned to the iOS client
   geocoded_by :address
