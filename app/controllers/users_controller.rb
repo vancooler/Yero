@@ -226,16 +226,13 @@ class UsersController < ApplicationController
 
 
   def requests
-    time_0 = Time.now
+    
     return_users = current_user.whisper_friends
     return_venues = current_user.whisper_venue
     # yero_notify = WhisperNotification.yero_notification(current_user.id)
-    time_1 = Time.now
-    runtime = time_1 - time_0
-    puts "The Fetch time is: "
-    puts runtime.inspect
+
     users = requests_friends_json(return_users)
-    
+    puts return_venues
     venues_array = Jbuilder.encode do |json|
       #Loop through the return_venues ids and do a find to get the object
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
@@ -287,7 +284,8 @@ class UsersController < ApplicationController
       # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
       # end
     end
-    
+    puts "USERS:"
+    puts unviewed_whispers
     venues_array.each do |v|
       venues << v
       unviewed_whispers << v
@@ -308,18 +306,11 @@ class UsersController < ApplicationController
     users.each do |whisp|
       whispers_array << whisp["whisper_id"]
     end
-    # Update
-    time_2 = Time.now
-    runtime = time_2 - time_1
-    puts "The Adjust time is: "
-    puts runtime.inspect
+    puts "Whispers:"
+    puts return_data
 
     WhisperNotification.viewed_by_sender(whispers_array)
     
-    time_3 = Time.now
-    runtime = time_3 - time_2
-    puts "The Update time is: "
-    puts runtime.inspect
 
     render json: success(users, "data")
   end
@@ -378,22 +369,22 @@ class UsersController < ApplicationController
       users = requests_friends_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
 
-      same_venue_users = []
-      different_venue_users = [] 
-      no_badge_users = []
+      # same_venue_users = []
+      # different_venue_users = [] 
+      # no_badge_users = []
 
-      users.each do |u|
-        if u['different_venue_badge'].to_s == "true"
-          different_venue_users << u
-        elsif u['same_venue_badge'].to_s == "true"
-          same_venue_users << u
-        else
-          no_badge_users << u
-        end
-      end
+      # users.each do |u|
+      #   if u['different_venue_badge'].to_s == "true"
+      #     different_venue_users << u
+      #   elsif u['same_venue_badge'].to_s == "true"
+      #     same_venue_users << u
+      #   else
+      #     no_badge_users << u
+      #   end
+      # end
       
-      return_data = same_venue_users + different_venue_users + no_badge_users 
-      users = return_data.sort_by { |hsh| hsh[:timestamp] }
+      # return_data = same_venue_users + different_venue_users + no_badge_users 
+      # users = return_data.sort_by { |hsh| hsh[:timestamp] }
 
       render json: success(users, "data")
     else
