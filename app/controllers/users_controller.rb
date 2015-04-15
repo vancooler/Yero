@@ -394,7 +394,7 @@ class UsersController < ApplicationController
       # end
       
       # return_data = same_venue_users + different_venue_users + no_badge_users 
-      users = users.sort_by { |hsh| hsh[:timestamp] }
+      # users = users.sort_by { |hsh| hsh[:timestamp] }
 
       render json: success(users, "data")
     else
