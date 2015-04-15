@@ -314,8 +314,6 @@ class UsersController < ApplicationController
     puts "The Adjust time is: "
     puts runtime.inspect
 
-    render json: success(users, "data")
-    
     WhisperNotification.viewed_by_sender(whispers_array)
     
     time_3 = Time.now
@@ -323,6 +321,7 @@ class UsersController < ApplicationController
     puts "The Update time is: "
     puts runtime.inspect
 
+    render json: success(users, "data")
   end
 
 
