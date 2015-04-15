@@ -226,13 +226,21 @@ class UsersController < ApplicationController
 
 
   def requests
-    
+    tome_0 = Time.now
     return_users = current_user.whisper_friends
+    time_1 = Time.now
+    runtime = time_1 - time_0
+    puts "User time"
+    puts runtime.inspect
     return_venues = current_user.whisper_venue
+    time_2 = Time.now
+    runtime = time_2 - time_1
+    puts "Venue time"
+    puts runtime.inspect
     # yero_notify = WhisperNotification.yero_notification(current_user.id)
 
     users = requests_friends_json(return_users)
-    puts return_venues
+
     venues_array = Jbuilder.encode do |json|
       #Loop through the return_venues ids and do a find to get the object
       # Then do the json dance to include venue id, link to venue_avatars to get the picture
@@ -284,8 +292,7 @@ class UsersController < ApplicationController
       # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
       # end
     end
-    puts "USERS:"
-    puts unviewed_whispers
+
     venues_array.each do |v|
       venues << v
       unviewed_whispers << v
@@ -306,12 +313,14 @@ class UsersController < ApplicationController
     users.each do |whisp|
       whispers_array << whisp["whisper_id"]
     end
-    puts "Whispers:"
-    puts return_data
 
+    time_3 = Time.now
     WhisperNotification.viewed_by_sender(whispers_array)
     
-
+    time_4 = Time.now
+    runtime = time_4 - time_3
+    puts "Update time"
+    puts runtime.inspect
     render json: success(users, "data")
   end
 
