@@ -565,6 +565,7 @@ class WhisperNotification < AWS::Record::HashModel
           notification_array << request 
         end
       end
+      puts notification_array
       if notification_array.count > 0
         batch.put('WhisperNotification', notification_array)
         batch.process!
