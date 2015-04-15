@@ -553,7 +553,7 @@ class WhisperNotification < AWS::Record::HashModel
           request["target_id"] = attributes['target_id']
           request["timestamp"] = attributes['timestamp']
           request["id"] = attributes['id'] if !attributes['id'].nil?
-          request["original_id"] = attributes['original_id'] if !attributes['origin_id'].nil?
+          request["origin_id"] = attributes['origin_id'] if !attributes['origin_id'].nil?
           request["accepted"] = attributes['accepted'] if !attributes['accepted'].nil?
           request["declined"] = attributes['declined'] if !attributes['declined'].nil?
           request["created_date"] = attributes['created_date'] if !attributes['created_date'].nil?
