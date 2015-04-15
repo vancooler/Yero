@@ -538,24 +538,47 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.viewed_by_sender(whispers)
     result = true
-    whispers.each do |w|
-      item = WhisperNotification.find_by_dynamodb_id(w)
-      if item.nil?
-        result = false && result
-      else
-        attributes = item.attributes.to_h
-        notification_type = attributes['notification_type'].to_s
-        if notification_type != "0"
-          item.attributes.update do |u|
-            u.set 'viewed' => 1
-            u.set 'not_viewed_by_sender' => 0
-          end
-          result = result && true
-        else
-          result = result && true
+    dynamo_db = AWS::DynamoDB.new
+    table = dynamo_db.tables['WhisperNotification']
+    table.load_schema
+    items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0")
+
+    items.each_slice(25) do |whisper_group|
+      batch = AWS::DynamoDB::BatchWrite.new
+      notification_array = Array.new
+      whisper_group.each do |w|
+        if !w.blank?
+          attributes = w.attributes.to_h
+          request = Hash.new()
+          request["target_id"] = attributes['target_id']
+          request["timestamp"] = attributes['timestamp']
+          request["id"] = attributes['id'] if !attributes['id'].nil?
+          request["original_id"] = attributes['original_id'] if !attributes['origin_id'].nil?
+          request["accepted"] = attributes['accepted'] if !attributes['accepted'].nil?
+          request["declined"] = attributes['declined'] if !attributes['declined'].nil?
+          request["created_date"] = attributes['created_date'] if !attributes['created_date'].nil?
+          request["venue_id"] = attributes['venue_id'] if !attributes['venue_id'].nil?
+          request["notification_type"] = attributes['notification_type'] if !attributes['notification_type'].nil?
+          request["intro"] = attributes['intro'] if !attributes['intro'].nil?
+          request["viewed"] = 1
+          request["not_viewed_by_sender"] = 0
+          notification_array << request 
         end
       end
+      if notification_array.count > 0
+        batch.put('WhisperNotification', notification_array)
+        batch.process!
+      end
     end
+
+    # items.each do |w|
+    #     attributes = w.attributes.to_h
+    #     w.attributes.update do |u|
+    #       u.set 'viewed' => 1
+    #       u.set 'not_viewed_by_sender' => 0
+    #     end
+    #     result = result && true
+    # end
     return result
   end
 
