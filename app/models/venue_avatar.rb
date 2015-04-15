@@ -17,7 +17,7 @@ class VenueAvatar < ActiveRecord::Base
   #   save!
   # end
 
-  validate :avatar_number
+  validate :avatar_number, :on => :create
  
   # before_create :randomize_file_name
 
@@ -31,9 +31,9 @@ class VenueAvatar < ActiveRecord::Base
 
   def avatar_number
     @avatar = VenueAvatar.where('venue_id = ?', self.venue_id)
-    if @avatar.size >= 8
+    if @avatar.size >= 3
   
-      errors.add :avatar, "You cannot upload more than 8 avatars for a same venue."
+      errors.add :avatar, "You cannot upload more than 3 avatars for a same venue."
     end
   end
   
