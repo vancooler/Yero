@@ -4,8 +4,8 @@ class User < ActiveRecord::Base
   has_many :pokes, foreign_key: "pokee_id"
   has_many :favourite_venues
   has_many :venues, through: :favourite_venues
-  has_many :user_avatars
-  accepts_nested_attributes_for :user_avatars
+  has_many :user_avatars, dependent: :destroy
+  accepts_nested_attributes_for :user_avatars, allow_destroy: true
   has_one  :participant
   has_many :activities, dependent: :destroy
   has_many :locations
@@ -18,7 +18,7 @@ class User < ActiveRecord::Base
   # mount_uploader :avatar, AvatarUploader
   before_save   :update_activity
 
-  validates :birthday, :first_name, :gender, presence: true
+  validates :email, :birthday, :first_name, :gender, presence: true
 
   scope :sort_by_last_active, -> { 
     where.not(last_active: nil).

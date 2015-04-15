@@ -1,7 +1,9 @@
 ActiveAdmin.register User do
   menu :parent => "USERS"
+  permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id,
+                user_avatars_attributes: [:id, :avatar, :venue_id, :default, :is_active, :_destroy]
 
-  actions :index, :show
+  actions :index, :show, :edit, :update, :destroy
   index do
   	column :id
     column :email
@@ -18,6 +20,35 @@ ActiveAdmin.register User do
     # column :is_active
     
   	actions
+  end
+
+  filter :id
+  filter :email
+  filter :gender
+  filter :is_connected
+
+  form do |f|
+    f.semantic_errors
+    f.inputs "Details" do
+      f.input :email
+      # f.input :avatar, :image_preview => true
+      f.input :first_name
+      f.input :birthday
+      f.input :gender, :as => :select, :collection => ['F', 'M']
+      f.input :apn_token
+      f.input :wechat_id
+      f.input :snapchat_id
+      f.input :instagram_id
+      f.inputs do
+        f.has_many :user_avatars, heading: 'Avatars', allow_destroy: false, new_record: false do |b|
+          b.input :avatar, :image_preview => true
+          b.input :default
+          b.input :is_active
+        end
+      end
+      
+    end
+    f.actions
   end
   
 
