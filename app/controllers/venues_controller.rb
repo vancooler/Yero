@@ -99,13 +99,7 @@ class VenuesController < ApplicationController
       # images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image2.png", 
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
-      host = 'http://www.yero.co'
-      if !request.protocol.nil? and !request.host.nil?
-        host = request.protocol + request.host
-        if !request.port.nil?
-          host += ':' + request.port.to_s
-        end
-      end
+      
       json.array! venues do |v|
         puts "venue id:" 
         puts v.id
@@ -124,7 +118,7 @@ class VenuesController < ApplicationController
           avatars = Array.new
           images.each do |i|
             avatar = Hash.new
-            avatar['url'] = host + i.avatar.url
+            avatar['url'] = i.avatar.url
             avatar['default'] = i.default
             avatars << avatar
           end
