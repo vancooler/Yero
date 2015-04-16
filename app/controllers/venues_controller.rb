@@ -117,10 +117,10 @@ class VenuesController < ApplicationController
         if !images.empty?
           avatars = Array.new
           images.each do |i|
-            avatar = Hash.new
-            avatar['url'] = i.avatar.url
-            avatar['default'] = i.default
-            avatars << avatar
+            # avatar = Hash.new
+            # avatar['url'] = i.avatar.url
+            # avatar['default'] = i.default
+            avatars << i.avatar.url
           end
           json.images do
             json.array! avatars
