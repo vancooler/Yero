@@ -102,7 +102,8 @@ class WhisperNotification < AWS::Record::HashModel
       attributes = i.attributes.to_h # Turn each item into a hash
       venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
       h = Hash.new # Make a new hash object
-      if venue_id > 0 
+      v = Venue.find(venue_id)
+      if !v.nil?
         if venue.include? venue_id #venue id already in there, then do nothing
         else
           h['venue_id'] = attributes['venue_id']
@@ -136,9 +137,9 @@ class WhisperNotification < AWS::Record::HashModel
       receiver_items.each do |i|
         attributes = i.attributes.to_h
         sender_id = attributes['origin_id'].to_i
+        user = User.find(sender_id)
         h = Hash.new
-        if sender_id > 0
-          user = User.find(sender_id)
+        if !user.nil?
           h['target_user'] = user
           if user.main_avatar
             h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
