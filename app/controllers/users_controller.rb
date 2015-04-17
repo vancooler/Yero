@@ -72,7 +72,7 @@ class UsersController < ApplicationController
     venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
     everyone = params[:everyone] == "1"? true : false
     page_number = params[:page] if !params[:page].blank?
-    users_per_page = params[:per_page] if !blank?
+    users_per_page = params[:per_page] if !params[:per_page]blank?
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
@@ -226,6 +226,8 @@ class UsersController < ApplicationController
 
 
   def requests
+
+    # TODO: check venue/user exist
     time_0 = Time.now
     return_users = current_user.whisper_friends
     time_1 = Time.now

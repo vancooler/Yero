@@ -418,4 +418,132 @@ class User < ActiveRecord::Base
     User.where(id: people_array).update_all(is_connected: false)
   end
 
+
+  def people_list
+    return_users = self.fellow_participants(nil, nil, nil, nil, nil, nil, true)
+    if return_users.count > 100
+      collected_whispers = WhisperNotification.collect_whispers(self)
+      
+      users = Jbuilder.encode do |json|
+        retus = Time.now
+
+        reten = Time.now
+        dbtime = reten-retus
+        
+        json_s = Time.now
+        json.array! return_users do |user|
+          if user.id != self.id
+            next unless user.user_avatars.present?
+            next unless user.main_avatar.present?
+            main_avatar   =  user.user_avatars.find_by(default:true)
+            other_avatars =  user.user_avatars.where.not(default:true)
+            avatar_array = Array.new
+            avatar_array[0] = {
+                  thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
+                }
+            avatar_array[1] = {
+                  avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
+                  avatar_id: main_avatar.nil? ? '' : main_avatar.id,
+                  default: true
+                }
+            if other_avatars.count > 0
+              avatar_array[2] = {
+                    avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
+                    avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
+                    default: false
+                  }
+              if other_avatars.count > 1
+                avatar_array[3] = {
+                      avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
+                      avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                      default: false
+                    }
+              end
+            end
+            json.avatars do |a|
+              json.array! avatar_array do |avatar|
+                a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
+                a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
+                a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
+                a.default     avatar[:default]   if !avatar[:default].nil?
+              end
+            end
+
+            collected_whispers.each do |cwid|
+              if cwid.to_s == user.id.to_s
+                json.whisper_sent true
+              end
+            end
+            start_time = Time.now
+            # json.whisper_sent WhisperNotification.whisper_sent(self, user) #Returns a boolean of whether a whisper was sent between this user and target user
+            end_time = Time.now
+            diff_1 += (end_time - start_time)
+            json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.different_venue_badge     self.different_venue_as?(user.id)
+            json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.id             user.id
+            json.first_name     user.first_name
+            json.key            user.key
+            json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+            json.birthday       user.birthday
+            # json.gender         user.gender
+            # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
+            json.wechat_id      user.wechat_id
+            json.snapchat_id    user.snapchat_id
+            json.instagram_id   user.instagram_id
+            json.apn_token      user.apn_token
+            json.latitude       user.latitude  
+            json.longitude      user.longitude 
+            json.introduction_1 user.introduction_1.blank? ? nil : user.introduction_1
+            json.exclusive      user.exclusive
+          end
+        end
+        json_e = Time.now
+        j_time = json_e-json_s
+        puts "The dbtime is: "
+        puts dbtime.inspect 
+        p "Json time:"
+        p j_time.inspect
+      end
+      users = JSON.parse(users).delete_if(&:empty?)
+      different_venue_users = [] # Make a empty array for users in the different venue
+      same_venue_users = [] #Make a empty array for users in the same venue
+      no_badge_users = [] # Make an empty array for no badge users
+      users.each do |u| # Go through the users
+        if !!u['exclusive'] == true
+          if u['same_venue_badge'].to_s == "true"
+             same_venue_users << u # Throw the user into the array
+          end
+        else
+          if !!u['exclusive'] == false
+            if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+              different_venue_users << u # Throw the user into the array
+            elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+              same_venue_users << u # Throw the user into the array
+            else 
+              different_venue_users << u # Users who are not in a venue also thrown into here.
+            end
+          end
+        end
+      end
+      
+      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+      
+      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
+      
+      final_time = Time.now
+      # diff_2 = final_time - end_time
+      e_time = Time.now
+      runtime = e_time - s_time
+      
+      puts "The runtime is: "
+      puts runtime.inspect
+      logger.info "NEWTIME: " + diff_1.to_s 
+      
+    else
+      users = ActiveInVenueNetwork.count
+    end
+    return users
+  end
+
 end
