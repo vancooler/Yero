@@ -419,8 +419,8 @@ class User < ActiveRecord::Base
   end
 
 
-  def people_list
-    return_users = self.fellow_participants(nil, nil, nil, nil, nil, nil, true)
+  def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+    return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     if return_users.count > 100
       collected_whispers = WhisperNotification.collect_whispers(self)
       

@@ -64,6 +64,8 @@ class UsersController < ApplicationController
 
   # API
   def index
+    current_user.is_connected = true
+    current_user.save
     gender = params[:gender] if !params[:gender].blank?
     min_age = params[:min_age].to_i if !params[:min_age].blank?
     max_age = params[:max_age].to_i if !params[:max_age].blank?
