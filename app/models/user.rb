@@ -154,9 +154,9 @@ class User < ActiveRecord::Base
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
     # only return users with avatar near current user 
-    users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
+    # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
-    # users = User.includes(:user_avatars).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
+    users = User.includes(:user_avatars).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
 
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
@@ -420,9 +420,9 @@ class User < ActiveRecord::Base
 
 
   def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-    return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-    if return_users.count > 100
+    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count > 100
       collected_whispers = WhisperNotification.collect_whispers(self)
+      return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       
       users = Jbuilder.encode do |json|
         retus = Time.now
@@ -539,9 +539,9 @@ class User < ActiveRecord::Base
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
-      
+      puts users.count
     else
-      users = ActiveInVenueNetwork.count
+      users = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
     end
     return users
   end

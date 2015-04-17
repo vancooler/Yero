@@ -31,8 +31,8 @@ end
 
 
 task :network_close => :environment do
-  puts "Checking for networks approaching 5pm"
-  User.network_close
+  puts "Checking for networks approaching 5am"
+  # User.network_close
   puts "Done."
 end
 
