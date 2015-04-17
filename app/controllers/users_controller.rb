@@ -72,7 +72,7 @@ class UsersController < ApplicationController
     venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
     everyone = params[:everyone] == "1"? true : false
     page_number = params[:page] if !params[:page].blank?
-    users_per_page = params[:per_page] if !params[:per_page]blank?
+    users_per_page = params[:per_page] if !params[:per_page].blank?
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
