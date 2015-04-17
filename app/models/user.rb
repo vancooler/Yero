@@ -420,7 +420,7 @@ class User < ActiveRecord::Base
 
 
   def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count > 100
+    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= 1
       collected_whispers = WhisperNotification.collect_whispers(self)
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       
@@ -539,11 +539,15 @@ class User < ActiveRecord::Base
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
-      puts users.count
+      count = users.count
     else
-      users = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      users = Array.new
     end
-    return users
+    result = Hash.new
+    result['users'] = users
+    result['count'] = count
+    return result
   end
 
 end
