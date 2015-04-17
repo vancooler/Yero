@@ -419,7 +419,7 @@ class User < ActiveRecord::Base
   end
 
 
-  def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+  def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
     diff_2 = 0
     if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= 1
@@ -533,12 +533,18 @@ class User < ActiveRecord::Base
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
       
       users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
+      # ADD Pagination
+      if !page_number.nil? and !users_per_page.nil?
+        users = users.page(page_number).per(users_per_page) if !users.nil?
+      end
       
       final_time = Time.now
       # diff_2 = final_time - end_time
       e_time = Time.now
       runtime = e_time - s_time
       
+
+
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
