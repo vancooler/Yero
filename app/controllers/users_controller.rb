@@ -75,6 +75,10 @@ class UsersController < ApplicationController
     everyone = params[:everyone] == "1"? true : false
     page_number = params[:page] if !params[:page].blank?
     users_per_page = params[:per_page] if !params[:per_page].blank?
+
+    result = current_user.people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+    
+=begin    
     diff_1 = 0
     diff_2 = 0
     s_time = Time.now
@@ -207,7 +211,8 @@ class UsersController < ApplicationController
     else
       users = ActiveInVenueNetwork.count
     end
-    render json: success(users, "users") #Return users
+=end
+    render json: success(result) #Return users
   end
 
   def whisper_sent
