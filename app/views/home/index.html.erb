@@ -4,8 +4,17 @@
 	<div class="row">
 		<div class="medium-10 medium-centered columns">
 			<h2>Seize the Night</h2>
-			<p>
+			<p class="show-for-large-up">
 				Yero is a nightly social network that lets you discover people in<br>
+				the same club, festival, college or just around your city.
+			</p>
+			<p class="show-for-small-only">
+				Yero is a nightly social network that lets
+				you discover people in the same club, 
+				festival, college or just around your city.
+			</p>
+			<p class="show-for-medium-only">
+				Yero is a nightly social network that lets you discover people in
 				the same club, festival, college or just around your city.
 			</p>
 			<a href="/beta-signup" class="hero-download-link">
@@ -21,14 +30,28 @@
 			<h3>
 				Tonight's Network
 			</h3>
-			<p>
+			<p class="show-for-large-up">
 				Between 5 PM and 5 AM, people on the same venue<br>
 				or college network get pushed to the top.<br>
 				No checking-in, just walk inside.
 			</p>
+			<p class="show-for-small-only">
+				Between 5 PM and 5 AM, people on the
+				same venue or college network get pushed
+				to the top. No checking-in, just walk inside.
+			</p>
+			<p class="show-for-medium-only">
+				Between 5 PM and 5 AM, people on the
+				same venue or college network get 
+				pushed to the top. No checking-in,just walk inside.
+			</p>
+			
 		</div>
-		<div class="medium-4 medium-pull-6 small-pull-6 small-6 columns">
-			<%= image_tag "tonights-network.jpg" %>
+		<div class="medium-4 medium-pull-6 small-pull-6 small-6 columns show-for-midium-up">
+			<%= image_tag "tonights-network.png" %>
+		</div>
+		<div class="medium-4 medium-pull-6 small-pull-6 small-6 columns show-for-small-only">
+			<%= image_tag "tonights-network.png" %>
 		</div>
 	</div>
 </div>
@@ -39,16 +62,27 @@
 			<h3>
 				Don't Yell, Whisper
 			</h3>
-			<p>
+			<p class="show-for-large-up">
 				Browse nearby profiles, send a Whisper or check out<br>
 				their Instagram. When someone accepts a Whisper,<br>
+				each user's Snapchat ID is exchanged.
+			</p>
+			<p class="show-for-small-only">
+				Browse nearby profiles, send a Whisper or check out
+				their Instagram. When someone accepts a Whisper,
+				each user's Snapchat ID is exchanged.
+			</p>
+			<p class="show-for-medium-only">
+				Browse nearby profiles, send a Whisper or check out
+				their Instagram. When someone accepts a Whisper,
 				each user's Snapchat ID is exchanged.
 			</p>
 		</div>
 		<div class="medium-4 medium-offset-1 left columns"> &nbsp;
 		</div>
 	</div>
-	<%= image_tag "whisper-girl.png" %>
+		<%= image_tag "whisper-girl.png", :class => "show-for-medium-up" %>
+		<%= image_tag "whisper-girl.png", :class => "center show-for-small-only" %>
 </div>
 
 <div class="feature chatting medium-text-left small-text-center padding no-bottom">
@@ -57,14 +91,24 @@
 			<h3>
 				Exclusive to Tonight
 			</h3>
-			<p>
-				Why should connecting to a network last forever? <br class="hide-for-small">
+			<p class="show-for-large-up">
+				Why should connecting to a network last forever? <br>
 				Unlike other apps, joining a network lasts for one night.<br>
+				Every morning at 5 AM, all users automatically disconnect.
+			</p>
+			<p class="show-for-medium-only">
+				Why should connecting to a network last forever?
+				Unlike other apps, joining a network lasts for one night.
+				Every morning at 5 AM, all users automatically disconnect.
+			</p>
+			<p class="show-for-small-only">
+				Why should connecting to a network last forever?
+				Unlike other apps, joining a network lasts for one night.
 				Every morning at 5 AM, all users automatically disconnect.
 			</p>
 		</div>
 		<div class="medium-4 medium-pull-7 columns">
-			<%= image_tag "exclusive.jpg", :class=>'chats-img' %>
+			<%= image_tag "exclusive.png", :class=>'chats-img' %>
 		</div>
 	</div>
 
@@ -76,14 +120,25 @@
 			<h3>
 				Next Level Nightlife
 			</h3>
-			<p>
+			<p class="show-for-large-up">
 				Yero shows you nearby venue networks for your night out.<br>
 				Upon arrival, see who else is inside and enjoy real-time venue<br>
 				engagement&mdash;like winning free drinks.
 			</p>
+			<p class="show-for-medium-only">
+				Yero shows you nearby venue networks for your night out.
+				Upon arrival, see who else is inside and enjoy real-time venue
+				engagement&mdash;like winning free drinks.
+			</p>
+			<p class="show-for-small-only">
+				Yero shows you nearby venue networks for your night out.
+				Upon arrival, see who else is inside and enjoy real-time venue
+				engagement&mdash;like winning free drinks.
+			</p>
 		</div>
 	</div>
-	<%= image_tag "next-level.png", :class=>'tonight-img' %>
+	<%= image_tag "next-level.png", :class=>'tonight-img show-for-medium-up' %>
+	<%= image_tag "next-level.png", :class=>'center tonight-img show-for-small-only' %>
 </div>
 
 <div class="download text-center padding">
