@@ -324,7 +324,7 @@ class UsersController < ApplicationController
     end
 
     time_3 = Time.now
-    WhisperNotification.viewed_by_sender(whispers_array)
+    WhisperNotification.delay.viewed_by_sender(whispers_array)
     
     time_4 = Time.now
     runtime = time_4 - time_3
