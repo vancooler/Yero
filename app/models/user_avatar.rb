@@ -8,7 +8,7 @@ class UserAvatar < ActiveRecord::Base
   validate :max_number_of_avatars
 
   mount_uploader :avatar, AvatarUploader
-  # process_in_background :avatar
+  process_in_background :avatar
   
   def update_image(image)
     self.avatar = image
