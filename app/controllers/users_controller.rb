@@ -213,9 +213,9 @@ class UsersController < ApplicationController
     end
 =end
     if result["count"].to_i >= 3
-      render json: success(result['users']) #Return users
+      render json: success(result['users'], "users") #Return users
     else
-      render json: success(result['count'])
+      render json: success(result['count'], "count")
     end
   end
 
