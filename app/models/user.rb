@@ -419,10 +419,11 @@ class User < ActiveRecord::Base
   end
 
 
-  def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+  def people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
     diff_2 = 0
-    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= 3
+    result = Hash.new
+    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
       s_time = Time.now
       collected_whispers = WhisperNotification.collect_whispers(self)
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
@@ -548,14 +549,13 @@ class User < ActiveRecord::Base
       puts "The runtime is: "
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
-      count = users.count
+      # count = users.count
+      result['users'] = users
     else
       count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
       users = Array.new
+      result['percentage'] = (count * 100 / gate_number).to_i
     end
-    result = Hash.new
-    result['users'] = users
-    result['count'] = count
     return result
   end
 

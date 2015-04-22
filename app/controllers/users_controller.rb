@@ -76,7 +76,8 @@ class UsersController < ApplicationController
     page_number = params[:page] if !params[:page].blank?
     users_per_page = params[:per_page] if !params[:per_page].blank?
 
-    result = current_user.people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+    gate_number = 5
+    result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     
 =begin    
     diff_1 = 0
@@ -212,11 +213,11 @@ class UsersController < ApplicationController
       users = ActiveInVenueNetwork.count
     end
 =end
-    if result["count"].to_i >= 3
-      result.delete('count') 
-    else
-      result.delete('users')
-    end
+    # if result["count"].to_i >= gate_number
+    #   result.delete('') 
+    # else
+    #   result.delete('users')
+    # end
     render json: success(result) #Return users
   end
 
