@@ -9,10 +9,18 @@
 </header> -->
 <div class="venues-hero text-center">
 	<div class="row">
-		<div class="medium-7 medium-centered columns details">
+		<div class="medium-7 medium-centered columns details venues">
 			<h3>Empower Your Venue</h3>
-			<p>
+			<p  class="show-for-large-up">
 				Yero takes your bar out of the dark ages with new and powerful real-time<br>
+				technology that delivers an enriched experience to both you and your guests.
+			</p>
+			<p  class="show-for-medium-only">
+				Yero takes your bar out of the dark ages with new and powerful real-time
+				technology that delivers an enriched experience to both you and your guests.
+			</p>
+			<p  class="show-for-small-only">
+				Yero takes your bar out of the dark ages with new and powerful real-time
 				technology that delivers an enriched experience to both you and your guests.
 			</p>
 			<a href="get-in-touch" class="button button-wide button-arr radius" id="get-in-touch">Get in touch</a>
@@ -25,13 +33,31 @@
 		<div class="medium-6 columns medium-push-5 text-content">
 
 			<h3>What is Yero?</h3>
-			<p>
+			<p class="show-for-large-up">
 				Yero is a location-based social network that lets users discover<br>relevant people and venues around their location. 
 			</p>
-			<p>
+			<p class="show-for-large-up">
 				A partnership with Yero gives you access to a suite of powerful <br>
 				tools designed to empower your business. Chances are you're<br>
 				here because we've already built a network for your venue<br>&#8212;here's your opportunity to capitalize on it.
+			</p>
+
+			<p class="show-for-medium-only">
+				Yero is a location-based social network that lets users discover relevant people and venues around their location. 
+			</p>
+			<p class="show-for-medium-only">
+				A partnership with Yero gives you access to a suite of powerful 
+				tools designed to empower your business. Chances are you're
+				here because we've already built a network for your venue&#8212;here's your opportunity to capitalize on it.
+			</p>
+
+			<p class="show-for-small-only">
+				Yero is a location-based social network that lets users discover relevant people and venues around their location. 
+			</p>
+			<p class="show-for-small-only">
+				A partnership with Yero gives you access to a suite of powerful 
+				tools designed to empower your business. Chances are you're
+				here because we've already built a network for your venue&#8212;here's your opportunity to capitalize on it.
 			</p>
 		</div>
 		<div class="medium-6 medium-pull-6 columns image">
@@ -42,7 +68,7 @@
 	</div>
 </section>
 
-<section class="page-content padding no-bottom">
+<section class="page-content padding no-bottom show-for-medium-up">
 	<div class="row">
 		<div class="medium-4 columns text-center bottom-50">
 			<p>
@@ -72,6 +98,41 @@
 			<%= image_tag "middle.png" %>
 		</div>
 		<div class="medium-4 columns text-center">
+			<%= image_tag "right.png" %>
+		</div>
+	</div>
+</section>
+
+<section class="page-content padding no-bottom show-for-small-only">
+	<div class="row">
+		<div class="medium-4 columns text-center bottom-30">
+			<p>
+				Greet your guests with a<br>
+				custom welcome message
+			</p>
+
+		</div>
+		<div class="medium-4 columns text-center bottom-50">
+			<%= image_tag "left.png" %>
+		</div>
+
+		<div class="medium-4 columns text-center bottom-30">
+			<p>
+				In-app venue profile with <br>
+				real-time information you control
+			</p>
+		</div>
+		<div class="medium-4 columns text-center bottom-50">
+			<%= image_tag "middle.png" %>
+		</div>
+
+		<div class="medium-4 columns text-center bottom-30">
+			<p>
+				Automated or manual drink <br>
+				giveaways to your crowd
+			</p>
+		</div>
+		<div class="medium-4 columns text-center bottom-50">
 			<%= image_tag "right.png" %>
 		</div>
 	</div>
