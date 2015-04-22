@@ -443,8 +443,8 @@ body{
 		img {
 			position: absolute;
 			bottom: 0px;
-			left: 40%;
-			max-width: 250px;
+			left: 24%;
+			max-width: 400px;
 		}
 		@media #{$small-only} {
 			position: relative;
@@ -452,7 +452,7 @@ body{
 			img {
 				position: relative;
 				left: 0%;
-				height: 400px;
+				width: 100%;
 			}
 		}
 	}
@@ -500,6 +500,9 @@ body{
 	}
 	.details p {
 		line-height: 3;
+		@media #{$small-only} {
+			line-height: 1.6;
+		}
 	}
 
 	.details a#get-in-touch{
@@ -517,6 +520,19 @@ body{
 .bottom-50 {
 	margin-bottom: 50px;
 }
+
+.bottom-70 {
+	margin-bottom: 70px;
+}
+
+.top-70 {
+	margin-top: 90px;
+}
+
+.top-20 {
+	margin-top: 40px;
+}
+
 .nightlife{
 	.details {
 		margin-top: 25px;
@@ -919,5 +935,5 @@ div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .
 	height: 90%;
 }
 div.medium-7.medium-centered.columns.details.venues{
-	margin-top: 12%;
+	margin-top: 14%;
 }
