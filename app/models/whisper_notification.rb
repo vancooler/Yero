@@ -551,7 +551,7 @@ class WhisperNotification < AWS::Record::HashModel
     return false
   end
 
-  def self.viewed_by_sender(whispers)
+  def viewed_by_sender(whispers)
     result = true
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
