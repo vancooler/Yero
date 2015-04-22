@@ -330,7 +330,9 @@ class UsersController < ApplicationController
     end
 
     time_3 = Time.now
-    current_user.delay.viewed_by_sender(whispers_array)
+    if !whispers_array.nil? and whispers_array.count > 0
+      current_user.delay.viewed_by_sender(whispers_array)
+    end
     
     time_4 = Time.now
     runtime = time_4 - time_3
