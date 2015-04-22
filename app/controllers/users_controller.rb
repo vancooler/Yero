@@ -212,7 +212,11 @@ class UsersController < ApplicationController
       users = ActiveInVenueNetwork.count
     end
 =end
-    render json: success(result) #Return users
+    if result["count"].to_i >= 3
+      render json: success(result['users']) #Return users
+    else
+      render json: success(result['count'])
+    end
   end
 
   def whisper_sent

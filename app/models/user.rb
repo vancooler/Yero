@@ -422,7 +422,7 @@ class User < ActiveRecord::Base
   def people_list(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
     diff_2 = 0
-    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= 1
+    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= 3
       s_time = Time.now
       collected_whispers = WhisperNotification.collect_whispers(self)
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
