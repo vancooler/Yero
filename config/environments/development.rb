@@ -40,5 +40,5 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = false
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default :charset => "utf-8"
-  ENV["REDISTOGO_URL"] = 'redis://redistogo:7fdc01450101bbb8fdc6b69aa5e50c81@hoki.redistogo.com:9604/'
+  # ENV["REDISTOGO_URL"] = 'redis://redistogo:7fdc01450101bbb8fdc6b69aa5e50c81@hoki.redistogo.com:9604/'
 end
