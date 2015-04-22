@@ -356,7 +356,7 @@ body{
 				}
 		}
 		@media #{$small-only} {
-			height: 860px;
+			height: 850px;
 			img {
 				right: 10%;
 				left: auto;
@@ -373,12 +373,18 @@ body{
 			margin-top: 9%;
 			padding-left: 50px;
 		}
+		p {
+			line-height: 2;
+		}
 	}
 }
 .matching {
 	.details{
 		@media #{$medium-up} {
 			margin-top: 13%;
+		}
+		p {
+			line-height: 2;
 		}
 	}
 }
@@ -444,13 +450,14 @@ body{
 			position: relative;
 			height: 275px;
 			img {
-				// position: initial;
-				height: 275px;
+				position: relative;
+				left: 0%;
+				height: 400px;
 			}
 		}
 	}
 	@media #{$small-only} {
-		height: 700px;
+		height: 825px;
 	}
 }
 
@@ -879,7 +886,7 @@ h5 {
 	left: 18%;
 	//position: relative;
 	width: 79% !important;
-	height: 65% !important;
+	height: 70% !important;
 	
 
 }
@@ -910,4 +917,7 @@ div.feature.medium-text-right.small-text-center.grey.matching.padding.no-bottom 
 }
 div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .show-for-medium-up{
 	height: 90%;
+}
+div.medium-7.medium-centered.columns.details.venues{
+	margin-top: 12%;
 }
