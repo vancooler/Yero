@@ -337,7 +337,7 @@ body{
 		max-width: 250px;
 	}
 	@media #{$small-only} {
-		height: 1200px;
+		height: 800px;
 		img {
 			right: 10%;
 			left: auto;
@@ -355,7 +355,7 @@ body{
 				}
 		}
 		@media #{$small-only} {
-			height: 1500px;
+			height: 800px;
 			img {
 				right: 10%;
 				left: auto;
@@ -377,7 +377,7 @@ body{
 .matching {
 	.details{
 		@media #{$medium-up} {
-			margin-top: 16%;
+			margin-top: 9%;
 		}
 	}
 }
@@ -862,15 +862,18 @@ h5 {
 
 .whisper.center.show-for-small-only{
 	left: 18%;
-	width: 100% !important;
-	height: 80% !important;
+	//position: relative;
+	width: 79% !important;
+	height: 65% !important;
+	
 
 }
 
 .center.tonights.show-for-small-only{
-	right: 18%;
-	width: 100% !important;
-	height: 100% !important;
+	left: 16%;
+	position: relative;
+	width: 70% !important;
+	height: 80% !important;
 
 }
 
@@ -878,5 +881,18 @@ h5 {
 .center.tonight-img.show-for-small-only{
 	right: 5%;
 	width: 90% !important;
-	height: 83% !important;
+	height: 64% !important;
+}
+
+div.medium-4.medium-pull-6.small-pull-6.small-6.columns.show-for-medium-up .show-for-medium-up{
+	width: 80%;
+	height: 80%;
+  	left: 50%;
+  	position: relative;
+}
+div.feature.medium-text-right.small-text-center.grey.matching.padding.no-bottom .show-for-medium-up{
+	height: 90%;
+}
+div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .show-for-medium-up{
+	height: 80%;
 }
