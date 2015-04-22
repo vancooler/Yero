@@ -53,11 +53,11 @@ gem 'stripe', :git => 'https://github.com/stripe/stripe-ruby'
 gem "carrierwave"
 gem "fog", "~> 1.3.1"
 gem 'mini_magick', '~> 3.7.0'
-gem 'rmagick', '2.13.2'
+gem 'rmagick', '2.13.2', require: false
 gem 'houston'
 gem 'aws-sdk', '< 2.0'
 gem 'geocoder'
-gem 'sidekiq'
+# gem 'sidekiq'
 gem 'kaminari'
 gem 'newrelic_rpm'
 gem 'oink', '~> 0.10'

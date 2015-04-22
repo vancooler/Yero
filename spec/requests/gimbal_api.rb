@@ -1,6 +1,6 @@
 require 'spec_helper'
-require 'sidekiq/testing'
-Sidekiq::Testing.disable!
+# require 'sidekiq/testing'
+# Sidekiq::Testing.disable!
 
 describe "Gimbal API" do
 
