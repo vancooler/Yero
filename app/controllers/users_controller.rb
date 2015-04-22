@@ -213,9 +213,9 @@ class UsersController < ApplicationController
     end
 =end
     if result["count"].to_i >= 3
-      result.tap { |hs| hs.delete(:count) }
+      result.delete(:count) 
     else
-      result.tap { |hs| hs.delete(:users) }
+      result.delete(:users)
     end
     render json: success(result) #Return users
   end
