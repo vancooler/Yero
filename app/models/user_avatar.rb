@@ -9,7 +9,7 @@ class UserAvatar < ActiveRecord::Base
 
   mount_uploader :avatar, AvatarUploader
   # process_in_background :avatar
-  store_in_background :avatar
+  # store_in_background :avatar
   
   def update_image(image)
     self.avatar = image
