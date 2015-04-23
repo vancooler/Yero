@@ -221,7 +221,7 @@ class UsersController < ApplicationController
     if result['users'].nil?
       render json: success(result) #Return users
     else
-      render json: success(result, "users")
+      render json: success(result['users'], "users")
     end
   end
 
