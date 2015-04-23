@@ -218,7 +218,11 @@ class UsersController < ApplicationController
     # else
     #   result.delete('users')
     # end
-    render json: success(result) #Return users
+    if result['users'].nil?
+      render json: success(result) #Return users
+    else
+      render json: success(result, "users")
+    end
   end
 
   def whisper_sent
@@ -333,7 +337,7 @@ class UsersController < ApplicationController
     if !whispers_array.nil? and whispers_array.count > 0
       current_user.delay.viewed_by_sender(whispers_array)
     end
-    
+
     time_4 = Time.now
     runtime = time_4 - time_3
     puts "Update time"
