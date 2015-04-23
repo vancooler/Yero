@@ -550,13 +550,14 @@ class User < ActiveRecord::Base
       puts runtime.inspect
       logger.info "NEWTIME: " + diff_1.to_s 
       # count = users.count
-      result['users'] = users
+      # result['users'] = users
+      return users
     else
       count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
       users = Array.new
       result['percentage'] = (count * 100 / gate_number).to_i
+      return result
     end
-    return result
   end
 
   def viewed_by_sender(whispers)
