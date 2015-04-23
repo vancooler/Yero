@@ -20,7 +20,8 @@ class VenueAvatarUploader < CarrierWave::Uploader::Base
   def default_url
      "https://s3.amazonaws.com/whisprdev/uploads/default_avatar.png"
   end
-
+  
+  process :optimize
   # Process files as they are uploaded:
   # W320xH240 for profile photo
   # process :resize_to_fill => [320, 240]

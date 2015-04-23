@@ -68,6 +68,7 @@ gem 'bcrypt', '3.1.7'
 
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
+gem 'carrierwave-imageoptimizer'
 # gem 'redis'
 #layer gem
 gem 'jwt'
