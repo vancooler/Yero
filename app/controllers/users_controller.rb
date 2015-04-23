@@ -1014,7 +1014,7 @@ class UsersController < ApplicationController
   end
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 
