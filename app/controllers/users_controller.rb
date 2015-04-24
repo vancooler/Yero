@@ -78,7 +78,7 @@ class UsersController < ApplicationController
     page_number = params[:page] if !params[:page].blank?
     users_per_page = params[:per_page] if !params[:per_page].blank?
 
-    gate_number = 5
+    gate_number = 20
     result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     
 =begin    
