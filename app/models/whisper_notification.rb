@@ -647,16 +647,18 @@ class WhisperNotification < AWS::Record::HashModel
           chat_accept_number: chat_accept_number
       }
     end
-    p "Notification object"
-    p notification.inspect
 
     # And... sent! That's all it takes.
 
     if !token.nil? and !token.empty?
       begin  
+        p "Notification object"
+        p notification.inspect
         apn.push(notification)
         return true  
       rescue  
+        p "Notification object error"
+        p notification.inspect
         return false 
       end  
     else
