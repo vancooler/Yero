@@ -575,9 +575,6 @@ class WhisperNotification < AWS::Record::HashModel
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
 
-    p 'push notification'
-    p message.inspect
-
     # if self.origin_id != "0"
     #   origin_user = User.find(self.origin_id) 
     #   origin_user_key = origin_user.key
@@ -585,7 +582,8 @@ class WhisperNotification < AWS::Record::HashModel
     #   origin_user_key = "SYSTEM"
     # end
     target_user = User.find(self.target_id) 
-
+    p "Target user: "
+    p target_user.inspect
     apn = Houston::Client.development
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
@@ -595,8 +593,8 @@ class WhisperNotification < AWS::Record::HashModel
     p token.inspect
     # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
     notification = Houston::Notification.new(device: token)
-    p "notification before message"
-    p notification.inspect
+    # p "notification before message"
+    # p notification.inspect
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
     
     #get badge number
