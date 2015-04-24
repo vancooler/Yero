@@ -465,7 +465,8 @@ class UsersController < ApplicationController
         response = @user.to_json(true)
         
         intro = "Welcome to Yero"
-        n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
+        # TODO: future feature
+        # n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
         
         render json: success(response)
       else
@@ -539,7 +540,8 @@ class UsersController < ApplicationController
       # render json: user_avatar.to_json.inspect
       
       intro = "Welcome to Yero"
-      n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
+      # TODO: future feature
+      # n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
       
       render json: success(response)
     else
