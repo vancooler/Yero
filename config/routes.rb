@@ -49,8 +49,8 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'terms', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
-  get 'get-in-touch', to: 'early_venues#new', as: :get_in_touch
-  get 'venue-login', to: 'home#venue-login'
+  get 'venues/contact', to: 'early_venues#new', as: :get_in_touch
+  get 'venues/login', to: 'home#venue-login'
   get 'android', to: 'beta_signup_users#android'
   get 'beta-signup', to: 'beta_signup_users#beta'
   get 'beta-thankyou', to: 'home#beta-thankyou', as: :beta_thankyou

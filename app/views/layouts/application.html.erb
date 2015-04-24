@@ -58,16 +58,16 @@
             <%# else %>
               <!-- <li class="active"><%#= link_to "sign in", new_venue_session_path %></li> -->
             <%# end %>
-             <% if current_page?('/venues') ||  current_page?('/venues-thankyou') ||  current_page?('/android-thankyou')  || current_page?('/get-in-touch') %>
+             <% if current_page?('/venues') ||  current_page?('/venues-thankyou') ||  current_page?('/android-thankyou')  || current_page?('/venues/contact') %>
               <li class="nav-alt">Already a partner?
-                <%= link_to('Sign In', '/venue-login', :class=>'nav-item sign-in')%>
+                <%= link_to('Sign In', '/venues/login', :class=>'nav-item sign-in')%>
               </li>
-            <% elsif current_page?('/venue-login') %>
+            <% elsif current_page?('/venues/login') %>
               <li class="nav-alt">Don't have an account?
-                <%= link_to('Get in touch', '/get-in-touch', :class=>'nav-item sign-in')%>
+                <%= link_to('Get in touch', '/venues/contact', :class=>'nav-item sign-in')%>
               </li>
             <% end %>
-             <% if !current_page?('/venues') and !current_page?('/venue-login') and !current_page?('/android') and !current_page?('/beta-signup') and !current_page?('/get-in-touch') and !current_page?('/venues-thankyou') and !current_page?('/android-thankyou') %>
+             <% if !current_page?('/venues') and !current_page?('/venues/login') and !current_page?('/android') and !current_page?('/beta-signup') and !current_page?('/venues/contact') and !current_page?('/venues-thankyou') and !current_page?('/android-thankyou') %>
               <li><%= link_to('FAQ', '/faq', :class=>'nav-item '+check_active('/faq')) %></li>
               <li><%= link_to('Contact', '/contact', :class=>'nav-item '+check_active('/contact')) %></li>
               <li><%= link_to('For Venues', '/venues', :class=>'nav-item '+check_active('/venues')) %></li>
