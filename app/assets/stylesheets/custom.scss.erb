@@ -356,7 +356,7 @@ body{
 				}
 		}
 		@media #{$small-only} {
-			height: 850px;
+			height: 905px;
 			img {
 				right: 10%;
 				left: auto;
@@ -369,9 +369,10 @@ body{
 }
 .chatting {
 	.details{
+		margin-top: 25px;
 		@media #{$medium-up} {
 			margin-top: 9%;
-			padding-left: 50px;
+			padding-left: 100px;
 		}
 		p {
 			line-height: 2;
@@ -380,6 +381,7 @@ body{
 }
 .matching {
 	.details{
+		margin-top: 25px;
 		@media #{$medium-up} {
 			margin-top: 13%;
 		}
@@ -544,7 +546,9 @@ body{
 }
 
 .top-25 {
-	margin-top: 25px !important;
+	position: relative;
+	top: 0.9%;
+	//margin-top: 25px !important;
 }
 
 .nightlife{
@@ -582,6 +586,9 @@ body{
 	display: block;
 	margin-top: 2rem;
 	margin-bottom: 2rem;
+	width: 135px;
+	margin-left: auto;
+	margin-right: auto;
 	@media #{$small-only} {
 		margin-top: 10px;
 		margin-bottom: 20px;
@@ -952,4 +959,11 @@ div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .
 }
 div.medium-7.medium-centered.columns.details.venues{
 	margin-top: 14%;
+}
+
+
+.two-columns {
+    -webkit-column-count: 2; /* Chrome, Safari, Opera */
+    -moz-column-count: 2; /* Firefox */
+    column-count: 2;
 }
