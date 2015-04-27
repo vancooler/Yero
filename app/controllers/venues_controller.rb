@@ -102,7 +102,7 @@ class VenuesController < ApplicationController
       
       json.array! venues do |v|
         puts "venue:" 
-        puts v
+        puts v.inspect
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
         puts images
         json.id v.id
