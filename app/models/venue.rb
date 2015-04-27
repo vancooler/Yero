@@ -30,9 +30,9 @@ class Venue < ActiveRecord::Base
 
   def self.near_venues(user, distance)
     if user.latitude.nil? or user.longitude.nil?
-      return Venue.geocoded.near([49, -123], distance, units: :km)
+      return Venue.geocoded.near([49, -123], distance, units: :km, :order => :distance)
     else
-      return Venue.geocoded.near([user.latitude, user.longitude], distance, units: :km)
+      return Venue.geocoded.near([user.latitude, user.longitude], distance, units: :km, :order => :distance)
     end
   end
 
