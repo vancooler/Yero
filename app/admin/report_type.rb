@@ -1,6 +1,8 @@
 ActiveAdmin.register ReportType do
   menu :parent => "REPORT"
   permit_params :report_type_name
+
+  actions :index, :create, :new, :show, :update, :edit
   index do
   	column :id
     column "Type", :report_type_name

@@ -101,10 +101,9 @@ class VenuesController < ApplicationController
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
       
       json.array! venues do |v|
-        puts "venue:" 
-        puts v.inspect
+        # puts "venue:" 
+        # puts v.inspect
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
-        puts images
         json.id v.id
         json.name v.name
         json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
