@@ -82,8 +82,7 @@ class VenuesController < ApplicationController
     user = User.find_by_key(params[:key])
     # venues = Venue.all
     venues = Venue.near_venues(user, distance)
-    puts "VENUES:"
-    puts venues
+
     # if params[:after]
     #   new_list = []
 
@@ -102,8 +101,8 @@ class VenuesController < ApplicationController
       #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
       
       json.array! venues do |v|
-        puts "venue id:" 
-        puts v.id
+        puts "venue:" 
+        puts v
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
         puts images
         json.id v.id
