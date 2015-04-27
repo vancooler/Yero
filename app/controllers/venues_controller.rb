@@ -82,7 +82,8 @@ class VenuesController < ApplicationController
     user = User.find_by_key(params[:key])
     # venues = Venue.all
     venues = Venue.near_venues(user, distance)
-
+    puts "VENUES:"
+    puts venues
     # if params[:after]
     #   new_list = []
 
