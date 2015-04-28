@@ -338,7 +338,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1200 and int_time < 1210 # If time is 17:00 ~ 17:09
+      if int_time >= 1220 and int_time < 1230 # If time is 17:00 ~ 17:09
         open_network_tz = [Time.zone.name.to_s] #format it
         times_array << open_network_tz #Throw into array
       end
@@ -352,7 +352,7 @@ class User < ActiveRecord::Base
       if !usersInTimezone.nil? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
-          if !attributes["user_id"].nil?
+          if !attributes["user_id"].nil? and !User.find(attributes["user_id"].to_i).nil?
             people_array << attributes["user_id"].to_i #Assign new attributes
           end  
         end
@@ -408,7 +408,7 @@ class User < ActiveRecord::Base
       if !usersInTimezone.nil? # If there are people in that timezone
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
-          if !attributes["user_id"].nil?
+          if !attributes["user_id"].nil? and !User.find(attributes["user_id"].to_i).nil?
             people_array << attributes["user_id"].to_i #Assign new attributes
           end  
         end
