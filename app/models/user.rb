@@ -345,35 +345,38 @@ class User < ActiveRecord::Base
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
       if int_time >= 1410 and int_time < 1420 # If time is 17:00 ~ 17:09
-        open_network_tz = [Time.zone.name.to_s] #format it
+        open_network_tz = Time.zone.name.to_s #format it
         times_array << open_network_tz #Throw into array
       end
     end
 
     people_array = Array.new 
-    times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
-    times_array.each do |timezone| #Each timezone that we found to be at 17:00
-      usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
+    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
+    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+
+
+    if !usersInTimezone.nil? # If there are people in that timezone
+      usersInTimezone.each do |user|
+        attributes = user.attributes.to_h # Turn the people into usable attributes
+        if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
+          tmp_user = User.find(attributes["user_id"].to_i)
+          user_hash = Hash.new
+          user_hash['id'] = tmp_user.id
+          user_hash['token'] = tmp_user.apn_token
+          user_hash['updated_at'] = tmp_user.updated_at
+
+          people_array << user_hash
+          
+
+        end  
+      end
+    end 
+    # times_array.each do |timezone| #Each timezone that we found to be at 17:00
+    #   usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
       
-      if !usersInTimezone.nil? # If there are people in that timezone
-        usersInTimezone.each do |user|
-          attributes = user.attributes.to_h # Turn the people into usable attributes
-          if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
-            tmp_user = User.find(attributes["user_id"].to_i)
-            user_hash = Hash.new
-            user_hash['id'] = tmp_user.id
-            user_hash['token'] = tmp_user.apn_token
-            user_hash['updated_at'] = tmp_user.updated_at
+    # end
 
-            people_array << user_hash
-            
-
-          end  
-        end
-      end 
-    end
-
-    new_people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
+    people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
     puts "COUNT: "
     puts people_array.length
     people_array.each_slice(25) do |people_group|
@@ -394,7 +397,7 @@ class User < ActiveRecord::Base
           request["accepted"] = 0
           notification_array << request
           # TODO: use job queue?
-          User.delay.find(person['id'].to_i).send_network_open_notification
+          User.find(person['id'].to_i).delay.send_network_open_notification
            
         end
       end
