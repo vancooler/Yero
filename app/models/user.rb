@@ -344,12 +344,12 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1550 and int_time < 1600 # If time is 17:00 ~ 17:09
+      if int_time >= 1600 and int_time < 1610 # If time is 17:00 ~ 17:09
         open_network_tz = Time.zone.name.to_s #format it
         times_array << open_network_tz #Throw into array
       end
     end
-    
+
     time2 = Time.now
     dbtime = time2 - time1
     puts "runtime2: "
@@ -357,7 +357,7 @@ class User < ActiveRecord::Base
 
     times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
     user_ids = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
-    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+    # usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
 
 
     # user_ids = Array.new
@@ -398,40 +398,42 @@ class User < ActiveRecord::Base
     puts dbtime.inspect
 
     # remove duplicated apn_tokens
-    people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
-    puts "COUNT: "
-    puts people_array.length
+    if !people_array.nil? and people_array.length > 0
+      people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
+      puts "COUNT: "
+      puts people_array.length
 
-    time4 = Time.now
-    dbtime = time4 - time3
-    puts "runtime4: "
-    puts dbtime.inspect
+      time4 = Time.now
+      dbtime = time4 - time3
+      puts "runtime4: "
+      puts dbtime.inspect
 
-    people_array.each_slice(25) do |people_group|
-      batch = AWS::DynamoDB::BatchWrite.new
-      notification_array = Array.new
-      people_group.each do |person|
-        if !person.blank?
-          request = Hash.new()
-          request["target_id"] = person['id'].to_s
-          request["timestamp"] = Time.now.to_i
-          request["origin_id"] = '0'
-          request["created_date"] = Date.today.to_s
-          request["venue_id"] = '0'
-          request["notification_type"] = '0'
-          request["intro"] = "Yero is now online. Connect to your city's network."
-          request["viewed"] = 0
-          request["not_viewed_by_sender"] = 1
-          request["accepted"] = 0
-          notification_array << request
-          # TODO: use job queue?
-          User.find(person['id'].to_i).delay.send_network_open_notification
-           
+      people_array.each_slice(25) do |people_group|
+        batch = AWS::DynamoDB::BatchWrite.new
+        notification_array = Array.new
+        people_group.each do |person|
+          if !person.blank?
+            request = Hash.new()
+            request["target_id"] = person['id'].to_s
+            request["timestamp"] = Time.now.to_i
+            request["origin_id"] = '0'
+            request["created_date"] = Date.today.to_s
+            request["venue_id"] = '0'
+            request["notification_type"] = '0'
+            request["intro"] = "Yero is now online. Connect to your city's network."
+            request["viewed"] = 0
+            request["not_viewed_by_sender"] = 1
+            request["accepted"] = 0
+            notification_array << request
+            # TODO: use job queue?
+            User.find(person['id'].to_i).delay.send_network_open_notification
+             
+          end
         end
-      end
-      if notification_array.count > 0
-        batch.put('WhisperNotification', notification_array)
-        batch.process!
+        if notification_array.count > 0
+          batch.put('WhisperNotification', notification_array)
+          batch.process!
+        end
       end
     end
     time5 = Time.now
