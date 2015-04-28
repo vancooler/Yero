@@ -337,7 +337,7 @@ class User < ActiveRecord::Base
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def self.network_open
-    start_time = Time.now
+    time1 = Time.now
 
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
@@ -349,11 +349,19 @@ class User < ActiveRecord::Base
         times_array << open_network_tz #Throw into array
       end
     end
+    time2 = Time.now
+    dbtime = time2 - time1
+    puts "runtime2: "
+    puts dbtime.inspect
 
     people_array = Array.new 
     times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
     usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
 
+    time3 = Time.now
+    dbtime = time3 - time2
+    puts "runtime3: "
+    puts dbtime.inspect
 
     if !usersInTimezone.nil? # If there are people in that timezone
       usersInTimezone.each do |user|
@@ -379,6 +387,12 @@ class User < ActiveRecord::Base
     people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
     puts "COUNT: "
     puts people_array.length
+
+    time4 = Time.now
+    dbtime = time4 - time3
+    puts "runtime4: "
+    puts dbtime.inspect
+
     people_array.each_slice(25) do |people_group|
       batch = AWS::DynamoDB::BatchWrite.new
       notification_array = Array.new
@@ -406,10 +420,13 @@ class User < ActiveRecord::Base
         batch.process!
       end
     end
-    end_time = Time.now
-    dbtime = end_time - start_time
-    puts "runtime: "
+    time5 = Time.now
+    dbtime = time5 - time4
+    puts "runtime5: "
     puts dbtime.inspect
+
+    puts "runtimeALL: "
+    puts (time5 - time1).inspect
   end
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
