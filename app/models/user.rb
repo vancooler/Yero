@@ -344,46 +344,57 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1430 and int_time < 1440 # If time is 17:00 ~ 17:09
+      if int_time >= 1450 and int_time < 1500 # If time is 17:00 ~ 17:09
         open_network_tz = Time.zone.name.to_s #format it
         times_array << open_network_tz #Throw into array
       end
     end
+
+    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
+    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+
     time2 = Time.now
     dbtime = time2 - time1
     puts "runtime2: "
     puts dbtime.inspect
 
-    people_array = Array.new 
-    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
-    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+    user_ids = Array.new
+    if !usersInTimezone.nil? # If there are people in that timezone
+      usersInTimezone.each do |user|
+        attributes = user.attributes.to_h # Turn the people into usable attributes
+        if !attributes["user_id"].nil? 
+          user_ids << attributes["user_id"].to_i
+
+        end  
+      end
+    end 
 
     time3 = Time.now
     dbtime = time3 - time2
     puts "runtime3: "
     puts dbtime.inspect
+    
+    if user_ids.length > 0
+      users = User.where(id: user_ids)
+    end
 
-    if !usersInTimezone.nil? # If there are people in that timezone
-      usersInTimezone.each do |user|
-        attributes = user.attributes.to_h # Turn the people into usable attributes
-        if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
-          tmp_user = User.find(attributes["user_id"].to_i)
-          user_hash = Hash.new
-          user_hash['id'] = tmp_user.id
-          user_hash['token'] = tmp_user.apn_token
-          user_hash['updated_at'] = tmp_user.updated_at
-
-          people_array << user_hash
-          
-
-        end  
+    if users.length > 0
+      people_array = Array.new 
+      users.each do |tmp_user|
+        user_hash = Hash.new
+        user_hash['id'] = tmp_user.id
+        user_hash['token'] = tmp_user.apn_token
+        user_hash['updated_at'] = tmp_user.updated_at
+        people_array << user_hash
       end
-    end 
-    # times_array.each do |timezone| #Each timezone that we found to be at 17:00
-    #   usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
-      
-    # end
+    end
 
+    time4s = Time.now
+    dbtime = time4s - time3
+    puts "runtime4s: "
+    puts dbtime.inspect
+
+    # remove duplicated apn_tokens
     people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
     puts "COUNT: "
     puts people_array.length
