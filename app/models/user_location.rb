@@ -26,6 +26,23 @@ class UserLocation < AWS::Record::HashModel
     items = table.items.where(:timezone).in(*timezones)
 
     if items and items.count > 0
+      time1 = Time.now
+      user_ids = Array.new
+
+      items.each do |user|
+        attributes = user.attributes.to_h # Turn the people into usable attributes
+        if !attributes["user_id"].nil? 
+          user_ids << attributes["user_id"].to_i
+
+        end  
+      end
+
+
+      time3 = Time.now
+      dbtime = time3 - time1
+      puts "QUERY TIME: "
+      puts dbtime.inspect
+
       return items
     else
       return nil
