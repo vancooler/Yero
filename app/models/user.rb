@@ -338,7 +338,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1230 and int_time < 1240 # If time is 17:00 ~ 17:09
+      if int_time >= 1330 and int_time < 1340 # If time is 17:00 ~ 17:09
         open_network_tz = [Time.zone.name.to_s] #format it
         times_array << open_network_tz #Throw into array
       end
@@ -353,11 +353,21 @@ class User < ActiveRecord::Base
         usersInTimezone.each do |user|
           attributes = user.attributes.to_h # Turn the people into usable attributes
           if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
-            people_array << attributes["user_id"].to_i #Assign new attributes
+            tmp_user = User.find(attributes["user_id"].to_i)
+            user_hash = Hash.new
+            user_hash['id'] = tmp_user.id
+            user_hash['token'] = tmp_user.apn_token
+            user_hash['updated_at'] = tmp_user.updated_at
+
+            people_array << user_hash
+            
+
           end  
         end
       end 
     end
+
+    people_array = people_array.group_by { |x| x[:token] }.map {|x,y|y.max_by {|x|x[:updated_at]}}
 
     people_array.each_slice(25) do |people_group|
       batch = AWS::DynamoDB::BatchWrite.new
@@ -365,7 +375,7 @@ class User < ActiveRecord::Base
       people_group.each do |person|
         if !person.blank?
           request = Hash.new()
-          request["target_id"] = person.to_s
+          request["target_id"] = person['id'].to_s
           request["timestamp"] = Time.now.to_i
           request["origin_id"] = '0'
           request["created_date"] = Date.today.to_s
@@ -377,7 +387,7 @@ class User < ActiveRecord::Base
           request["accepted"] = 0
           notification_array << request
           # TODO: use job queue?
-          WhisperNotification.send_nightopen_notification(person.to_i)  
+          WhisperNotification.send_nightopen_notification(person['id'].to_i)  
         end
       end
       if notification_array.count > 0
