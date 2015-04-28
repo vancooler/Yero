@@ -23,18 +23,18 @@ class UserLocation < AWS::Record::HashModel
     table = dynamo_db.tables['UserLocation']
     table.load_schema
     # items = table.items.where(:timezone).equals(timezone.to_s)
-    items = table.items.where(:timezone).in(*timezones)
+    items = table.items.where(:timezone).in(*timezones).select(:user_id) { |data| p data.attributes["user_id"] }
 
     if items and items.count > 0
       time1 = Time.now
       user_ids = Array.new
 
       items.each do |user|
-        attributes = user.attributes.to_h # Turn the people into usable attributes
+        attributes = user.attributes # Turn the people into usable attributes
         if !attributes["user_id"].nil? 
           user_ids << attributes["user_id"].to_i
 
-        end  
+        end   
       end
 
 
@@ -43,7 +43,7 @@ class UserLocation < AWS::Record::HashModel
       puts "QUERY TIME: "
       puts dbtime.inspect
 
-      return items
+      return user_ids
     else
       return nil
     end

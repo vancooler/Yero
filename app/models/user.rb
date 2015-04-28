@@ -344,41 +344,44 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1510 and int_time < 1520 # If time is 17:00 ~ 17:09
+      if int_time >= 1550 and int_time < 1600 # If time is 17:00 ~ 17:09
         open_network_tz = Time.zone.name.to_s #format it
         times_array << open_network_tz #Throw into array
       end
     end
-
-    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
-    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
-
+    
     time2 = Time.now
     dbtime = time2 - time1
     puts "runtime2: "
     puts dbtime.inspect
 
-    user_ids = Array.new
-    if !usersInTimezone.nil? # If there are people in that timezone
-      usersInTimezone.each do |user|
-        attributes = user.attributes.to_h # Turn the people into usable attributes
-        if !attributes["user_id"].nil? 
-          user_ids << attributes["user_id"].to_i
+    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
+    user_ids = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
 
-        end  
-      end
-    end 
+
+    # user_ids = Array.new
+    # if !usersInTimezone.nil? # If there are people in that timezone
+    #   usersInTimezone.each do |user|
+    #     attributes = user.attributes.to_h # Turn the people into usable attributes
+    #     if !attributes["user_id"].nil? 
+    #       user_ids << attributes["user_id"].to_i
+
+    #     end  
+    #   end
+    # end 
 
     time3 = Time.now
     dbtime = time3 - time2
     puts "runtime3: "
     puts dbtime.inspect
     
-    if user_ids.length > 0
+    if !user_ids.nil? and user_ids.length > 0
       users = User.where(id: user_ids)
     end
 
-    if users.length > 0
+
+    if !users.nil? and users.length > 0
       people_array = Array.new 
       users.each do |tmp_user|
         user_hash = Hash.new
@@ -455,16 +458,16 @@ class User < ActiveRecord::Base
     puts times_array
     people_array = Array.new 
     times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
-    usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+    people_array = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
     
-    if !usersInTimezone.nil? # If there are people in that timezone
-      usersInTimezone.each do |user|
-        attributes = user.attributes.to_h # Turn the people into usable attributes
-        if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
-          people_array << attributes["user_id"].to_i #Assign new attributes
-        end  
-      end
-    end 
+    # if !usersInTimezone.nil? # If there are people in that timezone
+    #   usersInTimezone.each do |user|
+    #     attributes = user.attributes.to_h # Turn the people into usable attributes
+    #     if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
+    #       people_array << attributes["user_id"].to_i #Assign new attributes
+    #     end  
+    #   end
+    # end 
     # times_array.each do |timezone| #Each timezone that we found to be at 17:00
     # end
 
