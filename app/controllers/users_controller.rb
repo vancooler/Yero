@@ -420,7 +420,7 @@ class UsersController < ApplicationController
 
       render json: success(users.reverse, "data")
     else
-      render json: success("User has no friends")
+      render json: success(Array.new, "data")
     end
   end
 
