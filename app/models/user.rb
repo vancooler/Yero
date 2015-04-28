@@ -331,6 +331,10 @@ class User < ActiveRecord::Base
     self.last_activity = Time.now
   end
 
+  def send_network_open_notification
+    WhisperNotification.send_nightopen_notification(self.id) 
+  end
+
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def self.network_open
     start_time = Time.now
@@ -340,7 +344,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1350 and int_time < 1400 # If time is 17:00 ~ 17:09
+      if int_time >= 1410 and int_time < 1420 # If time is 17:00 ~ 17:09
         open_network_tz = [Time.zone.name.to_s] #format it
         times_array << open_network_tz #Throw into array
       end
@@ -369,7 +373,7 @@ class User < ActiveRecord::Base
       end 
     end
 
-    people_array = people_array.group_by { |x| x[:token] }.map {|x,y|y.max_by {|x|x[:updated_at]}}
+    new_people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
     puts "COUNT: "
     puts people_array.length
     people_array.each_slice(25) do |people_group|
@@ -390,7 +394,8 @@ class User < ActiveRecord::Base
           request["accepted"] = 0
           notification_array << request
           # TODO: use job queue?
-          WhisperNotification.send_nightopen_notification(person['id'].to_i)  
+          User.delay.find(person['id'].to_i).send_network_open_notification
+           
         end
       end
       if notification_array.count > 0
@@ -399,7 +404,7 @@ class User < ActiveRecord::Base
       end
     end
     end_time = Time.now
-    dbtime = start_time - end_time
+    dbtime = end_time - start_time
     puts "runtime: "
     puts dbtime.inspect
   end
