@@ -436,17 +436,19 @@ body{
 	@media #{$medium-up} {
 		.text-content {
 			margin-top: 8%;
-			margin-left: 8%;
+			left: 50%;
 		}
 	}
 	.image {
-		position: absolute;
-		bottom: 0px;
+		float: left !important;
+		position: relative;
+		bottom: -50px;
 		height: 450px;
+		right: 54%;
 		img {
-			position: absolute;
-			bottom: 0px;
-			left: 24%;
+			position: relative;
+			bottom: 15%;
+			left: 5%;
 			max-width: 400px;
 			
 		}
@@ -456,6 +458,8 @@ body{
 		@media #{$small-only} {
 			position: relative;
 			height: 275px;
+			bottom: 0px;
+			right: 0%;
 			img {
 				position: relative;
 				left: 0%;
