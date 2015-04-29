@@ -461,20 +461,20 @@ class UsersController < ApplicationController
 
       @user.last_active = Time.now
       @user.account_status = 0  # inactive without avatar
-      if @user.save
-        response = @user.to_json(true)
-        
-        intro = "Welcome to Yero"
-        # TODO: future feature
-        # n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
-        
-        render json: success(response)
-      else
-        if @user.errors.on(:email)
-          render json: error("This email has already been taken.")
+      if User.exists? email: params[:email]
+        if @user.save
+          response = @user.to_json(true)
+          
+          intro = "Welcome to Yero"
+          # TODO: future feature
+          # n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
+          
+          render json: success(response)
         else
           render json: error(JSON.parse(@user.errors.messages.to_json))
         end
+      else
+          render json: error("This email has already been taken.")
       end
     end
   end
@@ -499,57 +499,57 @@ class UsersController < ApplicationController
     user_registration.user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
     user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
-    if user_registration.create
-      user = user_registration.user
-      
-      # #signup with the avatar id
-      # avatar_id = sign_up_params[:avatar_id]
-      # response = user.to_json(true)
-      # response["avatars"] = Array.new
-      # if avatar_id.to_i > 0
-      #   avatar = UserAvatar.find(avatar_id.to_i)
-      #   if !avatar.nil?
-      #     avatar.user_id = user.id
-      #     avatar.save
-      #     user_avatar = Hash.new
-      #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
-      #     user_avatar['avatar'] = avatar.avatar.url
-      #     response["avatars"] = [user_avatar]
-      #   end
-      # end
+    if User.exists? email: params[:email]
+      if user_registration.create
+        user = user_registration.user
+        
+        # #signup with the avatar id
+        # avatar_id = sign_up_params[:avatar_id]
+        # response = user.to_json(true)
+        # response["avatars"] = Array.new
+        # if avatar_id.to_i > 0
+        #   avatar = UserAvatar.find(avatar_id.to_i)
+        #   if !avatar.nil?
+        #     avatar.user_id = user.id
+        #     avatar.save
+        #     user_avatar = Hash.new
+        #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
+        #     user_avatar['avatar'] = avatar.avatar.url
+        #     response["avatars"] = [user_avatar]
+        #   end
+        # end
 
-      # avatar = sign_up_params[:avatar]
-      # if avatar
-      #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
-      # else
-      # end
-      
-      # The way in one step
-      response = user.to_json(true)
-      user_info = user
+        # avatar = sign_up_params[:avatar]
+        # if avatar
+        #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
+        # else
+        # end
+        
+        # The way in one step
+        response = user.to_json(true)
+        user_info = user
 
-      if !response["avatars"].empty?
-        thumb = response["avatars"].first['avatar']
-        if thumb
-          response["avatars"].first['thumbnail'] = thumb
-          response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+        if !response["avatars"].empty?
+          thumb = response["avatars"].first['avatar']
+          if thumb
+            response["avatars"].first['thumbnail'] = thumb
+            response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+          end
         end
-      end
-      
-      # render json: user_registration.to_json.inspect
-      # render json: user_avatar.to_json.inspect
-      
-      intro = "Welcome to Yero"
-      # TODO: future feature
-      # n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
-      
-      render json: success(response)
-    else
-      if !user.errors.messages[:email][0].nil? and user.errors.messages[:email][0] == "has already been taken"
-        render json: error("This email has already been taken.")
+        
+        # render json: user_registration.to_json.inspect
+        # render json: user_avatar.to_json.inspect
+        
+        intro = "Welcome to Yero"
+        # TODO: future feature
+        # n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
+        
+        render json: success(response)
       else
         render json: error(JSON.parse(user.errors.messages.to_json))
       end
+    else
+        render json: error("This email has already been taken.")
     end
   end
 
