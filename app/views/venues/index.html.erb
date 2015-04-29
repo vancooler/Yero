@@ -1,0 +1,20 @@
+<% content_for :title, "Yero -  Venues" %>
+
+<h1>Venues</h1>
+
+</br>
+
+<% @venues.each do |venue| %>
+<div class="venueBody venueShow">
+  <h3><%=link_to venue.name, venue %></h3>
+	   
+		<%#= h(truncate((raw venue.body), :length => 10))%>
+	<%#=venue.address%>
+
+    <%if true %>
+		<%= link_to 'Edit', edit_venue_url(venue) %>
+		<%#= link_to 'Destroy', venue, method: :delete, data: { confirm: 'Are you sure?' } %>
+	<%end%>
+</div><hr>
+<% end %>
+

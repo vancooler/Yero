@@ -1,11 +1,17 @@
 <% body_class "venue-login" %>
-<% content_for :title , "Venue Log In" %>
+<% content_for :title , "Yero Venue Log In" %>
+<div class="error">
+	<%=flash[:alert].html_safe if flash[:alert]%>
+</div>
+
 <section class="page-content get-in-touch-content padding text-center">
 	<div class="row">
 
 		<div class="medium-8 medium-centered columns">
 			<h3>Venue Partner Login</h3>
 		</div>
+	</div>
+	<div class="row">
 		<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
 		<div class="medium-4 medium-centered columns email-form">
 			<div>
@@ -21,7 +27,7 @@
 				<div class="">
 					<%= f.submit "Login", :class => 'button expand' %>
 				</div>
-				<!-- <a href="" class="forgot-pass">Forgot Password?</a> -->
+				<a href="/password/new" class="forgot-pass">Forgot Password?</a>
 			</div>
 		</div>
 		<% end %>

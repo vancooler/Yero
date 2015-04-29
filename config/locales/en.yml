@@ -30,6 +30,19 @@ en:
             email:
               blank: Email can't be blank!
               invalid: Email is invalid!
+              not_found: Email cannot be found!
+            password:
+              blank: New password(s) cannot be empty.
+              too_short: Password is too short (minimum is 6 characters)!
+            password_confirmation:
+              blank: New password(s) cannot be empty.
+              confirmation: Password doesn't match confirmation!
+        web_user:
+          attributes:
+            email:
+              blank: Email can't be blank!
+              invalid: Email is invalid!
+              not_found: Email cannot be found!
             password:
               blank: New password(s) cannot be empty.
               too_short: Password is too short (minimum is 6 characters)!

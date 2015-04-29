@@ -4,6 +4,15 @@ ActiveAdmin.register WebUser do
   #               beacons_attributes: [:id, :key, :venue_id, :_destroy],
   #               venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
+
+  controller do
+    def update_resource(object, attributes)
+      update_method = attributes.first[:password].present? ? :update_attributes : :update_without_password
+      object.send(update_method, *attributes)
+    end
+  end
+
+  
   batch_action :do_something do |selection|
     WebUser.find(selection).each do |venue|
       # venue.status = 0

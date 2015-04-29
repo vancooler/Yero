@@ -24,6 +24,9 @@ Rails.application.routes.draw do
     get 'venue/pick-winner', to: 'venues#pick_winner', as: :pick_winner
     get 'lottery-dashboard', to: 'venues#lottery_dash', as: :lotto_dash
     post 'claim-drink/:winner_id', to: 'venues#claim_drink', as: :claim_drink
+    get 'owner/venues', to: 'venues#index', as: :venues
+    get 'owner/venues/:id', to: 'venues#show', as: :venue
+    get 'owner/venues/:id/edit', to: 'venues#edit', as: :edit_venue
 
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
