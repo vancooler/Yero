@@ -1,8 +1,5 @@
 <% body_class "venue-login" %>
 <% content_for :title , "Yero Venue Log In" %>
-<div class="error">
-	<%=flash[:alert].html_safe if flash[:alert]%>
-</div>
 
 <section class="page-content get-in-touch-content padding text-center">
 	<div class="row">
@@ -13,8 +10,14 @@
 	</div>
 	<div class="row">
 		<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
 		<div class="medium-4 medium-centered columns email-form">
 			<div>
+				<div class="error">
+					<%=flash[:alert].html_safe if flash[:alert]%>
+					<%=notice%>
+				</div>
+				
 				<div class="email-input">
 					<%= f.email_field :email, autofocus: true, :placeholder=>"Email" %>
 				</div>

@@ -12,21 +12,25 @@
 	<div class="row">
 
 		<%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-			<div class="">
-				<%= devise_error_messages! %>
-			</div>
 		  	<div class="medium-4 medium-centered columns email-form">
 				<div>
+					<div class="">
+						<%= devise_error_messages! %>
+					</div>
 					<div class="email-input">
 					  <%= f.email_field :email, autofocus: true, :placeholder=>"Email" %></div>
 					</div>
 					<div class="">
 						<%= f.submit "Send me reset password instructions", :class => 'button expand' %>
 					</div>
-					<%= render "web_users/shared/links" %>
 				</div>
 			</div>
 		<% end %>
+	</div>
+	<div class="row">
+		<div class="medium-4 medium-centered columns">
+			<%= render "web_users/shared/links" %>
+		</div>
 	</div>
 </div>
 
