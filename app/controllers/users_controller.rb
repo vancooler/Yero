@@ -461,7 +461,7 @@ class UsersController < ApplicationController
 
       @user.last_active = Time.now
       @user.account_status = 0  # inactive without avatar
-      if User.exists? email: params[:email]
+      if !(User.exists? email: params[:email])
         if @user.save
           response = @user.to_json(true)
           
@@ -499,7 +499,7 @@ class UsersController < ApplicationController
     user_registration.user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
     user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
-    if User.exists? email: params[:email]
+    if !(User.exists? email: params[:email])
       if user_registration.create
         user = user_registration.user
         
