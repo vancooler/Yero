@@ -181,13 +181,13 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
-    friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3")
-    friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3")
+    friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
+    friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
     friends_array = Array.new
     friends_id_array = Array.new
     if friends_accepted and friends_accepted.count > 0
       friends_accepted.each do |friend|
-        attributes = friend.attributes.to_h
+        attributes = friend.attributes
         friend_id = attributes['target_id'].to_i
         h = Hash.new
         p 'in the loop'
@@ -197,6 +197,7 @@ class WhisperNotification < AWS::Record::HashModel
         else
           friends_id_array << friend_id
           if friend_id > 0
+            if User.exists? id: friend_id
               user = User.find(friend_id)
               h['intro'] = user.introduction_1
               h['target_user'] = user
@@ -208,6 +209,9 @@ class WhisperNotification < AWS::Record::HashModel
                   h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
                 end
               end
+            else
+              h['target_user'] = ''
+            end
           else
               h['target_user'] = ''
           end
@@ -221,7 +225,7 @@ class WhisperNotification < AWS::Record::HashModel
     if friends_whispered and friends_whispered.count > 0
       friends_whispered.each do |friend|
         attributes = friend.attributes.to_h
-        friend_id = attributes['origin_id'].to_i
+        friend_id = attributes['origin_id']
         h = Hash.new
         p 'in the loop'
         p friend_id
@@ -230,6 +234,7 @@ class WhisperNotification < AWS::Record::HashModel
         else
           friends_id_array << friend_id
           if friend_id > 0
+            if User.exists id: friend_id
               user = User.find(friend_id)
               h['intro'] = user.introduction_1
               h['target_user'] = user
@@ -241,6 +246,9 @@ class WhisperNotification < AWS::Record::HashModel
                   h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
                 end
               end
+            else
+              h['target_user'] = ''
+            end
           else
               h['target_user'] = ''
           end
@@ -254,8 +262,7 @@ class WhisperNotification < AWS::Record::HashModel
     users = Array.new
     users = friends_array
     users = users.sort_by { |hsh| hsh[:timestamp] }
-    p "users#afd"
-    p users.inspect
+
     return users.reverse
 
   end
@@ -288,6 +295,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  # NOT used
   def self.my_chatting_requests(target_id)
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
