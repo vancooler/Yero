@@ -1,6 +1,8 @@
 ActiveAdmin.register Venue do
   menu :parent => "VENUE"
-  permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, :age_requirement, :latitude, :longitude,
+  permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, 
+                :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, 
+                :age_requirement, :latitude, :longitude, :web_user, :web_user_id,
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
@@ -18,6 +20,7 @@ ActiveAdmin.register Venue do
     column :email
     column "Name", :name
     column "Type", :venue_type
+    column "Owner", :web_user
     column :venue_network
     column "Address" do |venue|
       (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.city.nil? ? '' : ', ' + venue.city)
@@ -44,12 +47,14 @@ ActiveAdmin.register Venue do
   filter :city, :label => "City", :as => :select, :collection => proc { Venue.where("venues.city IS NOT NULL").collect  { |v| [v.city] }.uniq }
   filter :venue_type
   filter :venue_network
+  filter :web_user, :label => "Owner"
 
   form do |f|
     f.inputs "Details" do
       f.input :email
       f.input :name, :label => "Name"
       f.input :venue_type
+      f.input :web_user, :label => "Owner"
       f.input :venue_network
       f.input :address_line_one
       f.input :address_line_two
@@ -83,6 +88,7 @@ ActiveAdmin.register Venue do
       row :email
       row :name
       row("Address") { |venue| (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.zipcode.nil? ? '' : ' ' + venue.zipcode) + (venue.city.nil? ? '' : ', ' + venue.city) + (venue.state.nil? ? '' : ' ' + venue.state) + (venue.country_name.nil? ? '' : ', ' + venue.country_name) }
+      row("Owner") { |venue| venue.web_user }
       # row :address_line_one
       # row :address_line_two
       # row :city

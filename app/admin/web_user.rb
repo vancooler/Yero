@@ -12,7 +12,7 @@ ActiveAdmin.register WebUser do
     end
   end
 
-  
+
   batch_action :do_something do |selection|
     WebUser.find(selection).each do |venue|
       # venue.status = 0
@@ -25,11 +25,13 @@ ActiveAdmin.register WebUser do
     selectable_column
   	column :id
     column :email
-    column "Name", :web_user_name
-    # column "Type", :venue_type
-    # column :venue_network
-    column "Address" do |venue|
-      (venue.address_line_1.nil? ? '' : venue.address_line_1) + (venue.address_line_2.nil? ? '' : ' ' + venue.address_line_2) + (venue.city.nil? ? '' : ', ' + venue.city)
+    column "Full Name"do |web_user|
+      (web_user.first_name.blank? ? '' : web_user.first_name + ' ') + (web_user.last_name.blank? ? '' : web_user.last_name)
+    end
+    # column "Type", :web_user_type
+    # column :web_user_network
+    column "Address" do |web_user|
+      (web_user.address_line_1.blank? ? '' : web_user.address_line_1 + ' ') + (web_user.address_line_2.blank? ? '' : web_user.address_line_2 + ', ') + (web_user.city.blank? ? '' : web_user.city)
     end
     # # column :address_line_one
     # # column :address_line_two
@@ -95,7 +97,7 @@ ActiveAdmin.register WebUser do
     attributes_table_for web_user do
       row :email
       row :web_user_name
-      row("Address") { |web_user| (web_user.address_line_1.nil? ? '' : web_user.address_line_1) + (web_user.address_line_2.nil? ? '' : ' ' + web_user.address_line_2) + (web_user.zipcode.nil? ? '' : ' ' + web_user.zipcode) + (web_user.city.nil? ? '' : ', ' + web_user.city) + (web_user.state.nil? ? '' : ' ' + web_user.state) + (web_user.country_name.nil? ? '' : ', ' + web_user.country_name) }
+      row("Address") { |web_user| (web_user.address_line_1.blank? ? '' : web_user.address_line_1 + ' ') + (web_user.address_line_2.blank? ? '' : web_user.address_line_2 + ' ') + (web_user.zipcode.blank? ? '' : web_user.zipcode + ', ') + (web_user.city.blank? ? '' : web_user.city + ' ') + (web_user.state.blank? ? '' : web_user.state + ', ') + (web_user.country_name.blank? ? '' : web_user.country_name) }
       # # row :address_line_one
       # # row :address_line_two
       # # row :city
@@ -108,8 +110,8 @@ ActiveAdmin.register WebUser do
       # row :venue_network
       # row :longitude
       # row :latitude
-      # row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.nil?}
-      # row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}
+      # row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.blank?}
+      # row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.blank?}
 
       # table_for venue.beacons do
       #   column "Places" do |b|
