@@ -339,19 +339,23 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table = dynamo_db.tables['WhisperNotification']
     table.load_schema
-    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2")
-    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2")
+    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
+    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
     origin_user_array = Array.new
     if target_items and target_items.count > 0
       target_items.each do |i|
-        attributes = i.attributes.to_h
+        attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
         a = Array.new
         if origin_id > 0
-          user = User.find(origin_id)
-          h['origin_user'] = user
-          h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
+          if User.exists? id: origin_id
+            user = User.find(origin_id)
+            h['origin_user'] = user
+            h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
+          else
+            h['origin_user'] = ''
+          end
         else
           h['origin_user'] = ''
         end
@@ -366,14 +370,18 @@ class WhisperNotification < AWS::Record::HashModel
     end
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
-        attributes = i.attributes.to_h
+        attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
         a = Array.new
         if target_id > 0
-          user = User.find(target_id)
-          h['target_user'] = user
-          h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          if User.exists? id: target_id
+            user = User.find(target_id)
+            h['target_user'] = user
+            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          else
+            h['target_user'] = ''
+          end
         else
           h['target_user'] = ''
         end
