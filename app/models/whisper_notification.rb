@@ -96,15 +96,17 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
-    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1")
+    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").select(:venue_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
     venue = Array.new # Make a new hash object
+    exist_venue_id = Array.new
     venue_items.each do |i| # For each item
-      attributes = i.attributes.to_h # Turn each item into a hash
+      
+      attributes = i.attributes
       venue_id = attributes['venue_id'].to_i # Turn venue id into a integer
       h = Hash.new # Make a new hash object
-      v = Venue.find(venue_id)
-      if !v.nil?
-        if venue.include? venue_id #venue id already in there, then do nothing
+      # v = Venue.find(venue_id)
+      if Venue.exists? id: venue_id
+        if exist_venue_id.include? venue_id #venue id already in there, then do nothing
         else
           h['venue_id'] = attributes['venue_id']
           h['timestamp'] = attributes['timestamp'].to_i
@@ -114,6 +116,7 @@ class WhisperNotification < AWS::Record::HashModel
           h['created_date'] = attributes['created_date']
           h['whisper_id'] = attributes['id']
           venue << h # Throw venue_id into the array
+          exist_venue_id << venue_id
         end
       end
     end
@@ -127,7 +130,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
     # Target_id is the receiver of the messages
-    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1)
+    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1).select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
     time_1 = Time.now
     runtime = time_1 - time_0
     puts "Read user time"
@@ -135,11 +138,11 @@ class WhisperNotification < AWS::Record::HashModel
     receiver_items_array = Array.new
     if receiver_items and receiver_items.count > 0
       receiver_items.each do |i|
-        attributes = i.attributes.to_h
+        attributes = i.attributes
         sender_id = attributes['origin_id'].to_i
-        user = User.find(sender_id)
         h = Hash.new
-        if !user.nil?
+        if User.exists? id: sender_id
+          user = User.find(sender_id)
           h['target_user'] = user
           if user.main_avatar
             h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
