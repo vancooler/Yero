@@ -2,10 +2,12 @@ class VenuesController < ApplicationController
 
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list, :people]
+  before_action :authenticate_web_user!, only: [:index]
 
 
   def index
-    @venues = Venue.all
+
+    @venues = current_web_user.venues.order('updated_at DESC')
     respond_to do |format|
       format.html # index.html.erb
       format.json { render json: @venues }
