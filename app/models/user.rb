@@ -599,7 +599,7 @@ class User < ActiveRecord::Base
               different_venue_users << u # Throw the user into the array
             elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
               same_venue_users << u # Throw the user into the array
-            else 
+            elsif everyone
               different_venue_users << u # Users who are not in a venue also thrown into here.
             end
           end

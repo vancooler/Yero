@@ -33,9 +33,9 @@ ActiveAdmin.register UserAvatar do
     actions
   end
   filter :id
+  # filter :user_id, label:      'User', as: :select, collection: User.includes(:user_avatars).where.not(user_avatars: { id: nil }).order(:id).reverse 
   # filter :user
-  filter :user_id, label:      'User', as: :select, collection: User.includes(:user_avatars).where.not(user_avatars: { id: nil }).order(:id).reverse 
-  # filter :user, as: :select, collection: UserAvatar.includes(:user).where.not(user_id: nil).order(:user_id).reverse.uniq.collect { |cat| [cat.user.name, cat.user.id] if !cat.user.nil? }
+
   filter :default
   filter :is_active
   filter :updated_at
