@@ -238,7 +238,7 @@ class WhisperNotification < AWS::Record::HashModel
         else
           second_friends_id_array << friend_id
           if friend_id > 0
-            if User.exists id: friend_id
+            if User.exists? id: friend_id
               user = User.find(friend_id)
               h['intro'] = user.introduction_1
               h['target_user'] = user
