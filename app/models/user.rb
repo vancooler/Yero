@@ -13,6 +13,11 @@ class User < ActiveRecord::Base
   has_one :active_in_venue, dependent: :destroy
   has_one :active_in_venue_network, dependent: :destroy
 
+  # Like feature
+  acts_as_follower
+  acts_as_followable
+
+
   reverse_geocoded_by :latitude, :longitude
 
   # mount_uploader :avatar, AvatarUploader

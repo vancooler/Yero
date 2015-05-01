@@ -922,40 +922,39 @@ class UsersController < ApplicationController
     end
   end
 
-  # This code for usage with a CRON job. Currently done using Heroku Scheduler
-  # def network_open
-  #   times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
-  #   times_array = Array.new # Make a new array to hold the times that are at 5:00pm
-  #   times_result.each do |timezone| # Check each timezone
-  #     Time.zone = timezone["timezone"] # Assign timezone
-  #     if Time.zone.now.strftime("%H:%M") == "17:00" # If time is 17:00
-  #       open_network_tz = [Time.zone.name.to_s, Time.zone.now.strftime("%H:%M")] #format it
-  #       times_array << open_network_tz #Throw into array
-  #     end
-  #   end
-  #   people_array = Array.new 
-    
-  #   times_array.each do |timezone| #Each timezone that we found to be at 17:00
-  #     usersInTimezone = UserLocation.find_by_dynamodb_timezone(timezone[0]) #Find users of that timezone
-      
-  #     if !usersInTimezone.blank? # If there are people in that timezone
-  #       usersInTimezone.each do |user|
-  #         attributes = user.attributes.to_h # Turn the people into usable attributes
-  #         if !attributes["user_id"].blank?
-  #           people_array[attributes["user_id"].to_i] = attributes["user_id"].to_i #Assign new attributes
-  #         end  
-  #       end
-  #     end 
-  #   end
+  # Like / Unlike feature
+  def like
+    # user = User.find_by_key(params[:key])
+    if !params[:user_id].nil?
+      if User.exists? id: params[:user_id]
+        target_user = User.find(params[:user_id])
 
-  #   people_array.each do |person|
-  #     if !person.blank?
-  #       WhisperNotification.send_nightopen_notification(person.to_i)  
-  #     end
-  #   end
+        if current_user.follows?(target_user) # Unlike
+          current_user.unfollow!(target_user)
+        else # Like
+          current_user.follow!(target_user)
+        end
 
-  #   render nothing: true 
-  # end
+        # Return friends list
+        friends = WhisperNotification.myfriends(current_user.id)
+
+        if !friends.blank?
+          users = requests_friends_json(friends)
+          users = JSON.parse(users).delete_if(&:blank?)
+          users = users.sort_by { |hsh| hsh[:timestamp] }
+
+          render json: success(users.reverse, "data")
+        else
+          render json: success(Array.new, "data")
+        end
+      else
+        render json: error("Sorry, this user doesn't exist")
+      end
+    else
+      render json: error("Sorry, user_id required")
+    end
+
+  end
 
   private
 

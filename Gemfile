@@ -79,6 +79,9 @@ gem 'rails_12factor', group: :production
 
 gem 'country_select', github: 'stefanpenner/country_select'
 
+# For like feature
+gem 'socialization'
+
 group :development do 
   gem 'rest-client'
 end

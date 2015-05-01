@@ -307,6 +307,8 @@ GEM
       websocket (~> 1.0.4)
     sendgrid (1.2.0)
       json
+    socialization (1.1.0)
+      activerecord
     sort_alphabetical (1.0.1)
       unicode_utils (>= 1.2.2)
     sprockets (2.11.0)
@@ -393,6 +395,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   selenium-webdriver (= 2.35.1)
   sendgrid
+  socialization
   sprockets (= 2.11.0)
   stripe!
   timezone

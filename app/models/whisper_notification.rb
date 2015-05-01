@@ -181,10 +181,13 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
+    current_user = User.find(user_id)
     friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
     friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
-    friends_array = Array.new
-    friends_id_array = Array.new
+    first_friends_array = Array.new
+    second_friends_array = Array.new
+    first_friends_id_array = Array.new
+    second_friends_id_array = Array.new
     if friends_accepted and friends_accepted.count > 0
       friends_accepted.each do |friend|
         attributes = friend.attributes
@@ -192,15 +195,16 @@ class WhisperNotification < AWS::Record::HashModel
         h = Hash.new
         p 'in the loop'
         p friend_id
-        if friends_id_array.include? friend_id
+        if first_friends_id_array.include? friend_id
           p 'in the array'
         else
-          friends_id_array << friend_id
+          first_friends_id_array << friend_id
           if friend_id > 0
             if User.exists? id: friend_id
               user = User.find(friend_id)
               h['intro'] = user.introduction_1
               h['target_user'] = user
+              h['target_user_id'] = user.id          
               if user.main_avatar
                 h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
                 h['target_user_main'] = user.main_avatar.avatar.url
@@ -217,7 +221,7 @@ class WhisperNotification < AWS::Record::HashModel
           end
           h['timestamp'] = attributes['timestamp'].to_i
           h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
-          friends_array << h  
+          first_friends_array << h  
         end 
       end
     end
@@ -229,15 +233,16 @@ class WhisperNotification < AWS::Record::HashModel
         h = Hash.new
         p 'in the loop'
         p friend_id
-        if friends_id_array.include? friend_id
+        if second_friends_id_array.include? friend_id
           p 'in the array'
         else
-          friends_id_array << friend_id
+          second_friends_id_array << friend_id
           if friend_id > 0
             if User.exists id: friend_id
               user = User.find(friend_id)
               h['intro'] = user.introduction_1
               h['target_user'] = user
+              h['target_user_id'] = user.id
               if user.main_avatar
                 h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
                 h['target_user_main'] = user.main_avatar.avatar.url
@@ -254,13 +259,42 @@ class WhisperNotification < AWS::Record::HashModel
           end
           h['timestamp'] = attributes['timestamp'].to_i
           h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
-          friends_array << h  
+          second_friends_array << h  
         end 
       end
     end
-    
+
+    # Friends by like
+    followees = current_user.followees(User)
+    followers = current_user.followers(User)
+    mutual_follow = followers & followees
+    mutual_follow_array = Array.new
+    mutual_follow.each do |user|
+      h = Hash.new
+      friend_id = user.id
+          h['intro'] = user.introduction_1
+          h['target_user'] = user
+          h['target_user_id'] = user.id
+          if user.main_avatar
+            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+            h['target_user_main'] = user.main_avatar.avatar.url
+            if user.secondary_avatars
+              h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+              h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+            end
+          end
+          
+          timestamp_1 = Follow.where(:follower_type => "User", :follower_id => user.id, :followable_type => "User", :followable_id => current_user.id).first.created_at.to_i
+          timestamp_2 = Follow.where(:follower_type => "User", :follower_id => current_user.id, :followable_type => "User", :followable_id => user.id).first.created_at.to_i
+          h['timestamp'] = (timestamp_1 > timestamp_2) ? timestamp_1 : timestamp_2
+          h['timestamp_read'] = Time.at(h['timestamp']) # TODO: change format
+          mutual_follow_array << h  
+
+    end
     users = Array.new
-    users = friends_array
+    users = first_friends_array & second_friends_array & mutual_follow_array
+    users = users.group_by { |x| x['target_user_id'] }.map {|x,y|y.max_by {|x|x['timestamp']}}
+
     users = users.sort_by { |hsh| hsh[:timestamp] }
 
     return users.reverse

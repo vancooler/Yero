@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150421185422) do
+ActiveRecord::Schema.define(version: 20150430210312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,6 +136,28 @@ ActiveRecord::Schema.define(version: 20150421185422) do
     t.integer "venue_id"
   end
 
+  create_table "follows", force: true do |t|
+    t.string   "follower_type"
+    t.integer  "follower_id"
+    t.string   "followable_type"
+    t.integer  "followable_id"
+    t.datetime "created_at"
+  end
+
+  add_index "follows", ["followable_id", "followable_type"], name: "fk_followables", using: :btree
+  add_index "follows", ["follower_id", "follower_type"], name: "fk_follows", using: :btree
+
+  create_table "likes", force: true do |t|
+    t.string   "liker_type"
+    t.integer  "liker_id"
+    t.string   "likeable_type"
+    t.integer  "likeable_id"
+    t.datetime "created_at"
+  end
+
+  add_index "likes", ["likeable_id", "likeable_type"], name: "fk_likeables", using: :btree
+  add_index "likes", ["liker_id", "liker_type"], name: "fk_likes", using: :btree
+
   create_table "locations", force: true do |t|
     t.float    "latitude"
     t.float    "longitude"
@@ -145,6 +167,17 @@ ActiveRecord::Schema.define(version: 20150421185422) do
   end
 
   add_index "locations", ["user_id"], name: "index_locations_on_user_id", using: :btree
+
+  create_table "mentions", force: true do |t|
+    t.string   "mentioner_type"
+    t.integer  "mentioner_id"
+    t.string   "mentionable_type"
+    t.integer  "mentionable_id"
+    t.datetime "created_at"
+  end
+
+  add_index "mentions", ["mentionable_id", "mentionable_type"], name: "fk_mentionables", using: :btree
+  add_index "mentions", ["mentioner_id", "mentioner_type"], name: "fk_mentions", using: :btree
 
   create_table "nightlies", force: true do |t|
     t.integer  "venue_id",                      null: false
@@ -254,6 +287,7 @@ ActiveRecord::Schema.define(version: 20150421185422) do
     t.boolean  "image_processed"
     t.boolean  "avatar_processing"
     t.boolean  "is_active",         default: true
+    t.string   "avatar_tmp"
   end
 
   create_table "users", force: true do |t|
