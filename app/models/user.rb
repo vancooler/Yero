@@ -494,6 +494,7 @@ class User < ActiveRecord::Base
     if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
       s_time = Time.now
       collected_whispers = WhisperNotification.collect_whispers(self)
+      followees = self.followees(User)
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       
       users = Jbuilder.encode do |json|
@@ -545,6 +546,12 @@ class User < ActiveRecord::Base
               if cwid.to_s == user.id.to_s
                 json.whisper_sent true
               end
+            end
+
+            if followees.blank?
+              json.like false
+            else
+              json.like followees.map(&:id).include? user.id
             end
             start_time = Time.now
             # json.whisper_sent WhisperNotification.whisper_sent(self, user) #Returns a boolean of whether a whisper was sent between this user and target user
