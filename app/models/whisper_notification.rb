@@ -228,8 +228,8 @@ class WhisperNotification < AWS::Record::HashModel
 
     if friends_whispered and friends_whispered.count > 0
       friends_whispered.each do |friend|
-        attributes = friend.attributes.to_h
-        friend_id = attributes['origin_id']
+        attributes = friend.attributes
+        friend_id = attributes['origin_id'].to_i
         h = Hash.new
         p 'in the loop'
         p friend_id
