@@ -304,9 +304,9 @@ class UsersController < ApplicationController
       render json: error("No email address")
     else
       if User.exists? email: params[:email]
-        render json: error(0)
+        render json: error("Email address exists")
       else
-        render json: success(1)
+        render json: success()
       end
     end
   end
