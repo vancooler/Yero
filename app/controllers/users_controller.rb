@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset]
+  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -82,145 +82,6 @@ class UsersController < ApplicationController
     gate_number = 4
     result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     
-=begin    
-    diff_1 = 0
-    diff_2 = 0
-    s_time = Time.now
-    if ActiveInVenueNetwork.count > 100
-      collected_whispers = WhisperNotification.collect_whispers(current_user)
-      
-      users = Jbuilder.encode do |json|
-        retus = Time.now
-        if !params[:page].blank? and !params[:per_page].blank?
-          #fellow_participants basically returns all users that are out or in your particular venue
-          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-          # Basically a pagination thing for mobile.
-          return_users = return_users.page(page_number).per(users_per_page) if !return_users.nil?
-        else
-          return_users = current_user.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-        end
-        reten = Time.now
-        dbtime = reten-retus
-        
-        json_s = Time.now
-        json.array! return_users do |user|
-          if user.id != current_user.id
-            next unless user.user_avatars.present?
-            next unless user.main_avatar.present?
-            main_avatar   =  user.user_avatars.find_by(default:true)
-            other_avatars =  user.user_avatars.where.not(default:true)
-            avatar_array = Array.new
-            avatar_array[0] = {
-                  thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
-                }
-            avatar_array[1] = {
-                  avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
-                  avatar_id: main_avatar.nil? ? '' : main_avatar.id,
-                  default: true
-                }
-            if other_avatars.count > 0
-              avatar_array[2] = {
-                    avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-                    avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                    default: false
-                  }
-              if other_avatars.count > 1
-                avatar_array[3] = {
-                      avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-                      avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
-                      default: false
-                    }
-              end
-            end
-            json.avatars do |a|
-              json.array! avatar_array do |avatar|
-                a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-                a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-                a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-                a.default     avatar[:default]   if !avatar[:default].nil?
-              end
-            end
-
-            collected_whispers.each do |cwid|
-              if cwid.to_s == user.id.to_s
-                json.whisper_sent true
-              end
-            end
-            start_time = Time.now
-            # json.whisper_sent WhisperNotification.whisper_sent(current_user, user) #Returns a boolean of whether a whisper was sent between this user and target user
-            end_time = Time.now
-            diff_1 += (end_time - start_time)
-            json.same_venue_badge          current_user.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-            json.different_venue_badge     current_user.different_venue_as?(user.id)
-            json.same_beacon               current_user.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
-            json.id             user.id
-            json.first_name     user.first_name
-            json.key            user.key
-            json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
-            json.birthday       user.birthday
-            # json.gender         user.gender
-            # json.distance       current_user.distance_label(user) # Returns a label such as "Within 2 km"
-            json.wechat_id      user.wechat_id
-            json.snapchat_id    user.snapchat_id
-            json.instagram_id   user.instagram_id
-            json.apn_token      user.apn_token
-            json.latitude       user.latitude  
-            json.longitude      user.longitude 
-            json.introduction_1 user.introduction_1.blank? ? nil : user.introduction_1
-            json.exclusive      user.exclusive
-          end
-        end
-        json_e = Time.now
-        j_time = json_e-json_s
-        puts "The dbtime is: "
-        puts dbtime.inspect 
-        p "Json time:"
-        p j_time.inspect
-      end
-      users = JSON.parse(users).delete_if(&:empty?)
-      different_venue_users = [] # Make a empty array for users in the different venue
-      same_venue_users = [] #Make a empty array for users in the same venue
-      no_badge_users = [] # Make an empty array for no badge users
-      users.each do |u| # Go through the users
-        if !!u['exclusive'] == true
-          if u['same_venue_badge'].to_s == "true"
-             same_venue_users << u # Throw the user into the array
-          end
-        else
-          if !!u['exclusive'] == false
-            if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-              different_venue_users << u # Throw the user into the array
-            elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-              same_venue_users << u # Throw the user into the array
-            else 
-              different_venue_users << u # Users who are not in a venue also thrown into here.
-            end
-          end
-        end
-      end
-      
-      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      
-      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
-      
-      final_time = Time.now
-      # diff_2 = final_time - end_time
-      e_time = Time.now
-      runtime = e_time - s_time
-      
-      puts "The runtime is: "
-      puts runtime.inspect
-      logger.info "NEWTIME: " + diff_1.to_s 
-      
-    else
-      users = ActiveInVenueNetwork.count
-    end
-=end
-    # if result["count"].to_i >= gate_number
-    #   result.delete('') 
-    # else
-    #   result.delete('users')
-    # end
     if result['users'].nil?
       render json: success(result) #Return users
     else
@@ -435,11 +296,28 @@ class UsersController < ApplicationController
 
   ##########################################
   #
+  # Check email address exists
+  # 
+  ##########################################
+  def check_email
+    if params[:email].nil? or params[:email].blank?
+      render json: error("No email address")
+    else
+      if User.exists? email: params[:email]
+        render json: error(0)
+      else
+        render json: success(1)
+      end
+    end
+  end
+
+  ##########################################
+  #
   # Signup user without avatar
   # 
   ##########################################
   def sign_up_without_avatar
-    if params[:email].empty? or params[:password].empty? or params[:birthday].empty? or params[:first_name].empty? or params[:gender].empty?
+    if params[:email].blank? or params[:password].blank? or params[:birthday].blank? or params[:first_name].blank? or params[:gender].blank?
       render json: error("Required fields cannot be blank")
     else
       # good to signup
@@ -554,31 +432,34 @@ class UsersController < ApplicationController
     end
   end
 
+  # API to login a user
   def login
-    if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty?
+    if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty? or params[:key].nil?
       render json: error("Login information missing.")
     else
-      user = User.find_by_email(params[:email]) # find by email, skip key
-      puts "The user"
-      puts user.authenticate(params[:password])
-      if !user.nil? and user.authenticate(params[:password])
-        # Authenticated successfully
-        # Check token change, do update for both token and key 
-        # (TODO: change to another field to identify a new device)
-        if user.apn_token != params[:token]
-          # # generate a new key
-          # user.key = loop do
-          #   random_token = SecureRandom.urlsafe_base64(nil, false)
-          #   break random_token unless User.exists?(key: random_token)
-          # end
-          # # update token
-          # # user.token = params[:token]
-          user.save!
-        end
-        render json: success(user.to_json(true))
+      if User.exists? email: params[:email]
+        user = User.find_by_email(params[:email]) # find by email, skip key
+        puts "The user"
+        puts user.authenticate(params[:password])
+        if user.authenticate(params[:password])
+          # Authenticated successfully
+          # Check key change, means login in another device, do update the key 
+          if user.key != params[:key]
+            # generate a new key
+            user.key = loop do
+              random_token = SecureRandom.urlsafe_base64(nil, false)
+              break random_token unless User.exists?(key: random_token)
+            end
+
+            user.save!
+          end
+          render json: success(user.to_json(true))
+        else
+          render json: error("Email/Password does not match")
+        end  
       else
-        render json: error(JSON.parse(user.errors.messages.to_json))
-      end  
+        render json: error("Email address not found")
+      end
     end
   end
 

@@ -66,6 +66,7 @@ Rails.application.routes.draw do
   post 'api/v1/users/signup',                 to: 'users#sign_up'
   post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
   post 'api/v1/users/login',                  to: 'users#login'
+  post 'api/v1/users/check-email',                  to: 'users#check_email'
   post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
   post 'api/v1/users/update',                 to: 'users#update_settings'
   post 'api/v1/users/deactivate',             to: 'users#deactivate'
