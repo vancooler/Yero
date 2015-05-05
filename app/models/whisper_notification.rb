@@ -124,6 +124,10 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.find_friends(user_id)
+    require 'socket'
+    hostname = Socket.gethostname
+    puts "HOSTNAME: "
+    puts hostname
     time_0 = Time.now
 
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
