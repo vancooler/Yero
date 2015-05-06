@@ -4,7 +4,14 @@ class UserLocation < AWS::Record::HashModel
   float_attr :latitude
   float_attr :longitude
 
-
+  def self.table_prefix
+    dynamo_db_table_prefix = ''
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      dynamo_db_table_prefix = ENV['DYNAMODB_PREFIX']
+    end
+    return dynamo_db_table_prefix
+  end
+  
   #create user's location log in AWS DynamoDB
   def self.create_in_aws(user, latitude, longitude)
 

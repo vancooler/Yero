@@ -18,7 +18,13 @@ class UserActivity < AWS::Record::HashModel
     end
   end
 
-
+  def self.table_prefix
+    dynamo_db_table_prefix = ''
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      dynamo_db_table_prefix = ENV['DYNAMODB_PREFIX']
+    end
+    return dynamo_db_table_prefix
+  end
 
   #create enter/leave beacon log in AWS DynamoDB
   def self.create_in_aws(user, action, trackable_type, trackable_id)

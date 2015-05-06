@@ -22,6 +22,13 @@ class WhisperNotification < AWS::Record::HashModel
               # 1 => accepted
               # 2 => declined
 
+  def self.table_prefix
+    dynamo_db_table_prefix = ''
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      dynamo_db_table_prefix = ENV['DYNAMODB_PREFIX']
+    end
+    return dynamo_db_table_prefix
+  end
 
   #create user's Notification log in AWS DynamoDB
   def self.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
@@ -178,11 +185,6 @@ class WhisperNotification < AWS::Record::HashModel
 
   # TODO: use it for friends request
   def self.myfriends(user_id)
-    dynamo_db_table_name = 'WhisperNotification'
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      puts "TABLENAME"
-      puts ENV['DYNAMODB_PREFIX'] + dynamo_db_table_name
-    end
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
     table.load_schema 
