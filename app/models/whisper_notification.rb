@@ -100,7 +100,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.system_notification(user_id)
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table = dynamo_db.tables['WhisperNotification'] # Choose the table
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
     venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").select(:venue_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
@@ -134,7 +134,7 @@ class WhisperNotification < AWS::Record::HashModel
     time_0 = Time.now
 
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table = dynamo_db.tables['WhisperNotification'] # Choose the table
     table.load_schema 
     # Target_id is the receiver of the messages
     receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1).select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
@@ -186,7 +186,7 @@ class WhisperNotification < AWS::Record::HashModel
   # TODO: use it for friends request
   def self.myfriends(user_id)
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table = dynamo_db.tables['WhisperNotification'] # Choose the 'WhisperNotification' table
+    table = dynamo_db.tables['WhisperNotification'] # Choose the table
     table.load_schema 
     current_user = User.find(user_id)
     friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
@@ -644,7 +644,8 @@ class WhisperNotification < AWS::Record::HashModel
     target_user = User.find(self.target_id) 
     p "Target user: "
     p target_user.inspect
-    apn = Houston::Client.development
+    # apn = Houston::Client.development
+    apn = Houston::Client.production
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
@@ -742,7 +743,8 @@ class WhisperNotification < AWS::Record::HashModel
     end
     target_user = User.find(hash["target_id"]) 
 
-    apn = Houston::Client.development
+    # apn = Houston::Client.development
+    apn = Houston::Client.production
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
@@ -799,7 +801,8 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.send_nightopen_notification(id)
     app_local_path = Rails.root
-    apn = Houston::Client.development
+    # apn = Houston::Client.development
+    apn = Houston::Client.production
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
@@ -827,7 +830,8 @@ class WhisperNotification < AWS::Record::HashModel
   # Send notification when the avatar is disabled by admin
   def self.send_avatar_disabled_notification(id)
     app_local_path = Rails.root
-    apn = Houston::Client.development
+    # apn = Houston::Client.development
+    apn = Houston::Client.production
     apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
 
     # An example of the token sent back when a device registers for notifications
