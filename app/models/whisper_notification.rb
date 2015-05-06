@@ -819,6 +819,7 @@ class WhisperNotification < AWS::Record::HashModel
 
     # And... sent! That's all it takes.
     if !token.nil? and !token.empty?
+      puts token
       apn.push(notification)
     end
   end
