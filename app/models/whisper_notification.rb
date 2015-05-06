@@ -644,9 +644,13 @@ class WhisperNotification < AWS::Record::HashModel
     target_user = User.find(self.target_id) 
     p "Target user: "
     p target_user.inspect
-    # apn = Houston::Client.development
-    apn = Houston::Client.production
-    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      apn = Houston::Client.development
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    else
+      apn = Houston::Client.production
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    end
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
@@ -743,9 +747,13 @@ class WhisperNotification < AWS::Record::HashModel
     end
     target_user = User.find(hash["target_id"]) 
 
-    # apn = Houston::Client.development
-    apn = Houston::Client.production
-    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      apn = Houston::Client.development
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    else
+      apn = Houston::Client.production
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    end
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(hash["origin_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
@@ -801,9 +809,13 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.send_nightopen_notification(id)
     app_local_path = Rails.root
-    # apn = Houston::Client.development
-    apn = Houston::Client.production
-    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      apn = Houston::Client.development
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    else
+      apn = Houston::Client.production
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    end
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
@@ -830,9 +842,13 @@ class WhisperNotification < AWS::Record::HashModel
   # Send notification when the avatar is disabled by admin
   def self.send_avatar_disabled_notification(id)
     app_local_path = Rails.root
-    # apn = Houston::Client.development
-    apn = Houston::Client.production
-    apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      apn = Houston::Client.development
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    else
+      apn = Houston::Client.production
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    end
 
     # An example of the token sent back when a device registers for notifications
     token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
