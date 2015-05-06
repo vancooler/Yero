@@ -399,21 +399,14 @@ class User < ActiveRecord::Base
       end
     end
 
-    time4s = Time.now
-    dbtime = time4s - time3
+    time4 = Time.now
+    dbtime = time4 - time3
     puts "runtime4s: "
     puts dbtime.inspect
 
     # remove duplicated apn_tokens
     if !people_array.nil? and people_array.length > 0
       people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
-      puts "COUNT: "
-      puts people_array.length
-
-      time4 = Time.now
-      dbtime = time4 - time3
-      puts "runtime4: "
-      puts dbtime.inspect
 
       people_array.each_slice(25) do |people_group|
         batch = AWS::DynamoDB::BatchWrite.new
