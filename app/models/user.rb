@@ -479,22 +479,83 @@ class User < ActiveRecord::Base
     end
   end
 
+  def friends_by_like
+    followees = self.followees(User)
+    followers = self.followers(User)
+    mutual_follow = followers & followees
+
+    return mutual_follow
+  end
+
+  # find friends 
+  def friends_by_whisper    
+    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+    table = dynamo_db.tables['WhisperNotification'] # Choose the table
+    table.load_schema 
+
+    friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
+    friends_whispered = table.items.where(:target_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:origin_id)
+
+    first_friends_id_array = Array.new
+    second_friends_id_array = Array.new
+
+    if friends_accepted and friends_accepted.count > 0
+      friends_accepted.each do |friend|
+        attributes = friend.attributes
+        friend_id = attributes['target_id'].to_i
+        if first_friends_id_array.include? friend_id
+          p 'in the array'
+        else
+          first_friends_id_array << friend_id
+        end 
+      end
+    end
+
+    if friends_whispered and friends_whispered.count > 0
+      friends_whispered.each do |friend|      
+        attributes = friend.attributes
+        friend_id = attributes['origin_id'].to_i
+        if second_friends_id_array.include? friend_id
+          p 'in the array'
+        else
+          second_friends_id_array << friend_id 
+        end 
+      end
+    end
+
+    users = Array.new
+    users = first_friends_id_array | second_friends_id_array
+    return_users = Array.new
+    return_users = User.where(:id => users)
+    return return_users
+
+  end
 
   def people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
     diff_2 = 0
     result = Hash.new
+    # check 
     if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
       s_time = Time.now
+      # collect all whispers sent 
       collected_whispers = WhisperNotification.collect_whispers(self)
+      # colect all users with "like"
       followees = self.followees(User)
-      return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
-      
-      users = Jbuilder.encode do |json|
-        retus = Time.now
+      # collect all friends with mutual like + whisper accepted friends
+      mutual_follow = self.friends_by_like
+      whisper_friends = self.friends_by_whisper
+      friends = mutual_follow | whisper_friends
 
-        reten = Time.now
-        dbtime = reten-retus
+
+      retus = Time.now
+      # get all users with filter params
+      return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      reten = Time.now
+      dbtime = reten-retus
+      
+      # build json format
+      users = Jbuilder.encode do |json|
         
         json_s = Time.now
         json.array! return_users do |user|
@@ -546,6 +607,13 @@ class User < ActiveRecord::Base
             else
               json.like followees.map(&:id).include? user.id
             end
+
+            if friends.blank?
+              json.mutual_like false
+            else
+              json.mutual_like friends.map(&:id).include? user.id
+            end
+
             start_time = Time.now
             # json.whisper_sent WhisperNotification.whisper_sent(self, user) #Returns a boolean of whether a whisper was sent between this user and target user
             end_time = Time.now

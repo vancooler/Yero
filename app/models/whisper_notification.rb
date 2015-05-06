@@ -272,9 +272,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
 
     # Friends by like
-    followees = current_user.followees(User)
-    followers = current_user.followers(User)
-    mutual_follow = followers & followees
+    mutual_follow = current_user.friends_by_like
     mutual_follow_array = Array.new
     mutual_follow.each do |user|
       h = Hash.new
