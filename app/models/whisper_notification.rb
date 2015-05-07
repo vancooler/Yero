@@ -305,7 +305,7 @@ class WhisperNotification < AWS::Record::HashModel
     users = first_friends_array | second_friends_array | mutual_follow_array
     users = users.group_by { |x| x['target_user_id'] }.map {|x,y|y.max_by {|x|x['timestamp']}}
 
-    users = users.sort_by { |hsh| hsh[:timestamp] }
+    users = users.sort_by { |hsh| hsh['timestamp'] }
 
     return users.reverse
 
