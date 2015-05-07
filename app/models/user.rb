@@ -431,7 +431,8 @@ class User < ActiveRecord::Base
           end
         end
         if notification_array.count > 0
-          batch.put('WhisperNotification', notification_array)
+          table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+          batch.put(table_name, notification_array)
           batch.process!
         end
       end
@@ -490,7 +491,8 @@ class User < ActiveRecord::Base
   # find friends built by accepting whisper
   def friends_by_whisper    
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table = dynamo_db.tables['WhisperNotification'] # Choose the table
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name] # Choose the table
     table.load_schema 
 
     friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
@@ -698,7 +700,8 @@ class User < ActiveRecord::Base
   def viewed_by_sender(whispers)
     result = true
     dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name]
     table.load_schema
     puts "Read time: "
 
@@ -727,7 +730,7 @@ class User < ActiveRecord::Base
         end
       end
       if notification_array.count > 0
-        batch.put('WhisperNotification', notification_array)
+        batch.put(table_name, notification_array)
         batch.process!
       end
     end

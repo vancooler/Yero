@@ -28,8 +28,8 @@ class UserActivity < AWS::Record::HashModel
 
   #create enter/leave beacon log in AWS DynamoDB
   def self.create_in_aws(user, action, trackable_type, trackable_id)
-
-    v = UserActivity.new
+    table_name = UserActivity.table_prefix + 'UserActivity'
+    v = UserActivity.shard(table_name).new
     v.user_id = user.id
     v.action = action
     v.timestamp = Time.now

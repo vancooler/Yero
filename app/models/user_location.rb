@@ -11,11 +11,11 @@ class UserLocation < AWS::Record::HashModel
     end
     return dynamo_db_table_prefix
   end
-  
+
   #create user's location log in AWS DynamoDB
   def self.create_in_aws(user, latitude, longitude)
-
-    l = UserLocation.new
+    table_name = UserLocation.table_prefix + 'UserLocation'
+    l = UserLocation.shard(table_name).new
     l.user_id = user.id
     l.latitude = latitude
     l.timestamp = Time.now
@@ -27,7 +27,8 @@ class UserLocation < AWS::Record::HashModel
 
   def self.find_by_dynamodb_timezone(timezones)
     dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['UserLocation']
+    table_name = UserLocation.table_prefix + 'UserLocation'
+    table = dynamo_db.tables[table_name]
     table.load_schema
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:timezone).in(*timezones).select(:user_id)
@@ -58,7 +59,8 @@ class UserLocation < AWS::Record::HashModel
 
   def self.find_if_user_exist(id, latitude, longitude, timezone)
     dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['UserLocation']
+    table_name = UserLocation.table_prefix + 'UserLocation'
+    table = dynamo_db.tables[table_name]
     table.load_schema
     items = table.items.where(:user_id).equals(id.to_s)
     if items.count > 0

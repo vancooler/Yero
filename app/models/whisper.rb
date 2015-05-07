@@ -36,16 +36,4 @@ class Whisper < ActiveRecord::Base
 
   end
 
-  def self.delete_whispers(whisper_array)
-    dynamo_db = AWS::DynamoDB.new
-    table = dynamo_db.tables['WhisperNotification']
-    table.load_schema
-    whisper_array.each do |id|
-      item = WhisperNotification.find_by_dynamodb_id(id[1].to_s)
-      item.attributes.update do |u|
-          u.set 'declined' => 1
-      end
-    end
-    return true
-  end
 end
