@@ -487,7 +487,7 @@ class User < ActiveRecord::Base
     return mutual_follow
   end
 
-  # find friends 
+  # find friends built by accepting whisper
   def friends_by_whisper    
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table = dynamo_db.tables['WhisperNotification'] # Choose the table
@@ -542,7 +542,7 @@ class User < ActiveRecord::Base
       collected_whispers = WhisperNotification.collect_whispers(self)
       # colect all users with "like"
       followees = self.followees(User)
-      # collect all friends with mutual like + whisper accepted friends
+      # collect all friends with mutual like AND whisper accepted friends
       mutual_follow = self.friends_by_like
       whisper_friends = self.friends_by_whisper
       friends = mutual_follow | whisper_friends
