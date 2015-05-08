@@ -95,6 +95,12 @@ class VenuesController < ApplicationController
     # venues = Venue.all
     venues = Venue.near_venues(user, distance)
 
+    campus = VenueType.find_by_name("Campus")
+
+    if !campus.nil?
+      venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
+    end
+
     # if params[:after]
     #   new_list = []
 
@@ -108,9 +114,6 @@ class VenuesController < ApplicationController
     # end
 
     data = Jbuilder.encode do |json|
-      # images = ["https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image1.png", 
-      #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image2.png", 
-      #   "https://s3-us-west-2.amazonaws.com/yero-live-venue/venues/image3.png"]
       
       json.array! venues do |v|
         # puts "venue:" 
