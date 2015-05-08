@@ -28,7 +28,7 @@ class UsersController < ApplicationController
     user = {
       id: current_user.id,
       first_name: current_user.first_name,
-      introduction_1: current_user.introduction_1,
+      introduction_1: (current_user.introduction_1.blank? ? nil : current_user.introduction_1),
       key: current_user.key,
       since_1970: (current_user.last_active - Time.new('1970')).seconds.to_i, #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
       birthday: current_user.birthday,
