@@ -1,4 +1,8 @@
-FactoryGirl.define do  factory :time_zone do
+FactoryGirl.define do  factory :global_variable do
+    name "MyString"
+value "MyString"
+  end
+  factory :time_zone do
     
   end
   factory :prospect_city_client do
