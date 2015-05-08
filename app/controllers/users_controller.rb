@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
 
-  before_action :authenticate_api, except: [:sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_api, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -79,13 +79,40 @@ class UsersController < ApplicationController
     page_number = params[:page] if !params[:page].blank?
     users_per_page = params[:per_page] if !params[:per_page].blank?
 
-    gate_number = 1
+    gate_number = 4
+    # if set in db, use the db value
+    if GlobalVariable.exists? name: "min_ppl_size"
+      size = GlobalVariable.find_by_name("min_ppl_size")
+      if !size.nil? and !size.value.nil? and size.value.to_i > 0
+        gate_number = size.value.to_i
+      end
+    end
     result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     
     if result['users'].nil?
       render json: success(result) #Return users
     else
       render json: success(result['users'], "users")
+    end
+  end
+
+
+  def set_global_variable
+    if !params[:variable].blank? and !params[:value].blank?
+      name = params[:variable]
+      value = params[:value]
+      if GlobalVariable.exists? name: name
+        variable = GlobalVariable.find_by_name(name)
+        variable.value = value
+      else
+        variable = GlobalVariable.new
+        variable.name = name
+        variable.value = value
+      end
+      variable.save!
+      render json: success(true)
+    else
+      render json: error("Invalid params")
     end
   end
 
