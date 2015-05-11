@@ -36,27 +36,9 @@ class UsersController < ApplicationController
       created_at: current_user.created_at,
       updated_at: current_user.updated_at,
       apn_token: current_user.apn_token,
-      # layer_id: current_user.layer_id,
       latitude:current_user.latitude,
       longitude:current_user.longitude,
       avatars: avatar_array
-      # avatars: {
-      #   avatar_0: {
-      #     avatar: current_user.main_avatar.avatar.url,
-      #     avatar_id: current_user.main_avatar.id,
-      #     default: true
-      #   },
-      #   avatar_1: {
-      #     avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
-      #     avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
-      #     default: false
-      #   },
-      #   avatar_2: {
-      #     avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
-      #     avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
-      #     default: false
-      #   }
-      # }
     }
 
     render json: success(user)
