@@ -66,6 +66,10 @@ gem 'timezone'
 gem 'tzinfo'
 gem 'bcrypt', '3.1.7'
 
+# Speed up Heroku deploys
+gem 'dalli'
+gem 'memcachier'
+
 # gem 'carrierwave_direct'
 gem 'carrierwave_backgrounder'
 gem 'carrierwave-imageoptimizer'

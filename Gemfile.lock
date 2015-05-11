@@ -132,6 +132,7 @@ GEM
       currencies (~> 0.4.2)
       i18n_data (~> 0.6.0)
     currencies (0.4.2)
+    dalli (2.7.4)
     debug_inspector (0.0.2)
     delayed_job (4.0.6)
       activesupport (>= 3.0, < 5.0)
@@ -215,6 +216,7 @@ GEM
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
+    memcachier (0.0.2)
     migration_data (0.0.4)
       rails (>= 4.0.0.rc1)
     mime-types (1.25)
@@ -362,6 +364,7 @@ DEPENDENCIES
   compass
   compass-rails
   country_select!
+  dalli
   database_cleaner!
   delayed_job_active_record
   devise (~> 3.2.4)
@@ -377,6 +380,7 @@ DEPENDENCIES
   json-jwt
   jwt
   kaminari
+  memcachier
   migration_data
   mini_magick (~> 3.7.0)
   minitest
