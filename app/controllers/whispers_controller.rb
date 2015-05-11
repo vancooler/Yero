@@ -185,7 +185,12 @@ class WhispersController < ApplicationController
   end
 
   def decline_whisper_requests
-    whispers_delete = WhisperNotification.delete_whispers(params[:array].to_a)
-    render json: success(whispers_delete)
+    puts params[:array]
+    if params[:array].blank?
+      render json: error("ID array is empty")
+    else
+      whispers_delete = WhisperNotification.delete_whispers(params[:array].to_a)
+      render json: success(whispers_delete)
+    end
   end
 end
