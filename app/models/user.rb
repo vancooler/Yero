@@ -37,14 +37,16 @@ class User < ActiveRecord::Base
 
   # Checks if you are in the same venue as the other person
   def same_venue_as?(user_id)
-    if fellow_participant = User.find(user_id)
+    if User.exists? id: user_id 
+      fellow_participant = User.find(user_id)
       
       fellow_participant_venue = fellow_participant.current_venue
       self_venue = self.current_venue
 
       return false if fellow_participant_venue.nil? || self_venue.nil?
 
-      self.current_venue.id == fellow_participant.current_venue.id
+      return self.current_venue.id == fellow_participant.current_venue.id
+
     else
       false
     end
@@ -52,19 +54,22 @@ class User < ActiveRecord::Base
 
   # Checks if you are in a different venue as the other person
   def different_venue_as?(user_id)
-    if fellow_participant = User.find(user_id)
+    if User.exists? id: user_id 
+      fellow_participant = User.find(user_id)
       
       fellow_participant_venue = fellow_participant.current_venue
       self_venue = self.current_venue
 
-      if !fellow_participant_venue.nil? && self_venue.nil?
-        return true
-      elsif !fellow_participant_venue.nil? && !self_venue.nil?
-        if self.current_venue.id != fellow_participant.current_venue.id
+      if fellow_participant_venue.nil? or fellow_participant_venue.venue_type.nil? or fellow_participant_venue.venue_type.name.nil? or fellow_participant_venue.venue_type.name.include? "Campus" 
+          # fellow not in venue or in campus
+          return false
+      elsif !fellow_participant_venue.nil? and !self_venue.nil? and !self_venue.venue_type.nil? and !self_venue.venue_type.name.nil? and !(self_venue.venue_type.name.include? "Campus") and self_venue.id == fellow_participant_venue.id
+          # in a same non-campus venue as fellow
+          return false
+      else
+          # other situation
           return true
-        end
       end
-      false
     else
       false
     end
