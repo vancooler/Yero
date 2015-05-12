@@ -439,7 +439,7 @@ class UsersController < ApplicationController
         
         render json: success(response)
       else
-        puts user_registration.user.errors
+        puts user_registration.user.errors.messages
         render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
       end
     else
