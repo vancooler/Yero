@@ -381,6 +381,9 @@ class UsersController < ApplicationController
     
     user_registration = UserRegistration.new(sign_up_params)
     
+    puts "EMAIL ADDRESS:"
+    puts params[:email]
+    puts params[:email].gsub!(/\s+/, "") 
     user_registration.user.email = params[:email].gsub!(/\s+/, "") if params[:email].present?
     user_registration.user.password = params[:password] if params[:password].present?
     user_registration.user.birthday = params[:birthday] if params[:birthday].present?
