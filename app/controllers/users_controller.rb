@@ -439,8 +439,8 @@ class UsersController < ApplicationController
         
         render json: success(response)
       else
-        puts user_registration.errors
-        render json: error(JSON.parse(user_registration.errors.messages.to_json))
+        puts user_registration.user.errors
+        render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
       end
     else
         render json: error("This email has already been taken.")
