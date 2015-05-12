@@ -297,7 +297,7 @@ class UsersController < ApplicationController
   end
 
   def update_profile
-    if current_user.update(introduction_1: CGI.unescape(params[:introduction_1]))
+    if current_user.update(introduction_1: CGI.unescape(params[:introduction_1].strip))
       render json: success(current_user)
     else
       render json: error(current_user.errors)
@@ -331,16 +331,20 @@ class UsersController < ApplicationController
       render json: error("Required fields cannot be blank")
     else
       # good to signup
-      @user = User.new(:email => params[:email],
+      email = params[:email].gsub!(/\s+/, "")
+      first_name = params[:first_name].gsub!(/\s+/, "")
+      gender = params[:gender].gsub!(/\s+/, "")
+
+      @user = User.new(:email => email,
                        :password => params[:password],
                        :birthday => params[:birthday],
-                       :first_name => params[:first_name],
-                       :gender => params[:gender])
+                       :first_name => first_name,
+                       :gender => gender)
                        
       @user.nonce = params[:nonce] if params[:nonce].present?
-      @user.instagram_id = params[:instagram_id] if params[:instagram_id].present?
-      @user.wechat_id = params[:wechat_id] if params[:wechat_id].present?
-      @user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
+      @user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") if params[:instagram_id].present?
+      @user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") if params[:wechat_id].present?
+      @user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") if params[:snapchat_id].present?
       @user.exclusive = params[:exclusive] if params[:exclusive].present?
       # create user key
       @user.key = loop do
@@ -377,15 +381,15 @@ class UsersController < ApplicationController
     
     user_registration = UserRegistration.new(sign_up_params)
     
-    user_registration.user.email = params[:email] if params[:email].present?
+    user_registration.user.email = params[:email].gsub!(/\s+/, "") if params[:email].present?
     user_registration.user.password = params[:password] if params[:password].present?
     user_registration.user.birthday = params[:birthday] if params[:birthday].present?
-    user_registration.user.first_name = params[:first_name] if params[:first_name].present?
-    user_registration.user.gender = params[:gender] if params[:gender].present?                       
+    user_registration.user.first_name = params[:first_name].gsub!(/\s+/, "") if params[:first_name].present?
+    user_registration.user.gender = params[:gender].gsub!(/\s+/, "") if params[:gender].present?                       
     user_registration.user.nonce = params[:nonce] if params[:nonce].present?
-    user_registration.user.instagram_id = params[:instagram_id] if params[:instagram_id].present?
-    user_registration.user.wechat_id = params[:wechat_id] if params[:wechat_id].present?
-    user_registration.user.snapchat_id = params[:snapchat_id] if params[:snapchat_id].present?
+    user_registration.user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") if params[:instagram_id].present?
+    user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") if params[:wechat_id].present?
+    user_registration.user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") if params[:snapchat_id].present?
     user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
     if !(User.exists? email: params[:email])
@@ -503,9 +507,9 @@ class UsersController < ApplicationController
 
   def update_chat_accounts
     user = User.find_by_key(params[:key])
-    snapchat_id = params[:snapchat_id]? params[:snapchat_id] : user.snapchat_id
-    wechat_id = params[:wechat_id]? params[:wechat_id] : user.wechat_id
-    instagram_id = params[:instagram_id]? params[:instagram_id] : user.wechat_id
+    snapchat_id = params[:snapchat_id]? params[:snapchat_id].gsub!(/\s+/, "") : user.snapchat_id
+    wechat_id = params[:wechat_id]? params[:wechat_id].gsub!(/\s+/, "") : user.wechat_id
+    instagram_id = params[:instagram_id]? params[:instagram_id].gsub!(/\s+/, "") : user.wechat_id
     user.snapchat_id = snapchat_id
     user.wechat_id = wechat_id
     user.instagram_id = instagram_id
