@@ -927,9 +927,12 @@ class UsersController < ApplicationController
         target_user = User.find(params[:user_id])
 
         if current_user.follows?(target_user) # Unlike
-          current_user.unfollow!(target_user)
+          # REMOVED unlike
+          # current_user.unfollow!(target_user)
         else # Like
           current_user.follow!(target_user)
+
+          # Send notifications to target user 
         end
 
         # Return friends list

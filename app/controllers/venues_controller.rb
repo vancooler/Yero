@@ -120,7 +120,7 @@ class VenuesController < ApplicationController
         # puts v.inspect
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
         json.id v.id
-        json.name v.name
+        json.name (v.name.blank? ? '' : v.name.upcase)
         json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
         json.address v.address_line_one
         json.city v.city
