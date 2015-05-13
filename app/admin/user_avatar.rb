@@ -10,6 +10,7 @@ ActiveAdmin.register UserAvatar do
       if ua.save! and !ua.user_id.nil?
         # notification
         WhisperNotification.send_avatar_disabled_notification(ua.user_id)
+        ReportUserHistory.notify_all_users(ua.user_id)
       end
     end
     redirect_to :back, :notice => "Selected avatars are disabled"
