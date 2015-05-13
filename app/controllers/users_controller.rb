@@ -226,25 +226,50 @@ class UsersController < ApplicationController
   #########################
   def report
     reporting_user = User.find_by_key(params[:key])
-    reported_user = User.find(params[:user_id])
-    report_type = ReportType.find(params[:type_id])
+    reported_user = User.find_by_id(params[:user_id])
+    report_type = ReportType.find_by_id(params[:type_id])
     if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
-      record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id(reporting_user.id, reported_user.id)
+      record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id_and_report_type_id(reporting_user.id, reported_user.id, report_type.id)
       # no report record found
-      if record.nil?
+      if record.blank?
         rep = ReportUserHistory.new
         rep.reporting_user_id = reporting_user.id
         rep.reported_user_id = reported_user.id
         rep.report_type_id = report_type.id
+        # find same report by other users
+        other_user_rep = ReportUserHistory.find_by_reported_user_id_and_report_type_id(reported_user.id, report_type.id)
+        if other_user_rep.blank?
+          rep.frequency = 1
+        else
+          rep.frequency = other_user_rep.frequency + 1
+        end
         rep.reason = params[:reason]
         if rep.save!
+          # update other records
+          reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id, :report_type_id => report_type.id)
+          reports_need_update.update_all(:frequency => rep.frequency)
           render json: success(true)
         else
           render json: success(false)
         end
       else
-
+        if record.frequency.blank?
+          record.frequency = 1
+        else
+          record.frequency += 1
+        end
+        if record.save!
+          # update other records
+          reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id, :report_type_id => report_type.id)
+          reports_need_update.update_all(:frequency => record.frequency)
+          render json: success(true)
+        else
+          render json: success(false)
+        end
       end
+
+
+      # update other records with same type & reported_user_id
     else
       render json: success(false)
     end
