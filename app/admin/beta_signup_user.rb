@@ -8,6 +8,7 @@ ActiveAdmin.register BetaSignupUser do
     column :phone_type
     column :city
     column :phone_model
+    column :created_at
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
     # end
