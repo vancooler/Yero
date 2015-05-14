@@ -22,7 +22,7 @@ task :venue_locs => :environment do
   puts "Done"
 end
 
-desc "CRON Job, 15 min - Network Open task"
+desc "CRON Job, 5pm - Network Open task"
 task :network_open => :environment do
   puts "Checking for networks approaching 5pm"
   User.network_open
@@ -32,7 +32,7 @@ end
 
 task :network_close => :environment do
   puts "Checking for networks approaching 5am"
-  # User.network_close
+  User.network_close
   puts "Done."
 end
 
