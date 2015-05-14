@@ -55,4 +55,23 @@ class ActiveInVenueNetwork < ActiveRecord::Base
     return result
   end
 
+  def self.five_am_cleanup(venue_network)
+    vn = ActiveInVenueNetwork.where(:venue_network_id => venue_network.id)
+    if vn and vn.count > 1
+      result = vn.destroy_all
+    elsif vn and vn.count == 1
+      result = vn.first.destroy
+    else
+      result = false
+    end
+
+    # cleanup active_in_venue records in this venue_network
+    venues = Venue.where(:venue_network_id => venue_network.id)
+    venues.each do |v|
+      ActiveInVenue.five_am_cleanup(v)
+      VenueEnteredToday.five_am_cleanup(v)
+    end
+    return result
+  end
+
 end

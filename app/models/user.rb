@@ -463,25 +463,21 @@ class User < ActiveRecord::Base
         times_array << open_network_tz #Throw into array
       end
     end
-
-    people_array = Array.new 
     times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
+
+    # disconnect all users
+    people_array = Array.new 
     if !times_array.empty?    
       people_array = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
     end
-
-    # if !usersInTimezone.nil? # If there are people in that timezone
-    #   usersInTimezone.each do |user|
-    #     attributes = user.attributes.to_h # Turn the people into usable attributes
-    #     if !attributes["user_id"].nil? and User.exists? id: attributes["user_id"].to_i
-    #       people_array << attributes["user_id"].to_i #Assign new attributes
-    #     end  
-    #   end
-    # end 
-    # times_array.each do |timezone| #Each timezone that we found to be at 17:00
-    # end
     if !people_array.empty? 
       User.where(id: people_array).update_all(is_connected: false)
+    end
+
+    # cleanup active_in_venue_network & active_in_venue & enter_today
+    venue_networks = VenueNetwork.where(:timezone => times_array)
+    venue_networks.each do |vn|
+      ActiveInVenueNetwork.five_am_cleanup(vn)
     end
   end
 

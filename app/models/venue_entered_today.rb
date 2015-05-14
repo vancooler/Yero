@@ -38,4 +38,17 @@ class VenueEnteredToday < ActiveRecord::Base
     return result
   end
 
+  def self.five_am_cleanup(venue)
+    #vn = VenueEnteredToday.where("last_activity < ? ", Time.now - 0.1.seconds)
+    vn = VenueEnteredToday.where(:venue_id => venue.id)
+    if vn and vn.count > 1
+      result = vn.destroy_all
+    elsif vn and vn.count == 1
+      result = vn.first.destroy
+    else
+      result = false
+    end
+    return result
+  end
+
 end

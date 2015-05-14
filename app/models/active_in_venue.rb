@@ -68,4 +68,11 @@ class ActiveInVenue < ActiveRecord::Base
       ActiveInVenue.leave_venue(aiv.venue, aiv.user)
     end
   end
+
+  def self.five_am_cleanup(venue)
+    aivs = ActiveInVenue.where(:venue_id => venue.id)
+    aivs.each do |aiv|
+      ActiveInVenue.leave_venue(aiv.venue, aiv.user)
+    end
+  end
 end
