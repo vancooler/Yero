@@ -9,21 +9,36 @@ class UsersController < ApplicationController
     puts current_user.id
     avatar_array = Array.new
     if current_user.account_status == 1 or !current_user.default_avatar.nil?
-      avatar_array[0] = {
-            avatar: current_user.main_avatar.avatar.url,
-            avatar_id: current_user.main_avatar.id,
-            default: true
-          }
-      avatar_array[1] = {
-            avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
-            avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
-            default: false
-          }
-      avatar_array[2] = {
-            avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
-            avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
-            default: false
-          }
+      user_info = current_user.to_json(false)
+      avatars = Array.new
+      user_info['avatars'].each do |avatar|
+        if avatar['default'].to_s == "true"
+          avatars.unshift(avatar)
+        else
+          avatars.push(avatar)
+        end
+      end
+      user_info['avatars'] = avatars
+      user_info['avatars'].each do |a|
+        thumb = a['avatar']
+        a['avatar'] = thumb.gsub! 'thumb_', ''
+      end
+
+      # avatar_array[0] = {
+      #       avatar: current_user.main_avatar.avatar.url,
+      #       avatar_id: current_user.main_avatar.id,
+      #       default: true
+      #     }
+      # avatar_array[1] = {
+      #       avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
+      #       avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
+      #       default: false
+      #     }
+      # avatar_array[2] = {
+      #       avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
+      #       avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
+      #       default: false
+      #     }
     end
     user = {
       id: current_user.id,
@@ -38,7 +53,7 @@ class UsersController < ApplicationController
       apn_token: current_user.apn_token,
       latitude:current_user.latitude,
       longitude:current_user.longitude,
-      avatars: avatar_array
+      avatars: user_info['avatars']
     }
 
     render json: success(user)
