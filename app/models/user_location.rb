@@ -33,28 +33,23 @@ class UserLocation < AWS::Record::HashModel
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:timezone).in(*timezones).select(:user_id)
 
+    user_ids = Array.new
     if items and items.count > 0
       time1 = Time.now
-      user_ids = Array.new
 
       items.each do |user|
         attributes = user.attributes # Turn the people into usable attributes
         if !attributes["user_id"].nil? 
           user_ids << attributes["user_id"].to_i
-
         end   
       end
-
 
       time3 = Time.now
       dbtime = time3 - time1
       puts "QUERY TIME: "
       puts dbtime.inspect
-
-      return user_ids
-    else
-      return nil
     end
+    return user_ids
   end
 
   def self.find_if_user_exist(id, latitude, longitude, timezone)
