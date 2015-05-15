@@ -453,6 +453,7 @@ class User < ActiveRecord::Base
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def self.network_close
+    time1 = Time.now
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
@@ -464,7 +465,8 @@ class User < ActiveRecord::Base
       end
     end
     times_array << ["America/Vancouver"] if times_array.include? ["America/Los_Angeles"]
-
+    puts "CLOSE Timezones:"
+    puts times_array.inspect
     # disconnect all users
     people_array = Array.new 
     if !times_array.empty?    
@@ -479,6 +481,11 @@ class User < ActiveRecord::Base
     venue_networks.each do |vn|
       ActiveInVenueNetwork.five_am_cleanup(vn)
     end
+    puts "CLOSE Networks:"
+    puts venue_networks.inspect
+    time2 = Time.now
+    puts "CLOSE runtimeALL: "
+    puts (time2 - time1).inspect
   end
 
   def friends_by_like
