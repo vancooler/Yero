@@ -54,7 +54,7 @@ class ActiveInVenue < ActiveRecord::Base
     if !venue.nil?
       if venue.is_a? Venue
         venue_id = venue.id
-      elsif venue is_a Integer
+      elsif venue.is_a Integer
         venue_id = venue
       else
         venue_id = 0
@@ -66,7 +66,7 @@ class ActiveInVenue < ActiveRecord::Base
     if !user.nil?
       if user.is_a? User
         user_id = user.id
-      elsif user is_a Integer
+      elsif user.is_a Integer
         user_id = user
       else
         user_id = 0
