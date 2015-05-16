@@ -50,7 +50,7 @@ class ActiveInVenue < ActiveRecord::Base
   end
 
   def self.leave_venue(venue, user)
-    venue_network = venue.venue_network
+    # venue_network = venue.venue_network
     if !venue.nil?
       if venue.is_a? Venue
         venue_id = venue.id
