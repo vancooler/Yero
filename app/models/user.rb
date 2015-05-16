@@ -325,6 +325,7 @@ class User < ActiveRecord::Base
           json.avatar a.avatar.thumb.url
           json.default a.default
           json.avatar_id a.id
+          json.order (a.order.nil? ? 100 : a.order)
         end
       end
 
