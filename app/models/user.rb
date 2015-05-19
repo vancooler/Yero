@@ -565,7 +565,7 @@ class User < ActiveRecord::Base
       reten = Time.now
       dbtime = reten-retus
 
-    number_of_users = return_users.count
+    number_of_users = return_users.length
     if number_of_users >= gate_number  
       # build json format
       users = Jbuilder.encode do |json|
