@@ -10,19 +10,25 @@ class UsersController < ApplicationController
     avatar_array = Array.new
     if current_user.account_status == 1 or !current_user.default_avatar.nil?
       user_info = current_user.to_json(false)
-      avatars = Array.new
-      user_info['avatars'].each do |avatar|
-        if avatar['default'].to_s == "true"
-          avatars.unshift(avatar)
-        else
-          avatars.push(avatar)
-        end
-      end
-      user_info['avatars'] = avatars
-      user_info['avatars'].each do |a|
+      user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+      user_info["avatars"].each do |a|
         thumb = a['avatar']
+        # a['thumbnail'] = thumb
         a['avatar'] = thumb.gsub! 'thumb_', ''
       end
+      # avatars = Array.new
+      # user_info['avatars'].each do |avatar|
+      #   if avatar['default'].to_s == "true"
+      #     avatars.unshift(avatar)
+      #   else
+      #     avatars.push(avatar)
+      #   end
+      # end
+      # user_info['avatars'] = avatars
+      # user_info['avatars'].each do |a|
+      #   thumb = a['avatar']
+      #   a['avatar'] = thumb.gsub! 'thumb_', ''
+      # end
 
       # avatar_array[0] = {
       #       avatar: current_user.main_avatar.avatar.url,
@@ -510,7 +516,13 @@ class UsersController < ApplicationController
     if !(User.exists? email: params[:email])
       if user_registration.create
         user = user_registration.user
-        
+        # save avatar order
+        if !user.nil? and !user.default_avatar.nil?
+          avatar = user.default_avatar
+          avatar.order = 0
+          avatar.save!
+        end
+
         # #signup with the avatar id
         # avatar_id = sign_up_params[:avatar_id]
         # response = user.to_json(true)

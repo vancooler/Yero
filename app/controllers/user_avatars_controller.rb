@@ -10,17 +10,24 @@ class UserAvatarsController < ApplicationController
         avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
         if avatar
           if avatar.set_as_default
+            # swap order
+            current_main_avatar.order = avatar.order
+            current_main_avatar.save
+            avatar.order = 0
+            avatar.save
+
             user_info = current_user.to_json(false)
-            avatars = Array.new
-            user_info['avatars'].each do |avatar|
-              if avatar['default'].to_s == "true"
-                avatars.unshift(avatar)
-              else
-                avatars.push(avatar)
-              end
-            end
-            user_info['avatars'] = avatars
-            user_info["avatars"].each do |a|
+            # avatars = Array.new
+            # user_info['avatars'].each do |avatar|
+            #   if avatar['default'].to_s == "true"
+            #     avatars.unshift(avatar)
+            #   else
+            #     avatars.push(avatar)
+            #   end
+            # end
+            # user_info['avatars'] = avatars
+            user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+            user_info['avatars'].each do |a|
               thumb = a['avatar']
               # a['thumbnail'] = thumb
               a['avatar'] = thumb.gsub! 'thumb_', ''
@@ -39,16 +46,19 @@ class UserAvatarsController < ApplicationController
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
       if avatar
         if avatar.set_as_default
+          avatar.order = 0
+          avatar.save
           user_info = current_user.to_json(false)
-            avatars = Array.new
-            user_info['avatars'].each do |avatar|
-              if avatar['default'].to_s == "true"
-                avatars.unshift(avatar)
-              else
-                avatars.push(avatar)
-              end
-            end
-            user_info['avatars'] = avatars
+            # avatars = Array.new
+            # user_info['avatars'].each do |avatar|
+            #   if avatar['default'].to_s == "true"
+            #     avatars.unshift(avatar)
+            #   else
+            #     avatars.push(avatar)
+            #   end
+            # end
+            # user_info['avatars'] = avatars
+            user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
             user_info["avatars"].each do |a|
               thumb = a['avatar']
               # a['thumbnail'] = thumb
@@ -71,9 +81,13 @@ class UserAvatarsController < ApplicationController
 
       if avatar.nil?
         avatar = UserAvatar.new(user: current_user)
+        next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+        avatar.order = next_order
       end
     else  
       avatar = UserAvatar.new(user: current_user)
+      next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+      avatar.order = next_order
     end
     current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     avatar.avatar = params[:avatar]
@@ -94,20 +108,26 @@ class UserAvatarsController < ApplicationController
         end
       end
       user_info = current_user.to_json(false)
-      avatars = Array.new
-      user_info['avatars'].each do |avatar|
-        real_avatar = UserAvatar.find(avatar['avatar_id'].to_i)
-        return_avatar = Hash.new
-        return_avatar['avatar'] = real_avatar.avatar.url
-        return_avatar['default'] = real_avatar.default
-        return_avatar['avatar_id'] = avatar['avatar_id'].to_i
-        if avatar['default'].to_s == "true"
-          avatars.unshift(return_avatar)
-        else
-          avatars.push(return_avatar)
-        end
+      # avatars = Array.new
+      # user_info['avatars'].each do |avatar|
+      #   real_avatar = UserAvatar.find(avatar['avatar_id'].to_i)
+      #   return_avatar = Hash.new
+      #   return_avatar['avatar'] = real_avatar.avatar.url
+      #   return_avatar['default'] = real_avatar.default
+      #   return_avatar['avatar_id'] = avatar['avatar_id'].to_i
+      #   if avatar['default'].to_s == "true"
+      #     avatars.unshift(return_avatar)
+      #   else
+      #     avatars.push(return_avatar)
+      #   end
+      # end
+      # user_info['avatars'] = avatars
+      user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+      user_info["avatars"].each do |a|
+        thumb = a['avatar']
+        # a['thumbnail'] = thumb
+        a['avatar'] = thumb.gsub! 'thumb_', ''
       end
-      user_info['avatars'] = avatars
       render json: success(user_info)
       # render json: success(current_user.to_json(false))
     else
@@ -137,22 +157,40 @@ class UserAvatarsController < ApplicationController
     avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
 
     if avatar and !avatar.default
+      this_order = avatar.order
       if avatar.destroy
-        user_info = current_user.to_json(false)
-        avatars = Array.new
-        user_info['avatars'].each do |a|
-          real_avatar = UserAvatar.find(a['avatar_id'].to_i)
-          return_avatar = Hash.new
-          return_avatar['avatar'] = real_avatar.avatar.url
-          return_avatar['default'] = real_avatar.default
-          return_avatar['avatar_id'] = a['avatar_id'].to_i
-          if a['default'].to_s == "true"
-            avatars.unshift(return_avatar)
-          else
-            avatars.push(return_avatar)
+        # check max order
+        next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+        # minus one for all avatars with greater order
+        if this_order + 1 < next_order
+          greater_avatars = UserAvatar.where(order: (this_order + 1)..Float::INFINITY).where(user_id: current_user.id)
+          greater_avatars.each do |ga|
+            ga.order = ga.order - 1
+            ga.save!
           end
         end
-        user_info['avatars'] = avatars
+
+        user_info = current_user.to_json(false)
+        # avatars = Array.new
+        # user_info['avatars'].each do |a|
+        #   real_avatar = UserAvatar.find(a['avatar_id'].to_i)
+        #   return_avatar = Hash.new
+        #   return_avatar['avatar'] = real_avatar.avatar.url
+        #   return_avatar['default'] = real_avatar.default
+        #   return_avatar['avatar_id'] = a['avatar_id'].to_i
+        #   if a['default'].to_s == "true"
+        #     avatars.unshift(return_avatar)
+        #   else
+        #     avatars.push(return_avatar)
+        #   end
+        # end
+        # user_info['avatars'] = avatars
+        user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+        user_info["avatars"].each do |a|
+          thumb = a['avatar']
+          # a['thumbnail'] = thumb
+          a['avatar'] = thumb.gsub! 'thumb_', ''
+        end
         render json: success(user_info)
       else
         render json: error(avatar.errors)
