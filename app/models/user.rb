@@ -476,7 +476,7 @@ class User < ActiveRecord::Base
     if !people_array.empty? 
       User.where(id: people_array).update_all(is_connected: false)
     end
-
+    time1 = Time.now
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
     venue_networks.each do |vn|
@@ -547,7 +547,7 @@ class User < ActiveRecord::Base
     diff_2 = 0
     result = Hash.new
     # check 
-    if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
+    # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
       s_time = Time.now
       # collect all whispers sent 
       collected_whispers = WhisperNotification.collect_whispers(self)
@@ -564,7 +564,9 @@ class User < ActiveRecord::Base
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       reten = Time.now
       dbtime = reten-retus
-      
+
+    number_of_users = return_users.count
+    if number_of_users >= gate_number  
       # build json format
       users = Jbuilder.encode do |json|
         
@@ -699,7 +701,8 @@ class User < ActiveRecord::Base
       # count = users.count
       result['users'] = users
     else
-      count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      # count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      count = number_of_users
       users = Array.new
       result['percentage'] = (count * 100 / gate_number).to_i
     end
