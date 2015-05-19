@@ -548,6 +548,9 @@ class User < ActiveRecord::Base
     result = Hash.new
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
+    all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+    number_of_users = all_users.length
+    if number_of_users >= gate_number  
       s_time = Time.now
       # collect all whispers sent 
       collected_whispers = WhisperNotification.collect_whispers(self)
@@ -565,8 +568,6 @@ class User < ActiveRecord::Base
       reten = Time.now
       dbtime = reten-retus
 
-    number_of_users = return_users.length
-    if number_of_users >= gate_number  
       # build json format
       users = Jbuilder.encode do |json|
         
