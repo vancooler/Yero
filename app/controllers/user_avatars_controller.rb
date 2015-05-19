@@ -75,18 +75,19 @@ class UserAvatarsController < ApplicationController
   end
 
   def create
+    current_order = UserAvatar.where(:user_id => current_user.id).maximum(:order)
     if !params[:avatar_id].nil?
       avatar_id = params[:avatar_id] 
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
 
       if avatar.nil?
         avatar = UserAvatar.new(user: current_user)
-        next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+        next_order = current_order.nil? ? 0 : current_order+1
         avatar.order = next_order
       end
     else  
       avatar = UserAvatar.new(user: current_user)
-      next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+      next_order = current_order.nil? ? 0 : current_order+1
       avatar.order = next_order
     end
     current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
@@ -160,7 +161,8 @@ class UserAvatarsController < ApplicationController
       this_order = avatar.order
       if avatar.destroy
         # check max order
-        next_order = UserAvatar.where(:user_id => current_user.id).maximum(:order).next
+        current_order = UserAvatar.where(:user_id => current_user.id).maximum(:order)
+        next_order = current_order.nil? ? 0 : current_order+1
         # minus one for all avatars with greater order
         if this_order + 1 < next_order
           greater_avatars = UserAvatar.where(order: (this_order + 1)..Float::INFINITY).where(user_id: current_user.id)
