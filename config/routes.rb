@@ -26,6 +26,8 @@ Rails.application.routes.draw do
     post 'claim-drink/:winner_id', to: 'venues#claim_drink', as: :claim_drink
     get 'owner/venues', to: 'venues#index', as: :venues
     get 'owner/venues/:id', to: 'venues#show', as: :venue
+    patch 'owner/venues/:id', to: 'venues#update'
+    put 'owner/venues/:id', to: 'venues#update'
     get 'owner/venues/:id/edit', to: 'venues#edit', as: :edit_venue
 
     # Venue API

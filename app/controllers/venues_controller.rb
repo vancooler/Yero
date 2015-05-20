@@ -23,9 +23,29 @@ class VenuesController < ApplicationController
     end
   end
 
+  # edit page of venue
   def edit
     @venue = Venue.find_by_id(params[:id])
   end
+
+
+  # update a venue
+  def update
+    @venue = Venue.find_by_id(params[:id])
+
+    respond_to do |format|
+      get_params = params.require(:venue).permit(:name, :venue_type_id, :address_line_one, :city, :state, :country, :phone, :email)
+      if @venue.update_attributes(get_params)
+        format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
+        format.json { head :no_content }
+      else
+        format.html { render action: "edit" }
+        format.json { render json: @venue.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+
 
   def venue_location
     r = Geocoder.search("44.981667,-93.27833")
