@@ -4,7 +4,7 @@ class LocationsController < ApplicationController
 
   def create
     # Add && params[:timezone].present? when we are doing timezones
-    if current_user && params[:latitude].present? && params[:longitude].present? 
+    if current_user && params[:latitude].present? && params[:longitude].present? && params[:timezone].present?
       # location_history = current_user.locations.new(
       #   latitude: params[:latitude].to_f,
       #   longitude: params[:longitude].to_f)
@@ -23,7 +23,7 @@ class LocationsController < ApplicationController
       if user.save and UserLocation.find_if_user_exist(current_user.id, user.latitude, user.longitude, params[:timezone])
         render json: success
       # elsif location_history.save && user.save
-      elsif user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f)
+      elsif user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f, params[:timezone])
         render json: success
       else
         render json: error("Could not save location.")

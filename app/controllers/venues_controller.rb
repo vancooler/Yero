@@ -4,9 +4,8 @@ class VenuesController < ApplicationController
   before_action :authenticate_api, only: [:list, :people]
   before_action :authenticate_web_user!, only: [:index]
 
-
+  # list all the venues for this owner
   def index
-
     @venues = current_web_user.venues.order('updated_at DESC')
     respond_to do |format|
       format.html # index.html.erb
@@ -14,6 +13,19 @@ class VenuesController < ApplicationController
     end
   end
 
+  # show details of a venue
+  def show
+    @venue = Venue.find_by_id(params[:id])
+  
+    respond_to do |format|
+      format.html # show.html.erb
+      format.json { render json: @venue }
+    end
+  end
+
+  def edit
+    @venue = Venue.find_by_id(params[:id])
+  end
 
   def venue_location
     r = Geocoder.search("44.981667,-93.27833")

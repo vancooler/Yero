@@ -1,0 +1,20 @@
+<% content_for :title, "Yero -  Venues" %>
+
+<h2><%= @venue.name %></h2>
+</br>
+<div class="img">
+	<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
+</div>
+<div class="map">
+    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
+</div>
+<div class="address">
+	<%= @venue.address%>
+</div>
+
+
+<%if current_web_user %>
+	<%= link_to 'Edit', edit_venue_url(@venue) %> |
+	<%= link_to 'Destroy', @venue, method: :delete, data: { confirm: 'Are you sure?' } %> |
+<%end%>
+<%= link_to 'Back', venues_url %>

@@ -3,6 +3,7 @@ class UserLocation < AWS::Record::HashModel
   integer_attr :timestamp
   float_attr :latitude
   float_attr :longitude
+  string_attr :timezone
 
   def self.table_prefix
     dynamo_db_table_prefix = ''
@@ -13,13 +14,14 @@ class UserLocation < AWS::Record::HashModel
   end
 
   #create user's location log in AWS DynamoDB
-  def self.create_in_aws(user, latitude, longitude)
+  def self.create_in_aws(user, latitude, longitude, timezone)
     table_name = UserLocation.table_prefix + 'UserLocation'
     l = UserLocation.shard(table_name).new
     l.user_id = user.id
     l.latitude = latitude
     l.timestamp = Time.now
     l.longitude = longitude
+    l.timezone = timezone
     l.save!
 
     return l
