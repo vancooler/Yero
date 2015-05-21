@@ -1,7 +1,12 @@
 <% content_for :title, "Yero -  Venues" %>
-<section class="page-content padding">
-	<div class="row">
-		<div class="medium-10 medium-centered columns">
+<%= render "sidebar", current: "venue-profile" %>
+
+
+	<div class="large-12 columns main-content">
+		<div class="index-title">Your Venue</div>
+
+		<hr class="top-divider">
+		<div class="row">
 			<%= form_for(@venue) do |f| %>
 			  <% if @venue.errors.any? %>
 			    <div id="error_explanation">
@@ -15,42 +20,46 @@
 			    </div>
 			  <% end %>
 
-			   <div class="field">
-			    <%= f.label :name %><br />
+			   <div class="venue-sub-title">Venue Info</div>
+			   <div class="venue-field">
+			    <%= f.label :name, :class => "venue-label" %>
 			    <%= f.text_field :name %>
 			   </div>
-			   <div class="field">
+			   <div class="venue-field">
 			   	<% types_array =  VenueType.all.collect  { |type| [type.name, type.id] } %>
-			    <%= f.label :type %><br />
+			    <%= f.label :type, :class => "venue-label" %>
 			    <%= f.select :venue_type_id, options_for_select(types_array, f.object.venue_type_id),{:include_blank => 'None'} %>
 			   </div>
-			   <div class="field">
-			    <%= f.label :email %><br />
-			    <%= f.text_field :email %>
-			   </div>
-			   <div class="field">
-			    <%= f.label :phone %><br />
-			    <%= f.text_field :phone %>
-			   </div>
-			   <div class="field">
-			    <%= f.label :address %><br />
+			   <div class="venue-field">
+			    <%= f.label :address, :class => "venue-label" %>
 			    <%= f.text_field :address_line_one %>
 			   </div>
-			   <div class="field">
-			    <%= f.label :city %><br />
+			   <div class="venue-field">
+			    <%= f.label :city, :class => "venue-label" %>
 			    <%= f.text_field :city %>
 			   </div>
-			   <div class="field">
-			    <%= f.label :state_province %><br />
+			   <div class="venue-field">
+			    <%= f.label :state_province, :class => "venue-label" %>
 			    <%= f.text_field :state %>
 			   </div>
-			   <div class="field">
-			    <%= f.label :country %><br />
+			   <div class="venue-field">
+			    <%= f.label :country, :class => "venue-label" %>
 			    <%= country_select("venue", "country", priority_countries: ["CA", "US"]) %>
 			   </div>
 
-			   <%= f.submit "SAVE ALL CHANGES", :class => "button small"%>
+			   <div class="venue-sub-title">Manager Info</div>
+			   <div class="venue-field">
+			    <%= f.label :email, :class => "venue-label" %>
+			    <%= f.text_field :email %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :phone, :class => "venue-label" %>
+			    <%= f.text_field :phone %>
+			   </div>
+			   <div class="venue-field">
+				   <%= f.submit "SAVE ALL CHANGES", :class => "button small"%>
+				</div>
 			<%end%>
 		</div>
 	</div>
-</div>
+

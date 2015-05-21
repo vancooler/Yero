@@ -1,20 +1,27 @@
 <% content_for :title, "Yero -  Venues" %>
+<%= render "sidebar", current: "venue-profile" %>
+<div class="rows">
+	<div class="large-12 columns main-content">
+		<div class="index-title">Your Venues</div>
 
-<h1>Venues</h1>
+		<hr class="top-divider">
 
-</br>
-
-<% @venues.each do |venue| %>
-<div class="venueBody venueShow">
-  <h3><%=link_to venue.name, venue %></h3>
-	   
-		<%#= h(truncate((raw venue.body), :length => 10))%>
-	<%#=venue.address%>
-
-    <%if true %>
-		<%= link_to 'Edit', edit_venue_url(venue) %>
-		<%#= link_to 'Destroy', venue, method: :delete, data: { confirm: 'Are you sure?' } %>
-	<%end%>
-</div><hr>
-<% end %>
-
+		<div class="venue-rows">
+			<% @venues.each do |venue| %>
+			<div class="venueBody venueShow">
+			  	<span class="venue-name">
+			  		<%= link_to venue.name, venue %>
+				</span>
+				<span class="venue-edit-link">
+					<i><%= link_to 'Edit', edit_venue_url(venue) %></i>
+				</span>
+				<% if !venue.default_avatar.nil? %>
+					<div class="img">
+						<%= link_to image_tag(venue.default_avatar.avatar), venue %>
+					</div>
+				<% end %>
+			</div><hr>
+			<% end %>
+		</div>
+	</div>
+</div>
