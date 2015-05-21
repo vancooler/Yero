@@ -174,10 +174,10 @@ class User < ActiveRecord::Base
       end
     end
     if !max_age.nil? 
-      users = users.where("birthday >= ?", (max_age + 1).years.ago + 1.day) #Filter by max age
+      users = users.where("birthday >= ?", (max_age).years.ago + 1.day) #Filter by max age
     end
     if !min_age.nil? and min_age > 0
-      users = users.where("birthday <= ?", (min_age + 1).years.ago) # Filter by min age
+      users = users.where("birthday <= ?", (min_age).years.ago) # Filter by min age
     end
     min_distance = 0 if min_distance.nil? 
     max_distance = 60 if max_distance.nil?
