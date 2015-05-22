@@ -4,10 +4,11 @@
     <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo logo-green sidebar") %>
   </li>
   <br>
-  <li><label>Activity</label></li>
+  <li class="item mylabel"><span>Activity</span></li>
   <li class="item <%= "#{'active' if current == 'dashboard'}" %>">
     <%= link_to "Dashboard", venue_root_path %>
   </li>
+  <li class="item mylabel"><span>Actions</span></li>
   <li class="item <%= "#{'active' if current == 'update-info'}" %>">
     <%= link_to "Update Info", venue_nightly_path %>
   </li>
@@ -17,12 +18,14 @@
   <!-- <li class="item <%= "#{'active' if current == 'settings'}" %>">
     <%= link_to "Settings", venues_path %>
   </li> -->
+  <li class="item mylabel"><span>People</span></li>
   <li class="item <%= "#{'active' if current == 'advertise'}" %>">
     <%= link_to "Advertise", venues_path %>
   </li>
   <li class="item <%= "#{'active' if current == 'analytics'}" %>">
     <%= link_to "Analytics", venues_path %>
   </li>
+  <li class="item mylabel"><span>App</span></li>
   <li class="item <%= "#{'active' if current == 'venue-profile'}" %>">
     <%= link_to "Venue Profile", venues_path %>
   </li>
