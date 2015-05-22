@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150515155433) do
+ActiveRecord::Schema.define(version: 20150522141312) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -386,6 +386,24 @@ ActiveRecord::Schema.define(version: 20150515155433) do
     t.float    "latitude"
     t.integer  "venue_network_id"
     t.integer  "web_user_id"
+    t.string   "manager_first_name"
+    t.string   "manager_last_name"
+    t.string   "manager_phone"
+    t.string   "pending_manager_first_name"
+    t.string   "pending_manager_last_name"
+    t.string   "pending_manager_phone"
+    t.string   "pending_name"
+    t.string   "pending_phone"
+    t.string   "pending_email"
+    t.integer  "pending_venue_type_id"
+    t.integer  "pending_venue_network_id"
+    t.string   "pending_address"
+    t.string   "pending_city"
+    t.string   "pending_state"
+    t.string   "pending_country"
+    t.string   "pending_zipcode"
+    t.float    "pending_latitude"
+    t.float    "pending_longitude"
   end
 
   add_index "venues", ["email"], name: "index_venues_on_email", unique: true, using: :btree
