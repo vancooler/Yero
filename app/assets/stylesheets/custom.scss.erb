@@ -1026,18 +1026,24 @@ ul.shared_links_list{
 .index-title{
 	color: gray;
 	font-size: 36px;
-	margin-left: 60px;
 	margin-top:60px;
 	text-transform: uppercase;
+	margin-left: 20px;
+	@media #{$medium-up} {
+		margin-left: 60px;
+	}
 }
 
 .venue-sub-title{
 	color: gray;
 	font-size: 24px;
-	margin-left: 100px;
 	margin-top: 18px;
 	margin-bottom: 6px;
 	text-transform: uppercase;
+	margin-left: 40px;
+	@media #{$medium-up} {
+		margin-left: 100px;
+	}
 }
 
 ul.sidebar{
@@ -1045,8 +1051,12 @@ ul.sidebar{
 	margin-left: 0;
 }
 
-.logo.hide-for-small.logo-green.sidebar{
+.logo.logo-green.sidebar{
 	left: 24px;
+}
+
+li.item{
+	
 }
 
 li.item.logo{
@@ -1054,7 +1064,10 @@ li.item.logo{
 }
 
 .venueBody.venueShow{
-	margin-left: 120px;
+	margin-left: 40px;
+	@media #{$medium-up} {
+		margin-left: 120px;
+	}
 }
 
 label.venue-label{
@@ -1067,8 +1080,12 @@ span.venue-name{
 }
 
 div.venue-field{
-	width: 350px;
-	margin-left: 100px;
+	width: 250px;
+	margin-left: 40px;
+	@media #{$medium-up} {
+		width: 350px;
+		margin-left: 100px;
+	}
 }
 
 p.homepage-subtitle{
@@ -1080,7 +1097,9 @@ p.homepage-subtitle{
 	padding-top: 12px;
 }
 
-
+.inner-wrap {
+	min-height: 768px;
+}
 
 
 .placehold {
