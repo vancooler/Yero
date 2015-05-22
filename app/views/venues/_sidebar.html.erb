@@ -1,7 +1,10 @@
-<ul class="sidebar">
+
+<ul class="off-canvas-list">
   <li class="item logo">
     <%= image_tag("Logo_green.png", :alt => "logo", :class => "logo hide-for-small logo-green sidebar") %>
   </li>
+  <br>
+  <li><label>Activity</label></li>
   <li class="item <%= "#{'active' if current == 'dashboard'}" %>">
     <%= link_to "Dashboard", venue_root_path %>
   </li>
@@ -28,8 +31,6 @@
   </li>
 </ul>
 
-<style>
-  body {
-    background-color: #fafafa;
-  }
-</style>
+
+
+

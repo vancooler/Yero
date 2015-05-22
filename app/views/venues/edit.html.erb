@@ -1,13 +1,24 @@
 <% content_for :title, "Yero -  Venues" %>
-<%= render "sidebar", current: "venue-profile" %>
 
 
-	<div class="large-12 columns main-content">
-		<div class="index-title">Your Venue</div>
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+    </nav>
+
+    <aside class="left-off-canvas-menu">
+      <%= render "sidebar", current: "venue-profile" %>
+    </aside>
+
+    <section class="main-section">
+      <!-- content goes here -->
+      	<div class="index-title">Your Venue</div>
 
 		<hr class="top-divider">
-		<div class="row">
-			<%= form_for(@venue) do |f| %>
+      		<%= form_for(@venue) do |f| %>
 			  <% if @venue.errors.any? %>
 			    <div id="error_explanation">
 			      <h2><%= pluralize(@venue.errors.count, "error") %> prohibited this venue from being saved:</h2>
@@ -60,6 +71,10 @@
 				   <%= f.submit "SAVE ALL CHANGES", :class => "button small"%>
 				</div>
 			<%end%>
-		</div>
-	</div>
+    </section>
+
+  <a class="show-for-small-only exit-off-canvas"></a>
+
+  </div>
+</div>
 

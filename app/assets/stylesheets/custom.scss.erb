@@ -1,6 +1,6 @@
 @import "compass/css3";
 @import "foundation";
-
+@import "foundation/components/offcanvas";
 // type
 strong {
 	font-family: 'GothamMedium';
@@ -1008,9 +1008,13 @@ ul.shared_links_list{
 }
 
 .large-12.columns.main-content{
-	padding-left: 250px;
+	//margin-left: 235px;
 	padding-right: 0;
 	padding-top: 80px;
+	width: auto;
+    position: relative;
+    overflow: auto;
+    z-index: 1;
 
 }
 
@@ -1023,6 +1027,7 @@ ul.shared_links_list{
 	color: gray;
 	font-size: 36px;
 	margin-left: 60px;
+	margin-top:60px;
 	text-transform: uppercase;
 }
 
@@ -1071,12 +1076,17 @@ p.homepage-subtitle{
 	line-height: 2;
 }
 
+.sidebar{
+	padding-top: 12px;
+}
 
 
 
 
-
-
+.placehold {
+     width: 10px;
+     position: relative;
+}
 
 
 

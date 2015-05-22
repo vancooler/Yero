@@ -1,29 +1,47 @@
 <% content_for :title, "Yero -  Venues" %>
 
-<section class="page-content padding">
-	<div class="row">
-		<div class="medium-10 medium-centered columns">
-			<h2><%= @venue.name %></h2>
-			<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
-			<h5>Email: <%= @venue.email %></h5>
-			<h5>Phone: <%= @venue.phone %></h5>
 
-			<div class="img">
-				<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
-			</div>
-			</br>
-			<div class="map">
-			    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
-			</div>
-			<div class="address">
-				<%= @venue.address%>
-			</div>
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+    </nav>
 
+    <aside class="left-off-canvas-menu">
+      <%= render "sidebar", current: "venue-profile" %>
+    </aside>
 
-			<%if current_web_user %>
-				<%= link_to 'Edit', edit_venue_url(@venue) %> |
-			<%end%>
-			<%= link_to 'Back', venues_url %>
+    <section class="main-section">
+      <!-- content goes here -->
+      	<h2><%= @venue.name %></h2>
+		<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
+		<h5>Email: <%= @venue.email %></h5>
+		<h5>Phone: <%= @venue.phone %></h5>
+
+		<div class="img">
+			<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
 		</div>
-	</div>
+		</br>
+		<div class="map">
+		    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
+		</div>
+		<div class="address">
+			<%= @venue.address%>
+		</div>
+
+
+		<%if current_web_user %>
+			<%= link_to 'Edit', edit_venue_url(@venue) %> |
+		<%end%>
+		<%= link_to 'Back', venues_url %>
+    </section>
+
+  <a class="show-for-small-only exit-off-canvas"></a>
+
+  </div>
 </div>
+
+
+
