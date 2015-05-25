@@ -17,6 +17,8 @@ class Venue < ActiveRecord::Base
   geocoded_by :address
   after_validation :geocode
 
+  scope :pending, ->{where("pending_name is not ? or pending_email is not ? or pending_venue_type_id is not ? or pending_phone is not ? or pending_address is not ? or pending_city is not ? or pending_state is not ? or pending_country is not ? or pending_zipcode is not ? or pending_manager_first_name is not ? or pending_manager_last_name is not ? or pending_latitude is not ? or pending_longitude is not ?", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)}
+
   validates_presence_of :venue_network, :name
 
   def country_name

@@ -26,6 +26,19 @@ class VenuesController < ApplicationController
   # edit page of venue
   def edit
     @venue = Venue.find_by_id(params[:id])
+    if @venue.draft_pending.nil? or !@venue.draft_pending
+      @venue.pending_name = @venue.name
+      @venue.pending_venue_type_id = @venue.venue_type_id
+      @venue.pending_address = @venue.address_line_one
+      @venue.pending_city = @venue.city
+      @venue.pending_state = @venue.state
+      @venue.pending_zipcode = @venue.zipcode
+      @venue.pending_country = @venue.country
+      @venue.pending_manager_first_name = @venue.manager_first_name
+      @venue.pending_manager_last_name = @venue.manager_last_name
+      @venue.pending_email = @venue.email
+      @venue.pending_phone = @venue.phone
+    end
   end
 
 
@@ -34,13 +47,51 @@ class VenuesController < ApplicationController
     @venue = Venue.find_by_id(params[:id])
 
     respond_to do |format|
-      get_params = params.require(:venue).permit(:name, :venue_type_id, :address_line_one, :city, :state, :country, :phone, :email)
-      if @venue.update_attributes(get_params)
-        format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
-        format.json { head :no_content }
+      get_params = params.require(:venue).permit(:pending_name, :pending_venue_type_id, :pending_address, :pending_city, :pending_state, :pending_zipcode, :pending_country, :pending_manager_first_name, :pending_manager_last_name, :pending_phone, :pending_email)
+      puts "PAramssss:"
+      puts get_params[:pending_name]
+      if !@venue.draft_pending.nil? and @venue.draft_pending
+        # has draft
+        if @venue.update_attributes(get_params)
+          format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
+          format.json { head :no_content }
+        else
+          format.html { render action: "edit" }
+          format.json { render json: @venue.errors, status: :unprocessable_entity }
+        end
       else
-        format.html { render action: "edit" }
-        format.json { render json: @venue.errors, status: :unprocessable_entity }
+        # no draft
+        if ((get_params[:pending_name].blank? and @venue.name.blank?) or get_params[:pending_name] == @venue.name) and ((get_params[:pending_venue_type_id].blank? and @venue.venue_type_id.blank?) or get_params[:pending_venue_type_id].to_s == @venue.venue_type_id) and ((get_params[:pending_address].blank? and @venue.address_line_one.blank?) or get_params[:pending_address] == @venue.address_line_one) and ((get_params[:pending_city].blank? and @venue.city.blank?) or get_params[:pending_city] == @venue.city) and ((get_params[:pending_state].blank? and @venue.state.blank?) or get_params[:pending_state] == @venue.state) and ((get_params[:pending_zipcode].blank? and @venue.zipcode.blank?) or get_params[:pending_zipcode] == @venue.zipcode) and ((get_params[:pending_country].blank? and @venue.country.blank?) or get_params[:pending_country] == @venue.country) and ((get_params[:pending_manager_first_name].blank? and @venue.manager_first_name.blank?) or get_params[:pending_manager_first_name] == @venue.manager_first_name) and ((get_params[:pending_manager_last_name].blank? and @venue.manager_last_name.blank?) or get_params[:pending_manager_last_name] == @venue.manager_last_name) and ((get_params[:pending_phone].blank? and @venue.phone.blank?) or get_params[:pending_phone] == @venue.phone) and ((get_params[:pending_email].blank? and @venue.email.blank?) or get_params[:pending_email] == @venue.email)
+          # nothing changed
+          @venue.pending_name = nil
+          @venue.pending_venue_type_id = nil
+          @venue.pending_address = nil
+          @venue.pending_city = nil
+          @venue.pending_state = nil
+          @venue.pending_zipcode = nil
+          @venue.pending_country = nil
+          @venue.pending_manager_last_name = nil
+          @venue.pending_manager_first_name = nil
+          @venue.pending_email = nil
+          @venue.pending_phone = nil
+          @venue.draft_pending = false
+          @venue.save!
+
+          format.html { redirect_to @venue, notice: 'Sorry, nothing changed.' }
+          format.json { head :no_content }
+
+        else
+          # something changed
+          if @venue.update_attributes(get_params)
+            @venue.draft_pending = true
+            @venue.save
+            format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
+            format.json { head :no_content }
+          else
+            format.html { render action: "edit" }
+            format.json { render json: @venue.errors, status: :unprocessable_entity }
+          end
+        end 
       end
     end
   end

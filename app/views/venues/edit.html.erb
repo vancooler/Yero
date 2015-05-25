@@ -37,41 +37,53 @@
 			   <div class="venue-sub-title">Venue Info</div>
 			   <div class="venue-field">
 			    <%= f.label :name, :class => "venue-label" %>
-			    <%= f.text_field :name %>
+			    <%= f.text_field :pending_name %>
 			   </div>
 			   <div class="venue-field">
 			   	<% types_array =  VenueType.all.collect  { |type| [type.name, type.id] } %>
 			    <%= f.label :type, :class => "venue-label" %>
-			    <%= f.select :venue_type_id, options_for_select(types_array, f.object.venue_type_id),{:include_blank => 'None'} %>
+			    <%= f.select :pending_venue_type_id, options_for_select(types_array, f.object.venue_type_id),{:include_blank => 'None'} %>
 			   </div>
 			   <div class="venue-field">
 			    <%= f.label :address, :class => "venue-label" %>
-			    <%= f.text_field :address_line_one %>
+			    <%= f.text_field :pending_address %>
 			   </div>
 			   <div class="venue-field">
 			    <%= f.label :city, :class => "venue-label" %>
-			    <%= f.text_field :city %>
+			    <%= f.text_field :pending_city %>
 			   </div>
 			   <div class="venue-field">
 			    <%= f.label :state_province, :class => "venue-label" %>
-			    <%= f.text_field :state %>
+			    <%= f.text_field :pending_state %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :zipcode, :class => "venue-label" %>
+			    <%= f.text_field :pending_zipcode %>
 			   </div>
 			   <div class="venue-field">
 			    <%= f.label :country, :class => "venue-label" %>
-			    <%= country_select("venue", "country", priority_countries: ["CA", "US"]) %>
+			    <%= country_select("venue", "pending_country", priority_countries: ["CA", "US"]) %>
 			   </div>
 
 			   <div class="venue-sub-title">Manager Info</div>
 			   <div class="venue-field">
+			    <%= f.label :first_name, :class => "venue-label" %>
+			    <%= f.text_field :pending_manager_first_name %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :last_name, :class => "venue-label" %>
+			    <%= f.text_field :pending_manager_last_name %>
+			   </div>
+			   <div class="venue-field">
 			    <%= f.label :email, :class => "venue-label" %>
-			    <%= f.text_field :email %>
+			    <%= f.text_field :pending_email %>
 			   </div>
 			   <div class="venue-field">
 			    <%= f.label :phone, :class => "venue-label" %>
-			    <%= f.text_field :phone %>
+			    <%= f.text_field :pending_phone %>
 			   </div>
 			   <div class="venue-field">
-				   <%= f.submit "SAVE ALL CHANGES", :class => "button small"%>
+				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
 				</div>
 			<%end%>
     </section>

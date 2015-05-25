@@ -18,6 +18,8 @@
 
     <section class="main-section">
       <!-- content goes here -->
+      	<p id="notice"><%= notice %></p>
+ 
       	<h2><%= @venue.name %></h2>
 		<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
 		<h5>Email: <%= @venue.email %></h5>
