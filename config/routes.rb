@@ -29,6 +29,7 @@ Rails.application.routes.draw do
     patch 'owner/venues/:id', to: 'venues#update'
     put 'owner/venues/:id', to: 'venues#update'
     get 'owner/venues/:id/edit', to: 'venues#edit', as: :edit_venue
+    post 'owner/venues/approve', to: 'venues#approve', as: :venue_approve
 
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly

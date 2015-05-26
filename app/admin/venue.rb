@@ -6,6 +6,12 @@ ActiveAdmin.register Venue do
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
+  action_item :only => :show do
+    if !venue.draft_pending.nil? and venue.draft_pending
+      link_to('Approve pending draft', venue_approve_url(:venue => venue), :method => "post", :data => {:confirm => 'Are you sure?'}) 
+    end
+  end
+
   batch_action :do_something do |selection|
     Venue.find(selection).each do |venue|
       # venue.status = 0
@@ -106,84 +112,89 @@ ActiveAdmin.register Venue do
   end
 
   show do |venue|
-    table do
-      tr do
-        th "Attributes"
-        th "Live Info"
-        th "Pending Info" if venue.draft_pending
-      end
-      tr do
-        td "Name"
-        td venue.name
-        td venue.pending_name
-      end
-      tr do
-        td "Type"
-        td venue.venue_type.name if venue.venue_type
-        td VenueType.find_by_id(venue.pending_venue_type_id).name if VenueType.find_by_id(venue.pending_venue_type_id)
-      end
-      tr do
-        td "Email"
-        td venue.email
-        td venue.pending_email
-      end
-      tr do
-        td "Phone"
-        td venue.phone
-        td venue.pending_phone
-      end
-      tr do
-        td "Manager_first_name"
-        td venue.manager_first_name
-        td venue.pending_manager_first_name
-      end
-      tr do
-        td "Manager_last_name"
-        td venue.manager_last_name
-        td venue.pending_manager_last_name
-      end
-      tr do
-        td "Address"
-        td venue.address_line_one
-        td venue.pending_address
-      end
-      tr do
-        td "City"
-        td venue.city
-        td venue.pending_city
-      end
-      tr do
-        td "State"
-        td venue.state
-        td venue.pending_state
-      end
-      tr do
-        td "Zipcode"
-        td venue.zipcode
-        td venue.pending_zipcode
-      end
-      tr do
-        td "Country"
-        td venue.country
-        td venue.pending_country
-      end
-      tr do
-        td "Latitude"
-        td venue.latitude
-        td venue.pending_latitude
-      end
-      tr do
-        td "Longitude"
-        td venue.longitude
-        td venue.pending_longitude
+    div :class => "table" do 
+      table do
+        tr do
+          th "Attributes"
+          th "Live Info"
+          th "Pending Info" if venue.draft_pending
+        end
+        tr do
+          td "Name"
+          td venue.name
+          td venue.pending_name
+        end
+        tr do
+          td "Type"
+          td venue.venue_type.name if venue.venue_type
+          td VenueType.find_by_id(venue.pending_venue_type_id).name if VenueType.find_by_id(venue.pending_venue_type_id)
+        end
+        tr do
+          td "Email"
+          td venue.email
+          td venue.pending_email
+        end
+        tr do
+          td "Phone"
+          td venue.phone
+          td venue.pending_phone
+        end
+        tr do
+          td "Manager_first_name"
+          td venue.manager_first_name
+          td venue.pending_manager_first_name
+        end
+        tr do
+          td "Manager_last_name"
+          td venue.manager_last_name
+          td venue.pending_manager_last_name
+        end
+        tr do
+          td "Address"
+          td venue.address_line_one
+          td venue.pending_address
+        end
+        tr do
+          td "City"
+          td venue.city
+          td venue.pending_city
+        end
+        tr do
+          td "State"
+          td venue.state
+          td venue.pending_state
+        end
+        tr do
+          td "Zipcode"
+          td venue.zipcode
+          td venue.pending_zipcode
+        end
+        tr do
+          td "Country"
+          td venue.country
+          td venue.pending_country
+        end
+        # tr do
+        #   td "Latitude"
+        #   td venue.latitude
+        #   td venue.pending_latitude
+        # end
+        # tr do
+        #   td "Longitude"
+        #   td venue.longitude
+        #   td venue.pending_longitude
+        # end
       end
     end
+
     attributes_table_for venue do
       
       # row("Address") { |venue| (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.zipcode.nil? ? '' : ' ' + venue.zipcode) + (venue.city.nil? ? '' : ', ' + venue.city) + (venue.state.nil? ? '' : ' ' + venue.state) + (venue.country_name.nil? ? '' : ', ' + venue.country_name) }
       row("Owner") { |venue| venue.web_user }
       row :age_requirement
       row :venue_network
+      row :latitude
+      row :longitude
       
       row("Default Avatar ID") { |venue| link_to venue.default_avatar.id, [ :admin, venue.default_avatar ]  if !venue.default_avatar.nil?}
       row("Default Avatar") { |venue| image_tag(venue.default_avatar.avatar) if !venue.default_avatar.nil?}

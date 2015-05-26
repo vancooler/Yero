@@ -19,28 +19,98 @@
     <section class="main-section">
       <!-- content goes here -->
       	<p id="notice"><%= notice %></p>
- 
-      	<h2><%= @venue.name %></h2>
-		<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
-		<h5>Email: <%= @venue.email %></h5>
-		<h5>Phone: <%= @venue.phone %></h5>
+ 		<span class="index-title">Your Venue</span>
+		<span class="venue-edit-link show-page" style="float:right; margin-right:300px">
+			<i><%= link_to 'Edit', edit_venue_url(@venue), :class => "button small" %></i>
+		</span>
 
-		<div class="img">
-			<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
-		</div>
-		</br>
-		<div class="map">
-		    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
-		</div>
-		<div class="address">
-			<%= @venue.address%>
-		</div>
+		<hr class="top-divider">
 
+      	<div class="venueBody venueShow">
+      		<div class="medium-5 medium-offset-1 columns show-for-small-only">
+				<h4>Real Info</h4>
 
-		<%if current_web_user %>
-			<%= link_to 'Edit', edit_venue_url(@venue) %> |
-		<%end%>
-		<%= link_to 'Back', venues_url %>
+				<h5>Name: <%= @venue.name %></h5>
+		      	
+				<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
+				<h5>Address: <%= @venue.address%></h5>
+				<h5>Manager: <%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>				
+				<h5>Email: <%= @venue.email %></h5>
+				<h5>Phone: <%= @venue.phone %></h5>
+
+				<%if false%>
+				<div class="img">
+					<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
+				</div>
+				</br>
+				<div class="map">
+				    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
+				</div>
+				<%end%>
+				<br>
+				<%if !@venue.draft_pending.nil? and @venue.draft_pending %>
+					<h4>Draft Info</h4>
+					<h5>Name: <%= @venue.pending_name %></h5>
+		      	
+					<h5>Type: <%= VenueType.find_by_id(@venue.pending_venue_type_id).name if !@venue.pending_venue_type_id.nil? and !VenueType.find_by_id(@venue.pending_venue_type_id).nil? %></h5>
+					<h5>Address: <%= @venue.pending_address%></h5>
+					<h5>Manager: <%= @venue.pending_manager_first_name%>&nbsp;<%= @venue.pending_manager_last_name%></h5>				
+					<h5>Email: <%= @venue.pending_email %></h5>
+					<h5>Phone: <%= @venue.pending_phone %></h5>
+
+				<%end%>
+			</div>
+
+			<div class="medium-12 medium-offset-1 columns show-for-medium-up">
+				<div style="width: 10%; float:left">
+					<h4 style="visibility:hidden;">&nbsp; </h4>
+					<h5>Name: </h5>
+					<h5>Type: </h5>
+					<h5>Address: </h5>
+					<h5>Manager: </h5>					
+					<h5>Email: </h5>
+					<h5>Phone: </h5>
+				</div>
+				<div style="width: 45%; float:left">
+					<h4>Real Info</h4>
+
+					<h5><%= @venue.name %>&nbsp;</h5>
+					<h5><%= @venue.venue_type.name if !@venue.venue_type.nil? %>&nbsp;</h5>
+					<h5>
+						<%= @venue.address%>&nbsp;
+					</h5>
+					<h5><%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>
+					<h5><%= @venue.email %>&nbsp;</h5>
+					<h5><%= @venue.phone %>&nbsp;</h5>
+
+					<%if false%>
+					<div class="img">
+						<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
+					</div>
+					</br>
+					<div class="map">
+					    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
+					</div>
+					<%end%>
+				</div>
+				<div style="width: 45%; float:right">
+					<%if !@venue.draft_pending.nil? and @venue.draft_pending %>
+						<h4>Draft Info</h4>
+						<h5><%= @venue.name %>&nbsp;</h5>
+						<h5><%= VenueType.find_by_id(@venue.pending_venue_type_id).name if !@venue.pending_venue_type_id.nil? and !VenueType.find_by_id(@venue.pending_venue_type_id).nil? %>&nbsp;</h5>
+						<h5>
+							<%= @venue.pending_address %><%= "," if !@venue.pending_address.blank?%>&nbsp;<%= @venue.pending_city %><%= "," if !@venue.pending_city.blank?%>&nbsp;<%= @venue.pending_state %><%= "," if !@venue.pending_state.blank?%>&nbsp;<%= @venue.pending_country %>
+						</h5>
+						<h5><%= @venue.pending_manager_first_name%>&nbsp;<%= @venue.pending_manager_last_name%></h5>
+						<h5><%= @venue.pending_email %>&nbsp;</h5>
+						<h5><%= @venue.pending_phone %>&nbsp;</h5>
+
+					<%end%>
+				</div>
+			</div>
+				
+
+      	</div>
     </section>
 
   <a class="show-for-small-only exit-off-canvas"></a>

@@ -41,7 +41,37 @@ class VenuesController < ApplicationController
     end
   end
 
-
+  def approve
+    @venue = Venue.find(params[:venue])
+    @venue.name = @venue.pending_name
+    @venue.venue_type_id = @venue.pending_venue_type_id
+    @venue.address_line_one = @venue.pending_address
+    @venue.city = @venue.pending_city
+    @venue.state = @venue.pending_state
+    @venue.zipcode = @venue.pending_zipcode
+    @venue.country = @venue.pending_country
+    @venue.manager_first_name = @venue.pending_manager_first_name
+    @venue.manager_last_name = @venue.pending_manager_last_name
+    @venue.phone = @venue.pending_phone
+    @venue.email = @venue.pending_email
+    @venue.pending_name = nil
+    @venue.pending_venue_type_id = nil
+    @venue.pending_address = nil
+    @venue.pending_city = nil
+    @venue.pending_state = nil
+    @venue.pending_zipcode = nil
+    @venue.pending_country = nil
+    @venue.pending_manager_last_name = nil
+    @venue.pending_manager_first_name = nil
+    @venue.pending_email = nil
+    @venue.pending_phone = nil
+    @venue.draft_pending = false
+    if @venue.save!
+      redirect_to admin_venue_url(@venue), :notice => "Pending draft approved!" 
+    else
+      redirect_to :back, :notice => "Something wrong..."
+    end
+  end
   # update a venue
   def update
     @venue = Venue.find_by_id(params[:id])
