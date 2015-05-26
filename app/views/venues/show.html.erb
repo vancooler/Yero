@@ -18,9 +18,10 @@
 
     <section class="main-section">
       <!-- content goes here -->
+      	<p></p>
       	<p id="notice"><%= notice %></p>
  		<span class="index-title">Your Venue</span>
-		<span class="venue-edit-link show-page" style="float:right; margin-right:300px">
+		<span class="venue-edit-link show-page">
 			<i><%= link_to 'Edit', edit_venue_url(@venue), :class => "button small" %></i>
 		</span>
 
@@ -34,7 +35,7 @@
 		      	
 				<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
 				<h5>Address: <%= @venue.address%></h5>
-				<h5>Manager: <%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>				
+				<h5>Full Name: <%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>				
 				<h5>Email: <%= @venue.email %></h5>
 				<h5>Phone: <%= @venue.phone %></h5>
 
@@ -63,22 +64,29 @@
 
 			<div class="medium-12 medium-offset-1 columns show-for-medium-up">
 				<div style="width: 10%; float:left">
+					<div class="venue-sub-title">&nbsp;</div>
 					<h4 style="visibility:hidden;">&nbsp; </h4>
 					<h5>Name: </h5>
 					<h5>Type: </h5>
 					<h5>Address: </h5>
-					<h5>Manager: </h5>					
+					<hr class="top-divider" style="width:0;border:0">
+					<div class="venue-sub-title">&nbsp;</div>
+					<h4 style="visibility:hidden;">&nbsp; </h4>
+					<h5>Full Name: </h5>					
 					<h5>Email: </h5>
 					<h5>Phone: </h5>
 				</div>
 				<div style="width: 45%; float:left">
+					<div class="venue-sub-title show-page">Venue Info</div>
 					<h4>Real Info</h4>
-
 					<h5><%= @venue.name %>&nbsp;</h5>
 					<h5><%= @venue.venue_type.name if !@venue.venue_type.nil? %>&nbsp;</h5>
 					<h5>
 						<%= @venue.address%>&nbsp;
 					</h5>
+					<hr class="top-divider" style="width:0;border:0">
+					<div class="venue-sub-title show-page">Manager Info</div>
+					<h4>Real Info</h4>
 					<h5><%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>
 					<h5><%= @venue.email %>&nbsp;</h5>
 					<h5><%= @venue.phone %>&nbsp;</h5>
@@ -95,12 +103,16 @@
 				</div>
 				<div style="width: 45%; float:right">
 					<%if !@venue.draft_pending.nil? and @venue.draft_pending %>
+						<div class="venue-sub-title">&nbsp;</div>
 						<h4>Draft Info</h4>
 						<h5><%= @venue.name %>&nbsp;</h5>
 						<h5><%= VenueType.find_by_id(@venue.pending_venue_type_id).name if !@venue.pending_venue_type_id.nil? and !VenueType.find_by_id(@venue.pending_venue_type_id).nil? %>&nbsp;</h5>
 						<h5>
 							<%= @venue.pending_address %><%= "," if !@venue.pending_address.blank?%>&nbsp;<%= @venue.pending_city %><%= "," if !@venue.pending_city.blank?%>&nbsp;<%= @venue.pending_state %><%= "," if !@venue.pending_state.blank?%>&nbsp;<%= @venue.pending_country %>
 						</h5>
+						<hr class="top-divider" style="width:0;border:0">
+						<div class="venue-sub-title">&nbsp;</div>
+						<h4>Draft Info</h4>
 						<h5><%= @venue.pending_manager_first_name%>&nbsp;<%= @venue.pending_manager_last_name%></h5>
 						<h5><%= @venue.pending_email %>&nbsp;</h5>
 						<h5><%= @venue.pending_phone %>&nbsp;</h5>

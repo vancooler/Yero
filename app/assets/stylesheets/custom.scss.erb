@@ -1046,6 +1046,18 @@ ul.shared_links_list{
 	}
 }
 
+.venue-sub-title.show-page{
+	color: gray;
+	font-size: 24px;
+	margin-top: 18px;
+	margin-bottom: 6px;
+	text-transform: uppercase;
+	margin-left: 40px;
+	@media #{$medium-up} {
+		margin-left: -130px;
+	}
+}
+
 ul.sidebar{
 	list-style-type: none;
 	margin-left: 0;
@@ -1053,6 +1065,11 @@ ul.sidebar{
 
 .logo.logo-green.sidebar{
 	left: 24px;
+	@media #{$small-only} {
+		max-width: 170px;
+		margin-left: 10px;
+		// padding-top: 10px;
+	}
 }
 
 li.item{
@@ -1095,6 +1112,9 @@ p.homepage-subtitle{
 
 .sidebar{
 	padding-top: 24px;
+	@media only screen and (max-width: 40em) {
+		display: block;
+	}
 }
 
 .inner-wrap {
@@ -1142,4 +1162,15 @@ h3{
 h6{
 	font-family: "GothamBook" !important;
 	font-weight: 500 !important;
+}
+
+
+.venue-edit-link.show-page{
+	position:relative;
+	left: 20px;
+	bottom:5px;
+	@media #{$medium-up} {
+		float:right; 
+		margin-right:300px;
+	}
 }

@@ -26,6 +26,12 @@ if($(window).width() < 768  ){
 
 }
 
+$(function() {
+   $('#notice').delay(500).fadeIn('normal', function() {
+      $(this).delay(2500).fadeOut();
+   });
+});
+
 
 $(window).resize(function(event) {
 	/* Act on the event */
