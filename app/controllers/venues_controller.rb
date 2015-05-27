@@ -6,6 +6,11 @@ class VenuesController < ApplicationController
   before_action :authenticate_admin_user!, only: [:approve]
   # list all the venues for this owner
   def index
+    if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
     @venues = current_web_user.venues.order('updated_at DESC')
     respond_to do |format|
       format.html # index.html.erb
@@ -15,6 +20,11 @@ class VenuesController < ApplicationController
 
   # show details of a venue
   def show
+    if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
     @venue = Venue.find_by_id(params[:id])
   
     respond_to do |format|
@@ -25,6 +35,11 @@ class VenuesController < ApplicationController
 
   # edit page of venue
   def edit
+    if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
     @venue = Venue.find_by_id(params[:id])
     if @venue.draft_pending.nil? or !@venue.draft_pending
       @venue.pending_name = @venue.name

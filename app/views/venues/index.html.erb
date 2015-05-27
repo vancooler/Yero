@@ -1,8 +1,11 @@
 
 <% content_for :title, "Yero -  Venues" %>
 
-
+<%if @device == "mobile"%>
 <div class="off-canvas-wrap" data-offcanvas>
+<%else%>
+<div class="off-canvas-wrap move-right" data-offcanvas>
+<%end%>
   <div class="inner-wrap">
     <nav class="tab-bar">
       <section class="left-small">
@@ -10,7 +13,7 @@
       </section>
       
       <section class="middle tab-bar-section">
-        <h1 class="title">Your Venues</h1>
+        <h1 class="title">Venue Profile</h1>
       </section>
     </nav>
 

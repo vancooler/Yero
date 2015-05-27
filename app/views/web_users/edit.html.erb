@@ -1,7 +1,11 @@
 <% content_for :title, "Yero - Account" %>
 
 
+<%if @device == "mobile"%>
 <div class="off-canvas-wrap" data-offcanvas>
+<%else%>
+<div class="off-canvas-wrap move-right" data-offcanvas>
+<%end%>
   <div class="inner-wrap">
     <nav class="tab-bar">
       <section class="left-small">

@@ -4,6 +4,11 @@ class WebUsersController < ApplicationController
 
 
   def edit
+  	if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
     @id = current_web_user.id
     @web_user = WebUser.find_by_id(@id)
     
