@@ -1,6 +1,5 @@
 <% content_for :title, "Yero -  Venues" %>
 
-
 <div class="off-canvas-wrap" data-offcanvas>
   <div class="inner-wrap">
     <nav class="tab-bar">
@@ -20,7 +19,7 @@
       <!-- content goes here -->
       	<p></p>
       	<p id="notice"><%= notice %></p>
- 		<span class="index-title">Your Venue</span>
+ 		<span class="index-title"><%=@venue.name%></span>
 		<span class="venue-edit-link show-page">
 			<i><%= link_to 'Edit', edit_venue_url(@venue), :class => "button small" %></i>
 		</span>
@@ -28,8 +27,8 @@
 		<hr class="top-divider">
 
       	<div class="venueBody venueShow">
-      		<div class="medium-5 medium-offset-1 columns show-for-small-only">
-				<h4>Real Info</h4>
+      		<div class="medium-12 medium-offset-1 columns">
+				<h4>Real Info<%= " *" if !@venue.draft_pending.nil? and @venue.draft_pending %></h4>
 
 				<h5>Name: <%= @venue.name %></h5>
 		      	
@@ -39,7 +38,7 @@
 				<h5>Email: <%= @venue.email %></h5>
 				<h5>Phone: <%= @venue.phone %></h5>
 
-				<%if false%>
+<%if false%>
 				<div class="img">
 					<%= image_tag(@venue.default_avatar.avatar) if !@venue.default_avatar.nil?%>
 				</div>
@@ -47,9 +46,7 @@
 				<div class="map">
 				    <%= image_tag "http://maps.googleapis.com/maps/api/staticmap?size=424x289&sensor=false&zoom=16&markers=#{@venue.latitude}%2C#{@venue.longitude}" %> 
 				</div>
-				<%end%>
-				<br>
-				<%if !@venue.draft_pending.nil? and @venue.draft_pending %>
+				
 					<h4>Draft Info</h4>
 					<h5>Name: <%= @venue.pending_name %></h5>
 		      	
@@ -58,10 +55,9 @@
 					<h5>Manager: <%= @venue.pending_manager_first_name%>&nbsp;<%= @venue.pending_manager_last_name%></h5>				
 					<h5>Email: <%= @venue.pending_email %></h5>
 					<h5>Phone: <%= @venue.pending_phone %></h5>
-
-				<%end%>
+<%end%>
 			</div>
-
+<%if false%>
 			<div class="medium-12 medium-offset-1 columns show-for-medium-up">
 				<div style="width: 10%; float:left">
 					<div class="venue-sub-title">&nbsp;</div>
@@ -120,7 +116,7 @@
 					<%end%>
 				</div>
 			</div>
-				
+<%end%>			
 
       	</div>
     </section>

@@ -2,8 +2,8 @@ class VenuesController < ApplicationController
 
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list, :people]
-  before_action :authenticate_web_user!, only: [:index]
-
+  before_action :authenticate_web_user!, only: [:index, :edit, :show, :update]
+  before_action :authenticate_admin_user!, only: [:approve]
   # list all the venues for this owner
   def index
     @venues = current_web_user.venues.order('updated_at DESC')

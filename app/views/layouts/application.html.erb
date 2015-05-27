@@ -30,7 +30,7 @@
   </head>
 
   <body data-no-turbolink class="<%= yield (:body_class) %>" >
-    <% if !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) %>
+    <% if !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) && !(params[:controller] == 'web_users' &&  params[:action] == 'edit') %>
     <div class="contain-to-grid top-header <% if current_page?('/venues') %>transparent<% else %>sticky<% end %>">
       <nav class="top-bar" data-topbar data-options="sticky_on: large" role="nagivation">
         <ul class="title-area">
@@ -87,7 +87,7 @@
 
     <%= yield %>
 
-    <% if !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) %>
+    <% if !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) && !(params[:controller] == 'web_users' &&  params[:action] == 'edit') %>
     <footer class="page-footer">
       <div class="row">
         <div class="medium-8 medium-centered columns">

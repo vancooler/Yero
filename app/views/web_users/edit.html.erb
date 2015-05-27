@@ -1,0 +1,70 @@
+<% content_for :title, "Yero - Account" %>
+
+
+<div class="off-canvas-wrap" data-offcanvas>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+      <section class="middle tab-bar-section">
+        <h1 class="title">Account</h1>
+      </section>
+    </nav>
+
+    <aside class="left-off-canvas-menu">
+      <%= render "/venues/sidebar", current: "account" %>
+    </aside>
+
+    <section class="main-section">
+      <!-- content goes here -->
+      	<div class="index-title"><%=@web_user.name%></div>
+
+		<hr class="top-divider">
+      		<%= form_for(@web_user) do |f| %>
+			  <% if @web_user.errors.any? %>
+			    <div id="error_explanation">
+			      <h2><%= pluralize(@web_user.errors.count, "error") %> prohibited this web_user from being saved:</h2>
+			      <ul>
+			      <% @web_user.errors.full_messages.each do |msg| %>
+			        <li><%= msg %></li>
+			      <% end %>
+			      </ul>
+			    </div>
+			  <% end %>
+
+			   <div class="venue-field">
+			    <%= f.label :email, :class => "venue-label" %>
+			    <%= f.text_field :email %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :password, :class => "venue-label" %>
+			    <%= f.password_field :password %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :password_confirmation, :class => "venue-label" %>
+			    <%= f.password_field :password_confirmation %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :first_name, :class => "venue-label" %>
+			    <%= f.text_field :first_name %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :last_name, :class => "venue-label" %>
+			    <%= f.text_field :last_name %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :business_phone, :class => "venue-label" %>
+			    <%= f.text_field :business_phone %>
+			   </div>
+			   <div class="venue-field">
+				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
+				</div>
+			<%end%>
+    </section>
+
+  <a class="show-for-small-only exit-off-canvas"></a>
+
+  </div>
+</div>
+

@@ -30,6 +30,10 @@ Rails.application.routes.draw do
     put 'owner/venues/:id', to: 'venues#update'
     get 'owner/venues/:id/edit', to: 'venues#edit', as: :edit_venue
     post 'owner/venues/approve', to: 'venues#approve', as: :venue_approve
+    get 'owner/account', to: 'web_users#edit', as: :owner_account
+    patch 'owner/web_users/:id', to: 'web_users#update'
+    put 'owner/web_users/:id', to: 'web_users#update'
+    get 'owner/:id', to: 'web_users#show', as: :web_user
 
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly

@@ -18,7 +18,7 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<div class="index-title">Your Venue</div>
+      	<div class="index-title"><%=@venue.name%></div>
 
 		<hr class="top-divider">
       		<%= form_for(@venue) do |f| %>
@@ -34,7 +34,7 @@
 			    </div>
 			  <% end %>
 
-			   <div class="venue-sub-title">Venue Info</div>
+			   <!-- <div class="venue-sub-title">Venue Info</div> -->
 			   <div class="venue-field">
 			    <%= f.label :name, :class => "venue-label" %>
 			    <%= f.text_field :pending_name %>
@@ -64,7 +64,7 @@
 			    <%= f.label :country, :class => "venue-label" %>
 			    <%= country_select("venue", "pending_country", priority_countries: ["CA", "US"]) %>
 			   </div>
-
+<%if false%>
 			   <div class="venue-sub-title">Manager Info</div>
 			   <div class="venue-field">
 			    <%= f.label :first_name, :class => "venue-label" %>
@@ -82,6 +82,8 @@
 			    <%= f.label :phone, :class => "venue-label" %>
 			    <%= f.text_field :pending_phone %>
 			   </div>
+<%end%>
+
 			   <div class="venue-field">
 				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
 				</div>
