@@ -106,7 +106,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables[table_name] # Choose the table
     table.load_schema 
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
-    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:timestamp).gte(12.hours.ago.to_i).where(:notification_type).equals("1").select(:venue_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
+    venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:timestamp).gte(1.hour.ago.to_i).where(:notification_type).equals("1").select(:venue_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
     venue = Array.new # Make a new hash object
     exist_venue_id = Array.new
     venue_items.each do |i| # For each item
@@ -141,7 +141,7 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables[table_name] # Choose the table
     table.load_schema 
     # Target_id is the receiver of the messages
-    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:timestamp).gte(12.hours.ago.to_i).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1).select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
+    receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:timestamp).gte(1.hour.ago.to_i).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1).select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
     time_1 = Time.now
     runtime = time_1 - time_0
     puts "Read user time"
