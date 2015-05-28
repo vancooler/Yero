@@ -391,8 +391,10 @@ class UsersController < ApplicationController
 
       if params[:first_name].match(/\s/).blank?
         first_name = params[:first_name]
+        first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
       else
         first_name = params[:first_name].gsub!(/\s+/, "") 
+        first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
       end
 
       @user = User.new(:email => email,
@@ -479,9 +481,13 @@ class UsersController < ApplicationController
 
     if params[:first_name].present? 
       if params[:first_name].match(/\s/).blank?
-        user_registration.user.first_name = params[:first_name]
+        first_name = params[:first_name]
+        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+
       else
-        user_registration.user.first_name = params[:first_name].gsub!(/\s+/, "") 
+        first_name = params[:first_name].gsub!(/\s+/, "") 
+        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+
       end
     end
 
