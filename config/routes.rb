@@ -8,12 +8,15 @@ Rails.application.routes.draw do
 
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
-  devise_for :web_users, path: '', path_names: { sign_in: 'signin', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
+  devise_for :web_users, path: '', path_names: { sign_in: 'venues/login', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
+  
   #temporary routes for YJ to test out notification functionality
   get 'temp_beacon/enter_random_users', as: 'enter_users'
   get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
   devise_scope :web_users do
+    delete "signout", :to => "devise/sessions#destroy"
+
     get 'dashboard', to: 'venues#dashboard', as: :venue_root
     get 'nightly', to: 'venues#nightly', as: :venue_nightly
     get 'settings', to: 'venues#settings', as: :settings
@@ -31,8 +34,8 @@ Rails.application.routes.draw do
     get 'owner/venues/:id/edit', to: 'venues#edit', as: :edit_venue
     post 'owner/venues/approve', to: 'venues#approve', as: :venue_approve
     get 'owner/account', to: 'web_users#edit', as: :owner_account
-    patch 'owner/web_users/:id', to: 'web_users#update'
-    put 'owner/web_users/:id', to: 'web_users#update'
+    patch 'owner/:id', to: 'web_users#update'
+    put 'owner/:id', to: 'web_users#update'
     get 'owner/:id', to: 'web_users#show', as: :web_user
 
     # Venue API
@@ -60,7 +63,6 @@ Rails.application.routes.draw do
   get 'terms', to: 'home#terms-of-use'
   get 'careers', to: 'home#careers'
   get 'venues/contact', to: 'early_venues#new', as: :get_in_touch
-  get 'venues/login', to: 'home#venue-login'
   get 'android', to: 'beta_signup_users#android'
   get 'beta-signup', to: 'beta_signup_users#beta'
   get 'beta-thankyou', to: 'home#beta-thankyou', as: :beta_thankyou

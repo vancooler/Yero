@@ -16,6 +16,19 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def after_sign_out_path_for(resource)
+    # TODO add redirect when users logout
+    # puts "AAAAAA"
+    # puts resource.inspect
+    # if resource.is_a?(WebUser) or resource == "web_user"
+    #   puts "AAA"
+    #   new_web_user_session_path
+    # else
+    #   super
+    # end
+    new_web_user_session_path
+  end
+
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
     unless User.find_by_key(params[:key])

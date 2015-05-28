@@ -35,6 +35,9 @@
   <li class="item <%= "#{'active' if current == 'account'}" %>">
     <%= link_to "Account", owner_account_path %>
   </li>
+  <li class="item">
+    <%= link_to "Logout", signout_url, :method => :delete %>
+  </li>
 </ul>
 
 
