@@ -641,12 +641,31 @@ class UsersController < ApplicationController
 
   def update_chat_accounts
     user = User.find_by_key(params[:key])
-    snapchat_id = params[:snapchat_id]? params[:snapchat_id].gsub!(/\s+/, "") : user.snapchat_id
-    wechat_id = params[:wechat_id]? params[:wechat_id].gsub!(/\s+/, "") : user.wechat_id
-    instagram_id = params[:instagram_id]? params[:instagram_id].gsub!(/\s+/, "") : user.wechat_id
-    user.snapchat_id = snapchat_id
-    user.wechat_id = wechat_id
-    user.instagram_id = instagram_id
+
+    if !params[:instagram_id].blank? 
+      if params[:instagram_id].match(/\s/).blank?
+        user.instagram_id = params[:instagram_id]
+      else
+        user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
+      end
+    end
+
+    if !params[:snapchat_id].blank? 
+      if params[:snapchat_id].match(/\s/).blank?
+        user.snapchat_id = params[:snapchat_id]
+      else
+        user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
+      end
+    end
+
+    if !params[:wechat_id].blank? 
+      if params[:wechat_id].match(/\s/).blank?
+        user.wechat_id = params[:wechat_id]
+      else
+        user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+      end
+    end
+    
     if user.save
       render json: success(user)
     else
