@@ -17,6 +17,7 @@ class UserAvatarsController < ApplicationController
             avatar.save
 
             user_info = current_user.to_json(false)
+            user_info["key"] = current_user.key
             # avatars = Array.new
             # user_info['avatars'].each do |avatar|
             #   if avatar['default'].to_s == "true"
@@ -49,6 +50,7 @@ class UserAvatarsController < ApplicationController
           avatar.order = 0
           avatar.save
           user_info = current_user.to_json(false)
+          user_info["key"] = current_user.key
             # avatars = Array.new
             # user_info['avatars'].each do |avatar|
             #   if avatar['default'].to_s == "true"
@@ -109,6 +111,7 @@ class UserAvatarsController < ApplicationController
         end
       end
       user_info = current_user.to_json(false)
+      user_info["key"] = current_user.key
       # avatars = Array.new
       # user_info['avatars'].each do |avatar|
       #   real_avatar = UserAvatar.find(avatar['avatar_id'].to_i)
@@ -173,6 +176,7 @@ class UserAvatarsController < ApplicationController
         end
 
         user_info = current_user.to_json(false)
+        user_info["key"] = current_user.key
         # avatars = Array.new
         # user_info['avatars'].each do |a|
         #   real_avatar = UserAvatar.find(a['avatar_id'].to_i)
