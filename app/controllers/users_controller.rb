@@ -1032,6 +1032,7 @@ class UsersController < ApplicationController
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
         json.timestamp  user["timestamp"]
+        json.seconds_left  user["seconds_left"]
         json.timestamp_read  Time.at(user["timestamp"])
         json.accepted   user["accepted"].blank? ? nil : user["accepted"]
         json.declined   user["declined"].blank? ? nil : user["declined"]
