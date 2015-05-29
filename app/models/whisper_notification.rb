@@ -167,7 +167,7 @@ class WhisperNotification < AWS::Record::HashModel
           h['target_user'] = ''
         end
         h['timestamp'] = attributes['timestamp'].to_i
-        h['seconds_left'] = attributes['timestamp'].to_i + 4*3600 - Time.now.to_i
+        h['seconds_left'] = attributes['timestamp'].to_i + 4*3600 - Time.now.to_i + 60
         h['accepted'] = attributes['accepted'].to_i
         h['declined'] = attributes['declined'].to_i
         h['viewed'] = attributes['viewed'].to_i
