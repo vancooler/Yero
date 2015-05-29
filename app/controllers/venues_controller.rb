@@ -6,19 +6,7 @@ class VenuesController < ApplicationController
   before_action :authenticate_admin_user!, only: [:approve]
   # list all the venues for this owner
   def index
-    if !ENV['MIXPANEL_TOKEN'].blank?
-      require 'mixpanel-ruby'
-      tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_TOKEN'])
-
-      tracker.people.set(current_web_user.id.to_s, {
-          '$first_name'       => current_web_user.first_name,
-          '$last_name'        => current_web_user.last_name,
-          '$email'            => current_web_user.email,
-          '$phone'            => current_web_user.business_phone,
-          'Business Name'     => current_web_user.business_name
-      });
-      tracker.track(current_web_user.id.to_s, 'View venues list')
-    end
+    WebUser.mixpanel_event(current_web_user.id, 'View venues list')
 
     if mobile_device?
       @device = "mobile"
@@ -41,20 +29,7 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-  
-    if !ENV['MIXPANEL_TOKEN'].blank?
-      require 'mixpanel-ruby'
-      tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_TOKEN'])
-
-      tracker.people.set(current_web_user.id.to_s, {
-          '$first_name'       => current_web_user.first_name,
-          '$last_name'        => current_web_user.last_name,
-          '$email'            => current_web_user.email,
-          '$phone'            => current_web_user.business_phone,
-          'Business Name'     => current_web_user.business_name
-      });
-      tracker.track(current_web_user.id.to_s, 'View venue ' + @venue.name + '(' + @venue.id.to_s + ')')
-    end
+    WebUser.mixpanel_event(current_web_user.id, 'View venue ' + @venue.name + '(' + @venue.id.to_s + ')')
 
     respond_to do |format|
       format.html # show.html.erb

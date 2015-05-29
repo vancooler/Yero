@@ -19,4 +19,23 @@ class WebUser < ActiveRecord::Base
   def name
   	(self.first_name.nil? ? '' : self.first_name + ' ') + (self.last_name.nil? ? '' : self.last_name)
   end
+
+
+
+
+  def self.mixpanel_event(web_user_id, event)
+    if !ENV['MIXPANEL_TOKEN'].blank?
+      require 'mixpanel-ruby'
+      tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_TOKEN'])
+      u = WebUser.find_by_id(web_user_id)
+      tracker.people.set(web_user_id.to_s, {
+          '$first_name'       => u.first_name,
+          '$last_name'        => u.last_name,
+          '$email'            => u.email,
+          '$phone'            => u.business_phone,
+          'Business Name'     => u.business_name
+      });
+      tracker.track(web_user_id.to_s, event)
+    end
+  end
 end
