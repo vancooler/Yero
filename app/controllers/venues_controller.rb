@@ -29,7 +29,10 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue details page of ' + @venue.name + '(' + @venue.id.to_s + ')')
+    WebUser.mixpanel_event(current_web_user.id, 'View venue details page', {
+        'Venue Name' => @venue.name,
+        'Venue ID' => @venue.id.to_s
+    })
 
     respond_to do |format|
       format.html # show.html.erb
@@ -45,7 +48,10 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue edit page of ' + @venue.name + '(' + @venue.id.to_s + ')')
+    WebUser.mixpanel_event(current_web_user.id, 'View venue edit page', {
+        'Venue Name' => @venue.name,
+        'Venue ID' => @venue.id.to_s
+    })
     if @venue.draft_pending.nil? or !@venue.draft_pending
       @venue.pending_name = @venue.name
       @venue.pending_venue_type_id = @venue.venue_type_id
@@ -103,7 +109,10 @@ class VenuesController < ApplicationController
       if !@venue.draft_pending.nil? and @venue.draft_pending
         # has draft
         if @venue.update_attributes(get_params)
-          WebUser.mixpanel_event(current_web_user.id, 'Update the venue draft of ' + @venue.name + '(' + @venue.id.to_s + ')')
+          WebUser.mixpanel_event(current_web_user.id, 'Update the venue draft', {
+              'Venue Name' => @venue.name,
+              'Venue ID' => @venue.id.to_s
+          })
           format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
           format.json { head :no_content }
         else
@@ -136,7 +145,10 @@ class VenuesController < ApplicationController
           if @venue.update_attributes(get_params)
             @venue.draft_pending = true
             @venue.save
-            WebUser.mixpanel_event(current_web_user.id, 'Create a venue draft of ' + @venue.name + '(' + @venue.id.to_s + ')')
+            WebUser.mixpanel_event(current_web_user.id, 'Create a venue draft', {
+                'Venue Name' => @venue.name,
+                'Venue ID' => @venue.id.to_s
+            })
             format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
             format.json { head :no_content }
           else
