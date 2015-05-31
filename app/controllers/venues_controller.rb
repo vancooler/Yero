@@ -6,7 +6,7 @@ class VenuesController < ApplicationController
   before_action :authenticate_admin_user!, only: [:approve]
   # list all the venues for this owner
   def index
-    WebUser.mixpanel_event(current_web_user.id, 'View venues list')
+    WebUser.mixpanel_event(current_web_user.id, 'View venues list', nil)
 
     if mobile_device?
       @device = "mobile"
@@ -93,6 +93,7 @@ class VenuesController < ApplicationController
     @venue.pending_phone = nil
     @venue.draft_pending = false
     if @venue.save!
+      # TODO: send email to webuser
       redirect_to admin_venue_url(@venue), :notice => "Pending draft approved!" 
     else
       redirect_to :back, :notice => "Something wrong..."
@@ -145,6 +146,7 @@ class VenuesController < ApplicationController
           if @venue.update_attributes(get_params)
             @venue.draft_pending = true
             @venue.save
+            # TODO: send email to both admin(hello@yero.co) and webuser
             WebUser.mixpanel_event(current_web_user.id, 'Create a venue draft', {
                 'Venue Name' => @venue.name,
                 'Venue ID' => @venue.id.to_s

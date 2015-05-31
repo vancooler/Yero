@@ -23,7 +23,7 @@ class WebUser < ActiveRecord::Base
 
 
 
-  def self.mixpanel_event(web_user_id, event)
+  def self.mixpanel_event(web_user_id, event, hash)
     if !ENV['MIXPANEL_TOKEN'].blank?
       require 'mixpanel-ruby'
       tracker = Mixpanel::Tracker.new(ENV['MIXPANEL_TOKEN'])
@@ -35,7 +35,11 @@ class WebUser < ActiveRecord::Base
           '$phone'            => u.business_phone,
           'Business Name'     => u.business_name
       });
-      tracker.track(web_user_id.to_s, event)
+      if hash.blank?      
+        tracker.track(web_user_id.to_s, event)
+      else
+        tracker.track(web_user_id.to_s, event, hash)
+      end
     end
   end
 end
