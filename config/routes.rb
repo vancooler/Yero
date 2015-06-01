@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  require 'domain'
 
   devise_for :users
   resources :venue_portals
@@ -6,8 +7,10 @@ Rails.application.routes.draw do
 
   resources :beta_signup_users
 
-  devise_for :admin_users, ActiveAdmin::Devise.config
-  ActiveAdmin.routes(self)
+  constraints(Domain) do
+    devise_for :admin_users, ActiveAdmin::Devise.config
+    ActiveAdmin.routes(self)
+  end
   devise_for :web_users, path: '', path_names: { sign_in: 'venues/login', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   
   #temporary routes for YJ to test out notification functionality
