@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150525121434) do
+ActiveRecord::Schema.define(version: 20150601085513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,21 @@ ActiveRecord::Schema.define(version: 20150525121434) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "greeting_messages", force: true do |t|
+    t.integer  "weekday_id"
+    t.integer  "venue_id"
+    t.string   "first_dj"
+    t.string   "second_dj"
+    t.string   "last_call"
+    t.float    "admission_fee"
+    t.string   "drink_special"
+    t.text     "description"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "greeting_messages", ["venue_id"], name: "index_greeting_messages_on_venue_id", using: :btree
 
   create_table "likes", force: true do |t|
     t.string   "liker_type"
@@ -442,6 +457,10 @@ ActiveRecord::Schema.define(version: 20150525121434) do
 
   add_index "web_users", ["email"], name: "index_web_users_on_email", unique: true, using: :btree
   add_index "web_users", ["reset_password_token"], name: "index_web_users_on_reset_password_token", unique: true, using: :btree
+
+  create_table "weekdays", force: true do |t|
+    t.string "weekday_title"
+  end
 
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
