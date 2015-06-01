@@ -29,9 +29,11 @@
   <li class="item <%= "#{'active' if current == 'venue-profile'}" %>">
     <%= link_to "Venue Profile", venues_path %>
   </li>
-  <li class="item <%= "#{'active' if current == 'greeting-message'}" %>">
-    <%= link_to "Greeting Message", venues_path %>
-  </li>
+  <% if venue_id.present? and venue_id > 0 %>
+    <li class="item <%= "#{'active' if current == 'greeting-message'}" %>">
+      <%= link_to "Greeting Message", venues_path %>
+    </li>
+  <%end%>
   <li class="item <%= "#{'active' if current == 'account'}" %>">
     <%= link_to "Account", owner_account_path %>
   </li>
