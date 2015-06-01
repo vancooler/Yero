@@ -1,6 +1,7 @@
 class Venue < ActiveRecord::Base
 
   has_many :business_hours, dependent: :destroy
+  has_many :greeting_messages, dependent: :destroy
   has_many :nightlies
   has_many :beacons, dependent: :destroy
   has_many :winners
