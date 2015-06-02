@@ -21,11 +21,7 @@ class UserLocation < AWS::Record::HashModel
     l.latitude = latitude
     l.timestamp = Time.now
     l.longitude = longitude
-    if timezone.blank?
-      l.timezone = "NG"
-    else
-      l.timezone = timezone
-    end
+    l.timezone = timezone
     l.save!
 
     return l
