@@ -21,7 +21,11 @@ class UserLocation < AWS::Record::HashModel
     l.latitude = latitude
     l.timestamp = Time.now
     l.longitude = longitude
-    l.timezone = timezone
+    if timezone.blank?
+      l.timezone = "NG"
+    else
+      l.timezone = timezone
+    end
     l.save!
 
     return l
@@ -34,22 +38,24 @@ class UserLocation < AWS::Record::HashModel
     table.load_schema
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:timezone).in(*timezones).select(:user_id)
+    null_items = table.items.where(:timezone).is_null.select(:user_id)
 
     user_ids = Array.new
     if items and items.count > 0
-      time1 = Time.now
-
       items.each do |user|
         attributes = user.attributes # Turn the people into usable attributes
         if !attributes["user_id"].nil? 
           user_ids << attributes["user_id"].to_i
         end   
       end
-
-      time3 = Time.now
-      dbtime = time3 - time1
-      puts "QUERY TIME: "
-      puts dbtime.inspect
+    end
+    if null_items and null_items.count > 0
+      null_items.each do |user|
+        attributes = user.attributes # Turn the people into usable attributes
+        if !attributes["user_id"].nil? 
+          user_ids << attributes["user_id"].to_i
+        end   
+      end
     end
     return user_ids
   end
