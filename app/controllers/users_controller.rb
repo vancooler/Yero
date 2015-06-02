@@ -79,8 +79,10 @@ class UsersController < ApplicationController
     venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
     puts "EVERYONE: " + params[:everyone].to_s
     everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
-    page_number = params[:page] if !params[:page].blank?
-    users_per_page = params[:per_page] if !params[:per_page].blank?
+    page_number = nil
+    users_per_page = nil
+    page_number = params[:page].to_i if !params[:page].blank?
+    users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
     gate_number = 4
     # if set in db, use the db value

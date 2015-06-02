@@ -685,7 +685,7 @@ class User < ActiveRecord::Base
       
       users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
       # ADD Pagination
-      if !page_number.nil? and !users_per_page.nil?
+      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
       end
 
