@@ -27,14 +27,13 @@ class UserLocation < AWS::Record::HashModel
     return l
   end
 
-  def self.find_by_dynamodb_timezone(timezones)
+  def self.find_by_dynamodb_timezone(timezones, include_null)
     dynamo_db = AWS::DynamoDB.new
     table_name = UserLocation.table_prefix + 'UserLocation'
     table = dynamo_db.tables[table_name]
     table.load_schema
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:timezone).in(*timezones).select(:user_id)
-    null_items = table.items.where(:timezone).is_null.select(:user_id)
 
     user_ids = Array.new
     if items and items.count > 0
@@ -45,12 +44,16 @@ class UserLocation < AWS::Record::HashModel
         end   
       end
     end
-    if null_items and null_items.count > 0
-      null_items.each do |user|
-        attributes = user.attributes # Turn the people into usable attributes
-        if !attributes["user_id"].nil? 
-          user_ids << attributes["user_id"].to_i
-        end   
+
+    if !include_null.nil? and include_null
+      null_items = table.items.where(:timezone).is_null.select(:user_id)
+      if null_items and null_items.count > 0
+        null_items.each do |user|
+          attributes = user.attributes # Turn the people into usable attributes
+          if !attributes["user_id"].nil? 
+            user_ids << attributes["user_id"].to_i
+          end   
+        end
       end
     end
     return user_ids

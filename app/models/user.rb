@@ -368,9 +368,9 @@ class User < ActiveRecord::Base
 
     times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
     if !times_array.empty?
-      user_ids = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+      user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
     end
-    # usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+    # usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
 
 
     # user_ids = Array.new
@@ -431,7 +431,7 @@ class User < ActiveRecord::Base
             request["not_viewed_by_sender"] = 1
             request["accepted"] = 0
             notification_array << request
-            # TODO: use job queue?
+
             User.find(person['id'].to_i).delay.send_network_open_notification
              
           end
@@ -471,7 +471,7 @@ class User < ActiveRecord::Base
     # disconnect all users
     people_array = Array.new 
     if !times_array.empty?    
-      people_array = UserLocation.find_by_dynamodb_timezone(times_array) #Find users of that timezone
+      people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
     if !people_array.empty? 
       User.where(id: people_array).update_all(is_connected: false)
