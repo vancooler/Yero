@@ -40,7 +40,10 @@ Rails.application.routes.draw do
     patch 'owner/:id', to: 'web_users#update'
     put 'owner/:id', to: 'web_users#update'
     get 'owner/:id', to: 'web_users#show', as: :web_user
-
+    get 'owner/:id/greeting-message/:day', to: 'greeting_messages#edit_message', as: :greeting_message_create
+    patch 'owner/:id/greeting-message/:day', to: 'greeting_messages#update'
+    put 'owner/:id/greeting-message/:day', to: 'greeting_messages#update'
+    get 'owner/:id/greeting-message/show', to: 'greeting_messages#show', as: :greeting_message
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
     post 'api/nightly/update_regular',   to: 'nightlies#update_regular', as: :update_regular_nightly

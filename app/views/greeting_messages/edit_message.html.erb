@@ -1,0 +1,70 @@
+<% content_for :title, "Yero -  Venues" %>
+
+
+<%if @device == "mobile"%>
+<div class="off-canvas-wrap" data-offcanvas>
+<%else%>
+<div class="off-canvas-wrap move-right" data-offcanvas>
+<%end%>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+      <section class="middle tab-bar-section">
+        <h3 class="title">Greeting Message</h3>
+      </section>
+    </nav>
+
+    <aside class="left-off-canvas-menu">
+      <%= render "/venues/sidebar", current: "greeting-message", venue_id: @venue.id %>
+    </aside>
+
+    <section class="main-section">
+      <!-- content goes here -->
+      	<div class="index-title"><%=@venue.name%></div>
+
+		<hr class="top-divider">
+      		<%= form_for(@greeting_message) do |f| %>
+			  <% if @greeting_message.errors.any? %>
+			    <div id="error_explanation">
+			      <h2><%= pluralize(@greeting_message.errors.count, "error") %> prohibited this greeting_message from being saved:</h2>
+
+			      <ul>
+			      <% @greeting_message.errors.full_messages.each do |msg| %>
+			        <li><%= msg %></li>
+			      <% end %>
+			      </ul>
+			    </div>
+			  <% end %>
+
+			   <!-- <div class="venue-sub-title">Venue Info</div> -->
+			   <div class="venue-field">
+			    <%= f.label :DJ, :class => "venue-label" %>
+			    <%= f.text_field :first_dj %>
+			    <%= f.text_field :second_dj %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :admission_fee, :class => "venue-label" %>
+			    <%= f.text_field :admission_fee %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :drink_special, :class => "venue-label" %>
+			    <%= f.text_field :drink_special %>
+			   </div>
+			   <div class="venue-field">
+			    <%= f.label :description, :class => "venue-label" %>
+			    <%= f.text_field :description %>
+			   </div>
+
+			   <div class="venue-field">
+				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
+				</div>
+			<%end%>
+    </section>
+
+  <a class="show-for-small-only exit-off-canvas"></a>
+
+  </div>
+</div>
+
