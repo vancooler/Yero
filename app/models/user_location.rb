@@ -36,20 +36,21 @@ class UserLocation < AWS::Record::HashModel
     items = table.items.where(:user_id).equals(user_id.to_s).select(:timezone)
     puts "COUNT"
     puts items.count
+    timezone = Array.new
     if items and items.count > 0
       items.each do |user|
         attributes = user.attributes # Turn the people into usable attributes
         if !attributes["timezone"].nil? 
-          timezone =  attributes["timezone"]
+          timezone <<  attributes["timezone"]
         else
-          timezone = 'America/Vancouver'
+          timezone << 'America/Vancouver'
         end   
       end
     end
     puts "timezone:::"
     puts timezone
     # 5 am tomorrow
-    expire_timestamp = DateTime.strptime(timestamp.to_s,'%s').in_time_zone(timezone).tomorrow.beginning_of_day + 5.hours
+    expire_timestamp = DateTime.strptime(timestamp.to_s,'%s').in_time_zone(timezone.first).tomorrow.beginning_of_day + 5.hours
 
     return expire_timestamp.to_i
   end
