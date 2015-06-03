@@ -3,6 +3,7 @@ class WhisperNotification < AWS::Record::HashModel
   string_attr :origin_id
 
   integer_attr :timestamp
+  integer_attr :expired
   string_attr :created_date
   string_attr :venue_id
   string_attr :intro
@@ -45,12 +46,57 @@ class WhisperNotification < AWS::Record::HashModel
     n.viewed = false
     n.not_viewed_by_sender = true
     n.accepted = false
+    if n.notification_type.to_i == 2
+      n.expired = 0
+    end
     n.save!
 
     p "n:"
     p n.inspect
 
     return n
+  end
+
+
+  # expire at 5 am
+  def self.expire(people_array, notification_type)
+    dynamo_db = AWS::DynamoDB.new
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name]
+    table.load_schema
+    puts "Read time: "
+
+    items = table.items.where(:target_id).in(*people_array).where(:notification_type).equals(notification_type).select(:target_id, :origin_id, :declined, :intro, :venue_id, :notification_type, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
+    
+    items.each_slice(25) do |whisper_group|
+      batch = AWS::DynamoDB::BatchWrite.new
+      notification_array = Array.new
+      whisper_group.each do |w|
+        if !w.blank?
+          attributes = w.attributes
+          request = Hash.new()
+          request["target_id"] = attributes['target_id']
+          request["timestamp"] = attributes['timestamp']
+          request["id"] = attributes['id'] if !attributes['id'].nil?
+          request["origin_id"] = attributes['origin_id'] if !attributes['origin_id'].nil?
+          request["accepted"] = attributes['accepted'] if !attributes['accepted'].nil?
+          request["declined"] = attributes['declined'] if !attributes['declined'].nil?
+          request["created_date"] = attributes['created_date'] if !attributes['created_date'].nil?
+          request["venue_id"] = attributes['venue_id'] if !attributes['venue_id'].nil?
+          request["notification_type"] = attributes['notification_type'] if !attributes['notification_type'].nil?
+          request["intro"] = attributes['intro'] if !attributes['intro'].nil?
+          request["viewed"] = attributes['viewed']
+          request["not_viewed_by_sender"] = attributes['not_viewed_by_sender']
+          request["expired"] = 1
+          notification_array << request 
+        end
+      end
+      if notification_array.count > 0
+        batch.put(table_name, notification_array)
+        batch.process!
+      end
+    end
+
   end
 
   def self.read_notification(id, user)

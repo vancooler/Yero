@@ -474,7 +474,9 @@ class User < ActiveRecord::Base
       people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
     if !people_array.empty? 
-      User.where(id: people_array).update_all(is_connected: false)
+      User.where(id: people_array).update_all(is_connected: false) # disconnect users
+      # expire all whispers with type 2 of these users
+      WhisperNotification.expire(people_array, '2')
     end
     time1 = Time.now
     # cleanup active_in_venue_network & active_in_venue & enter_today
