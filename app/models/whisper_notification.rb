@@ -46,8 +46,8 @@ class WhisperNotification < AWS::Record::HashModel
     n.viewed = false
     n.not_viewed_by_sender = true
     n.accepted = false
-    if n.notification_type.to_i == 2
-      n.expired = 0
+    if notification_type.to_i == 2
+      n.expired = false
     end
     n.save!
 
