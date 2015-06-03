@@ -65,8 +65,11 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables[table_name]
     table.load_schema
     puts "Read time: "
-
-    items = table.items.where(:target_id).in(*people_array).where(:notification_type).equals(notification_type).select(:target_id, :origin_id, :declined, :intro, :venue_id, :notification_type, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
+    people_array_string = Array.new
+    people_array.each do |p|
+      people_array_string << p.to_s
+    end
+    items = table.items.where(:target_id).in(*people_array_string).where(:notification_type).equals(notification_type).select(:target_id, :origin_id, :declined, :intro, :venue_id, :notification_type, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
     
     items.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
