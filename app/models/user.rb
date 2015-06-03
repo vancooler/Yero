@@ -720,14 +720,14 @@ class User < ActiveRecord::Base
     table.load_schema
     puts "Read time: "
 
-    items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0")
+    items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0").select(:target_id, :timestamp, :id, :origin_id, :accepted, :declined, :created_date, :venue_id, :notification_type, :intro, :expired, :viewed, :not_viewed_by_sender)
     
     items.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
       notification_array = Array.new
       whisper_group.each do |w|
         if !w.blank?
-          attributes = w.attributes.to_h
+          attributes = w.attributes
           request = Hash.new()
           request["target_id"] = attributes['target_id']
           request["timestamp"] = attributes['timestamp']
@@ -739,6 +739,7 @@ class User < ActiveRecord::Base
           request["venue_id"] = attributes['venue_id'] if !attributes['venue_id'].nil?
           request["notification_type"] = attributes['notification_type'] if !attributes['notification_type'].nil?
           request["intro"] = attributes['intro'] if !attributes['intro'].nil?
+          request["expired"] = attributes['expired'] if !attributes['expired'].nil?
           request["viewed"] = 1
           request["not_viewed_by_sender"] = 0
           notification_array << request 
