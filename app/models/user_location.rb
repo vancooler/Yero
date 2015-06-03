@@ -27,6 +27,28 @@ class UserLocation < AWS::Record::HashModel
     return l
   end
 
+  def self.tomorrow_close_timestamp(user_id, timestamp)
+    dynamo_db = AWS::DynamoDB.new
+    table_name = UserLocation.table_prefix + 'UserLocation'
+    table = dynamo_db.tables[table_name]
+    table.load_schema
+    # items = table.items.where(:timezone).equals(timezone.to_s)
+    items = table.items.where(:user_id).equals(user_id).select(:timezone)
+    if items and items.count > 0
+      items.each do |user|
+        attributes = user.attributes # Turn the people into usable attributes
+        if !attributes["timezone"].nil? 
+          timezone =  attributes["timezone"].to_i
+        end   
+      end
+    end
+
+    # 5 am tomorrow
+    expire_timestamp = DateTime.strptime(timestamp.to_s,'%s').in_time_zone(timezone).tomorrow.beginning_of_day + 5.hours
+
+    return expire_timestamp.to_i
+  end
+
   def self.find_by_dynamodb_timezone(timezones, include_null)
     dynamo_db = AWS::DynamoDB.new
     table_name = UserLocation.table_prefix + 'UserLocation'
