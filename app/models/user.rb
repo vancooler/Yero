@@ -612,10 +612,16 @@ class User < ActiveRecord::Base
               end
             end
 
+            sent = false
             collected_whispers.each do |cwid|
               if cwid.to_s == user.id.to_s
                 json.whisper_sent true
+                sent = true
               end
+            end
+
+            if !sent
+              json.whisper_sent false
             end
 
             if followees.blank?
