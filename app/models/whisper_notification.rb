@@ -88,8 +88,8 @@ class WhisperNotification < AWS::Record::HashModel
           request["venue_id"] = attributes['venue_id'] if !attributes['venue_id'].nil?
           request["notification_type"] = attributes['notification_type'] if !attributes['notification_type'].nil?
           request["intro"] = attributes['intro'] if !attributes['intro'].nil?
-          request["viewed"] = attributes['viewed']
-          request["not_viewed_by_sender"] = attributes['not_viewed_by_sender']
+          request["viewed"] = attributes['viewed'] if !attributes['viewed'].nil?
+          request["not_viewed_by_sender"] = attributes['not_viewed_by_sender'] if !attributes['not_viewed_by_sender'].nil?
           request["expired"] = 1
           notification_array << request 
         end
