@@ -460,7 +460,7 @@ class User < ActiveRecord::Base
     times_result.each do |timezone| # Check each timezone
       Time.zone = timezone["timezone"] # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 800 and int_time < 819 # If time is 5:00 ~ 5:09
+      if int_time >= 500 and int_time < 519 # If time is 5:00 ~ 5:19
         open_network_tz = Time.zone.name.to_s #format it
         times_array << open_network_tz #Throw into array
       end
@@ -480,7 +480,6 @@ class User < ActiveRecord::Base
       # expire all whispers with type 2 of these users
       WhisperNotification.expire(people_array, '2')
     end
-    time1 = Time.now
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
     venue_networks.each do |vn|
