@@ -1178,3 +1178,38 @@ h6{
 		margin-right:300px;
 	}
 }
+
+
+div.preview{
+}
+
+div.preview-inner-text{
+	color: white;
+	z-index: 100px;
+	position: relative;
+	top: -150px;
+}
+
+
+ul.button-group.round.even-10.day-picker{
+	margin-top: 12px;
+	@media #{$medium-up} {
+		margin-left: 60px;
+	}
+	@media #{$small-only} {
+		margin-left: 12px;
+	}
+	li a{
+		@media #{$medium-up} {
+			min-width: 160px;
+		}
+		@media #{$small-only} {
+			min-width: 160px;
+		}
+	}
+	li.active {
+		a{
+		  background-color: red;
+		}
+	}
+}
