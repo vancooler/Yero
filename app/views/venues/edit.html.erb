@@ -44,7 +44,7 @@
 			    <%= f.text_field :pending_name %>
 			   </div>
 			   <div class="venue-field">
-			   	<% types_array =  VenueType.all.collect  { |type| [type.name, type.id] } %>
+			   	<% types_array =  VenueType.all.where("lower(name) not like ?", "%campus%").collect  { |type| [type.name, type.id] } %>
 			    <%= f.label :type, :class => "venue-label" %>
 			    <%= f.select :pending_venue_type_id, options_for_select(types_array, f.object.venue_type_id),{:include_blank => 'None'} %>
 			   </div>
