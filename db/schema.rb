@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150604093722) do
+ActiveRecord::Schema.define(version: 20150607150234) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -240,6 +240,14 @@ ActiveRecord::Schema.define(version: 20150604093722) do
     t.integer  "pokee_id"
     t.datetime "poked_at", default: '2014-09-02 20:49:09'
     t.boolean  "viewed",   default: false
+  end
+
+  create_table "preset_greeting_images", force: true do |t|
+    t.integer  "greeting_message_id"
+    t.string   "avatar"
+    t.boolean  "is_active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "prospect_city_clients", force: true do |t|
