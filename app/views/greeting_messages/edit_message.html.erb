@@ -111,7 +111,7 @@
 			   
 			    Last call @ &emsp;
 			    <%@time_options = ["00:00", "00:30", "01:00"]%>
-			    <%= select_tag :pending_last_call, options_for_select(@time_options), :onchange => "preview()", :include_blank => "hh:mm" %>
+			    <%= select_tag :pending_last_call, options_for_select(@time_options, @greeting_message.pending_last_call), :onchange => "preview()", :include_blank => "hh:mm" %>
 			    &emsp;AM<br>
 			   
 			    $ &emsp;
