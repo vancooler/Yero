@@ -11,13 +11,25 @@
         };
 
         reader.readAsDataURL(input.files[0]);
+        document.getElementById("image_type").value = "file";
       }
+    }
+
+    function readPresetImage(input){
+    	if (input) {
+    		var output = document.getElementById('img_prev');
+    		console.log(input.value);
+		    // output.src = URL.createObjectURL(input.value);
+		    $('#img_prev').attr('src', input.value);
+		    document.getElementById("image_type").value = "url";
+    	}
     }
 
     function preview(){
     	first_dj = $('#first_dj').val();
     	second_dj = $('#second_dj').val();
-    	last_call = $('#last_call').val();
+    	last_call = $('#pending_last_call').val();
+    	console.log(last_call)
     	admission_fee = $('#admission_fee').val();
     	drink_special = $('#drink_special').val();
     	description = $('#description').val();
@@ -82,6 +94,14 @@
 
 			   <!-- <div class="venue-sub-title">Venue Info</div> -->
 			   <div class="venue-fields">
+			   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
+			   	
+			   	<% images_array.each do |image|%>
+			   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
+			   		<%= image_tag(image.avatar.url) %>
+
+			   	<% end %>
+			   	<%= hidden_field_tag 'image_type', 'none' %>
 			   	<%= f.file_field :poster, {:onchange => "readURL(this)"} %>
 			   	
 			    <p>Tonight's Lineup</p>
@@ -90,11 +110,12 @@
 			    <hr> 
 			   
 			    Last call @ &emsp;
-			    <%= f.text_field :pending_last_call, {:id => "last_call", :onkeyup => "preview()", :style => "display:inline-block; width:120px", :placeholder => "hh:mm"} %>
+			    <%@time_options = ["00:00", "00:30", "01:00"]%>
+			    <%= select_tag :pending_last_call, options_for_select(@time_options), :onchange => "preview()", :include_blank => "hh:mm" %>
 			    &emsp;AM<br>
 			   
 			    $ &emsp;
-			    <%= f.text_field :pending_admission_fee, {:id => "admission_fee", :onkeyup => "preview()", :style => "display:inline-block; width:120px"} %>
+			    <%= f.number_field :pending_admission_fee, {:step => 0.01, :id => "admission_fee", :onkeyup => "preview()", :style => "display:inline-block; width:120px"} %>
 			    &emsp;Admission
 			    <br>
 			    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Special go here"} %>

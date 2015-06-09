@@ -82,18 +82,38 @@ class GreetingMessagesController < ApplicationController
       @day = @greeting_message.weekday
       respond_to do |format|
 
-        get_params = params.require(:greeting_message).permit(:pending_first_dj, :pending_second_dj, :pending_last_call, :pending_admission_fee, :pending_drink_special, :pending_description, :poster)
+        get_params = params.require(:greeting_message).permit(:pending_first_dj, :pending_second_dj, :pending_last_call, :pending_admission_fee, :pending_drink_special, :pending_description, :poster, :image)
 
-        puts "POSTER::"
-        puts get_params[:poster]
-        poster_update = false
-        if !get_params[:poster].blank?
-          poster_update = true
-          @greeting_message.greeting_posters.create(avatar: get_params[:poster], default: false)
+        if params[:image_type].nil? or (params[:image_type] != "url" and params[:image_type] != "file")
+          poster_update = false
         else
+          poster_update = true
+        end
+
+        if poster_update
+          greeting_posters = GreetingPoster.where(:greeting_message_id => @greeting_message.id).where(:default => false)
+        
+          if !get_params[:poster].blank? and params[:image_type] == "file"
+            if greeting_posters.count > 0
+              greeting_posters.first.update(avatar: get_params[:poster])
+            else
+              @greeting_message.greeting_posters.create(avatar: get_params[:poster], default: false)
+            end
+          elsif !params[:image].blank? and params[:image_type] == "url"
+            image_url = ''
+            image_url = Rails.env.production? ? params[:image] : 'http://localhost:3000' + params[:image]
+            if greeting_posters.count > 0
+              greeting_posters.first.update(remote_avatar_url: image_url)
+            else
+              @greeting_message.greeting_posters.create(remote_avatar_url: image_url, default: false)
+            end
+          else
+            poster_update = false
+          end
 
         end
         get_params.delete(:poster)
+
 
         if !@greeting_message.draft_pending.nil? and @greeting_message.draft_pending
           # has draft
