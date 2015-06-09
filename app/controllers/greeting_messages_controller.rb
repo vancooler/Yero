@@ -84,6 +84,7 @@ class GreetingMessagesController < ApplicationController
 
         get_params = params.require(:greeting_message).permit(:pending_first_dj, :pending_second_dj, :pending_last_call, :pending_admission_fee, :pending_drink_special, :pending_description, :poster, :image)
 
+        get_params[:pending_last_call] = params[:pending_last_call]
         if params[:image_type].nil? or (params[:image_type] != "url" and params[:image_type] != "file")
           poster_update = false
         else
