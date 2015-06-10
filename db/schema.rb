@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150607150234) do
+ActiveRecord::Schema.define(version: 20150610161802) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -172,6 +172,8 @@ ActiveRecord::Schema.define(version: 20150607150234) do
     t.float    "pending_admission_fee"
     t.string   "pending_drink_special"
     t.text     "pending_description"
+    t.string   "last_call_as"
+    t.string   "pending_last_call_as"
   end
 
   add_index "greeting_messages", ["venue_id"], name: "index_greeting_messages_on_venue_id", using: :btree
@@ -248,6 +250,7 @@ ActiveRecord::Schema.define(version: 20150607150234) do
     t.boolean  "is_active"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "default_template",    default: false
   end
 
   create_table "prospect_city_clients", force: true do |t|
