@@ -322,10 +322,13 @@ class User < ActiveRecord::Base
         avatars = self.user_avatars.all
 
         json.array! avatars do |a|
-          json.avatar a.avatar.thumb.url
-          json.default a.default
-          json.avatar_id a.id
-          json.order (a.order.nil? ? 100 : a.order)
+          if a.is_active or a.default
+            json.avatar a.avatar.thumb.url
+            json.default a.default
+            json.is_active a.is_active
+            json.avatar_id a.id
+            json.order (a.order.nil? ? 100 : a.order)
+          end
         end
       end
 
@@ -580,7 +583,7 @@ class User < ActiveRecord::Base
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
             main_avatar   =  user.user_avatars.find_by(default:true)
-            other_avatars =  user.user_avatars.where.not(default:true)
+            other_avatars =  user.user_avatars.where.not(default:true).where(is_active:true)
             avatar_array = Array.new
             avatar_array[0] = {
                   thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
