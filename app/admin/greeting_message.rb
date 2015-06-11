@@ -31,6 +31,7 @@ ActiveAdmin.register GreetingMessage do
     column :first_dj
     column :second_dj
     column :last_call
+    column :last_call_as
     column :admission_fee
     column :drink_special
     column :description
@@ -66,12 +67,14 @@ ActiveAdmin.register GreetingMessage do
       f.input :first_dj
       f.input :second_dj
       f.input :last_call
+      f.input :last_call_as
       f.input :admission_fee
       f.input :drink_special
       f.input :description
       f.input :pending_first_dj
       f.input :pending_second_dj
       f.input :pending_last_call
+      f.input :pending_last_call_as
       f.input :pending_admission_fee
       f.input :pending_drink_special
       f.input :pending_description
@@ -82,7 +85,7 @@ ActiveAdmin.register GreetingMessage do
     f.inputs do
       f.has_many :greeting_posters, heading: 'Pictures', allow_destroy: true, new_record: true do |b|
         b.input :avatar, :image_preview => true
-        b.input :default
+        b.input :default, :label => "Approved"
       end
     end
     f.actions
@@ -111,6 +114,11 @@ ActiveAdmin.register GreetingMessage do
           td "Last Call"
           td venue.last_call
           td venue.pending_last_call
+        end
+        tr do
+          td "Last Call As"
+          td venue.last_call_as
+          td venue.pending_last_call_as
         end
         tr do
           td "Admission Fee"
