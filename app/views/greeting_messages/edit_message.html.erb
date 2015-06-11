@@ -29,16 +29,39 @@
     	first_dj = $('#first_dj').val();
     	second_dj = $('#second_dj').val();
     	last_call = $('#pending_last_call').val();
+    	last_call_as = $('#pending_last_call_as').val();
     	console.log(last_call)
     	admission_fee = $('#admission_fee').val();
     	drink_special = $('#drink_special').val();
     	description = $('#description').val();
     	$("div#first_dj_div").text(first_dj);
     	$("div#second_dj_div").text(second_dj);
-    	$("div#last_call_div").text(last_call);
+    	$("span#last_call_div").text(last_call);
+    	$("span#last_call_as_div").text(last_call_as);
     	$("div#admission_fee_div").text(admission_fee);
     	$("div#drink_special_div").text(drink_special);
     	$("div#description_div").text(description);
+
+    	if (first_dj || second_dj || last_call || last_call_as || admission_fee || drink_special || description){
+    		if ((first_dj || second_dj) && (last_call || last_call_as || admission_fee || drink_special)){
+    			document.getElementById("first-hr").style.display = 'block';
+			}
+    		else{
+    			document.getElementById("first-hr").style.display = 'none';
+    		}
+
+    		if (description && (last_call || last_call_as || admission_fee || drink_special)){
+    			document.getElementById("second-hr").style.display = 'block';
+			}
+    		else{
+    			document.getElementById("second-hr").style.display = 'none';
+    		}
+
+    		document.getElementById("venue-title-div").style.display = 'block';
+    	}
+    	else{
+		    document.getElementById("venue-title-div").style.display = 'none';
+    	}
 
     }
 </script>
@@ -112,7 +135,10 @@
 			    Last call @ &emsp;
 			    <%@time_options = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"]%>
 			    <%= select_tag :pending_last_call, options_for_select(@time_options, @greeting_message.pending_last_call), :onchange => "preview()", :include_blank => "hh:mm" %>
-			    &emsp;AM<br>
+			    &emsp;
+			    <%@as_options = ["AM", "PM"]%>
+			    <%= select_tag :pending_last_call_as, options_for_select(@as_options, @greeting_message.pending_last_call_as), :onchange => "preview()", :include_blank => "" %>
+			    <br>
 			   
 			    $ &emsp;
 			    <%= f.number_field :pending_admission_fee, {:step => 0.01, :id => "admission_fee", :onkeyup => "preview()", :style => "display:inline-block; width:120px"} %>
@@ -140,11 +166,24 @@
 					<%= image_tag(@greeting_message.poster.avatar.url, :alt => "Preview", :id => "img_prev") %>
 				<% end %>
 				<div class="preview-inner-text">
+					<div id="venue-title-div"><%=@venue.name%></div>
 					<div id="first_dj_div"><%=@greeting_message.pending_first_dj %></div>
 					<div id="second_dj_div"><%=@greeting_message.pending_second_dj %></div>
-					<div id="last_call_div"><%=@greeting_message.pending_last_call %></div>
+					<%if (@greeting_message.pending_first_dj.present? || @greeting_message.pending_second_dj.present?) && (@greeting_message.pending_last_call.present? || @greeting_message.pending_last_call_as.present? || @greeting_message.pending_admission_fee.present? || @greeting_message.pending_drink_special.present?)%>
+						<hr id="first-hr" class="preview hr" style="display:block">
+					<%else%>
+						<hr id="first-hr" class="preview hr" style="display:none">
+					<%end%>						
+					<span id="last_call_div"><%=@greeting_message.pending_last_call %></span>
+					<span id="last_call_as_div"><%=@greeting_message.pending_last_call_as %></span>
 					<div id="admission_fee_div"><%=@greeting_message.pending_admission_fee %></div>
 					<div id="drink_special_div"><%=@greeting_message.pending_drink_special %></div>
+					<%if (@greeting_message.pending_description.present?) && (@greeting_message.pending_last_call.present? || @greeting_message.pending_last_call_as.present? || @greeting_message.pending_admission_fee.present? || @greeting_message.pending_drink_special.present?)%>
+						<hr id="second-hr" class="preview hr" style="display:block">
+					<%else%>
+						<hr id="second-hr" class="preview hr" style="display:none">
+					<%end%>
+
 					<div id="description_div"><%=@greeting_message.pending_description %></div>
 				</div>
 			    <div class="venue-fields">

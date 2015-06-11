@@ -63,6 +63,7 @@ class GreetingMessagesController < ApplicationController
         @greeting_message.pending_first_dj = @greeting_message.first_dj
         @greeting_message.pending_second_dj = @greeting_message.second_dj
         @greeting_message.pending_last_call = @greeting_message.last_call
+        @greeting_message.pending_last_call_as = @greeting_message.last_call_as
         @greeting_message.pending_admission_fee = @greeting_message.admission_fee
         @greeting_message.pending_drink_special = @greeting_message.drink_special
         @greeting_message.pending_description = @greeting_message.description
@@ -82,9 +83,10 @@ class GreetingMessagesController < ApplicationController
       @day = @greeting_message.weekday
       respond_to do |format|
 
-        get_params = params.require(:greeting_message).permit(:pending_first_dj, :pending_second_dj, :pending_last_call, :pending_admission_fee, :pending_drink_special, :pending_description, :poster, :image)
+        get_params = params.require(:greeting_message).permit(:pending_first_dj, :pending_second_dj, :pending_last_call, :pending_last_call_as, :pending_admission_fee, :pending_drink_special, :pending_description, :poster, :image)
 
         get_params[:pending_last_call] = params[:pending_last_call]
+        get_params[:pending_last_call_as] = params[:pending_last_call_as]
         if params[:image_type].nil? or (params[:image_type] != "url" and params[:image_type] != "file")
           poster_update = false
         else
@@ -131,11 +133,12 @@ class GreetingMessagesController < ApplicationController
           end
         else
           # no draft
-          if !poster_update and ((get_params[:pending_first_dj].blank? and @greeting_message.first_dj.blank?) or get_params[:pending_first_dj] == @greeting_message.first_dj) and ((get_params[:pending_second_dj].blank? and @greeting_message.second_dj.blank?) or get_params[:pending_second_dj].to_s == @greeting_message.second_dj) and ((get_params[:pending_last_call].blank? and @greeting_message.last_call.blank?) or get_params[:pending_last_call] == @greeting_message.last_call) and ((get_params[:pending_admission_fee].blank? and @greeting_message.admission_fee.blank?) or get_params[:pending_admission_fee] == @greeting_message.admission_fee) and ((get_params[:pending_drink_special].blank? and @greeting_message.drink_special.blank?) or get_params[:pending_drink_special] == @greeting_message.drink_special) and ((get_params[:pending_description].blank? and @greeting_message.description.blank?) or get_params[:pending_description] == @greeting_message.description)
+          if !poster_update and ((get_params[:pending_first_dj].blank? and @greeting_message.first_dj.blank?) or get_params[:pending_first_dj] == @greeting_message.first_dj) and ((get_params[:pending_second_dj].blank? and @greeting_message.second_dj.blank?) or get_params[:pending_second_dj].to_s == @greeting_message.second_dj) and ((get_params[:pending_last_call].blank? and @greeting_message.last_call.blank?) or get_params[:pending_last_call] == @greeting_message.last_call) and ((get_params[:pending_last_call_as].blank? and @greeting_message.last_call_as.blank?) or get_params[:pending_last_call_as] == @greeting_message.last_call_as) and ((get_params[:pending_admission_fee].blank? and @greeting_message.admission_fee.blank?) or get_params[:pending_admission_fee] == @greeting_message.admission_fee) and ((get_params[:pending_drink_special].blank? and @greeting_message.drink_special.blank?) or get_params[:pending_drink_special] == @greeting_message.drink_special) and ((get_params[:pending_description].blank? and @greeting_message.description.blank?) or get_params[:pending_description] == @greeting_message.description)
             # nothing changed
             @greeting_message.pending_first_dj = nil
             @greeting_message.pending_second_dj = nil
             @greeting_message.pending_last_call = nil
+            @greeting_message.pending_last_call_as = nil
             @greeting_message.pending_admission_fee = nil
             @greeting_message.pending_drink_special = nil
             @greeting_message.pending_description = nil
