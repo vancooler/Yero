@@ -8,9 +8,15 @@ ActiveAdmin.register UserAvatar do
     UserAvatar.find(selection).each do |ua|
       ua.is_active = false
       if ua.save! and !ua.user_id.nil?
-        # notification
-        WhisperNotification.send_avatar_disabled_notification(ua.user_id)
-        ReportUserHistory.notify_all_users(ua.user_id)
+        u = User.find_by_id(ua.user_id)
+        if !u.blank?
+          # disconnect user
+          u.is_connected = false
+          u.save
+          # notification
+          WhisperNotification.send_avatar_disabled_notification(ua.user_id)
+          ReportUserHistory.notify_all_users(ua.user_id)
+        end
       end
     end
     redirect_to :back, :notice => "Selected avatars are disabled"

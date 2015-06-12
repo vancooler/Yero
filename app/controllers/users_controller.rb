@@ -67,37 +67,41 @@ class UsersController < ApplicationController
 
   # API
   def index
-    user = User.find_by_key(params[:key])
-    user.is_connected = true
-    user.save
-    puts user
-    gender = params[:gender] if !params[:gender].blank?
-    min_age = params[:min_age].to_i if !params[:min_age].blank?
-    max_age = params[:max_age].to_i if !params[:max_age].blank?
-    min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
-    max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
-    venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
-    puts "EVERYONE: " + params[:everyone].to_s
-    everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
-    page_number = nil
-    users_per_page = nil
-    page_number = params[:page].to_i if !params[:page].blank?
-    users_per_page = params[:per_page].to_i if !params[:per_page].blank?
+    if !current_user.default_avatar.nil?
+      user = User.find_by_key(params[:key])
+      user.is_connected = true
+      user.save
+      puts user
+      gender = params[:gender] if !params[:gender].blank?
+      min_age = params[:min_age].to_i if !params[:min_age].blank?
+      max_age = params[:max_age].to_i if !params[:max_age].blank?
+      min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
+      max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
+      venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
+      puts "EVERYONE: " + params[:everyone].to_s
+      everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
+      page_number = nil
+      users_per_page = nil
+      page_number = params[:page].to_i if !params[:page].blank?
+      users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-    gate_number = 4
-    # if set in db, use the db value
-    if GlobalVariable.exists? name: "min_ppl_size"
-      size = GlobalVariable.find_by_name("min_ppl_size")
-      if !size.nil? and !size.value.nil? and size.value.to_i > 0
-        gate_number = size.value.to_i
+      gate_number = 4
+      # if set in db, use the db value
+      if GlobalVariable.exists? name: "min_ppl_size"
+        size = GlobalVariable.find_by_name("min_ppl_size")
+        if !size.nil? and !size.value.nil? and size.value.to_i > 0
+          gate_number = size.value.to_i
+        end
       end
-    end
-    result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
-    
-    if result['users'].nil?
-      render json: success(result) #Return users
+      result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+      
+      if result['users'].nil?
+        render json: success(result) #Return users
+      else
+        render json: success(result['users'], "users")
+      end
     else
-      render json: success(result['users'], "users")
+      render json: error("No profile avatar")
     end
   end
 

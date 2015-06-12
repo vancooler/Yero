@@ -43,7 +43,7 @@ ActiveAdmin.register User do
         f.has_many :user_avatars, heading: 'Avatars', allow_destroy: false, new_record: false do |b|
           b.input :avatar, :image_preview => true
           b.input :default
-          b.input :is_active
+          # b.input :is_active
         end
       end
       

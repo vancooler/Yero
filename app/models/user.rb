@@ -322,13 +322,13 @@ class User < ActiveRecord::Base
         avatars = self.user_avatars.all
 
         json.array! avatars do |a|
-          if a.is_active or a.default
-            json.avatar a.avatar.thumb.url
-            json.default a.default
-            json.is_active a.is_active
-            json.avatar_id a.id
-            json.order (a.order.nil? ? 100 : a.order)
-          end
+
+          json.avatar a.avatar.thumb.url
+          json.default a.default
+          json.is_active a.is_active
+          json.avatar_id a.id
+          json.order (a.order.nil? ? 100 : a.order)
+
         end
       end
 
