@@ -119,12 +119,21 @@
       <!-- content goes here -->
       	<div class="index-title"><%=@venue.name%> | Greeting Message</div>
 
-      	<%= render "day_picker", current: @day.weekday_title, venue_id: @venue.id %>
 		<hr class="top-divider">
 
-		<div class="medium-12 medium-offset-1 columns">
+		<div class="top-of-day-picker">
+			Set up a weekly greeting message that will be automatically sent to guests who enter your venue's network.<br>
+			Keep in mind that a greeting message assigned to a night will appear <b>every week</b>.<br>
+			<br>
+			For example, a Friday greeting message will be displayed to your guests each and every Friday.<br>
+			<br>
+			<b>* Please make sure that the information you upload is up to date and accurate.</b>
+		</div>
+
+      	<%= render "day_picker", current: @day.weekday_title, venue_id: @venue.id %>
+
+		<div class="medium-12 medium-offset-1 columns" style="margin-top:18px;">
       		<%= form_for(@greeting_message) do |f| %>
-			<div class="message-edit-form"  style="width: 20%; float:left">
 			  <% if @greeting_message.errors.any? %>
 			    <div id="error_explanation">
 			      <h2><%= pluralize(@greeting_message.errors.count, "error") %> prohibited this greeting_message from being saved:</h2>
@@ -136,19 +145,23 @@
 			      </ul>
 			    </div>
 			  <% end %>
+			<div class="image-edit-form"  style="width: 20%; float:left">
+			    <div class="venue-fields">
+				   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
+				   	
+				   	<% images_array.each do |image|%>
+				   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
+				   		<%= image_tag(image.avatar.url) %>
 
-			   <!-- <div class="venue-sub-title">Venue Info</div> -->
-			   <div class="venue-fields">
-			   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
-			   	
-			   	<% images_array.each do |image|%>
-			   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
-			   		<%= image_tag(image.avatar.url) %>
+				   	<% end %>
+				   	<%= hidden_field_tag 'image_type', 'none' %>
+				   	<%= f.file_field :poster, {:onchange => "readURL(this)"} %>
+			   	</div>
+		    </div>
+		    <div style="width: 5%; float:left">&emsp;</div>
+		    <div class="image-edit-form"  style="width: 20%; float:left">
+			    <div class="venue-fields">
 
-			   	<% end %>
-			   	<%= hidden_field_tag 'image_type', 'none' %>
-			   	<%= f.file_field :poster, {:onchange => "readURL(this)"} %>
-			   	
 			    <p>Tonight's Lineup</p>
 			    <%= f.text_field :pending_first_dj, {:id => "first_dj", :onkeyup => "preview()", :placeholder => "Act #1 ex.DJ 1 (House) 10-1"} %>
 			    <%= f.text_field :pending_second_dj, {:id => "second_dj", :onkeyup => "preview()", :placeholder => "Act #2"} %>
@@ -171,16 +184,10 @@
 
 			    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything", :style => "height: 120px;resize:vertical;"} %>
 			   </div>
-
-
-
-
-
-
-
 			</div>
-			<div style="width: 10%; float:left">&emsp;</div>
-			<div class="preview"  style="width: 30%; float:left">
+
+			<div style="width: 5%; float:left">&emsp;</div>
+			<div class="preview"  style="width: 20%; float:left">
 				<h4>Preview</h4>
 			   	<%if @greeting_message.greeting_posters.blank? %>
 					<%= image_tag("Logo_green.png", :alt => "Preview", :id => "img_prev") %>
