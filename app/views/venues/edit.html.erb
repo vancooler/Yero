@@ -22,7 +22,9 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<div class="index-title"><%=@venue.name%></div>
+      	<p class="grey"></p>
+      	<p id="notice" class="grey"><%= notice %></p>
+      	<div class="index-title grey"><%=@venue.name%></div>
 
 		<hr class="top-divider">
       		<%= form_for(@venue) do |f| %>

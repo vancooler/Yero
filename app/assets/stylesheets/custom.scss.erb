@@ -1024,17 +1024,18 @@ ul.shared_links_list{
 
 .top-divider{
 	border-color: gray;
-	margin-top: 6px;
+	margin-top: 0px;
 }
 
 .index-title{
 	color: gray;
 	font-size: 36px;
-	margin-top:60px;
+	padding-top:60px;
 	text-transform: uppercase;
-	margin-left: 20px;
+	padding-left: 20px;
+	padding-bottom: 18px;
 	@media #{$medium-up} {
-		margin-left: 60px;
+		padding-left: 60px;
 	}
 }
 
@@ -1171,11 +1172,12 @@ h6{
 
 .venue-edit-link.show-page{
 	position:relative;
-	left: 20px;
-	bottom:5px;
+	//left: 20px;
+	//bottom:5px;
 	@media #{$medium-up} {
-		float:right; 
-		margin-right:300px;
+		//float:right; 
+		//margin-right:300px;
+		top: -12px;
 	}
 }
 
@@ -1209,25 +1211,36 @@ div.preview-inner-text{
 }
 
 
-ul.button-group.round.even-10.day-picker{
-	margin-top: 12px;
+ul.button-group.even-12.day-picker{
+	margin-top: 24px;
 	@media #{$medium-up} {
 		margin-left: 60px;
+		li{
+			min-width: 135px;
+		}
 	}
 	@media #{$small-only} {
 		margin-left: 12px;
+		li{
+			min-width: 135px;
+		}
 	}
 	li a{
-		@media #{$medium-up} {
-			min-width: 160px;
-		}
-		@media #{$small-only} {
-			min-width: 160px;
-		}
+		background-color: #E6E7E8;
+		color: gray;
+		width: 100%;
+		font-size: 14px;
+		padding-left: 20px;
+		padding-right: 20px;
 	}
 	li.active {
 		a{
-		  background-color: red;
+		  width: 100%;
+		  background-color: #3E4753;
+		  color: #00FFA9;
+    	  font-size: 14px;
+    	  padding-left: 20px;
+		  padding-right: 20px;
 		}
 	}
 }
@@ -1255,4 +1268,19 @@ select#pending_last_call_as {
 	display:inline-block; 
 	width:60px !important;
 	padding: 0px;
+}
+
+section.main-section{
+	position: relative;
+	top: -20px;
+}
+
+#notice{
+	margin-bottom: 0 !important;
+}
+
+
+div.medium-12.medium-offset-1.columns{
+	margin-left: 3.33333% !important;
+	margin-top: 18px;
 }

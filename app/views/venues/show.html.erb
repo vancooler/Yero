@@ -21,19 +21,20 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<p></p>
-      	<p id="notice"><%= notice %></p>
- 		<span class="index-title"><%=@venue.name%></span>
-		<span class="venue-edit-link show-page">
-			<i><%= link_to 'Edit', edit_venue_url(@venue), :class => "button small" %></i>
-		</span>
-
+      	<p class="grey"></p>
+      	<p id="notice" class="grey"><%= notice %></p>
+      	<div class="index-title grey" >
+	 		<%=@venue.name%>
+		</div>
 		<hr class="top-divider">
 
       	<div class="venueBody venueShow">
       		<div class="medium-12 medium-offset-1 columns">
-				<h4>Real Info<%= " *" if !@venue.draft_pending.nil? and @venue.draft_pending %></h4>
+				<span><h4>Real Info<%= " *" if !@venue.draft_pending.nil? and @venue.draft_pending %></h4></span>
 
+				<span class="venue-edit-link show-page">
+					<i><%= link_to 'Edit', edit_venue_url(@venue), :class => "button small" %></i>
+				</span>
 				<h5>Name: <%= @venue.name %></h5>
 		      	
 				<h5>Type: <%= @venue.venue_type.name if !@venue.venue_type.nil? %></h5>
