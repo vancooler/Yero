@@ -1197,6 +1197,22 @@ hr.preview.hr{
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
+hr.form.hr{
+	width: 80%;
+  	margin-left: auto;
+  	margin-right: auto;
+  	border-width: 1px;
+	margin-top: 12px;
+	margin-bottom: 12px;
+	padding: 0;
+	z-index: 100px;
+
+	//border: 0;
+    //height: 0;
+    //border-top: 1px solid rgba(0, 0, 0, 0.1);
+    //border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
 div.preview-inner-text{
 	color: white;
 	z-index: 100px;
@@ -1230,8 +1246,10 @@ ul.button-group.even-12.day-picker{
 		color: gray;
 		width: 100%;
 		font-size: 14px;
-		padding-left: 20px;
-		padding-right: 20px;
+		padding-left: 0;
+		padding-right: 0;
+		padding-top: 12px;
+		padding-bottom: 12px;
 	}
 	li.active {
 		a{
@@ -1239,14 +1257,17 @@ ul.button-group.even-12.day-picker{
 		  background-color: #3E4753;
 		  color: #00FFA9;
     	  font-size: 14px;
-    	  padding-left: 20px;
-		  padding-right: 20px;
+    	  padding-left: 0;
+		  padding-right: 0;
+		  padding-top: 12px;
+		  padding-bottom: 12px;
 		}
 	}
 }
 
 div.top-of-day-picker{
 	margin-top: 12px;
+	font-size: 15px;
 	@media #{$medium-up} {
 		margin-left: 60px;
 	}
@@ -1254,20 +1275,24 @@ div.top-of-day-picker{
 		margin-left: 12px;
 	}
 	b{
-		font-family: Gothammedium
+		font-family: Gothammedium;
 	}
 }
 
 select#pending_last_call {
 	display:inline-block; 
-	width:80px !important;
+	width:78px !important;
 	padding: 0px;
+	padding-left: 6px;
+	height: 30px;
 }
 
 select#pending_last_call_as {
 	display:inline-block; 
 	width:60px !important;
 	padding: 0px;
+	padding-left: 6px;
+	height: 30px;
 }
 
 section.main-section{
@@ -1283,4 +1308,70 @@ section.main-section{
 div.medium-12.medium-offset-1.columns{
 	margin-left: 3.33333% !important;
 	margin-top: 18px;
+
+	div.message-edit-form{
+		padding: 24px;
+		text-align: center;
+		input{
+			height: 30px;
+		}
+		input#admission_fee{
+			height: 30px;
+			padding-bottom: 0;
+			padding-top: 0;
+			width: 90px;
+		}
+		input.button.small{
+			height: 41px;
+			border-radius: 6px;
+			width: 70%;
+		}
+		div.head{
+			font-size: 24px;
+			font-family: GothamLight;
+			margin-bottom: 36px;
+		}
+		p.normal-text{
+			margin-bottom:0; 
+			color:grey;
+			font-size:13px;
+		}
+	}
 }
+
+input[type="file"] {
+    display: none;
+}
+.custom-file-upload {
+    border: 1px solid #ccc;
+    display: inline-block;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: #E6E7E8;
+    width: 70%;
+    color: #888F9F;
+    border-radius: 6px;
+    margin-top: 30px;
+}
+
+
+label.img-radio {
+	display: inline-block;
+}
+label.img-radio > input{ /* HIDE RADIO */
+  visibility: hidden; /* Makes input not-clickable */
+  position: absolute; /* Remove input from document flow */
+}
+label.img-radio > input + img{ /* IMAGE STYLES */
+  cursor:pointer;
+  border:3px solid transparent;
+  width: 80px;
+  height: 120px;  
+  display: inline;
+}
+label.img-radio > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
+  border:3px solid #00FFA9;
+}
+
+
+

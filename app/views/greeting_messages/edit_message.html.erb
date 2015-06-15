@@ -121,14 +121,7 @@
 
 		<hr class="top-divider">
 
-		<div class="top-of-day-picker">
-			Set up a weekly greeting message that will be automatically sent to guests who enter your venue's network.<br>
-			Keep in mind that a greeting message assigned to a night will appear <b>every week</b>.<br>
-			<br>
-			For example, a Friday greeting message will be displayed to your guests each and every Friday.<br>
-			<br>
-			<b>* Please make sure that the information you upload is up to date and accurate.</b>
-		</div>
+		
 
       	<%= render "day_picker", current: @day.weekday_title, venue_id: @venue.id %>
 
@@ -145,48 +138,61 @@
 			      </ul>
 			    </div>
 			  <% end %>
-			<div class="image-edit-form"  style="width: 20%; float:left">
+			<div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
+			    	<div class="head">Select Background</div>
+			    	<p class="normal-text" style="margin-top:18px">You can use one of background images</p>
 				   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
-				   	
-				   	<% images_array.each do |image|%>
-				   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
-				   		<%= image_tag(image.avatar.url) %>
-
-				   	<% end %>
+				   	<% images_array.in_groups_of(3, false) do |group| %>
+				   		<div class="row">
+						   	<% group.each do |image|%>
+							   	<label class="img-radio">
+							   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
+							   		<%= image_tag(image.avatar.url, :class => "preset-img") %>
+							   	</label>
+						   	<% end %>
+					   </div>
+					<% end %>
 				   	<%= hidden_field_tag 'image_type', 'none' %>
-				   	<%= f.file_field :poster, {:onchange => "readURL(this)"} %>
+				   	<p class="normal-text" style="margin-top:18px">Or upload your own design</p>
+				   	
+				   	<label for="greeting_message_poster" class="custom-file-upload">
+					    Upload
+					</label>
+					<%= f.file_field :poster, {:onchange => "readURL(this)", :class => "upload"} %> 
 			   	</div>
 		    </div>
-		    <div style="width: 5%; float:left">&emsp;</div>
-		    <div class="image-edit-form"  style="width: 20%; float:left">
+		    <div style="width: 1%; float:left">&nbsp;</div>
+		    <div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
+			    	<div class="head">Add Optional Text</div>
+				    <p class="normal-text" style="margin-top:18px">Add the lineup for tonight</p>
+				    <%= f.text_field :pending_first_dj, {:id => "first_dj", :onkeyup => "preview()", :placeholder => "Act #1 ex.DJ 1 (House) 10-1"} %>
+				    <%= f.text_field :pending_second_dj, {:id => "second_dj", :onkeyup => "preview()", :placeholder => "Act #2"} %>
+				    <hr class="form hr"> 
+				   
+				    <p class="normal-text" style="display:inline">Last call @ &nbsp;</p>
+				    <%@time_options = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"]%>
+				    <%= select_tag :pending_last_call, options_for_select(@time_options, @greeting_message.pending_last_call), :onchange => "preview()", :include_blank => "hh:mm" %>
+				    &nbsp;
+				    <%@as_options = ["AM", "PM"]%>
+				    <%= select_tag :pending_last_call_as, options_for_select(@as_options, @greeting_message.pending_last_call_as), :onchange => "preview()", :include_blank => "" %>
+				    <br>
+				   
+				    <p class="normal-text">$ &nbsp;
+				    <%= f.number_field :pending_admission_fee, {:step => 0.01, :id => "admission_fee", :onchange => "preview()", :style => "display:inline-block;"} %>
+				    &nbsp;Admission</p>
+				    
+				    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
+					<hr  class="form hr">
 
-			    <p>Tonight's Lineup</p>
-			    <%= f.text_field :pending_first_dj, {:id => "first_dj", :onkeyup => "preview()", :placeholder => "Act #1 ex.DJ 1 (House) 10-1"} %>
-			    <%= f.text_field :pending_second_dj, {:id => "second_dj", :onkeyup => "preview()", :placeholder => "Act #2"} %>
-			    <hr> 
-			   
-			    Last call @ &emsp;
-			    <%@time_options = ["00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00", "03:30", "04:00", "04:30", "05:00", "05:30", "06:00", "06:30", "07:00", "07:30", "08:00", "08:30", "09:00", "09:30", "10:00", "10:30", "11:00", "11:30"]%>
-			    <%= select_tag :pending_last_call, options_for_select(@time_options, @greeting_message.pending_last_call), :onchange => "preview()", :include_blank => "hh:mm" %>
-			    &emsp;
-			    <%@as_options = ["AM", "PM"]%>
-			    <%= select_tag :pending_last_call_as, options_for_select(@as_options, @greeting_message.pending_last_call_as), :onchange => "preview()", :include_blank => "" %>
-			    <br>
-			   
-			    $ &emsp;
-			    <%= f.number_field :pending_admission_fee, {:step => 0.01, :id => "admission_fee", :onkeyup => "preview()", :style => "display:inline-block; width:120px"} %>
-			    &emsp;Admission
-			    <br>
-			    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Special go here"} %>
-				<hr>
+				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;"} %>
 
-			    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything", :style => "height: 120px;resize:vertical;"} %>
-			   </div>
+				    <%= f.submit "Submit", :class => "button small", data: { disable_with: "Please wait..."}%>
+			    </div>
 			</div>
 
-			<div style="width: 5%; float:left">&emsp;</div>
+			<div style="width: 1%; float:left">&nbsp;</div>
 			<div class="preview"  style="width: 20%; float:left">
 				<h4>Preview</h4>
 			   	<%if @greeting_message.greeting_posters.blank? %>
@@ -237,9 +243,7 @@
 
 					<div id="description_div"><%=@greeting_message.pending_description %></div>
 				</div>
-			    <div class="venue-fields">
-				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
-				</div>
+			    
 		    </div>
 			<%end%>
 		</div>
