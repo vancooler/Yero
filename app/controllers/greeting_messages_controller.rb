@@ -71,6 +71,16 @@ class GreetingMessagesController < ApplicationController
     end
   end
 
+  def day_pick
+    @venue = Venue.find_by_id(params['id'])
+
+    if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
+  end
+
 
   # save action
   def update

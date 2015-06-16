@@ -31,7 +31,7 @@
   </li>
   <% if venue_id.present? and venue_id > 0 %>
     <li class="item <%= "#{'active' if current == 'greeting-message'}" %>">
-      <%= link_to "Greeting Message", greeting_message_create_path(:id => venue_id, :day => "Friday") %>
+      <%= link_to "Greeting Message", greeting_message_landing_path(:id => venue_id) %>
     </li>
   <%end%>
   <li class="item <%= "#{'active' if current == 'account'}" %>">
