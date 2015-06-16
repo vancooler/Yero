@@ -12,6 +12,7 @@
 
         reader.readAsDataURL(input.files[0]);
         document.getElementById("image_type").value = "file";
+        document.getElementById("submit").style.display = 'inline-block';
       }
     }
 
@@ -22,6 +23,7 @@
 		    // output.src = URL.createObjectURL(input.value);
 		    $('#img_prev').attr('src', input.value);
 		    document.getElementById("image_type").value = "url";
+		    document.getElementById("submit").style.display = 'inline-block';
     	}
     }
 
@@ -188,7 +190,11 @@
 
 				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;"} %>
 
-				    <%= f.submit "Submit", :class => "button small", data: { disable_with: "Please wait..."}%>
+				    <%if !@greeting_message.greeting_posters.blank? %>
+				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}%>
+				    <% else %>
+				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "display:none" %>
+				    <% end %>
 			    </div>
 			</div>
 

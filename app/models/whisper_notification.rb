@@ -12,6 +12,7 @@ class WhisperNotification < AWS::Record::HashModel
               # '1' => enter venue greeting
               # '2' => chat whisper request
               # '3' => accept whisper request
+              # '4' => avatar disable
   boolean_attr :viewed                 #0->1
   boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
@@ -923,7 +924,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   # Send notification when the avatar is disabled by admin
-  def self.send_avatar_disabled_notification(id)
+  def self.send_avatar_disabled_notification(id, default)
     app_local_path = Rails.root
     if !ENV['DYNAMODB_PREFIX'].blank?
       apn = Houston::Client.development
@@ -944,7 +945,9 @@ class WhisperNotification < AWS::Record::HashModel
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
-    notification.custom_data = {         
+    notification.custom_data = {   
+          type: 4,      
+          is_default: default,
           target_apn: token
     }
 
