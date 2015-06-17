@@ -1,6 +1,6 @@
 <ul class="shared_links_list">
 	<%- if controller_name != 'sessions' %>
-	  <li><%= link_to "Or go back to sign in", new_session_path(resource_name), :class => 'shared_link' %></li>
+	  <li><%= link_to "or go back to sign in", new_session_path(resource_name), :class => 'shared_link' %></li>
 	<% end -%>
 
 	<%- if devise_mapping.registerable? && controller_name != 'registrations' %>
