@@ -67,7 +67,7 @@ class UsersController < ApplicationController
 
   # API
   def index
-    if !current_user.default_avatar.nil?
+    if !current_user.default_avatar.nil? and current_user.default_avatar.is_active 
       user = User.find_by_key(params[:key])
       user.is_connected = true
       user.save
