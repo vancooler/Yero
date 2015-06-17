@@ -101,7 +101,7 @@ class UsersController < ApplicationController
         render json: success(result['users'], "users")
       end
     else
-      render json: error("No profile avatar")
+      render json: success("No profile avatar")
     end
   end
 
