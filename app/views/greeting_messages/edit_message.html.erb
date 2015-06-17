@@ -193,9 +193,9 @@
 				    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
 					<hr  class="form hr">
 
-				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;", :maxlength => 100} %>
+				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;margin-bottom: 0;", :maxlength => 100} %>
 				    <div>
-				    	<p class="normal-text" id="count">
+				    	<p class="normal-text" id="count" style="margin-bottom: 12px;">
 				    		<%= 100 - (@greeting_message.pending_description.blank? ? 0 : @greeting_message.pending_description.length) %> characters left
 				    	</p>
 				    </div>
