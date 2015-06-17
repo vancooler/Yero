@@ -201,13 +201,13 @@
 			<div style="width: 1%; float:left">&nbsp;</div>
 			<div class="preview"  style="width: 20%; float:left">
 				<div class="head">Preview</div>
+				<%= image_tag("iphone6_wireframe.png", :alt => "Preview Frame", :id => "img_prev_frame")%>
 			   	<%if @greeting_message.greeting_posters.blank? %>
-					<%= image_tag("Logo_green.png", :alt => "Preview", :id => "img_prev") %>
 				<% else %>
 					<%= image_tag(@greeting_message.poster.avatar.url, :alt => "Preview", :id => "img_prev") %>
 				<% end %>
 				<div class="preview-inner-text">
-					<div id="venue-title-div"><%=@venue.name%></div>
+					<!-- <div id="venue-title-div"><%=@venue.name%></div> -->
 					
 					<%if (@greeting_message.pending_first_dj.present? || @greeting_message.pending_second_dj.present?)%>
 						<div id="dj_div" style="display:block">Tonight's DJ lineup:</div>
