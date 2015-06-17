@@ -19,8 +19,7 @@
     function readPresetImage(input){
     	if (input) {
     		var output = document.getElementById('img_prev');
-    		console.log(input.value);
-		    // output.src = URL.createObjectURL(input.value);
+    		//console.log(input.value);
 		    $('#img_prev').attr('src', input.value);
 		    document.getElementById("image_type").value = "url";
 		    document.getElementById("submit").style.display = 'inline-block';
@@ -73,18 +72,24 @@
 			document.getElementById("first-hr").style.display = 'none';
 		}
 
-		if (description && (last_call || last_call_as || admission_fee || drink_special)){
+		if (description && (last_call || last_call_as || admission_fee || drink_special || first_dj || second_dj)){
 			document.getElementById("second-hr").style.display = 'block';
 		}
 		else{
 			document.getElementById("second-hr").style.display = 'none';
 		}
 
-    	if (first_dj || second_dj || last_call || last_call_as || admission_fee || drink_special || description){
-    		document.getElementById("venue-title-div").style.display = 'block';
-    	}
-    	else{
-		    document.getElementById("venue-title-div").style.display = 'none';
+    	// if (first_dj || second_dj || last_call || last_call_as || admission_fee || drink_special || description){
+    	// 	document.getElementById("venue-title-div").style.display = 'block';
+    	// }
+    	// else{
+		   //  document.getElementById("venue-title-div").style.display = 'none';
+    	// }
+
+    	if (description) {
+    		count_text = (100 - description.length) + " characters left"
+    		
+    		$("p#count").text(count_text);
     	}
 
     }
@@ -188,7 +193,12 @@
 				    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
 					<hr  class="form hr">
 
-				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;"} %>
+				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;", :maxlength => 100} %>
+				    <div>
+				    	<p class="normal-text" id="count">
+				    		<%= 100 - (@greeting_message.pending_description.blank? ? 0 : @greeting_message.pending_description.length) %> characters left
+				    	</p>
+				    </div>
 
 				    <%if !@greeting_message.greeting_posters.blank? %>
 				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}%>
@@ -210,12 +220,12 @@
 					<!-- <div id="venue-title-div"><%=@venue.name%></div> -->
 					
 					<%if (@greeting_message.pending_first_dj.present? || @greeting_message.pending_second_dj.present?)%>
-						<div id="dj_div" style="display:block">Tonight's DJ lineup:</div>
+						<div class="inner-text" id="dj_div" style="display:block">Tonight's DJ lineup:<br><br></div>
 					<%else%>
-						<div id="dj_div" style="display:none">Tonight's DJ lineup:</div>
+						<div class="inner-text" id="dj_div" style="display:none">Tonight's DJ lineup:<br><br></div>
 					<%end%>	
-					<div id="first_dj_div"><%=@greeting_message.pending_first_dj %></div>
-					<div id="second_dj_div"><%=@greeting_message.pending_second_dj %></div>
+					<div class="inner-text" id="first_dj_div"><%=@greeting_message.pending_first_dj %></div>
+					<div class="inner-text" id="second_dj_div"><%=@greeting_message.pending_second_dj %></div>
 					<%if (@greeting_message.pending_first_dj.present? || @greeting_message.pending_second_dj.present?) && (@greeting_message.pending_last_call.present? || @greeting_message.pending_last_call_as.present? || @greeting_message.pending_admission_fee.present? || @greeting_message.pending_drink_special.present?)%>
 						<hr id="first-hr" class="preview hr" style="display:block">
 					<%else%>
@@ -228,26 +238,28 @@
 					<%end%>					
 					
 					<span id="last_call_div"><%=@greeting_message.pending_last_call %></span>
-					<span id="last_call_as_div"><%=@greeting_message.pending_last_call_as %></span><br>
-					<%if (@greeting_message.pending_admission_fee.present?)%>
-						<span id="admission_fee_prefix" style="display:inline">$</span>
-					<%else%>
-						<span id="admission_fee_prefix" style="display:none">$</span>
-					<%end%>	
-					<span id="admission_fee_div"><%=@greeting_message.pending_admission_fee %></span>
-					<%if (@greeting_message.pending_admission_fee.present?)%>
-						<span id="admission_fee_suffix" style="display:inline"> admission</span>
-					<%else%>
-						<span id="admission_fee_suffix" style="display:none"> admission</span>
-					<%end%>	
-					<div id="drink_special_div"><%=@greeting_message.pending_drink_special %></div>
+					<span id="last_call_as_div"><%=@greeting_message.pending_last_call_as %></span>
+					<div class="inner-text">
+						<%if (@greeting_message.pending_admission_fee.present?)%>
+							<span id="admission_fee_prefix" style="display:inline">$</span>
+						<%else%>
+							<span id="admission_fee_prefix" style="display:none">$</span>
+						<%end%>	
+						<span id="admission_fee_div"><%=@greeting_message.pending_admission_fee %></span>
+						<%if (@greeting_message.pending_admission_fee.present?)%>
+							<span id="admission_fee_suffix" style="display:inline"> admission</span>
+						<%else%>
+							<span id="admission_fee_suffix" style="display:none"> admission</span>
+						<%end%>	
+					</div>
+					<div class="inner-text" id="drink_special_div"><%=@greeting_message.pending_drink_special %></div>
 					<%if (@greeting_message.pending_description.present?) && (@greeting_message.pending_last_call.present? || @greeting_message.pending_last_call_as.present? || @greeting_message.pending_admission_fee.present? || @greeting_message.pending_drink_special.present?)%>
 						<hr id="second-hr" class="preview hr" style="display:block">
 					<%else%>
 						<hr id="second-hr" class="preview hr" style="display:none">
 					<%end%>
 
-					<div id="description_div"><%=@greeting_message.pending_description %></div>
+					<div class="inner-text" id="description_div"><%=@greeting_message.pending_description %></div>
 				</div>
 			    
 		    </div>

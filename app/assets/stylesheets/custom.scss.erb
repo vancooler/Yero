@@ -1183,7 +1183,7 @@ h6{
 
 
 hr.preview.hr{
-	width: 80%;
+	width: 100%;
   	margin-left: auto;
   	margin-right: auto;
   	//border-width: 1px;
@@ -1213,18 +1213,6 @@ hr.form.hr{
     //border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-div.preview-inner-text{
-	color: white;
-	z-index: 100px;
-	position: relative;
-	top: -150px;
-	text-align: center;
-	
-	div#venue-title-div{
-		font-size: 18px;
-		margin-bottom: 18px;
-	}
-}
 
 
 ul.button-group.even-12.day-picker{
@@ -1354,6 +1342,31 @@ div.medium-12.medium-offset-1.columns{
 		    bottom: 352px;
 		    position: relative;
 		}
+
+		div.preview-inner-text{
+			color: white;
+			z-index: 100px;
+			font-size: 14px;
+			width: 150px;
+			position: relative;
+			bottom: 618px;
+			margin-left: auto;
+			margin-right: auto;
+			font-size: 12px;
+			line-height: 16px;
+
+			div.inner-text{
+				width: 132px;
+				margin-left: auto;
+				margin-right: auto;
+			}
+			
+			div#venue-title-div{
+				font-size: 18px;
+				margin-bottom: 18px;
+			}
+		}
+
 	}
 }
 
