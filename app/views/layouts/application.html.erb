@@ -87,7 +87,7 @@
 
     <%= yield %>
 
-    <% if !current_page?('/venues/contact') and !current_page?('/venues/login') and !current_page?('/android') and !current_page?('/beta-signup') && !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) && !(params[:controller] == 'web_users' &&  params[:action] == 'edit') && !(params[:controller] == 'greeting_messages' &&  (params[:action] == 'edit_message' || params[:action] == 'day_pick')) %>
+    <% if !current_page?('/password/new') and !current_page?('/venues/contact') and !current_page?('/venues/login') and !current_page?('/android') and !current_page?('/beta-signup') && !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) && !(params[:controller] == 'web_users' &&  params[:action] == 'edit') && !(params[:controller] == 'greeting_messages' &&  (params[:action] == 'edit_message' || params[:action] == 'day_pick')) %>
     <footer class="page-footer">
       <div class="row">
         <div class="medium-8 medium-centered columns">
