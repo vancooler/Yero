@@ -9,7 +9,7 @@
             // .width(450)
             // .height(200);
         };
-
+        console.log(input.files[0])
         reader.readAsDataURL(input.files[0]);
         document.getElementById("image_type").value = "file";
         document.getElementById("submit").style.display = 'inline-block';
@@ -79,12 +79,6 @@
 			document.getElementById("second-hr").style.display = 'none';
 		}
 
-    	// if (first_dj || second_dj || last_call || last_call_as || admission_fee || drink_special || description){
-    	// 	document.getElementById("venue-title-div").style.display = 'block';
-    	// }
-    	// else{
-		   //  document.getElementById("venue-title-div").style.display = 'none';
-    	// }
 
     	if (description) {
     		count_text = (100 - description.length) + " characters left"
@@ -132,7 +126,7 @@
 
       	<%= render "day_picker", current: @day.weekday_title, venue_id: @venue.id %>
 
-		<div class="medium-12 medium-offset-1 columns" style="margin-top:18px;">
+		<div class="medium-12 medium-offset-1" style="margin-top:18px;">
       		<%= form_for(@greeting_message) do |f| %>
 			  <% if @greeting_message.errors.any? %>
 			    <div id="error_explanation">
@@ -162,6 +156,7 @@
 					<% end %>
 				   	<%= hidden_field_tag 'image_type', 'none' %>
 				   	<p class="normal-text" style="margin-top:18px">Or upload your own design</p>
+				   	<p class="normal-text" >(must be 1242px &times; 2016px)</p>
 				   	
 				   	<label for="greeting_message_poster" class="custom-file-upload">
 					    Upload
@@ -205,6 +200,12 @@
 				    <% else %>
 				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "display:none" %>
 				    <% end %>
+				    <div>
+				    	<p class="normal-text">
+				    		Last submission pending approval.<br>
+				    		You will receive an email confirmation.
+				    	</p>
+				    </div>
 			    </div>
 			</div>
 
@@ -217,7 +218,7 @@
 					<%= image_tag(@greeting_message.poster.avatar.url, :alt => "Preview", :id => "img_prev") %>
 				<% end %>
 				<div class="preview-inner-text">
-					<!-- <div id="venue-title-div"><%=@venue.name%></div> -->
+					<div id="venue-title-div"><%=@venue.name%></div>
 					
 					<%if (@greeting_message.pending_first_dj.present? || @greeting_message.pending_second_dj.present?)%>
 						<div class="inner-text" id="dj_div" style="display:block">Tonight's DJ lineup:<br><br></div>

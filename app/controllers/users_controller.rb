@@ -67,7 +67,18 @@ class UsersController < ApplicationController
 
   # API
   def index
-    if !current_user.default_avatar.nil? and current_user.default_avatar.is_active 
+    disabled = !current_user.user_avatars.where(:is_active => false).blank?
+    default = !current_user.user_avatars.where(:is_active => false).where(:default => true).blank?
+    avatar_result = {
+      disabled: disabled,
+      main_avatar: default
+    }
+
+    disabled = false
+    default = false
+    if disabled and default
+      render json: success(avatar_result, "avatar")
+    else
       user = User.find_by_key(params[:key])
       user.is_connected = true
       user.save
@@ -95,13 +106,26 @@ class UsersController < ApplicationController
       end
       result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
       
-      if result['users'].nil?
-        render json: success(result) #Return users
+      if disabled and !default
+        if result['users'].nil?
+          final_result = {
+            avatar: avatar_result,
+            percentage: result['percentage']
+          }
+        else
+          final_result = {
+            avatar: avatar_result,
+            users: result['users']
+          }
+        end   
+        render json: success(final_result) #Return users
       else
-        render json: success(result['users'], "users")
-      end
-    else
-      render json: success("No profile avatar")
+        if result['users'].nil?
+          render json: success(result) #Return users
+        else
+          render json: success(result['users'], "users")
+        end 
+      end   
     end
   end
 
