@@ -1,18 +1,39 @@
 <script>
+	var _URL = window.URL || window.webkitURL;
+
     function readURL(input) {
       if (input.files && input.files[0]) {
-        var reader = new FileReader();
+      	var file = input.files[0];
+      	var error_message = '';
+      	if (file.type != 'image/png' && file.type != 'image/jpeg'){
+	        error_message += "Invalid file type";
+	        document.getElementById("greeting_message_poster").value = "";
+        	alert(error_message);
+      	}
+      	else{
+	      	var img = new Image();
+	        img.onload = function () {
+	        	console.log(this.width + ' ' + this.height);
+	            if (parseInt(this.width) != 1242 || parseInt(this.height) != 2016){
+	            	error_message += "Invalid image dimensions";
+	            	document.getElementById("greeting_message_poster").value = "";
+		        	alert(error_message);
+				}
+				else{
+			      	
+			        var reader = new FileReader();
+			        reader.onload = function (e) {
+			          	$('#img_prev').attr('src', e.target.result);
+			        };
+			        //console.log(input.files[0]);
+			        reader.readAsDataURL(input.files[0]);
+			        document.getElementById("image_type").value = "file";
+			        document.getElementById("submit").style.display = 'inline-block';
 
-        reader.onload = function (e) {
-          $('#img_prev')
-            .attr('src', e.target.result);
-            // .width(450)
-            // .height(200);
-        };
-        console.log(input.files[0])
-        reader.readAsDataURL(input.files[0]);
-        document.getElementById("image_type").value = "file";
-        document.getElementById("submit").style.display = 'inline-block';
+				}
+	        };
+	        img.src = _URL.createObjectURL(file);
+      	}
       }
     }
 
