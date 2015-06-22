@@ -29,6 +29,8 @@
 			        reader.readAsDataURL(input.files[0]);
 			        document.getElementById("image_type").value = "file";
 			        document.getElementById("submit").style.display = 'inline-block';
+			        document.getElementById("overlay").style.display = 'block';
+			        document.getElementById("disabled-submit").style.display = 'none';
 
 				}
 	        };
@@ -44,6 +46,9 @@
 		    $('#img_prev').attr('src', input.value);
 		    document.getElementById("image_type").value = "url";
 		    document.getElementById("submit").style.display = 'inline-block';
+		    document.getElementById("overlay").style.display = 'block';
+		    document.getElementById("disabled-submit").style.display = 'none';
+
     	}
     }
 
@@ -55,13 +60,15 @@
     	admission_fee = $('#admission_fee').val();
     	drink_special = $('#drink_special').val();
     	description = $('#description').val();
+    	// description = document.getElementById('description').innerHTML;
     	$("div#first_dj_div").text(first_dj);
     	$("div#second_dj_div").text(second_dj);
     	$("span#last_call_div").text(last_call);
     	$("span#last_call_as_div").text(last_call_as);
     	$("span#admission_fee_div").text(admission_fee);
-    	$("div#drink_special_div").text(drink_special);
-    	$("div#description_div").text(description);
+    	$("div#drink_special_div").html(drink_special.replace(/\r?\n/g,'<br/>'));
+    	$("div#description_div").html(description.replace(/\r?\n/g,'<br/>'));
+
 
 		if (first_dj || second_dj) {
 			document.getElementById("dj_div").style.display = 'block';
@@ -103,9 +110,19 @@
 
     	if (description) {
     		count_text = (100 - description.length) + " characters left"
-    		
-    		$("p#count").text(count_text);
     	}
+    	else{
+    		count_text = 100 + " characters left"
+    	}
+		$("p#count").text(count_text);
+
+    	if (drink_special) {
+    		count_text_40 = (40 - drink_special.length) + " characters left"
+		}
+		else{
+			count_text_40 = 40 + " characters left"
+    	}
+		$("p#count40").text(count_text_40);
 
     }
 </script>
@@ -208,7 +225,13 @@
 				    <%= f.number_field :pending_admission_fee, {:step => 0.01, :id => "admission_fee", :onchange => "preview()", :style => "display:inline-block;"} %>
 				    &nbsp;Admission</p>
 				    
-				    <%= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
+				    <%#= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
+				    <%= f.text_area :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here", :style => "height: 20px;resize:none;font-size:17px;margin-bottom:0;overflow:hidden", :maxlength => 40} %>
+				    <div>
+				    	<p class="normal-text" id="count40" style="margin-bottom: 12px;">
+				    		<%= 40 - (@greeting_message.pending_drink_special.blank? ? 0 : @greeting_message.pending_drink_special.length) %> characters left
+				    	</p>
+				    </div>
 					<hr  class="form hr">
 
 				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;margin-bottom: 0;", :maxlength => 100} %>
@@ -219,16 +242,26 @@
 				    </div>
 
 				    <%if !@greeting_message.greeting_posters.blank? %>
-				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}%>
+				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "font-family: HelveticaNeue"%>
+				    	<div id="disabled-submit", class="button small", style="display:none;font-family: HelveticaNeue;height: 41px;border-radius: 6px;width: 80%;">	
+					    	Add an image to submit
+					    </div>
 				    <% else %>
-				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "display:none" %>
+				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "display:none;font-family: HelveticaNeue" %>
+				    	<div id="disabled-submit", class="button small", style="font-family: HelveticaNeue;height: 41px;border-radius: 6px;width: 80%;">	
+					    	Add an image to submit
+					    </div>
 				    <% end %>
-				    <div>
-				    	<p class="normal-text">
-				    		Last submission pending approval.<br>
-				    		You will receive an email confirmation.
-				    	</p>
-				    </div>
+				    <% if !@greeting_message.draft_pending.nil? and @greeting_message.draft_pending%>
+					    <div>
+					    	<p class="normal-text">
+					    		<i>
+					    		Last submission pending approval.<br>
+					    		You will receive an email confirmation.
+						    	</i>
+					    	</p>
+					    </div>
+				    <%end%>
 			    </div>
 			</div>
 
@@ -237,9 +270,11 @@
 				<div class="head" style="font-family: HelveticaNeue">Preview</div>
 				<%= image_tag("iphone6_wireframe.png", :alt => "Preview Frame", :id => "img_prev_frame")%>
 			   	<%if @greeting_message.greeting_posters.blank? %>
+			   		<%= image_tag('', :alt => "", :id => "img_prev") %>
+					<div id="overlay" class="overlay" style="display:block"></div>
 				<% else %>
 					<%= image_tag(@greeting_message.poster.avatar.url, :alt => "Preview", :id => "img_prev") %>
-					<div class="overlay"></div>
+					<div id="overlay" class="overlay"></div>
 				<% end %>
 				<div class="preview-inner-text">
 					<div id="venue-title-div"><%=@venue.name%></div>
