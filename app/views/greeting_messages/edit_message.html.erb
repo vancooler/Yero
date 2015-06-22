@@ -237,6 +237,7 @@
 			   	<%if @greeting_message.greeting_posters.blank? %>
 				<% else %>
 					<%= image_tag(@greeting_message.poster.avatar.url, :alt => "Preview", :id => "img_prev") %>
+					<div class="overlay"></div>
 				<% end %>
 				<div class="preview-inner-text">
 					<div id="venue-title-div"><%=@venue.name%></div>
