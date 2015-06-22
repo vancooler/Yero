@@ -12,7 +12,7 @@
 
 <ul class="button-group even-12 day-picker">
   
-  <li class="<%= "#{'active' if current == 'Friday'}" %>">
+  <li class="first <%= "#{'active' if current == 'Friday'}" %>">
     <%= link_to "Friday", greeting_message_create_path(:id => venue_id, :day => "Friday"), :class => "button" %>
   </li>
   <li class="<%= "#{'active' if current == 'Saturday'}" %>">
@@ -30,7 +30,7 @@
   <li class="<%= "#{'active' if current == 'Wednesday'}" %>">
     <%= link_to "Wednesday", greeting_message_create_path(:id => venue_id, :day => "Wednesday"), :class => "button" %>
   </li>
-  <li class="<%= "#{'active' if current == 'Thursday'}" %>">
+  <li class="last <%= "#{'active' if current == 'Thursday'}" %>">
     <%= link_to "Thursday", greeting_message_create_path(:id => venue_id, :day => "Thursday"), :class => "button" %>
   </li>
 

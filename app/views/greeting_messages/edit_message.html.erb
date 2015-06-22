@@ -163,33 +163,35 @@
 			<div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
 			    	<div class="head">Select Background</div>
-			    	<p class="normal-text" style="margin-top:18px">You can use one of background images</p>
+			    	<p class="normal-text" style="margin-top:18px; margin-bottom:12px;">You can use one of background images</p>
 				   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
-				   	<% images_array.in_groups_of(3, false) do |group| %>
-				   		<div class="row">
-						   	<% group.each do |image|%>
-							   	<label class="img-radio">
-							   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
-							   		<%= image_tag(image.avatar.url, :class => "preset-img") %>
-							   	</label>
-						   	<% end %>
-					   </div>
-					<% end %>
+				   	<div class="preset-images">
+					   	<% images_array.in_groups_of(3, false) do |group| %>
+					   		<div class="row medium-12 medium-offset-2">
+							   	<% group.each do |image|%>
+								   	<label class="img-radio">
+								   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
+								   		<%= image_tag(image.avatar.url, :class => "preset-img") %>
+								   	</label>
+							   	<% end %>
+						   </div>
+						<% end %>
+				   	</div>
 				   	<%= hidden_field_tag 'image_type', 'none' %>
-				   	<p class="normal-text" style="margin-top:18px">Or upload your own design</p>
-				   	<p class="normal-text" >(must be 1242px &times; 2016px)</p>
+				   	<p class="normal-text" style="margin-top:18px">Or</p>
 				   	
 				   	<label for="greeting_message_poster" class="custom-file-upload">
 					    Upload
 					</label>
 					<%= f.file_field :poster, {:onchange => "readURL(this)", :class => "upload"} %> 
+				   	<p class="normal-text" style="font-size:0.675rem">Your image should be 1242px by 2016px, no larger than 1MB and in .PNG or JPG format.</p>
 			   	</div>
 		    </div>
 		    <div style="width: 1%; float:left">&nbsp;</div>
 		    <div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
 			    	<div class="head">Add Optional Text</div>
-				    <p class="normal-text" style="margin-top:18px">Add the lineup for tonight</p>
+				    <p class="normal-text" style="margin-top:18px; margin-bottom:6px;">Add the lineup for tonight</p>
 				    <%= f.text_field :pending_first_dj, {:id => "first_dj", :onkeyup => "preview()", :placeholder => "Act #1 ex.DJ 1 (House) 10-1"} %>
 				    <%= f.text_field :pending_second_dj, {:id => "second_dj", :onkeyup => "preview()", :placeholder => "Act #2"} %>
 				    <hr class="form hr"> 
@@ -232,7 +234,7 @@
 
 			<div style="width: 1%; float:left">&nbsp;</div>
 			<div class="preview"  style="width: 20%; float:left">
-				<div class="head">Preview</div>
+				<div class="head" style="font-family: HelveticaNeue">Preview</div>
 				<%= image_tag("iphone6_wireframe.png", :alt => "Preview Frame", :id => "img_prev_frame")%>
 			   	<%if @greeting_message.greeting_posters.blank? %>
 				<% else %>
