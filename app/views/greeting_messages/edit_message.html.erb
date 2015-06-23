@@ -243,13 +243,13 @@
 
 				    <%if !@greeting_message.greeting_posters.blank? %>
 				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "font-family: HelveticaNeue"%>
-				    	<div id="disabled-submit", class="button small", style="display:none;font-family: HelveticaNeue;height: 41px;border-radius: 6px;width: 80%;">	
-					    	Add an image to submit
+				    	<div id="disabled-submit", class="button small", style="display:none;">	
+					    	Submit
 					    </div>
 				    <% else %>
 				    	<%= f.submit "Submit", :id => "submit", :class => "button small", data: { disable_with: "Please wait..."}, :style => "display:none;font-family: HelveticaNeue" %>
-				    	<div id="disabled-submit", class="button small", style="font-family: HelveticaNeue;height: 41px;border-radius: 6px;width: 80%;">	
-					    	Add an image to submit
+				    	<div id="disabled-submit", class="button small">	
+					    	Submit
 					    </div>
 				    <% end %>
 				    <% if !@greeting_message.draft_pending.nil? and @greeting_message.draft_pending%>
