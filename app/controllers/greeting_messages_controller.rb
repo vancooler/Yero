@@ -1,8 +1,20 @@
 class GreetingMessagesController < ApplicationController
 
-  before_action :authenticate_web_user!, only: [:edit_message, :update]
+  before_action :authenticate_web_user!, only: [:edit_message, :update, :day_pick, :venues]
   before_action :authenticate_admin_user!, only: [:approve]
   
+
+  def venues
+    @venues = current_web_user.venues.order('updated_at DESC')
+    
+    if mobile_device?
+      @device = "mobile"
+    else
+      @device = "regular"
+    end
+  end
+
+
   def approve
     @greeting_message = GreetingMessage.find(params[:greeting_message])
     @greeting_message.first_dj = @greeting_message.pending_first_dj

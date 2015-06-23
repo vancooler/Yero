@@ -1,0 +1,52 @@
+<% content_for :title, "Yero -  Greeting Messages" %>
+
+
+<%if @device == "mobile"%>
+<div class="off-canvas-wrap" data-offcanvas>
+<%else%>
+<div class="off-canvas-wrap move-right" data-offcanvas>
+<%end%>
+  <div class="inner-wrap">
+    <nav class="tab-bar">
+      <section class="left-small">
+        <a class="left-off-canvas-toggle menu-icon" href="#"><span></span></a>
+      </section>
+      <section class="middle tab-bar-section">
+        <h3 class="title">Greeting Message</h3>
+      </section>
+    </nav>
+
+    <aside class="left-off-canvas-menu">
+      <%= render "/venues/sidebar", current: "greeting-message", venue_id: 0 %>
+    </aside>
+
+    <section class="main-section">
+        <%= render "/venues/header", title: "Your Venues", notice: notice %>
+
+     
+
+		
+
+      	<div class="venue-rows">
+        <% @venues.each do |venue| %>
+        <div class="venueBody venueShow">
+          <span class="venue-name">
+            <%= link_to venue.name, venue %>
+          </span>
+          <span class="venue-edit-link">
+            <i><%= link_to 'Edit Greeting Messages', greeting_message_landing_url(venue.id) %></i>
+          </span>
+          <% if !venue.default_avatar.nil? %>
+            <div class="img">
+              <%= link_to image_tag(venue.default_avatar.avatar), venue %>
+            </div>
+          <% end %>
+        </div><hr>
+        <% end %>
+      </div>
+    </section>
+
+    <a class="show-for-small-only exit-off-canvas"></a>
+
+  </div>
+</div>

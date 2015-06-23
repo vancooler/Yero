@@ -47,21 +47,21 @@
       <%= image_tag("venueprofile.png") %> Venue Profile
     <% end %>
   </li>
-  <% if venue_id.present? and venue_id > 0 %>
+  <% if true or (venue_id.present? and venue_id > 0) %>
     <li class="item <%= "#{'active' if current == 'greeting-message'}" %>">
       <%#= link_to "Greeting Message", greeting_message_landing_path(:id => venue_id) %>
-      <%= link_to greeting_message_landing_path(:id => venue_id) do %>
+      <%= link_to greeting_message_venues_path do %>
         <%= image_tag("greetingmessage.png") %> Greeting Message
       <% end %>
     </li>
   <%end%>
-  <li class="item <%= "#{'active' if current == 'account'}" %>">
+  <li class="item show-for-small-only <%= "#{'active' if current == 'account'}" %>">
     <%#= link_to "Account", owner_account_path %>
     <%= link_to owner_account_path do %>
       <%#= image_tag("venueprofile.png") %> Account
     <% end %>
   </li>
-  <li class="item">
+  <li class="item show-for-small-only">
     <%#= link_to "Logout", signout_url, :method => :delete %>
     <%= link_to signout_url, :method => :delete do %>
       <%#= image_tag("venueprofile.png") %> Logout

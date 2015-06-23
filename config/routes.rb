@@ -42,6 +42,7 @@ Rails.application.routes.draw do
     get 'owner/:id', to: 'web_users#show', as: :web_user
     get 'owner/:id/greeting-message/:day/edit', to: 'greeting_messages#edit_message', as: :greeting_message_create
     get 'owner/:id/greeting-message/day-pick', to: 'greeting_messages#day_pick', as: :greeting_message_landing
+    get 'owner/greeting-message/venues', to: 'greeting_messages#venues', as: :greeting_message_venues
     patch 'owner/greeting-message/:id', to: 'greeting_messages#update'
     put 'owner/greeting-message/:id', to: 'greeting_messages#update'
     get 'owner/greeting-message/:id', to: 'greeting_messages#show', as: :greeting_message
