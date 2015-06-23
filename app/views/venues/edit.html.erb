@@ -22,11 +22,8 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<p class="grey"></p>
-      	<p id="notice" class="grey"><%= notice %></p>
-      	<div class="index-title grey"><%=@venue.name%></div>
+        <%= render "header", title: @venue.name, notice: notice %>
 
-		<hr class="top-divider">
       		<%= form_for(@venue) do |f| %>
 			  <% if @venue.errors.any? %>
 			    <div id="error_explanation">

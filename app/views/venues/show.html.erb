@@ -21,12 +21,13 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<p class="grey"></p>
+      	<%= render "header", title: @venue.name, notice: notice %>
+      	<!-- <p class="grey"></p>
       	<p id="notice" class="grey"><%= notice %></p>
       	<div class="index-title grey" >
 	 		<%=@venue.name%>
 		</div>
-		<hr class="top-divider">
+		<hr class="top-divider"> -->
 
       	<div class="venueBody venueShow">
       		<div class="medium-12 medium-offset-1 columns">

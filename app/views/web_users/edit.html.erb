@@ -22,11 +22,8 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<p class="grey"></p>
-      	<p id="notice" class="grey"><%= notice %></p>
-      	<div class="index-title grey"><%=@web_user.name%></div>
+        <%= render "/venues/header", title: 'Your Account', notice: notice %>
 
-		<hr class="top-divider">
       		<%= form_for(@web_user) do |f| %>
 			  <% if @web_user.errors.any? %>
 			    <div id="error_explanation">

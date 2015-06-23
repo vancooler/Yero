@@ -1,6 +1,5 @@
 
 <% content_for :title, "Yero -  Venues" %>
-
 <%if @device == "mobile"%>
 <div class="off-canvas-wrap" data-offcanvas>
 <%else%>
@@ -23,12 +22,8 @@
 
     <section class="main-section">
       <!-- content goes here -->
-      	<p class="grey"></p>
-      	<p id="notice" class="grey"><%= notice %></p>
-      	<div class="index-title grey">Your Venues</div>
-
-		<hr class="top-divider">
-
+        <%= render "header", title: 'Your Venues', notice: notice %>
+      	
 		<div class="venue-rows">
 			<% @venues.each do |venue| %>
 			<div class="venueBody venueShow">

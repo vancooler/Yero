@@ -1,0 +1,23 @@
+<p class="grey"></p>
+<p id="notice" class="grey"><%= notice %></p>
+<div class="index-title grey" >
+	<%= title %>
+</div>
+
+
+<button href="#" data-dropdown="drop1" aria-controls="drop1" aria-expanded="false" class="button dropdown small show-for-medium-up"><%=current_web_user.name%></button>
+<ul id="drop1" data-dropdown-content class="tiny f-dropdown" aria-hidden="true">
+  	<li>
+  		<%= link_to owner_account_path do %>
+      		Account
+    	<% end %>
+  	</li>
+  	<li>
+	    <%= link_to signout_url, :method => :delete do %>
+			Logout
+	    <% end %>
+	</li>
+</ul>
+
+
+<hr class="top-divider">

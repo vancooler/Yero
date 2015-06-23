@@ -153,12 +153,15 @@
     </aside>
 
     <section class="main-section">
-    	<p class="grey"></p>
-      	<p id="notice" class="grey"><%= notice %></p>
       <!-- content goes here -->
+    	<%= render "/venues/header", title: @venue.name, notice: notice %>
+
+      <!-- content goes here -->
+      <!-- <p class="grey"></p>
+        <p id="notice" class="grey"><%= notice %></p>
       	<div class="index-title grey"><%=@venue.name%> | Greeting Message</div>
 
-		<hr class="top-divider">
+		<hr class="top-divider"> -->
 
 		
 
