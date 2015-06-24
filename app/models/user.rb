@@ -479,7 +479,7 @@ class User < ActiveRecord::Base
     puts "CLOSE People:"
     puts people_array.inspect
     if !people_array.empty? 
-      User.where(id: people_array).update_all(is_connected: false) # disconnect users
+      User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
       # expire all whispers with type 2 of these users
       WhisperNotification.expire(people_array, '2')
     end
