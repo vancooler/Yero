@@ -1,5 +1,5 @@
 class UserMailer < ActionMailer::Base
-  default to: '"Yero" <hello@yero.co>'
+  # default to: '"Yero" <hello@yero.co>'
 
   def forget_password(user)
   	@user = user
@@ -15,13 +15,13 @@ class UserMailer < ActionMailer::Base
   	@web_user = web_user
   	@venue = venue
   	mail(to:@web_user.email, subject: "Your update for " + @venue.name + " is pending now.")
-  	mail(subject: "Update for " + @venue.name + " is pending now.")
+  	mail(to:'"Yero" <hello@yero.co>' , subject: "Update for " + @venue.name + " is pending now.")
   end
 
   def venue_greeting_message_pending(web_user, venue)
   	@user = user
   	mail(to:@user.email, subject: "Your update for the greeting messages of " + @venue.name + " is pending now.")
-  	mail(subject: "Update for the greeting messages of " + @venue.name + " is pending now.")
+  	mail(to:'"Yero" <hello@yero.co>' , subject: "Update for the greeting messages of " + @venue.name + " is pending now.")
   end
 
   def venue_info_approved(web_user, venue)
