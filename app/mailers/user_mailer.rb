@@ -14,14 +14,17 @@ class UserMailer < ActionMailer::Base
   def venue_info_pending(web_user, venue)
   	@web_user = web_user
   	@venue = venue
-  	mail(to:@web_user.email, subject: "Your update for " + @venue.name + " is pending now.")
-  	mail(to:'"Yero" <hello@yero.co>' , subject: "Update for " + @venue.name + " is pending now.")
+  	@to = @web_user.nil? ? '"Yero" <hello@yero.co>' : @web_user.email
+  	mail(to:@to, subject: "Your update for " + @venue.name + " is pending now.")
+  	# mail(to:'"Yero" <hello@yero.co>' , subject: "Update for " + @venue.name + " is pending now.")
   end
 
   def venue_greeting_message_pending(web_user, venue)
-  	@user = user
-  	mail(to:@user.email, subject: "Your update for the greeting messages of " + @venue.name + " is pending now.")
-  	mail(to:'"Yero" <hello@yero.co>' , subject: "Update for the greeting messages of " + @venue.name + " is pending now.")
+  	@web_user = web_user
+  	@venue = venue
+  	@to = @web_user.nil? ? '"Yero" <hello@yero.co>' : @web_user.email
+  	mail(to:@to, subject: "Your update for the greeting messages of " + @venue.name + " is pending now.")
+  	# mail(to:'"Yero" <hello@yero.co>' , subject: "Update for the greeting messages of " + @venue.name + " is pending now.")
   end
 
   def venue_info_approved(web_user, venue)
@@ -31,7 +34,8 @@ class UserMailer < ActionMailer::Base
   end
 
   def venue_greeting_message_approved(web_user, venue)
-  	@user = user
-  	mail(to:@user.email, subject: "Your update for the greeting messages of " + @venue.name + " is approved now.")
+  	@web_user = web_user  	
+  	@venue = venue
+  	mail(to:@web_user.email, subject: "Your update for the greeting messages of " + @venue.name + " is approved now.")
   end
 end
