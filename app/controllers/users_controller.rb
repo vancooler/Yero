@@ -73,6 +73,14 @@ class UsersController < ApplicationController
       disabled: disabled,
       main_avatar: default
     }
+    gate_number = 4
+    # if set in db, use the db value
+    if GlobalVariable.exists? name: "min_ppl_size"
+      size = GlobalVariable.find_by_name("min_ppl_size")
+      if !size.nil? and !size.value.nil? and size.value.to_i > 0
+        gate_number = size.value.to_i
+      end
+    end
 
     disabled = false
     default = false
@@ -96,14 +104,6 @@ class UsersController < ApplicationController
       page_number = params[:page].to_i if !params[:page].blank?
       users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      gate_number = 4
-      # if set in db, use the db value
-      if GlobalVariable.exists? name: "min_ppl_size"
-        size = GlobalVariable.find_by_name("min_ppl_size")
-        if !size.nil? and !size.value.nil? and size.value.to_i > 0
-          gate_number = size.value.to_i
-        end
-      end
       result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
       
       if disabled and !default

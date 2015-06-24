@@ -8,11 +8,13 @@ class WhisperNotification < AWS::Record::HashModel
   string_attr :venue_id
   string_attr :intro
   string_attr :notification_type
-              # '0' => System notification
+
               # '1' => enter venue greeting
               # '2' => chat whisper request
               # '3' => accept whisper request
-              # '4' => avatar disable
+              # '100' => network open
+              # '101' => avatar disable
+              # '102' => enough users now
   boolean_attr :viewed                 #0->1
   boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
@@ -891,6 +893,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+  # send network open notification
   def self.send_nightopen_notification(id)
     app_local_path = Rails.root
     if !ENV['DYNAMODB_PREFIX'].blank?
@@ -913,7 +916,42 @@ class WhisperNotification < AWS::Record::HashModel
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
     notification.custom_data = {         
-          target_apn: token
+          target_apn: token,
+          type: 100
+    }
+
+    # And... sent! That's all it takes.
+    if !token.nil? and !token.empty?
+      puts token
+      apn.push(notification)
+    end
+  end
+
+  # send enough users notification
+  def self.send_enough_users_notification(id)
+    app_local_path = Rails.root
+    if !ENV['DYNAMODB_PREFIX'].blank?
+      apn = Houston::Client.development
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    else
+      apn = Houston::Client.production
+      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    end
+
+    # An example of the token sent back when a device registers for notifications
+    token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+   
+    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    notification = Houston::Notification.new(device: token)
+    notification.alert = "There are enough users in your network tonight!"
+    
+    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+    notification.sound = "sosumi.aiff"
+    notification.category = "INVITE_CATEGORY"
+    notification.content_available = true
+    notification.custom_data = {         
+          target_apn: token,
+          type: 102
     }
 
     # And... sent! That's all it takes.
@@ -946,7 +984,7 @@ class WhisperNotification < AWS::Record::HashModel
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
     notification.custom_data = {   
-          type: 4,      
+          type: 101,      
           is_default: default,
           target_apn: token
     }
