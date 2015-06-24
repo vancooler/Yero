@@ -101,7 +101,7 @@ class UsersController < ApplicationController
       everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
       page_number = nil
       users_per_page = nil
-      page_number = params[:page].to_i if !params[:page].blank?
+      page_number = params[:page].to_i + 1 if !params[:page].blank?
       users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
       result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
