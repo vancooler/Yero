@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150610161802) do
+ActiveRecord::Schema.define(version: 20150622221305) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -342,10 +342,10 @@ ActiveRecord::Schema.define(version: 20150610161802) do
   end
 
   create_table "users", force: true do |t|
-    t.date     "birthday",                          null: false
-    t.string   "first_name",                        null: false
-    t.string   "gender",                            null: false
-    t.string   "key",                               null: false
+    t.date     "birthday",                                              null: false
+    t.string   "first_name",                                            null: false
+    t.string   "gender",                                                null: false
+    t.string   "key",                                                   null: false
     t.datetime "last_activity"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -353,20 +353,21 @@ ActiveRecord::Schema.define(version: 20150610161802) do
     t.float    "latitude"
     t.float    "longitude"
     t.datetime "last_active"
-    t.string   "introduction_1",    default: " "
-    t.string   "introduction_2",    default: " "
+    t.string   "introduction_1",                        default: " "
+    t.string   "introduction_2",                        default: " "
     t.integer  "notification_read"
     t.string   "email"
     t.string   "snapchat_id"
     t.string   "wechat_id"
-    t.boolean  "discovery",         default: true
-    t.boolean  "exclusive",         default: false
-    t.boolean  "active",            default: true
-    t.boolean  "accept_contract",   default: false
+    t.boolean  "discovery",                             default: true
+    t.boolean  "exclusive",                             default: false
+    t.boolean  "active",                                default: true
+    t.boolean  "accept_contract",                       default: false
     t.string   "instagram_id"
     t.string   "password_digest"
     t.integer  "account_status"
-    t.boolean  "is_connected",      default: false
+    t.boolean  "is_connected",                          default: false
+    t.boolean  "enough_user_notification_sent_tonight", default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree

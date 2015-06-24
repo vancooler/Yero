@@ -113,6 +113,8 @@ class UsersController < ApplicationController
             percentage: result['percentage']
           }
         else
+          user.enough_user_notification_sent_tonight = true
+          user.save
           final_result = {
             avatar: avatar_result,
             users: result['users']
@@ -123,6 +125,8 @@ class UsersController < ApplicationController
         if result['users'].nil?
           render json: success(result) #Return users
         else
+          user.enough_user_notification_sent_tonight = true
+          user.save
           render json: success(result['users'], "users")
         end 
       end   
