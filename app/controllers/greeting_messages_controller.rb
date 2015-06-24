@@ -6,7 +6,7 @@ class GreetingMessagesController < ApplicationController
 
   def venues
     @venues = current_web_user.venues.order('updated_at DESC')
-    
+
     if mobile_device?
       @device = "mobile"
     else
@@ -43,6 +43,9 @@ class GreetingMessagesController < ApplicationController
       end
 
       # TODO: send email to webuser
+      if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
+        UserMailer.delay.venue_greeting_message_approved(@greeting_message.venue.web_user, @greeting_message.venue)
+      end
       redirect_to admin_greeting_message_url(@greeting_message), :notice => "Pending draft approved!" 
     else
       redirect_to :back, :notice => "Something wrong..."
@@ -143,6 +146,9 @@ class GreetingMessagesController < ApplicationController
         if !@greeting_message.draft_pending.nil? and @greeting_message.draft_pending
           # has draft
           if @greeting_message.update_attributes(get_params)
+            if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
+              UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
+            end
             WebUser.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
                 'Venue Name' => @venue.name,
                 'Venue ID' => @venue.id.to_s
@@ -176,6 +182,9 @@ class GreetingMessagesController < ApplicationController
               @greeting_message.draft_pending = true
               @greeting_message.save
               # TODO: send email to both admin(hello@yero.co) and webuser
+              if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
+                UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
+              end
               WebUser.mixpanel_event(current_web_user.id, 'Create a greeting message draft', {
                   'Venue Name' => @venue.name,
                   'Venue ID' => @venue.id.to_s

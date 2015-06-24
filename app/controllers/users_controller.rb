@@ -802,7 +802,7 @@ class UsersController < ApplicationController
         @user.password_confirmation = params[:user][:password_confirmation]
         if @user.save
           puts "saved"
-          UserMailer.password_change_success(@user)
+          UserMailer.delay.password_change_success(@user)
           flash[:danger] = nil
           flash[:success] = "Password Change Succeeded"
         end
@@ -819,7 +819,7 @@ class UsersController < ApplicationController
   def forgot_password
     @user = User.find_by_email(params[:email])
     if !@user.nil?
-      UserMailer.forget_password(@user).deliver
+      UserMailer.delay.forget_password(@user)
       render json: success(true)
     else
       render json: error("The email you have used is not valid.")
