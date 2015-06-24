@@ -146,8 +146,10 @@ class GreetingMessagesController < ApplicationController
         if !@greeting_message.draft_pending.nil? and @greeting_message.draft_pending
           # has draft
           if @greeting_message.update_attributes(get_params)
-            if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
-              UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
+            if !@greeting_message.previous_changes.empty?
+              if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
+                UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
+              end
             end
             WebUser.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
                 'Venue Name' => @venue.name,

@@ -113,13 +113,15 @@ class VenuesController < ApplicationController
       if !@venue.draft_pending.nil? and @venue.draft_pending
         # has draft
         if @venue.update_attributes(get_params)
+          if !@venue.previous_changes.empty?
+            if !@venue.web_user.nil?
+              UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
+            end
+          end
           WebUser.mixpanel_event(current_web_user.id, 'Update the venue draft', {
               'Venue Name' => @venue.name,
               'Venue ID' => @venue.id.to_s
           })
-          if !@venue.web_user.nil?
-            UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
-          end
           format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
           format.json { head :no_content }
         else
