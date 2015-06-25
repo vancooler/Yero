@@ -155,7 +155,7 @@ class GreetingMessagesController < ApplicationController
                 'Venue Name' => @venue.name,
                 'Venue ID' => @venue.id.to_s
             })
-            format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submitted Successfully.' }
+            format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submission successful.' }
             format.json { head :no_content }
           else
             format.html { render action: "edit" }
@@ -191,7 +191,7 @@ class GreetingMessagesController < ApplicationController
                   'Venue Name' => @venue.name,
                   'Venue ID' => @venue.id.to_s
               })
-              format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submitted Successfully.' }
+              format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submission successful.' }
               format.json { head :no_content }
             else
               format.html { render action: "edit" }
