@@ -21,7 +21,7 @@
     </aside>
 
     <section class="main-section">
-        <%= render "/venues/header", title: @venue.name, notice: notice %>
+        <%= render "/venues/header", title: @venue.name, notice: '' %>
 
       <!-- content goes here -->
       <!-- <p class="grey"></p>
@@ -35,7 +35,7 @@
       	<%= render "day_picker", current: "", venue_id: @venue.id %>
         <div class="medium-12 medium-offset-1 columns" style="margin-top:18px;">
           <div class="medium-8">
-            <div class="to-start">To start, select a day.</div>
+            <div class="to-start"><%= notice.nil? ? 'To start, select a day.' : notice %> </div>
 
           </div>
         </div>
