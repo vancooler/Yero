@@ -5,15 +5,21 @@
       if (input.files && input.files[0]) {
       	var file = input.files[0];
       	var error_message = '';
+      	// console.log(file)
       	if (file.type != 'image/png' && file.type != 'image/jpeg'){
 	        error_message += "Invalid file type";
+	        document.getElementById("greeting_message_poster").value = "";
+        	alert(error_message);
+      	}
+      	else if (parseInt(file.size) > 2*1024*1024){
+      		error_message += "File cannot be greater than 2MB";
 	        document.getElementById("greeting_message_poster").value = "";
         	alert(error_message);
       	}
       	else{
 	      	var img = new Image();
 	        img.onload = function () {
-	        	console.log(this.width + ' ' + this.height);
+	        	// console.log(this.width + ' ' + this.height);
 	            if (parseInt(this.width) != 1242 || parseInt(this.height) != 2016){
 	            	error_message += "Invalid image dimensions";
 	            	document.getElementById("greeting_message_poster").value = "";
@@ -25,11 +31,12 @@
 			        reader.onload = function (e) {
 			          	$('#img_prev').attr('src', e.target.result);
 			        };
-			        //console.log(input.files[0]);
+			        // console.log(input.files[0]);
 			        reader.readAsDataURL(input.files[0]);
 			        document.getElementById("image_type").value = "file";
 			        document.getElementById("submit").style.display = 'inline-block';
 			        document.getElementById("overlay").style.display = 'block';
+			        document.getElementById("additional-info").style.display = 'block';
 			        document.getElementById("disabled-submit").style.display = 'none';
 
 				}
@@ -42,11 +49,12 @@
     function readPresetImage(input){
     	if (input) {
     		var output = document.getElementById('img_prev');
-    		//console.log(input.value);
+    		// console.log(input.value);
 		    $('#img_prev').attr('src', input.value);
 		    document.getElementById("image_type").value = "url";
 		    document.getElementById("submit").style.display = 'inline-block';
 		    document.getElementById("overlay").style.display = 'block';
+		    document.getElementById("additional-info").style.display = 'block';
 		    document.getElementById("disabled-submit").style.display = 'none';
 
     	}
@@ -109,7 +117,8 @@
 
 
     	if (description) {
-    		count_text = (100 - description.length) + " characters left"
+    		var lines = description.split("\n"); 
+    		count_text = (100 - description.length - (lines.length - 1)) + " characters left"
     	}
     	else{
     		count_text = 100 + " characters left"
@@ -117,7 +126,8 @@
 		$("p#count").text(count_text);
 
     	if (drink_special) {
-    		count_text_40 = (40 - drink_special.length) + " characters left"
+    		var lines = drink_special.split("\n"); 
+    		count_text_40 = (40 - drink_special.length - (lines.length - 1)) + " characters left"
 		}
 		else{
 			count_text_40 = 40 + " characters left"
@@ -182,12 +192,12 @@
 			  <% end %>
 			<div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
-			    	<div class="head">Select Background</div>
+			    	<div class="head">1. Select Background</div>
 			    	<p class="normal-text" style="margin-top:18px; margin-bottom:12px;">You can use one of background images</p>
 				   	<% images_array =  PresetGreetingImage.all.where(:is_active => true) %>
 				   	<div class="preset-images">
 					   	<% images_array.in_groups_of(3, false) do |group| %>
-					   		<div class="row medium-12 medium-offset-2">
+					   		<div class="row medium-12">
 							   	<% group.each do |image|%>
 								   	<label class="img-radio">
 								   		<input type="radio" name="image" id="image_<%=image.id%>" value="<%=image.avatar.url%>" onchange="readPresetImage(this)">
@@ -198,19 +208,25 @@
 						<% end %>
 				   	</div>
 				   	<%= hidden_field_tag 'image_type', 'none' %>
-				   	<p class="normal-text" style="margin-top:18px">Or</p>
+				   	<p class="normal-text" style="margin-top:50px">Or</p>
 				   	
 				   	<label for="greeting_message_poster" class="custom-file-upload">
-					    Upload
+					    Upload Picture
 					</label>
 					<%= f.file_field :poster, {:onchange => "readURL(this)", :class => "upload"} %> 
-				   	<p class="normal-text" style="font-size:0.675rem">Your image should be 1242px by 2016px, no larger than 1MB and in .PNG or JPG format.</p>
+				   	<p class="normal-text" style="font-size:0.675rem">Your image should be 1242px by 2016px, no larger than 1MB and in .PNG or .JPG format.</p>
 			   	</div>
 		    </div>
+		    <%if !@greeting_message.greeting_posters.blank? %>
+		    <div id="additional-info">
+		    <%else%>
+		    <div id="additional-info" style="display:none">
+		    <%end%>
+
 		    <div style="width: 1%; float:left">&nbsp;</div>
 		    <div class="message-edit-form grey"  style="width: 22%; float:left">
 			    <div class="venue-fields">
-			    	<div class="head">Add Optional Text</div>
+			    	<div class="head">2. Add Optional Text</div>
 				    <p class="normal-text" style="margin-top:18px; margin-bottom:6px;">Add the lineup for tonight</p>
 				    <%= f.text_field :pending_first_dj, {:id => "first_dj", :onkeyup => "preview()", :placeholder => "Act #1 ex.DJ 1 (House) 10-1"} %>
 				    <%= f.text_field :pending_second_dj, {:id => "second_dj", :onkeyup => "preview()", :placeholder => "Act #2"} %>
@@ -229,7 +245,7 @@
 				    &nbsp;Admission</p>
 				    
 				    <%#= f.text_field :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here"} %>
-				    <%= f.text_area :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Speciald go here", :style => "height: 20px;resize:none;font-size:17px;margin-bottom:0;overflow:hidden", :maxlength => 40} %>
+				    <%= f.text_area :pending_drink_special, {:id => "drink_special", :onkeyup => "preview()", :placeholder => "Drink Specials go here", :style => "height: 18px;resize:none;font-size:14px;margin-bottom:0;overflow:hidden", :maxlength => 40} %>
 				    <div>
 				    	<p class="normal-text" id="count40" style="margin-bottom: 12px;">
 				    		<%= 40 - (@greeting_message.pending_drink_special.blank? ? 0 : @greeting_message.pending_drink_special.length) %> characters left
@@ -237,7 +253,7 @@
 				    </div>
 					<hr  class="form hr">
 
-				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 120px;resize:vertical;font-size:17px;margin-bottom: 0;", :maxlength => 100} %>
+				    <%= f.text_area :pending_description, {:id => "description", :onkeyup => "preview()", :placeholder => "Use this space for anything ex. Happy Birthday Natalie!", :style => "height: 70px;resize:none;font-size:14px;margin-bottom: 0;", :maxlength => 100} %>
 				    <div>
 				    	<p class="normal-text" id="count" style="margin-bottom: 12px;">
 				    		<%= 100 - (@greeting_message.pending_description.blank? ? 0 : @greeting_message.pending_description.length) %> characters left
@@ -324,7 +340,7 @@
 
 					<div class="inner-text" id="description_div"><%=@greeting_message.pending_description %></div>
 				</div>
-			    
+			</div>
 		    </div>
 			<%end%>
 		</div>
