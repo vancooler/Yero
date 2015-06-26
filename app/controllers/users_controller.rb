@@ -275,7 +275,8 @@ class UsersController < ApplicationController
 
   # New API for whispers requests
   def requests_new
-    
+    unread =  !params[:unread].blank? ? (params[:unread].to_i == 1) : false
+
     # TODO: check venue/user exist
     time_0 = Time.now
     return_users = current_user.whisper_friends
@@ -304,11 +305,24 @@ class UsersController < ApplicationController
       # if u["viewed"].to_i == 0
       #   unviewed_whisper_number = unviewed_whisper_number + 1
       # end
-      unviewed_whispers << u
+      if unread 
+        if u["viewed"].nil? or u["viewed"].to_i == 0
+          unviewed_whispers << u
+        end
+      else
+        unviewed_whispers << u
+      end
     end
 
     venues.each do |v|
-      unviewed_whispers << v
+      if unread 
+        if v["viewed"].nil? or v["viewed"].to_i == 0
+          unviewed_whispers << v
+        end
+      else
+        unviewed_whispers << v
+      end
+
       # if v["viewed"].nil? or v["viewed"].to_i == 0
       #   unviewed_whisper_number = unviewed_whisper_number + 1
       # end
