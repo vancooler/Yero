@@ -421,22 +421,6 @@ class UsersController < ApplicationController
     if !friends.blank?
       users = requests_friends_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
-
-      # same_venue_users = []
-      # different_venue_users = [] 
-      # no_badge_users = []
-
-      # users.each do |u|
-      #   if u['different_venue_badge'].to_s == "true"
-      #     different_venue_users << u
-      #   elsif u['same_venue_badge'].to_s == "true"
-      #     same_venue_users << u
-      #   else
-      #     no_badge_users << u
-      #   end
-      # end
-      
-      # return_data = same_venue_users + different_venue_users + no_badge_users 
       users = users.sort_by { |hsh| hsh["timestamp"] }
       puts "USER ORDER:"
       puts users.inspect
@@ -445,6 +429,28 @@ class UsersController < ApplicationController
       render json: success(Array.new, "data")
     end
   end
+
+  # new API for friends list
+  def myfriends_new
+    p 'user_id'
+    p current_user.id
+    # friends = UserFriends.return_friends(current_user.id)
+    friends = WhisperNotification.myfriends(current_user.id)
+    puts "friends123: "
+    puts friends.inspect
+    if !friends.blank?
+      users = requests_user_whisper_json(friends)
+      users = JSON.parse(users).delete_if(&:blank?)
+      users = users.sort_by { |hsh| hsh["timestamp"] }
+      WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
+      puts "USER ORDER:"
+      puts users.inspect
+      render json: success(users.reverse, "data")
+    else
+      render json: success(Array.new, "data")
+    end
+  end
+
 
   def update_profile
     if current_user.update(introduction_1: CGI.unescape(params[:introduction_1].strip))
