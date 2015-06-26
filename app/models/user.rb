@@ -657,7 +657,7 @@ class User < ActiveRecord::Base
             json.wechat_id      user.wechat_id
             json.snapchat_id    user.snapchat_id
             json.instagram_id   user.instagram_id
-            json.apn_token      user.apn_token
+            # json.apn_token      user.apn_token
             json.latitude       user.latitude  
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? nil : user.introduction_1
@@ -762,6 +762,45 @@ class User < ActiveRecord::Base
     end
 
     return result
+  end
+
+
+  def user_object(current_user)
+    # target_user = User.find_by_id(user["target_user"]["id"].to_i)
+    user_info = self.to_json(false)
+    user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+    user_info["avatars"].each do |a|
+      thumb = a['avatar']
+      a['avatar'] = thumb.gsub! 'thumb_', ''
+    end
+
+
+    user_object = {
+      same_venue_badge:          current_user.same_venue_as?(self.id),
+      different_venue_badge:     current_user.different_venue_as?(self.id) ,
+      actual_distance:           current_user.actual_distance(self),
+      id:             self.id,
+      first_name:     self.first_name,
+      key:            self.key,
+      last_active:    self.last_active,
+      last_activity:  self.last_activity,
+      since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
+      gender:         self.gender,
+      birthday:       (self.id != 307 ? self.birthday : ''),
+      distance:       (self.id != 307 ? current_user.distance_label(self) : ''),
+      created_at:     self.created_at,
+      updated_at:     self.updated_at,
+      avatars:         user_info["avatars"],
+      email:  self.email,
+      instagram_id:  self.instagram_id,
+      snapchat_id:  self.snapchat_id,
+      wechat_id:  self.wechat_id,
+      latitude:       self.latitude,
+      longitude:      self.longitude,
+      introduction_1: self.introduction_1.blank? ? nil : self.introduction_1
+    }
+
+    return user_object
   end
 
 end

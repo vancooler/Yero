@@ -857,6 +857,7 @@ class WhisperNotification < AWS::Record::HashModel
     accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
     chat_request_number = 0
     venue_greeting_number = 0
+    accept_number = 0
     if chat_items.present?
       chat_request_number = chat_items.count
     end
@@ -993,5 +994,36 @@ class WhisperNotification < AWS::Record::HashModel
     if !token.nil? and !token.empty?
       apn.push(notification)
     end
+  end
+
+
+  def self.unviewd_whisper_number(user_id)
+    dynamo_db = AWS::DynamoDB.new
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name]
+    table.load_schema
+
+    chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
+    greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
+    chat_request_number = 0
+    venue_greeting_number = 0
+    accept_number = 0
+    if chat_items.present?
+      chat_request_number = chat_items.count
+    end
+    if greeting_items.present?
+      venue_greeting_number = greeting_items.count
+    end
+    if accept_items.present?
+      accept_number = accept_items.count
+    end
+
+    badge = {
+      total_number: chat_request_number + venue_greeting_number + accept_number,
+      friend_number: accept_number
+    }
+
+    return badge
   end
 end

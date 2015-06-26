@@ -69,4 +69,61 @@ class Venue < ActiveRecord::Base
       "375 Water St,Vancouver,BC,CA"
     end
   end
+
+
+  def self.venues_object(venues)
+    data = Jbuilder.encode do |json|
+      json.array! venues do |v|
+        images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
+        json.id v.id
+        json.name (v.name.blank? ? '' : v.name.upcase)
+        json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
+        json.address v.address_line_one
+        json.city v.city
+        json.state v.state
+        json.longitude v.longitude
+        json.latitude v.latitude
+        # json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
+        if !images.empty?
+          avatars = Array.new
+          images.each do |i|
+            avatars << i.avatar.url
+          end
+          json.images do
+            json.array! avatars
+          end
+        end
+
+        # json.nightly do
+        #   nightly = Nightly.today_or_create(v)
+        #   json.boy_count nightly.boy_count
+        #   json.girl_count nightly.girl_count
+        #   json.guest_wait_time nightly.guest_wait_time
+        #   json.regular_wait_time nightly.regular_wait_time
+        # end
+      end
+    end
+
+    return data
+  end
+
+  def venue_object
+    images = VenueAvatar.where(venue_id: self.id).order(default: :desc)
+
+    venue_object = {
+      id:             self.id,
+      first_name:     (self.name.blank? ? '' : self.name.upcase),
+      type:            self.type,
+      address:    self.address_line_one,
+      city:  self.city,
+      state:         self.state,
+      country:         self.country,
+      latitude:     self.latitude,
+      longitude:     self.longitude,
+      venue_message: "Welcome to "+(self.name.blank? ? '' : self.name.upcase)+"! Open this Whisper to learn more about tonight.",
+      images:         images
+    }
+
+    return venue_object
+  end
 end

@@ -262,55 +262,44 @@ class VenuesController < ApplicationController
       venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
     end
 
-    # if params[:after]
-    #   new_list = []
+    data = Venue.venues_object(venues)
+    # data = Jbuilder.encode do |json|
+      
+    #   json.array! venues do |v|
+    #     # puts "venue:" 
+    #     # puts v.inspect
+    #     images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
+    #     json.id v.id
+    #     json.name (v.name.blank? ? '' : v.name.upcase)
+    #     json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
+    #     json.address v.address_line_one
+    #     json.city v.city
+    #     json.state v.state
+    #     json.longitude v.longitude
+    #     json.latitude v.latitude
+    #     json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
+    #     if !images.empty?
+    #       avatars = Array.new
+    #       images.each do |i|
+    #         # avatar = Hash.new
+    #         # avatar['url'] = i.avatar.url
+    #         # avatar['default'] = i.default
+    #         avatars << i.avatar.url
+    #       end
+    #       json.images do
+    #         json.array! avatars
+    #       end
+    #     end
 
-    #   venues.each do |venue|
-    #     if venue.tonightly.updated_at > Time.at(params[:after].to_i)
-    #       new_list << venue
+    #     json.nightly do
+    #       nightly = Nightly.today_or_create(v)
+    #       json.boy_count nightly.boy_count
+    #       json.girl_count nightly.girl_count
+    #       json.guest_wait_time nightly.guest_wait_time
+    #       json.regular_wait_time nightly.regular_wait_time
     #     end
     #   end
-
-    #   venues = new_list
     # end
-
-    data = Jbuilder.encode do |json|
-      
-      json.array! venues do |v|
-        # puts "venue:" 
-        # puts v.inspect
-        images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
-        json.id v.id
-        json.name (v.name.blank? ? '' : v.name.upcase)
-        json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
-        json.address v.address_line_one
-        json.city v.city
-        json.state v.state
-        json.longitude v.longitude
-        json.latitude v.latitude
-        json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
-        if !images.empty?
-          avatars = Array.new
-          images.each do |i|
-            # avatar = Hash.new
-            # avatar['url'] = i.avatar.url
-            # avatar['default'] = i.default
-            avatars << i.avatar.url
-          end
-          json.images do
-            json.array! avatars
-          end
-        end
-
-        json.nightly do
-          nightly = Nightly.today_or_create(v)
-          json.boy_count nightly.boy_count
-          json.girl_count nightly.girl_count
-          json.guest_wait_time nightly.guest_wait_time
-          json.regular_wait_time nightly.regular_wait_time
-        end
-      end
-    end
 
     # render json: {
     #   list: JSON.parse(data)

@@ -273,6 +273,76 @@ class UsersController < ApplicationController
     render json: success(users, "data")
   end
 
+  # New API for whispers requests
+  def requests_new
+    
+    # TODO: check venue/user exist
+    time_0 = Time.now
+    return_users = current_user.whisper_friends
+    time_1 = Time.now
+    runtime = time_1 - time_0
+    puts "User time"
+    puts runtime.inspect
+    return_venues = current_user.whisper_venue
+    time_2 = Time.now
+    runtime = time_2 - time_1
+    puts "Venue time"
+    puts runtime.inspect
+    # yero_notify = WhisperNotification.yero_notification(current_user.id)
+
+    users = requests_user_whisper_json(return_users)
+    venues = requests_venue_whisper_json(return_venues)
+
+    users = JSON.parse(users).delete_if(&:blank?)
+    venues  = JSON.parse(venues).delete_if(&:blank?)
+    # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+
+
+    unviewed_whisper_number = 0
+    unviewed_whispers = []
+    users.each do |u|
+      # if u["viewed"].to_i == 0
+      #   unviewed_whisper_number = unviewed_whisper_number + 1
+      # end
+      unviewed_whispers << u
+    end
+
+    venues.each do |v|
+      unviewed_whispers << v
+      # if v["viewed"].nil? or v["viewed"].to_i == 0
+      #   unviewed_whisper_number = unviewed_whisper_number + 1
+      # end
+    end
+
+    return_data = Array.new
+    unviewed_whispers.each do |r|
+      return_data << r
+    end 
+    
+    whispers_array = Array.new
+    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
+    users.each do |whisp|
+      whispers_array << whisp["whisper_id"]
+    end
+
+    time_3 = Time.now
+    if !whispers_array.nil? and whispers_array.count > 0
+      current_user.delay.viewed_by_sender(whispers_array)
+    end
+
+    time_4 = Time.now
+    runtime = time_4 - time_3
+    puts "Update time"
+    puts runtime.inspect
+
+    badge = WhisperNotification.unviewd_whisper_number(current_user.id)
+    response_data = {
+      badge_number: badge,
+      whispers: users
+    }
+    render json: success(response_data, "data")
+  end
+
 
   ########################
   # To report a user
@@ -1101,6 +1171,63 @@ class UsersController < ApplicationController
       end         
     end
     return users 
+  end
+
+  def requests_user_whisper_json(return_users)
+    users = Jbuilder.encode do |json|
+      json.array! return_users.each do |user|
+        target_user = User.find_by_id(user["target_user"]["id"].to_i)
+        if !target_user.nil?
+          user_object = target_user.user_object(current_user)
+        end
+
+        json.timestamp  user["timestamp"]
+        json.seconds_left  user["seconds_left"]
+        json.timestamp_read  Time.at(user["timestamp"])
+        json.accepted   user["accepted"].blank? ? nil : user["accepted"]
+        json.declined   user["declined"].blank? ? nil : user["declined"]
+        json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
+        json.intro_message user["intro"].blank? ? nil : user["intro"]
+        json.viewed user["viewed"].blank? ? 0 : user["viewed"]
+        json.notification_type 2
+        json.object_type "user"
+        json.object user_object
+
+      end         
+    end
+    return users 
+  end
+
+  def requests_venue_whisper_json(return_venues)
+    venues = Jbuilder.encode do |json|
+      json.array! return_venues.each do |venue|
+        venue_obj = Venue.find(venue["venue_id"])
+        if !venue_obj.nil?
+          venue_object = venue_obj.venue_object
+        end
+        # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+        # if venue_avatar 
+        #   json.venue_avatar venue_avatar["avatar"]
+        # end
+
+        # json.venue_name venue_obj["name"]
+        # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+        json.timestamp venue["timestamp"]
+        json.seconds_left  nil
+        json.timestamp_read Time.at(venue['timestamp'])
+        json.accepted   venue["accepted"].blank? ? nil : venue["accepted"]
+        json.declined   venue["declined"].blank? ? nil : venue["declined"]
+        json.viewed venue["viewed"]
+        # json.not_viewed_by_sender venue["not_viewed_by_sender"]
+        json.created_date venue["created_date"]
+        json.whisper_id venue["whisper_id"]
+        json.notification_type  1
+        json.object_type "venue"
+        json.object venue_object
+      end
+    end
+
+    return venues
   end
 
   def sign_up_params
