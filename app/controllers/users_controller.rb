@@ -432,13 +432,18 @@ class UsersController < ApplicationController
 
   # new API for friends list
   def myfriends_new
-    p 'user_id'
-    p current_user.id
-    # friends = UserFriends.return_friends(current_user.id)
     friends = WhisperNotification.myfriends(current_user.id)
-    puts "friends123: "
-    puts friends.inspect
+
     if !friends.blank?
+      page_number = nil
+      friends_per_page = nil
+      page_number = params[:page].to_i + 1 if !params[:page].blank?
+      friends_per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
+        friends = Kaminari.paginate_array(friends).page(page_number).per(friends_per_page) 
+      end
+
       users = requests_user_whisper_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
       users = users.sort_by { |hsh| hsh["timestamp"] }
