@@ -713,7 +713,6 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
 
-  #<Houston::Notification:0x007f1ebb6890f8 @token=\"a75d03d83efbcba0b2c56b444b278de14c303a4cee24c1d4bedd2a6ec026808b\", @alert=\"Welcome to YJ's Place! Open this to learn more about tonight.\", @badge=2, @sound=\"sosumi.aiff\", @category=\"INVITE_CATEGORY\", @expiry=nil, @id=nil, @priority=nil, @content_available=true, @custom_data={:type=>1, :venue_greeting_number=>1}>
   def send_push_notification_to_target_user(message)
     #this shall be refactored once we have more phones to test with
     app_local_path = Rails.root
@@ -746,54 +745,57 @@ class WhisperNotification < AWS::Record::HashModel
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
     
     #get badge number
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    table.load_schema
-    chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    accept_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
-    chat_request_number = 0
-    venue_greeting_number = 0
-    chat_accept_number = 0
-    if chat_items.present?
-      chat_request_number = chat_items.count
-    end
-    if greeting_items.present?
-      venue_greeting_number = greeting_items.count
-    end
-    if accept_items.present?
-      chat_accept_number = accept_items.count
-    end
+    # dynamo_db = AWS::DynamoDB.new
+    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    # table = dynamo_db.tables[table_name]
+    # table.load_schema
+    # chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
+    # greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    # accept_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
+    # chat_request_number = 0
+    # venue_greeting_number = 0
+    # chat_accept_number = 0
+    # if chat_items.present?
+    #   chat_request_number = chat_items.count
+    # end
+    # if greeting_items.present?
+    #   venue_greeting_number = greeting_items.count
+    # end
+    # if accept_items.present?
+    #   chat_accept_number = accept_items.count
+    # end
 
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number+chat_accept_number)
+    notification.badge = 1
     notification.sound = "sosumi.aiff"
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
-    if self.notification_type.to_i == 1
-      notification.custom_data = {
-          # whisper_id: self.id,
-          # origin_user: origin_user_key,
-          # target_user: target_user.key,
-          # timestamp: self.timestamp,
-          # target_apn: token,
-          # viewed: self.viewed,
-          # accepted: self.accepted,
-          type: self.notification_type.to_i,
-          venue_greeting_number: venue_greeting_number
-      }
-    elsif self.notification_type.to_i == 2
-      notification.custom_data = {
-          type: self.notification_type.to_i,
-          chat_request_number: chat_request_number
-      }
-    elsif self.notification_type.to_i == 3
-      notification.custom_data = {
-          type: self.notification_type.to_i,
-          chat_accept_number: chat_accept_number
-      }
-    end
+    # if self.notification_type.to_i == 1
+    #   notification.custom_data = {
+    #       # whisper_id: self.id,
+    #       # origin_user: origin_user_key,
+    #       # target_user: target_user.key,
+    #       # timestamp: self.timestamp,
+    #       # target_apn: token,
+    #       # viewed: self.viewed,
+    #       # accepted: self.accepted,
+    #       type: self.notification_type.to_i,
+    #       venue_greeting_number: venue_greeting_number
+    #   }
+    # elsif self.notification_type.to_i == 2
+    #   notification.custom_data = {
+    #       type: self.notification_type.to_i,
+    #       chat_request_number: chat_request_number
+    #   }
+    # elsif self.notification_type.to_i == 3
+    #   notification.custom_data = {
+    #       type: self.notification_type.to_i,
+    #       chat_accept_number: chat_accept_number
+    #   }
+    # end
+
+    notification.custom_data = {
+      type: self.notification_type.to_i
+    }
 
     # And... sent! That's all it takes.
 
@@ -813,86 +815,6 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  # not use it from April 9th 2015
-  def self.send_accept_notification_to_sender(whisper_id)
-    #this shall be refactored once we have more phones to test with
-    app_local_path = Rails.root
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    table.load_schema
-    hash = table.items.where(:id).equals(whisper_id.to_s)
-    hash = hash.first.attributes
-
-    if hash["origin_id"] != "0"
-      origin_user = User.find(hash["origin_id"]) 
-      origin_user_key = origin_user.key
-    else
-      origin_user_key = "SYSTEM"
-    end
-    target_user = User.find(hash["target_id"]) 
-
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      apn = Houston::Client.development
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
-    else
-      apn = Houston::Client.production
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-    end
-
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(hash["origin_id"]).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    message = target_user.first_name+" is now your friend!"
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
-    
-    #get badge number
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    table.load_schema
-    chat_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    greeting_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    accept_items = table.items.where(:target_id).equals(hash["origin_id"].to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
-    chat_request_number = 0
-    venue_greeting_number = 0
-    accept_number = 0
-    if chat_items.present?
-      chat_request_number = chat_items.count
-    end
-    if greeting_items.present?
-      venue_greeting_number = greeting_items.count
-    end
-    if accept_items.present?
-      accept_number = accept_items.count
-    end
-
-
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.badge = (chat_request_number+venue_greeting_number+accept_number)
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    notification.custom_data = {
-          whisper_id: hash["id"],
-          origin_user: origin_user_key,
-          target_user: target_user.key,
-          timestamp: hash["timestamp"],
-          target_apn: token,
-          viewed: hash["viewed"],
-          accepted: hash["accepted"],
-          type: hash["notification_type"].to_i,
-          chat_request_number: chat_request_number,
-          venue_greeting_number: venue_greeting_number,
-          accepted_request_number: accept_number
-      }
-
-    # And... sent! That's all it takes.
-    if !token.nil? and !token.empty?
-      apn.push(notification)
-    end
-  end
 
   # send network open notification
   def self.send_nightopen_notification(id)
@@ -917,7 +839,6 @@ class WhisperNotification < AWS::Record::HashModel
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
     notification.custom_data = {         
-          target_apn: token,
           type: 100
     }
 
@@ -951,7 +872,6 @@ class WhisperNotification < AWS::Record::HashModel
     notification.category = "INVITE_CATEGORY"
     notification.content_available = true
     notification.custom_data = {         
-          target_apn: token,
           type: 102
     }
 
@@ -986,8 +906,7 @@ class WhisperNotification < AWS::Record::HashModel
     notification.content_available = true
     notification.custom_data = {   
           type: 101,      
-          is_default: default,
-          target_apn: token
+          is_default: default
     }
 
     # And... sent! That's all it takes.

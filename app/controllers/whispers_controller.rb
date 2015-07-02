@@ -149,7 +149,6 @@ class WhispersController < ApplicationController
           venue_id = attributes['venue_id'].to_i
         end
         n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
-        # WhisperNotification.send_accept_notification_to_sender(whisperId)
         if origin_id.to_i <= 0 
           render json: success
         elsif !n.nil?
