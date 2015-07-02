@@ -794,7 +794,8 @@ class WhisperNotification < AWS::Record::HashModel
     # end
 
     notification.custom_data = {
-      type: self.notification_type.to_i
+      type: self.notification_type.to_i,
+      friend_or_whisper: (self.notification_type.to_i == 3 ? "friend" : "whisper")
     }
 
     # And... sent! That's all it takes.
