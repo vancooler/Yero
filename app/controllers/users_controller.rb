@@ -447,7 +447,7 @@ class UsersController < ApplicationController
   # new API for friends list
   def myfriends_new
     friends = WhisperNotification.myfriends(current_user.id)
-
+    badge = WhisperNotification.unviewd_whisper_number(current_user.id)
     if !friends.blank?
       page_number = nil
       friends_per_page = nil
@@ -464,10 +464,17 @@ class UsersController < ApplicationController
       WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
       puts "USER ORDER:"
       puts users.inspect
-      render json: success(users.reverse, "data")
+      response_data = {
+        badge_number: badge,
+        friends: users.reverse
+      }
     else
-      render json: success(Array.new, "data")
+      response_data = {
+        badge_number: badge,
+        friends: Array.new
+      }
     end
+    render json: success(response_data, "data")
   end
 
 
