@@ -262,6 +262,13 @@ class VenuesController < ApplicationController
       venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
     end
 
+    # reorder it based on featured and featured order
+    featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
+    if !featured_venues.empty?
+      other_venues = venues - featured_venues
+      featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
+      venues = featured_venues + other_venues
+    end
     data = Venue.venues_object(venues)
     # data = Jbuilder.encode do |json|
       

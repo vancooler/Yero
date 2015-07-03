@@ -19,7 +19,8 @@ class Venue < ActiveRecord::Base
   after_validation :geocode
 
   scope :pending, ->{where("pending_name is not ? or pending_email is not ? or pending_venue_type_id is not ? or pending_phone is not ? or pending_address is not ? or pending_city is not ? or pending_state is not ? or pending_country is not ? or pending_zipcode is not ? or pending_manager_first_name is not ? or pending_manager_last_name is not ? or pending_latitude is not ? or pending_longitude is not ?", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)}
-
+  scope :featured, ->{where("featured = ?", true)}
+  # scope :all, ->{all}
   validates_presence_of :venue_network, :name
 
   def country_name
@@ -83,6 +84,8 @@ class Venue < ActiveRecord::Base
         json.state v.state
         json.longitude v.longitude
         json.latitude v.latitude
+        json.featured v.featured
+        json.featured_order v.featured_order
         # json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
         if !images.empty?
           avatars = Array.new
@@ -120,6 +123,8 @@ class Venue < ActiveRecord::Base
       country:         self.country,
       latitude:     self.latitude,
       longitude:     self.longitude,
+      featured:     self.featured,
+      featured_order:     self.featured_order,
       venue_message: "Welcome to "+(self.name.blank? ? '' : self.name.upcase)+"! Open this Whisper to learn more about tonight.",
       images:         images
     }

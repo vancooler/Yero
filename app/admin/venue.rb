@@ -6,22 +6,51 @@ ActiveAdmin.register Venue do
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
+
+
   action_item :only => :show do
     if !venue.draft_pending.nil? and venue.draft_pending
       link_to('Approve pending draft', venue_approve_url(:venue => venue), :method => "post", :data => {:confirm => 'Are you sure?'}) 
     end
   end
 
-  batch_action :do_something do |selection|
+  batch_action :set_as_featured, :confirm => "Are you sure you want to set all of these as featured?" do |selection|
     Venue.find(selection).each do |venue|
-      # venue.status = 0
-      # venue.save!
+      venue.featured = true
+      venue.save!
     end
     redirect_to :back
   end
+
+  batch_action :unset_featured, :confirm => "Are you sure you want to unset all of these from featured?" do |selection|
+    Venue.find(selection).each do |venue|
+      venue.featured = false
+      venue.save!
+    end
+    redirect_to :back
+  end
+
   batch_action :destroy, false
 
+  scope :all
   scope :pending
+  scope :featured
+  
+  config.sort_order = 'featured_order_asc'
+ 
+  collection_action :sort, :method => :post do
+    order = 1
+    params[:venue].each do |id|
+      venue = Venue.find_by_id(id)
+      if !venue.nil? and venue.featured
+        venue.featured_order = order
+        venue.save!
+        order += 1
+      end
+    end
+    render :nothing => true
+  end
+
   index do
     selectable_column
   	column :id
@@ -52,6 +81,8 @@ ActiveAdmin.register Venue do
     #   end
     # end
     column :draft_pending
+    column :featured
+    column :featured_order
   	actions
 
 
