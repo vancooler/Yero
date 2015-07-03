@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
     users = User.includes(:user_avatars).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
-
+    users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
         users = users.where(:gender => gender) #Filter by gender
@@ -660,7 +660,7 @@ class User < ActiveRecord::Base
             # json.apn_token      user.apn_token
             json.latitude       user.latitude  
             json.longitude      user.longitude 
-            json.introduction_1 user.introduction_1.blank? ? nil : user.introduction_1
+            json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
             json.exclusive      user.exclusive
           end
         end
@@ -797,7 +797,7 @@ class User < ActiveRecord::Base
       wechat_id:  self.wechat_id,
       latitude:       self.latitude,
       longitude:      self.longitude,
-      introduction_1: self.introduction_1.blank? ? nil : self.introduction_1
+      introduction_1: self.introduction_1.blank? ? '' : self.introduction_1
     }
 
     return user_object
