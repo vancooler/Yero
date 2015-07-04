@@ -166,8 +166,8 @@ class User < ActiveRecord::Base
     # only return users with avatar near current user 
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
-    users = User.includes(:user_avatars).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
-    users.delete(self)
+    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
+    # users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
         users = users.where(:gender => gender) #Filter by gender
