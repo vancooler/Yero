@@ -1,5 +1,7 @@
 class WhispersController < ApplicationController
-  before_action :authenticate_api, only: [:api_create]
+  prepend_before_filter :get_api_key, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
+
+  before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
   skip_before_filter  :verify_authenticity_token
 
   def new
@@ -190,6 +192,12 @@ class WhispersController < ApplicationController
     else
       whispers_delete = WhisperNotification.delete_whispers(params[:array].to_a)
       render json: success(whispers_delete)
+    end
+  end
+
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
     end
   end
 end

@@ -1,4 +1,5 @@
 class UserAvatarsController < ApplicationController
+  prepend_before_filter :get_api_key, except: [:create_avatar]
   before_action :authenticate_api, except: [:create_avatar]
   skip_before_filter  :verify_authenticity_token
 
@@ -205,6 +206,13 @@ class UserAvatarsController < ApplicationController
       render json: error("This is the main avatar, please set another avatar as your main avatar and then delete it.")
     else
       render json: error("Avatar not found.")
+    end
+  end
+
+  private
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
     end
   end
 end

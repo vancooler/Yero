@@ -31,7 +31,9 @@ class ApplicationController < ActionController::Base
 
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
-    unless User.find_by_key(params[:key])
+    if User.find_by_key(params[:key])
+      # check expiration and extend if still valid
+    else
       render json: error("You must authenticate with an API Key")
     end
   end

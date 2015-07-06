@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-
+  prepend_before_filter :get_api_key, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   before_action :authenticate_api, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   skip_before_filter  :verify_authenticity_token
 
@@ -721,7 +721,7 @@ class UsersController < ApplicationController
 
   # API to login a user
   def login
-    if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty? or params[:key].nil?
+    if params[:email].nil? or params[:email].empty? or params[:password].nil? or params[:password].empty?
       render json: error("Login information missing.")
     else
       if User.exists? email: params[:email]
@@ -731,7 +731,7 @@ class UsersController < ApplicationController
         if user.authenticate(params[:password])
           # Authenticated successfully
           # Check key change, means login in another device, do update the key 
-          if user.key != params[:key]
+          if params[:key].blank? or user.key != params[:key]
             # generate a new key
             user.key = loop do
               random_token = SecureRandom.urlsafe_base64(nil, false)
@@ -1273,6 +1273,13 @@ class UsersController < ApplicationController
   def login_params
     params.require(:user).permit(:email, :password, :token)
   end
+
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
+    end
+  end
+
 end
 
 

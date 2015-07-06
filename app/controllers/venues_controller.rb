@@ -1,5 +1,5 @@
 class VenuesController < ApplicationController
-
+  prepend_before_filter :get_api_key, only: [:list, :people]
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list, :people]
   before_action :authenticate_web_user!, only: [:index, :edit, :show, :update]
@@ -398,4 +398,12 @@ class VenuesController < ApplicationController
       }
     end
   end
+
+  private
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
+    end
+  end
+
 end

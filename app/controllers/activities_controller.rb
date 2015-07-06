@@ -1,4 +1,5 @@
 class ActivitiesController < ApplicationController
+  prepend_before_filter :get_api_key
   before_action :authenticate_api
   skip_before_filter  :verify_authenticity_token
   
@@ -13,6 +14,13 @@ class ActivitiesController < ApplicationController
       render json: success((activity - Time.new('1970')).seconds.to_i)
     else
       render json: error("No Activity Found.")
+    end
+  end
+
+  private
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
     end
   end
 end

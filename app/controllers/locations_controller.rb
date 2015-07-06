@@ -1,4 +1,5 @@
 class LocationsController < ApplicationController
+  prepend_before_filter :get_api_key
   before_action :authenticate_api
   skip_before_filter  :verify_authenticity_token
 
@@ -43,6 +44,12 @@ class LocationsController < ApplicationController
 
     else
       render json: error("User or Location cannot be found.")
+    end
+  end
+  private
+  def get_api_key
+    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
+      params[:key] = api_key
     end
   end
 end
