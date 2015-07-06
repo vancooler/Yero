@@ -16,7 +16,7 @@ class UserAvatarsController < ApplicationController
             avatar.order = 0
             avatar.save
 
-            user_info = current_user.to_json(false)
+            user_info = current_user.to_json(true)
             user_info["key"] = current_user.key
             # avatars = Array.new
             # user_info['avatars'].each do |avatar|
@@ -49,7 +49,7 @@ class UserAvatarsController < ApplicationController
         if avatar.set_as_default
           avatar.order = 0
           avatar.save
-          user_info = current_user.to_json(false)
+          user_info = current_user.to_json(true)
           user_info["key"] = current_user.key
             # avatars = Array.new
             # user_info['avatars'].each do |avatar|
@@ -110,7 +110,7 @@ class UserAvatarsController < ApplicationController
           current_user.save
         end
       end
-      user_info = current_user.to_json(false)
+      user_info = current_user.to_json(true)
       user_info["key"] = current_user.key
       # avatars = Array.new
       # user_info['avatars'].each do |avatar|
@@ -133,7 +133,7 @@ class UserAvatarsController < ApplicationController
         a['avatar'] = thumb.gsub! 'thumb_', ''
       end
       render json: success(user_info)
-      # render json: success(current_user.to_json(false))
+      # render json: success(current_user.to_json(true))
     else
       render json: error(avatar.errors)
     end
@@ -151,7 +151,7 @@ class UserAvatarsController < ApplicationController
     if avatar.save
       
       render json: success(avatar)
-      # render json: success(current_user.to_json(false))
+      # render json: success(current_user.to_json(true))
     else
       render json: error(avatar.errors)
     end
@@ -175,7 +175,7 @@ class UserAvatarsController < ApplicationController
           end
         end
 
-        user_info = current_user.to_json(false)
+        user_info = current_user.to_json(true)
         user_info["key"] = current_user.key
         # avatars = Array.new
         # user_info['avatars'].each do |a|

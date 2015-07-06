@@ -269,6 +269,16 @@ class VenuesController < ApplicationController
       featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
       venues = featured_venues + other_venues
     end
+
+    page_number = nil
+    venues_per_page = nil
+    page_number = params[:page].to_i + 1 if !params[:page].blank?
+    venues_per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+    if !page_number.nil? and !venues_per_page.nil? and venues_per_page > 0 and page_number >= 0
+      venues = Kaminari.paginate_array(venues).page(page_number).per(venues_per_page) if !venues.nil?
+    end
+
     data = Venue.venues_object(venues)
     # data = Jbuilder.encode do |json|
       
