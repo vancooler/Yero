@@ -1345,7 +1345,6 @@ div.medium-12.medium-offset-1{
 	}
 
 	div.message-edit-form{
-		height: 680px;
 		padding: 24px;
 		text-align: center;
 		input{
@@ -1376,11 +1375,38 @@ div.medium-12.medium-offset-1{
 			font-size:13px;
 			font-family: HelveticaNeue;
 		}
+
+		@media #{$medium-up} {
+			height: 680px;
+			width: 22%; 
+			float:left;
+		}
+		@media #{$small-only} {
+			width: 95%; 
+			float:left;
+		}
+	}
+
+	div.one-percent-divider{
+		width: 1%; 
+		float:left;
+		@media #{$small-only} {
+			display: none;
+		}
 	}
 
 	div.preview{
 		text-align: center;
 		max-height: 906px;
+
+		@media #{$medium-up} {
+			width: 20%; 
+			float:left;
+		}
+		@media #{$small-only} {
+			width: 95%; 
+			float:left;
+		}
 		div.head{
 			margin-top: 30px;
 			margin-bottom: 12px;
@@ -1465,6 +1491,10 @@ label.img-radio > input + img{ /* IMAGE STYLES */
   width: 65px;
   height: 65px;  
   display: inline;
+  @media #{$small-only} {
+  	width: 60px;
+  	height: 60px;
+  }
 }
 label.img-radio > input:checked + img{ /* (RADIO CHECKED) IMAGE STYLES */
   border:5px solid red;

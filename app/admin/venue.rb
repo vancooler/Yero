@@ -82,7 +82,7 @@ ActiveAdmin.register Venue do
     # end
     column :draft_pending
     column :featured
-    column :featured_order
+    # column :featured_order
   	actions
 
 
