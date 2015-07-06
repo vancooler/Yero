@@ -22,7 +22,7 @@
 
     <section class="main-section">
       <!-- content goes here -->
-        <%= render "header", title: 'Your Venues', notice: notice %>
+        <%= render "header", title: 'Your Venues', notice: notice, venue_name: '' %>
       	
 		<div class="venue-rows">
 			<% @venues.each do |venue| %>
