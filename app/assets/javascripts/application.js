@@ -45,6 +45,33 @@ $(window).resize(function(event) {
 	}
 });
 
+
+function updateSidebar() {
+    var $width = document.documentElement.clientWidth,
+        $height = document.documentElement.clientHeight,
+        $main = jQuery('main').height();
+
+
+    if($width > 755) {
+        if($main > $height) {
+        	$height_set = $main + 'px';
+        } else {
+        	$height_set = $height + 'px';
+        }
+        console.log($height_set);
+
+        jQuery('div[class=inner-wrap]').css({'height': $height_set});
+    } 
+}
+
+$(window)
+    .load(function() {
+        updateSidebar();
+    })
+    .resize(function(){
+        updateSidebar();
+    });
+
 function scrollHeader(){
 
 	var homeHeader = $('.home .contain-to-grid');
