@@ -648,6 +648,7 @@ class User < ActiveRecord::Base
             json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.different_venue_badge     self.different_venue_as?(user.id)
             json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
             json.id             user.id
             json.first_name     user.first_name
             json.key            user.key
