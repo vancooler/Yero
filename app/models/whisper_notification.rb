@@ -439,7 +439,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.my_chat_request_history(user)
+  def self.my_chat_request_history(user, page_number, whispers_per_page)
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
@@ -501,6 +501,9 @@ class WhisperNotification < AWS::Record::HashModel
     end
     users = origin_user_array.sort_by! { |hsh| hsh[1] }
     users = users.reverse!
+    if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
+      users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?
+    end
     return users
   end
 

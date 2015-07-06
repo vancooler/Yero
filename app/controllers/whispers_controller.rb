@@ -181,7 +181,12 @@ class WhispersController < ApplicationController
   end
 
   def chat_request_history
-    items = WhisperNotification.my_chat_request_history(current_user)
+    page_number = nil
+    venues_per_page = nil
+    page_number = params[:page].to_i + 1 if !params[:page].blank?
+    whispers_per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+    items = WhisperNotification.my_chat_request_history(current_user, page_number, whispers_per_page)
     render json: success(items)
   end
 
