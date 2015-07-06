@@ -34,6 +34,7 @@ class CreateTimeZonePlaces < ActiveRecord::Migration
     TimeZonePlace.create(timezone: "America/Argentina/Buenos_Aires")
     TimeZonePlace.create(timezone: "America/Montevideo")
     TimeZonePlace.create(timezone: "America/Guyana")
+    TimeZonePlace.create(timezone: "America/Vancouver")
 
     TimeZonePlace.create(timezone: "Atlantic/South_Georgia")
     TimeZonePlace.create(timezone: "Atlantic/Azores")

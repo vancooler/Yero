@@ -370,7 +370,6 @@ class User < ActiveRecord::Base
     puts "runtime2: "
     puts dbtime.inspect
 
-    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
     if !times_array.empty?
       user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
     end
@@ -469,7 +468,6 @@ class User < ActiveRecord::Base
         times_array << open_network_tz #Throw into array
       end
     end
-    times_array << "America/Vancouver" if times_array.include? "America/Los_Angeles"
     puts "CLOSE Timezones:"
     puts times_array.inspect
     # disconnect all users
