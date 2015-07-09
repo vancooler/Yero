@@ -191,7 +191,6 @@ class VenuesController < ApplicationController
   end
 
   def prospect
-    user = User.find_by_key(params[:key])
     if(params[:email] && params[:longitude] && params[:latitude])
       h = {email: params[:email], longitude: params[:longitude], latitude: params[:latitude]}
       save_client = ProspectCityClient.create(h)
@@ -252,7 +251,7 @@ class VenuesController < ApplicationController
     else
       distance = 10000
     end
-    user = User.find_by_key(params[:key])
+    user = current_user
     # venues = Venue.all
     venues = Venue.near_venues(user, distance)
 
@@ -294,7 +293,7 @@ class VenuesController < ApplicationController
     #     json.state v.state
     #     json.longitude v.longitude
     #     json.latitude v.latitude
-    #     json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
+    #     json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
     #     if !images.empty?
     #       avatars = Array.new
     #       images.each do |i|

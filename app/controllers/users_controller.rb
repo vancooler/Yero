@@ -90,7 +90,7 @@ class UsersController < ApplicationController
     if disabled and default
       render json: success(avatar_result, "avatar")
     else
-      user = User.find_by_key(params[:key])
+      user = current_user
       user.is_connected = true
       user.save
       puts user
@@ -367,7 +367,7 @@ class UsersController < ApplicationController
   #
   #########################
   def report
-    reporting_user = User.find_by_key(params[:key])
+    reporting_user = current_user
     reported_user = User.find_by_id(params[:user_id])
     report_type = ReportType.find_by_id(params[:type_id])
     if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
@@ -756,7 +756,7 @@ class UsersController < ApplicationController
   end
 
   def update_settings
-    user = User.find_by_key(params[:key])
+    user = current_user
 
     if user.update(exclusive: params[:exclusive])
       u = Hash.new
@@ -774,7 +774,7 @@ class UsersController < ApplicationController
   end
 
   def deactivate
-    user = User.find_by_key(params[:key])
+    user = current_user
     if !params[:active]
       user.update(active: true)
       render json: success(true)
@@ -784,7 +784,7 @@ class UsersController < ApplicationController
   end
 
   def update_chat_accounts
-    user = User.find_by_key(params[:key])
+    user = current_user
 
     if !params[:instagram_id].blank? 
       if params[:instagram_id].match(/\s/).blank?
@@ -818,7 +818,7 @@ class UsersController < ApplicationController
   end
 
   def remove_chat_accounts
-    user = User.find_by_key(params[:key])
+    user = current_user
     if params[:snapchat_id] == true
       user.snapchat_id = nil
     end
@@ -837,7 +837,7 @@ class UsersController < ApplicationController
 
   # Renders a page for user to change password
   def reset_password
-    @user = User.find_by_key(params[:key])
+    @user = current_user
     render "password_reset"
   end
 
@@ -918,7 +918,7 @@ class UsersController < ApplicationController
         end
       end
     else
-      @user = User.find_by_key(params[:key])
+      @user = current_user
       @error = Array.new
       flash[:danger] = nil
       puts "we got into else"
@@ -937,7 +937,7 @@ class UsersController < ApplicationController
   end
 
   def update_image
-    user = User.find_by_key(params[:key])
+    user = current_user
     avatar = user.user_avatars.find(params[:avatar_id])
 
     if avatar && avatar.update_image(params[:avatar])
@@ -948,7 +948,7 @@ class UsersController < ApplicationController
   end
 
   def update_apn
-    user = User.find_by_key(params[:key])
+    user = current_user
     user.apn_token = params[:token]
     if user.save
       render json: success() #
@@ -959,7 +959,7 @@ class UsersController < ApplicationController
 
   # When user clicked "Connect" button, update field is_connect to true
   def connect
-    user = User.find_by_key(params[:key])
+    user = current_user
     user.is_connected = true
     
     if user.save
@@ -970,12 +970,12 @@ class UsersController < ApplicationController
   end
 
   def get_profile
-    user = User.find_by_key(params[:key])
+    user = current_user
     render json: success(user.to_json(false))
   end
 
   def get_lotto
-    winnings = User.find_by_key(params[:key]).winners.all
+    winnings = current_user.winners.all
 
     data = Jbuilder.encode do |json|
       json.winnings winnings, :message, :created_at, :winner_id, :claimed
@@ -1004,7 +1004,7 @@ class UsersController < ApplicationController
   end
 
   def add_favourite_venue
-    user = User.find_by_key(params[:key])
+    user = current_user
     venue = Venue.find(params[:venue_id])
     if user && venue && !user.favourite_venues.where(venue: venue).first
       fav = FavouriteVenue.new
@@ -1019,7 +1019,7 @@ class UsersController < ApplicationController
   end
 
   def remove_favourite_venue
-    user = User.find_by_key(params[:key])
+    user = current_user
     venue = Venue.find(params[:venue_id])
 
     if user && venue
@@ -1037,7 +1037,7 @@ class UsersController < ApplicationController
   # A list of the user's favourite venues
   # TODO refactor out the JSON data builder to venue.rb
   def favourite_venues
-    user = User.find_by_key(params[:key])
+    user = current_user
 
     favourites = user.favourite_venues
 
@@ -1055,7 +1055,7 @@ class UsersController < ApplicationController
         json.state v.state
         json.longitude v.longitude
         json.latitude v.latitude
-        json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
+        json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
         json.images do
           json.array! images
         end
@@ -1078,7 +1078,7 @@ class UsersController < ApplicationController
   # Get all the chat requests sent to the user
   # TODO refactor out the JSON builder into poke.rb
   def get_pokes
-    user = User.find_by_key(params[:key])
+    user = current_user
 
     pokes = Poke.where(pokee: user).all
 
@@ -1106,7 +1106,7 @@ class UsersController < ApplicationController
 
   # Accept contract makes sure the user accepts the rules of yero
   def accept_contract
-    user = User.find_by_key(params[:key])
+    user = current_user
     if params[:accept_contract] == true
       user.update(accept_contract: true)
       render json: success(true)
@@ -1117,7 +1117,7 @@ class UsersController < ApplicationController
 
   # Like / Unlike feature
   def like
-    # user = User.find_by_key(params[:key])
+    # user = current_user
     if !params[:user_id].nil?
       if User.exists? id: params[:user_id]
         target_user = User.find(params[:user_id])
