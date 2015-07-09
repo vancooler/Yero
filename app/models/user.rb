@@ -649,7 +649,7 @@ class User < ActiveRecord::Base
             json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
             json.id             user.id
             json.first_name     user.first_name
-            json.key            user.key
+            # json.key            user.key
             json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
             # json.gender         user.gender
@@ -782,7 +782,6 @@ class User < ActiveRecord::Base
       actual_distance:           current_user.actual_distance(self),
       id:             self.id,
       first_name:     self.first_name,
-      key:            self.key,
       last_active:    self.last_active,
       last_activity:  self.last_activity,
       since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
@@ -802,6 +801,19 @@ class User < ActiveRecord::Base
     }
 
     return user_object
+  end
+
+
+  def generate_token
+    user = {:id => self.id, :exp => (Time.now.to_i + 3600*3) } # expire in 3 hours
+    if Rails.env == 'development'
+      secret = 'secret'
+    else
+      secret = ENV['SECRET_KEY_BASE']
+    end
+    token = JWT.encode(user, "secret")
+
+    return token
   end
 
 end

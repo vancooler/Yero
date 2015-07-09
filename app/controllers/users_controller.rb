@@ -572,13 +572,14 @@ class UsersController < ApplicationController
         random_token = SecureRandom.urlsafe_base64(nil, false)
         break random_token unless User.exists?(key: random_token)
       end
+      @user.key_expiration = Time.now + 3.hours
 
       @user.last_active = Time.now
       @user.account_status = 0  # inactive without avatar
       if !(User.exists? email: params[:email])
         if @user.save
           response = @user.to_json(true)
-          
+          response['token'] = @user.generate_token
           intro = "Welcome to Yero"
           # TODO: future feature
           # n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
@@ -661,6 +662,8 @@ class UsersController < ApplicationController
     if !(User.exists? email: params[:email])
       if user_registration.create
         user = user_registration.user
+        user.key_expiration = Time.now + 3.hours
+        user.save
         # save avatar order
         if !user.nil? and !user.default_avatar.nil?
           avatar = user.default_avatar
@@ -701,7 +704,7 @@ class UsersController < ApplicationController
             response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
           end
         end
-        
+        response['token'] = user.generate_token
         # render json: user_registration.to_json.inspect
         # render json: user_avatar.to_json.inspect
         
@@ -737,10 +740,12 @@ class UsersController < ApplicationController
               random_token = SecureRandom.urlsafe_base64(nil, false)
               break random_token unless User.exists?(key: random_token)
             end
-
-            user.save!
           end
-          render json: success(user.to_json(true))
+          user.key_expiration = Time.now + 3.hours
+          user.save!
+          user_info = user.to_json(true)
+          user_info['token'] = user.generate_token
+          render json: success(user_info)
         else
           render json: error("Email/Password does not match")
         end  
