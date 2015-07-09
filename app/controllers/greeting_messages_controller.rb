@@ -56,12 +56,10 @@ class GreetingMessagesController < ApplicationController
   def edit_message
     @venue = Venue.find_by_id(params['id'])
     @day = Weekday.find_by_weekday_title(params['day']) # param day should be capitalized
-  	if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
-      WebUser.delay.mixpanel_event(current_web_user.id, 'View greeting message edit', {
-  		    'Day' => @day.weekday_title,
-  		    'Venue' => (@venue.blank? ? '' : @venue.name)
-  	  })
-    end
+  	WebUser.mixpanel_event(current_web_user.id, 'View greeting message edit', {
+		    'Day' => @day.weekday_title,
+		    'Venue' => (@venue.blank? ? '' : @venue.name)
+	  })
   	if mobile_device?
       @device = "mobile"
     else
@@ -153,12 +151,10 @@ class GreetingMessagesController < ApplicationController
                 UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
               end
             end
-            if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
-              WebUser.delay.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
-                  'Venue Name' => @venue.name,
-                  'Venue ID' => @venue.id.to_s
-              })
-            end
+            WebUser.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
+                'Venue Name' => @venue.name,
+                'Venue ID' => @venue.id.to_s
+            })
             format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submission successful.' }
             format.json { head :no_content }
           else
@@ -191,12 +187,10 @@ class GreetingMessagesController < ApplicationController
               if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
                 UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
               end
-              if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
-                WebUser.delay.mixpanel_event(current_web_user.id, 'Create a greeting message draft', {
-                    'Venue Name' => @venue.name,
-                    'Venue ID' => @venue.id.to_s
-                })
-              end
+              WebUser.mixpanel_event(current_web_user.id, 'Create a greeting message draft', {
+                  'Venue Name' => @venue.name,
+                  'Venue ID' => @venue.id.to_s
+              })
               format.html { redirect_to greeting_message_landing_path(:id => @venue.id), notice: 'Submission successful.' }
               format.json { head :no_content }
             else
