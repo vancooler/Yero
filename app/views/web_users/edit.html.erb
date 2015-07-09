@@ -22,7 +22,7 @@
 
     <section class="main-section">
       <!-- content goes here -->
-        <%= render "/venues/header", title: 'Your Account', notice: notice %>
+        <%= render "/venues/header", title: 'Your Account', notice: notice, venue_name: '' %>
 
       		<%= form_for(@web_user) do |f| %>
 			  <% if @web_user.errors.any? %>
