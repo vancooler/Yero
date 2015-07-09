@@ -133,7 +133,7 @@ class Venue < ActiveRecord::Base
       featured:     self.featured,
       featured_order:     self.featured_order,
       venue_message: "Welcome to "+(self.name.blank? ? '' : self.name.upcase)+"! Open this Whisper to learn more about tonight.",
-      images:         images
+      images:         images,
       logo:         logo.empty? ? default_logo : logo.first.url
     }
 
