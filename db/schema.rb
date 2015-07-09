@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150706123744) do
+ActiveRecord::Schema.define(version: 20150709145523) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -386,6 +386,14 @@ ActiveRecord::Schema.define(version: 20150706123744) do
     t.integer  "venue_id",                                   null: false
     t.integer  "user_id",                                    null: false
     t.datetime "enter_time", default: '2014-09-19 01:04:34', null: false
+  end
+
+  create_table "venue_logos", force: true do |t|
+    t.integer  "venue_id"
+    t.string   "avatar"
+    t.boolean  "pending"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "venue_networks", force: true do |t|
