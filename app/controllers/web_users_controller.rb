@@ -4,10 +4,12 @@ class WebUsersController < ApplicationController
 
 
   def edit
-  	WebUser.mixpanel_event(current_web_user.id, 'View WebUser account edit', {
-		    'Name' => current_web_user.name,
-		    'ID' => current_web_user.id.to_s
-	})
+    if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+    	WebUser.delay.mixpanel_event(current_web_user.id, 'View WebUser account edit', {
+  		    'Name' => current_web_user.name,
+  		    'ID' => current_web_user.id.to_s
+  	  })
+    end
   	if mobile_device?
       @device = "mobile"
     else
@@ -31,10 +33,12 @@ class WebUsersController < ApplicationController
       	password_update = false
 	  end
 	  if @web_user.update_attributes(get_params)
-	  	WebUser.mixpanel_event(current_web_user.id, 'WebUser account updated', {
-		    'Name' => current_web_user.name,
-		    'ID' => current_web_user.id.to_s
-		})
+      if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+  	  	WebUser.mixpanel_event(current_web_user.id, 'WebUser account updated', {
+  		    'Name' => current_web_user.name,
+  		    'ID' => current_web_user.id.to_s
+  		  })
+      end
 	  	if password_update
 		  	sign_in(@web_user, bypass: true)
 		end

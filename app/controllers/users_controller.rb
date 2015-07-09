@@ -1218,7 +1218,7 @@ class UsersController < ApplicationController
         json.accepted   user["accepted"].blank? ? nil : user["accepted"]
         json.declined   user["declined"].blank? ? nil : user["declined"]
         json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
-        json.intro_message user["intro"].blank? ? nil : user["intro"]
+        json.intro_message user["intro"].blank? ? '' : user["intro"]
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]
         json.notification_type 2
         json.object_type "user"

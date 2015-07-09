@@ -29,10 +29,12 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue details page', {
-        'Venue Name' => @venue.name,
-        'Venue ID' => @venue.id.to_s
-    })
+    if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+      WebUser.delay.mixpanel_event(current_web_user.id, 'View venue details page', {
+          'Venue Name' => @venue.name,
+          'Venue ID' => @venue.id.to_s
+      })
+    end
 
     respond_to do |format|
       format.html # show.html.erb
@@ -48,10 +50,12 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue edit page', {
-        'Venue Name' => @venue.name,
-        'Venue ID' => @venue.id.to_s
-    })
+    if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+      WebUser.delay.mixpanel_event(current_web_user.id, 'View venue edit page', {
+          'Venue Name' => @venue.name,
+          'Venue ID' => @venue.id.to_s
+      })
+    end
     if @venue.draft_pending.nil? or !@venue.draft_pending
       @venue.pending_name = @venue.name
       @venue.pending_venue_type_id = @venue.venue_type_id
@@ -118,10 +122,12 @@ class VenuesController < ApplicationController
               UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
             end
           end
-          WebUser.mixpanel_event(current_web_user.id, 'Update the venue draft', {
-              'Venue Name' => @venue.name,
-              'Venue ID' => @venue.id.to_s
-          })
+          if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+            WebUser.delay.mixpanel_event(current_web_user.id, 'Update the venue draft', {
+                'Venue Name' => @venue.name,
+                'Venue ID' => @venue.id.to_s
+            })
+          end
           format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
           format.json { head :no_content }
         else
@@ -158,11 +164,12 @@ class VenuesController < ApplicationController
             if !@venue.web_user.nil?
               UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
             end
-            WebUser.mixpanel_event(current_web_user.id, 'Create a venue draft', {
-                'Venue Name' => @venue.name,
-                'Venue ID' => @venue.id.to_s
-            })
-
+            if Rails.env == 'production' and ENV['DYNAMODB_PREFIX'].blank?
+              WebUser.delay.mixpanel_event(current_web_user.id, 'Create a venue draft', {
+                  'Venue Name' => @venue.name,
+                  'Venue ID' => @venue.id.to_s
+              })
+            end
             format.html { redirect_to @venue, notice: 'Venue was successfully updated.' }
             format.json { head :no_content }
           else
