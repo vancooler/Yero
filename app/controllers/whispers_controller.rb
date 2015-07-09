@@ -1,5 +1,5 @@
 class WhispersController < ApplicationController
-  prepend_before_filter :get_api_key, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
+  prepend_before_filter :get_api_token, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
 
   before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
   skip_before_filter  :verify_authenticity_token
@@ -200,9 +200,9 @@ class WhispersController < ApplicationController
     end
   end
 
-  def get_api_key
-    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
-      params[:key] = api_key
+  def get_api_token
+    if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+      params[:token] = api_token
     end
   end
 end

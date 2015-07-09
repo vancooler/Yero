@@ -86,7 +86,6 @@ class Venue < ActiveRecord::Base
         json.latitude v.latitude
         json.featured v.featured
         json.featured_order v.featured_order
-        # json.is_favourite FavouriteVenue.where(venue: v, user: User.find_by_key(params[:key])).exists?
         if !images.empty?
           avatars = Array.new
           images.each do |i|

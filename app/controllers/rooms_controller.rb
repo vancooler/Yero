@@ -1,5 +1,5 @@
 class RoomsController < ApplicationController
-  prepend_before_filter :get_api_key
+  prepend_before_filter :get_api_token
   before_action :authenticate_api
   skip_before_filter  :verify_authenticity_token
 
@@ -126,9 +126,9 @@ class RoomsController < ApplicationController
 
   private
 
-  def get_api_key
-    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
-      params[:key] = api_key
+  def get_api_token
+    if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+      params[:token] = api_token
     end
   end
 end

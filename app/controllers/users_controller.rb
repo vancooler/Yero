@@ -1,5 +1,5 @@
 class UsersController < ApplicationController
-  prepend_before_filter :get_api_key, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  prepend_before_filter :get_api_token, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   before_action :authenticate_api, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   skip_before_filter  :verify_authenticity_token
 
@@ -415,16 +415,7 @@ class UsersController < ApplicationController
     else
       render json: success(false)
     end
-    # report_user = ReportedUser.find_by(key: params[:key])
-    # if report_user
-    #   report_user.count = report_user.count.to_i + 1
-    #   report_user.save!
-    #   render json: success(true)
-    # elsif ReportedUser.create(first_name: params[:first_name], key: params[:key], apn_token: params[:apn_token], email: params[:email], count: 1, user_id: params[:user_id])
-    #   render json: success(true)
-    # else
-    #   render json: success(false)
-    # end
+    
   end
 
   def myfriends
@@ -1279,9 +1270,9 @@ class UsersController < ApplicationController
     params.require(:user).permit(:email, :password, :token)
   end
 
-  def get_api_key
-    if api_key = params[:key].blank? && request.headers["X-API-KEY"]
-      params[:key] = api_key
+  def get_api_token
+    if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+      params[:token] = api_token
     end
   end
 
