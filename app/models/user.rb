@@ -805,7 +805,7 @@ class User < ActiveRecord::Base
 
 
   def generate_token
-    user = {:id => self.id, :exp => (Time.now.to_i + 3600*3) } # expire in 3 hours
+    user = {:id => self.id, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
     if Rails.env == 'development'
       secret = 'secret'
     else
