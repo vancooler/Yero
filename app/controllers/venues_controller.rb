@@ -6,7 +6,7 @@ class VenuesController < ApplicationController
   before_action :authenticate_admin_user!, only: [:approve]
   # list all the venues for this owner
   def index
-    WebUser.mixpanel_event(current_web_user.id, 'View venues list', nil)
+    WebUser.delay.mixpanel_event(current_web_user.id, 'View venues list', nil)
 
     if mobile_device?
       @device = "mobile"
@@ -29,7 +29,7 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue details page', {
+    WebUser.delay.mixpanel_event(current_web_user.id, 'View venue details page', {
         'Venue Name' => @venue.name,
         'Venue ID' => @venue.id.to_s
     })
@@ -48,7 +48,7 @@ class VenuesController < ApplicationController
       @device = "regular"
     end
     @venue = Venue.find_by_id(params[:id])
-    WebUser.mixpanel_event(current_web_user.id, 'View venue edit page', {
+    WebUser.delay.mixpanel_event(current_web_user.id, 'View venue edit page', {
         'Venue Name' => @venue.name,
         'Venue ID' => @venue.id.to_s
     })
@@ -118,7 +118,7 @@ class VenuesController < ApplicationController
               UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
             end
           end
-          WebUser.mixpanel_event(current_web_user.id, 'Update the venue draft', {
+          WebUser.delay.mixpanel_event(current_web_user.id, 'Update the venue draft', {
               'Venue Name' => @venue.name,
               'Venue ID' => @venue.id.to_s
           })
@@ -158,7 +158,7 @@ class VenuesController < ApplicationController
             if !@venue.web_user.nil?
               UserMailer.delay.venue_info_pending(@venue.web_user, @venue)
             end
-            WebUser.mixpanel_event(current_web_user.id, 'Create a venue draft', {
+            WebUser.delay.mixpanel_event(current_web_user.id, 'Create a venue draft', {
                 'Venue Name' => @venue.name,
                 'Venue ID' => @venue.id.to_s
             })

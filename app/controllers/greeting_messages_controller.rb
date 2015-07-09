@@ -56,7 +56,7 @@ class GreetingMessagesController < ApplicationController
   def edit_message
     @venue = Venue.find_by_id(params['id'])
     @day = Weekday.find_by_weekday_title(params['day']) # param day should be capitalized
-  	WebUser.mixpanel_event(current_web_user.id, 'View greeting message edit', {
+  	WebUser.delay.mixpanel_event(current_web_user.id, 'View greeting message edit', {
 		    'Day' => @day.weekday_title,
 		    'Venue' => (@venue.blank? ? '' : @venue.name)
 	  })
@@ -151,7 +151,7 @@ class GreetingMessagesController < ApplicationController
                 UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
               end
             end
-            WebUser.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
+            WebUser.delay.mixpanel_event(current_web_user.id, 'Update the greeting message draft', {
                 'Venue Name' => @venue.name,
                 'Venue ID' => @venue.id.to_s
             })
@@ -187,7 +187,7 @@ class GreetingMessagesController < ApplicationController
               if !@greeting_message.venue.nil? and !@greeting_message.venue.web_user.nil?
                 UserMailer.delay.venue_greeting_message_pending(@greeting_message.venue.web_user, @greeting_message.venue)
               end
-              WebUser.mixpanel_event(current_web_user.id, 'Create a greeting message draft', {
+              WebUser.delay.mixpanel_event(current_web_user.id, 'Create a greeting message draft', {
                   'Venue Name' => @venue.name,
                   'Venue ID' => @venue.id.to_s
               })

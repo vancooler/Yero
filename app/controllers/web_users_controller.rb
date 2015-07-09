@@ -4,7 +4,7 @@ class WebUsersController < ApplicationController
 
 
   def edit
-  	WebUser.mixpanel_event(current_web_user.id, 'View WebUser account edit', {
+  	WebUser.delay.mixpanel_event(current_web_user.id, 'View WebUser account edit', {
 		    'Name' => current_web_user.name,
 		    'ID' => current_web_user.id.to_s
 	})
@@ -31,7 +31,7 @@ class WebUsersController < ApplicationController
       	password_update = false
 	  end
 	  if @web_user.update_attributes(get_params)
-	  	WebUser.mixpanel_event(current_web_user.id, 'WebUser account updated', {
+	  	WebUser.delay.mixpanel_event(current_web_user.id, 'WebUser account updated', {
 		    'Name' => current_web_user.name,
 		    'ID' => current_web_user.id.to_s
 		})
