@@ -7,7 +7,7 @@ class Venue < ActiveRecord::Base
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"
-  has_many :venue_avatars
+  has_many :venue_avatars, dependent: :destroy
   belongs_to :web_user
   belongs_to :venue_network
   belongs_to :venue_type
@@ -17,6 +17,13 @@ class Venue < ActiveRecord::Base
   # Address is geocoded so it can be returned to the iOS client
   geocoded_by :address
   after_validation :geocode
+
+  has_many :venue_logos, dependent: :destroy
+  accepts_nested_attributes_for :venue_logos, allow_destroy: true
+
+  def logo
+    self.venue_logos.order(:pending).first
+  end
 
   scope :pending, ->{where("pending_name is not ? or pending_email is not ? or pending_venue_type_id is not ? or pending_phone is not ? or pending_address is not ? or pending_city is not ? or pending_state is not ? or pending_country is not ? or pending_zipcode is not ? or pending_manager_first_name is not ? or pending_manager_last_name is not ? or pending_latitude is not ? or pending_longitude is not ?", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)}
   scope :featured, ->{where("featured = ?", true)}
