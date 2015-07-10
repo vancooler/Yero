@@ -14,6 +14,11 @@ class FileInput < Formtastic::Inputs::FileInput
     options[:image_preview] && @object.send(method).present?
   end
   def image_preview_html
-    template.image_tag(@object.send(method).url, :class => "image-preview")
+    image_class = "image_preview"
+    if !options[:model].blank?
+      image_class += ' '+options[:model]
+    end
+    style = !options[:style].blank? ? options[:style] : ''
+    template.image_tag(@object.send(method).url, :class => image_class, :style => style)
   end
 end

@@ -139,8 +139,8 @@ ActiveAdmin.register GreetingMessage do
 
         tr do
           td "Poster"
-          td !venue.greeting_posters.where(:default => true).first.nil? ? image_tag(venue.greeting_posters.where(:default => true).first.avatar) : ''
-          td !venue.greeting_posters.where(:default => false).first.nil? ? image_tag(venue.greeting_posters.where(:default => false).first.avatar) : ''
+          td !venue.greeting_posters.where(:default => true).first.nil? ? image_tag(venue.greeting_posters.where(:default => true).first.avatar, :style => "height:345px;width:217px;") : ''
+          td !venue.greeting_posters.where(:default => false).first.nil? ? image_tag(venue.greeting_posters.where(:default => false).first.avatar, :style => "height:345px;width:217px;") : ''
         end
         
       end

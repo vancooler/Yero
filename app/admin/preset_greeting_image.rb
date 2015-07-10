@@ -14,7 +14,7 @@ ActiveAdmin.register PresetGreetingImage do
 
   form do |f|
     f.inputs "Details" do
-      f.input :avatar, :image_preview => true#, :style => "height:345px;width:217px;"
+      f.input :avatar, :image_preview => true, :style => "height:345px;width:217px;"
       f.input :is_active
       
     end

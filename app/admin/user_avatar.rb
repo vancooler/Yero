@@ -36,7 +36,7 @@ ActiveAdmin.register UserAvatar do
     selectable_column
   	column :id
     column :avatar do |avatar|
-      image_tag avatar.avatar.url
+      image_tag avatar.avatar.thumb.url, {:style => "height:98px;width:98px;"}
     end
     column "User (ID)", :user
     column "Is default", :default
@@ -65,7 +65,7 @@ ActiveAdmin.register UserAvatar do
     attributes_table_for user do
       row :user
       row :avatar do
-          image_tag(user.avatar)
+          image_tag user.avatar.thumb.url, {:style => "height:98px;width:98px;"}
       end
       row :default
     end
