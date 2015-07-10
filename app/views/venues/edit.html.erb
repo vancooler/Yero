@@ -20,7 +20,7 @@
 	      	var img = new Image();
 	        img.onload = function () {
 	        	// console.log(this.width + ' ' + this.height);
-	            if (false && (parseInt(this.width) != 100 || parseInt(this.height) != 100)){
+	            if (parseInt(this.width) != 100 || parseInt(this.height) != 100){
 	            	error_message += "Invalid image dimensions";
 	            	document.getElementById("greeting_message_poster").value = "";
 		        	alert(error_message);
