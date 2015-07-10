@@ -320,7 +320,7 @@ class User < ActiveRecord::Base
       json.exclusive exclusive
 
       json.avatars do
-        avatars = self.user_avatars.all
+        avatars = self.user_avatars.where(is_active: true).order(:order)
 
         json.array! avatars do |a|
 
@@ -581,28 +581,35 @@ class User < ActiveRecord::Base
           if user.id != self.id
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
-            main_avatar   =  user.user_avatars.find_by(default:true)
-            other_avatars =  user.user_avatars.where.not(default:true).where(is_active:true)
+            user_avatar_object(self)
+            main_avatar   =  user.user_avatars.where(default:true).where(is_active:true)
+            other_avatars =  user.user_avatars.where.not(default:true).where(is_active:true).order(:order)
             avatar_array = Array.new
             avatar_array[0] = {
-                  thumbnail: main_avatar.nil? ? '' : main_avatar.avatar.thumb.url,
+                  thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
                 }
             avatar_array[1] = {
-                  avatar: main_avatar.nil? ? '' : main_avatar.avatar.url,
-                  avatar_id: main_avatar.nil? ? '' : main_avatar.id,
+                  avatar: main_avatar.blank? ? '' : main_avatar.first.avatar.url,
+                  avatar_id: main_avatar.blank? ? '' : main_avatar.first.id,
                   default: true
+                  is_active: true
+                  order: main_avatar.first.order.nil? ? '100' : main_avatar.first.order
                 }
             if other_avatars.count > 0
               avatar_array[2] = {
                     avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
                     avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
                     default: false
+                    is_active: true
+                    order: other_avatars.first.order.nil? ? '100' : other_avatars.first.order
                   }
               if other_avatars.count > 1
                 avatar_array[3] = {
-                      avatar: other_avatars.count > 1 ? other_avatars.last.avatar.url : '',
-                      avatar_id: other_avatars.count > 1 ? other_avatars.last.id : '',
+                      avatar: other_avatars.count > 1 ? other_avatars.second.avatar.url : '',
+                      avatar_id: other_avatars.count > 1 ? other_avatars.second.id : '',
                       default: false
+                      is_active: true
+                      order: other_avatars.second.order.nil? ? '100' : other_avatars.second.order
                     }
               end
             end
@@ -768,12 +775,12 @@ class User < ActiveRecord::Base
 
   def user_object(current_user)
     # target_user = User.find_by_id(user["target_user"]["id"].to_i)
-    user_info = self.to_json(false)
-    user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
-    user_info["avatars"].each do |a|
-      thumb = a['avatar']
-      a['avatar'] = thumb.gsub! 'thumb_', ''
-    end
+    # user_info = self.to_json(false)
+    # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+    # user_info["avatars"].each do |a|
+    #   thumb = a['avatar']
+    #   a['avatar'] = thumb.gsub! 'thumb_', ''
+    # end
 
 
     user_object = {
@@ -790,7 +797,7 @@ class User < ActiveRecord::Base
       distance:       (self.id != 307 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
-      avatars:         user_info["avatars"],
+      avatars:         user_avatar_object(self),
       email:  self.email,
       instagram_id:  self.instagram_id.blank? ? '' : self.instagram_id,
       snapchat_id:  self.snapchat_id.blank? ? '' : self.snapchat_id,
@@ -801,6 +808,16 @@ class User < ActiveRecord::Base
     }
 
     return user_object
+  end
+
+  def user_avatar_object(user)
+    user_info = user.to_json(false)
+    # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+    user_info["avatars"].each do |a|
+      thumb = a['avatar']
+      a['avatar'] = thumb.gsub! 'thumb_', ''
+    end
+    return user_info["avatars"]
   end
 
 

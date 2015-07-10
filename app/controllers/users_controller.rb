@@ -10,7 +10,7 @@ class UsersController < ApplicationController
     avatar_array = Array.new
     if current_user.account_status == 1 or !current_user.default_avatar.nil?
       user_info = current_user.to_json(false)
-      user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+      # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
       user_info["avatars"].each do |a|
         thumb = a['avatar']
         # a['thumbnail'] = thumb

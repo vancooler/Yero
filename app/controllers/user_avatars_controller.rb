@@ -28,7 +28,7 @@ class UserAvatarsController < ApplicationController
             #   end
             # end
             # user_info['avatars'] = avatars
-            user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+            
             user_info['avatars'].each do |a|
               thumb = a['avatar']
               # a['thumbnail'] = thumb
@@ -61,7 +61,7 @@ class UserAvatarsController < ApplicationController
             #   end
             # end
             # user_info['avatars'] = avatars
-            user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+            
             user_info["avatars"].each do |a|
               thumb = a['avatar']
               # a['thumbnail'] = thumb
@@ -127,7 +127,7 @@ class UserAvatarsController < ApplicationController
       #   end
       # end
       # user_info['avatars'] = avatars
-      user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+      
       user_info["avatars"].each do |a|
         thumb = a['avatar']
         # a['thumbnail'] = thumb
@@ -192,7 +192,7 @@ class UserAvatarsController < ApplicationController
         #   end
         # end
         # user_info['avatars'] = avatars
-        user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
+        
         user_info["avatars"].each do |a|
           thumb = a['avatar']
           # a['thumbnail'] = thumb
