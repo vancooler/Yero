@@ -205,6 +205,11 @@ ActiveAdmin.register Venue do
           td venue.country
           td venue.pending_country
         end
+        tr do
+          td "Logo"
+          td venue.venue_logos.where(pending: false).empty? ? '' : image_tag(venue.venue_logos.where(pending: false).first.avatar.url, height:100, width:100, :style => "border-radius:10px")
+          td venue.venue_logos.where(pending: true).empty? ? '' : image_tag(venue.venue_logos.where(pending: true).first.avatar.url, height:100, width:100, :style => "border-radius:10px")
+        end
         # tr do
         #   td "Latitude"
         #   td venue.latitude

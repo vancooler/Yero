@@ -25,6 +25,10 @@ class Venue < ActiveRecord::Base
     self.venue_logos.order(:pending).first
   end
 
+  def live_logo
+    self.venue_logos.where(pending: false).first
+  end
+
   scope :pending, ->{where("pending_name is not ? or pending_email is not ? or pending_venue_type_id is not ? or pending_phone is not ? or pending_address is not ? or pending_city is not ? or pending_state is not ? or pending_country is not ? or pending_zipcode is not ? or pending_manager_first_name is not ? or pending_manager_last_name is not ? or pending_latitude is not ? or pending_longitude is not ?", nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil)}
   scope :featured, ->{where("featured = ?", true)}
   # scope :all, ->{all}
@@ -80,8 +84,11 @@ class Venue < ActiveRecord::Base
 
 
   def self.venues_object(venues)
+    default_logo = ENV['DYNAMODB_PREFIX'] == 'Dev' ? 'https://s3-us-west-2.amazonaws.com/yero-development/static/avatar_venue_default.png?X-Amz-Date=20150709T223626Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=9362671e5feae095d12b06f732d8a8913da88d630c49359df3bbdbef90043d1a&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D' : 'https://s3-us-west-2.amazonaws.com/yero/static/avatar_venue_default.png?X-Amz-Date=20150709T223305Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=60bf8424d7242c66faee48bc0f4e2641a6fa2515cf65b7c9b81591bc0f074857&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D'
+    
     data = Jbuilder.encode do |json|
       json.array! venues do |v|
+        logo = VenueLogo.where(venue_id: v.id).where(pending: false)
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
         json.id v.id
         json.name (v.name.blank? ? '' : v.name.upcase)
@@ -102,6 +109,7 @@ class Venue < ActiveRecord::Base
             json.array! avatars
           end
         end
+        json.logo         logo.empty? ? default_logo : logo.first.avatar.url
 
         # json.nightly do
         #   nightly = Nightly.today_or_create(v)
@@ -134,7 +142,7 @@ class Venue < ActiveRecord::Base
       featured_order:     self.featured_order,
       venue_message: "Welcome to "+(self.name.blank? ? '' : self.name.upcase)+"! Open this Whisper to learn more about tonight.",
       images:         images,
-      logo:         logo.empty? ? default_logo : logo.first.url
+      logo:         logo.empty? ? default_logo : logo.first.avatar.url
     }
 
     return venue_object

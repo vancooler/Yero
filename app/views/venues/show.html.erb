@@ -43,6 +43,9 @@
 				<h5>Full Name: <%= @venue.manager_first_name%>&nbsp;<%= @venue.manager_last_name%></h5>				
 				<h5>Email: <%= @venue.email %></h5>
 				<h5>Phone: <%= @venue.phone %></h5>
+				<% if !@venue.venue_logos.where(pending: false).empty? %>
+					<h5>Logo: </h5> <%=image_tag(@venue.venue_logos.where(pending: false).first.avatar.url, height:100, width:100,  :style => "border-radius:10px;max-height:100px;max-width:100px")%>
+				<% end %>
 
 <%if false%>
 				<div class="img">

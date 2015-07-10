@@ -93,6 +93,19 @@ class VenuesController < ApplicationController
     @venue.pending_phone = nil
     @venue.draft_pending = false
     if @venue.save!
+
+      # change default logo
+      if @venue.venue_logos.where(:pending => true).count > 0
+        if @venue.venue_logos.where(:pending => false).count > 0 
+          logo = @venue.venue_logos.where(:pending => false).first
+          logo.destroy
+        end
+        logo = @venue.venue_logos.where(:pending => true).first
+        logo.pending = false
+        logo.save!
+      end
+
+
       # TODO: send email to webuser
       if !@venue.web_user.nil?
         UserMailer.delay.venue_info_approved(@venue.web_user, @venue)
@@ -107,9 +120,33 @@ class VenuesController < ApplicationController
     @venue = Venue.find_by_id(params[:id])
 
     respond_to do |format|
-      get_params = params.require(:venue).permit(:pending_name, :pending_venue_type_id, :pending_address, :pending_city, :pending_state, :pending_zipcode, :pending_country, :pending_manager_first_name, :pending_manager_last_name, :pending_phone, :pending_email)
+      get_params = params.require(:venue).permit(:pending_name, :pending_venue_type_id, :pending_address, :pending_city, :pending_state, :pending_zipcode, :pending_country, :pending_manager_first_name, :pending_manager_last_name, :pending_phone, :pending_email, :logo)
       puts "PAramssss:"
       puts get_params[:pending_name]
+      if params[:image_type].nil? or params[:image_type] != "file"
+        logo_update = false
+      else
+        logo_update = true
+      end
+
+      if logo_update
+        venue_logos = VenueLogo.where(:venue_id => @venue.id).where(:pending => true)
+      
+        if !get_params[:logo].blank? and params[:image_type] == "file"
+          if venue_logos.count > 0
+            venue_logos.first.update(avatar: get_params[:logo])
+          else
+            @venue.venue_logos.create(avatar: get_params[:logo], pending: true)
+          end
+        else
+          logo_update = false
+        end
+
+      end
+      get_params.delete(:logo)
+
+
+
       if !@venue.draft_pending.nil? and @venue.draft_pending
         # has draft
         if @venue.update_attributes(get_params)
@@ -130,7 +167,7 @@ class VenuesController < ApplicationController
         end
       else
         # no draft
-        if ((get_params[:pending_name].blank? and @venue.name.blank?) or get_params[:pending_name] == @venue.name) and ((get_params[:pending_venue_type_id].blank? and @venue.venue_type_id.blank?) or get_params[:pending_venue_type_id].to_s == @venue.venue_type_id) and ((get_params[:pending_address].blank? and @venue.address_line_one.blank?) or get_params[:pending_address] == @venue.address_line_one) and ((get_params[:pending_city].blank? and @venue.city.blank?) or get_params[:pending_city] == @venue.city) and ((get_params[:pending_state].blank? and @venue.state.blank?) or get_params[:pending_state] == @venue.state) and ((get_params[:pending_zipcode].blank? and @venue.zipcode.blank?) or get_params[:pending_zipcode] == @venue.zipcode) and ((get_params[:pending_country].blank? and @venue.country.blank?) or get_params[:pending_country] == @venue.country) and ((get_params[:pending_manager_first_name].blank? and @venue.manager_first_name.blank?) or get_params[:pending_manager_first_name] == @venue.manager_first_name) and ((get_params[:pending_manager_last_name].blank? and @venue.manager_last_name.blank?) or get_params[:pending_manager_last_name] == @venue.manager_last_name) and ((get_params[:pending_phone].blank? and @venue.phone.blank?) or get_params[:pending_phone] == @venue.phone) and ((get_params[:pending_email].blank? and @venue.email.blank?) or get_params[:pending_email] == @venue.email)
+        if !logo_update and ((get_params[:pending_name].blank? and @venue.name.blank?) or get_params[:pending_name] == @venue.name) and ((get_params[:pending_venue_type_id].blank? and @venue.venue_type_id.blank?) or get_params[:pending_venue_type_id].to_s == @venue.venue_type_id) and ((get_params[:pending_address].blank? and @venue.address_line_one.blank?) or get_params[:pending_address] == @venue.address_line_one) and ((get_params[:pending_city].blank? and @venue.city.blank?) or get_params[:pending_city] == @venue.city) and ((get_params[:pending_state].blank? and @venue.state.blank?) or get_params[:pending_state] == @venue.state) and ((get_params[:pending_zipcode].blank? and @venue.zipcode.blank?) or get_params[:pending_zipcode] == @venue.zipcode) and ((get_params[:pending_country].blank? and @venue.country.blank?) or get_params[:pending_country] == @venue.country) and ((get_params[:pending_manager_first_name].blank? and @venue.manager_first_name.blank?) or get_params[:pending_manager_first_name] == @venue.manager_first_name) and ((get_params[:pending_manager_last_name].blank? and @venue.manager_last_name.blank?) or get_params[:pending_manager_last_name] == @venue.manager_last_name) and ((get_params[:pending_phone].blank? and @venue.phone.blank?) or get_params[:pending_phone] == @venue.phone) and ((get_params[:pending_email].blank? and @venue.email.blank?) or get_params[:pending_email] == @venue.email)
           # nothing changed
           @venue.pending_name = nil
           @venue.pending_venue_type_id = nil

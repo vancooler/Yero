@@ -1,3 +1,49 @@
+<script>
+	var _URL = window.URL || window.webkitURL;
+
+    function readURL(input) {
+      if (input.files && input.files[0]) {
+      	var file = input.files[0];
+      	var error_message = '';
+      	// console.log(file)
+      	if (file.type != 'image/png' && file.type != 'image/jpeg'){
+	        error_message += "Invalid file type";
+	        document.getElementById("greeting_message_poster").value = "";
+        	alert(error_message);
+      	}
+      	else if (parseInt(file.size) > 100*1024){
+      		error_message += "File cannot be greater than 100KB";
+	        document.getElementById("greeting_message_poster").value = "";
+        	alert(error_message);
+      	}
+      	else{
+	      	var img = new Image();
+	        img.onload = function () {
+	        	// console.log(this.width + ' ' + this.height);
+	            if (false && (parseInt(this.width) != 100 || parseInt(this.height) != 100)){
+	            	error_message += "Invalid image dimensions";
+	            	document.getElementById("greeting_message_poster").value = "";
+		        	alert(error_message);
+				}
+				else{
+			      	
+			        var reader = new FileReader();
+			        reader.onload = function (e) {
+			          	$('#img_prev').attr('src', e.target.result);
+			        };
+			        // console.log(input.files[0]);
+			        reader.readAsDataURL(input.files[0]);
+			        document.getElementById("image_type").value = "file";
+				}
+	        };
+	        img.src = _URL.createObjectURL(file);
+      	}
+      }
+    }
+
+</script>
+
+
 <% content_for :title, "Yero -  Venues" %>
 
 
@@ -67,25 +113,21 @@
 			    <%= f.label :country, :class => "venue-label" %>
 			    <%= country_select("venue", "pending_country", priority_countries: ["CA", "US"]) %>
 			   </div>
-<%if false%>
-			   <div class="venue-sub-title">Manager Info</div>
 			   <div class="venue-field">
-			    <%= f.label :first_name, :class => "venue-label" %>
-			    <%= f.text_field :pending_manager_first_name %>
+			   	<%= hidden_field_tag 'image_type', 'none' %>
+			    <label for="venue_logo" class="custom-file-upload" style="width:108px;">
+				    Upload Logo
+				</label>
+				&emsp;&emsp;&emsp;&emsp;&emsp;
+				<%= f.file_field :logo, {:onchange => "readURL(this)", :class => "upload"} %> 
+				<%if @venue.venue_logos.blank? %>
+			   		<%= image_tag('avatar_venue_default.png', :alt => "", :id => "img_prev", :height => 100, :width => 100, :style => "border-radius:10px;max-height:100px;max-width:100px") %>
+				<% else %>
+					<%= image_tag(@venue.logo.avatar.url, :alt => "Preview", :id => "img_prev", :height => 100, :width => 100, :style => "border-radius:10px;max-height:100px;max-width:100px") %>
+				<% end %>
+			   	<p class="normal-text" style="font-size:0.675rem">Your image should be 100px by 100px, no larger than 100KB and in .PNG or .JPG format.</p>
+
 			   </div>
-			   <div class="venue-field">
-			    <%= f.label :last_name, :class => "venue-label" %>
-			    <%= f.text_field :pending_manager_last_name %>
-			   </div>
-			   <div class="venue-field">
-			    <%= f.label :email, :class => "venue-label" %>
-			    <%= f.text_field :pending_email %>
-			   </div>
-			   <div class="venue-field">
-			    <%= f.label :phone, :class => "venue-label" %>
-			    <%= f.text_field :pending_phone %>
-			   </div>
-<%end%>
 
 			   <div class="venue-field">
 				   <%= f.submit "SAVE ALL CHANGES", :class => "button small", data: { disable_with: "Please wait..."}%>
