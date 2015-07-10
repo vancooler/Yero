@@ -1030,13 +1030,14 @@ ul.shared_links_list{
 .index-title{
 	color: #89909e;
 	font-family: GothamMedium;
-	font-size: 36px;
+	font-size: 24px;
 	padding-top:60px;
 	text-transform: uppercase;
 	padding-left: 20px;
 	padding-bottom: 18px;
 	@media #{$medium-up} {
 		padding-left: 60px;
+		font-size: 36px;
 	}
 }
 
@@ -1332,7 +1333,9 @@ section.main-section{
 div.medium-12.medium-offset-1{
 	margin-left: 4.33333% !important;
 	margin-top: 18px;
-
+	@media #{$medium-only} {
+		margin-left: 6.66666% !important;
+	}
 	div.warning{
 		font-family: HelveticaNeue;
 		font-size: 14px;
@@ -1341,7 +1344,15 @@ div.medium-12.medium-offset-1{
 		margin-bottom: 12px;
 		padding: 10px;
 		line-height: 1.2rem;
-		width: 41.5%
+		@media #{$large-up} {
+			width: 41.5%; 
+		}
+		@media #{$medium-only} {
+			width: 60%; 
+		}
+		@media #{$small-only} {
+			width: 95%; 
+		}
 	}
 
 	div.message-edit-form{
@@ -1376,9 +1387,19 @@ div.medium-12.medium-offset-1{
 			font-family: HelveticaNeue;
 		}
 
-		@media #{$medium-up} {
+		@media #{$xlarge-up} {
 			height: 680px;
 			width: 22%; 
+			float:left;
+		}
+		@media #{$large-only} {
+			height: 680px;
+			width: 30%; 
+			float:left;
+		}
+		@media #{$medium-only} {
+			height: 680px;
+			width: 45%; 
 			float:left;
 		}
 		@media #{$small-only} {
@@ -1399,8 +1420,16 @@ div.medium-12.medium-offset-1{
 		text-align: center;
 		max-height: 906px;
 
-		@media #{$medium-up} {
+		@media #{$xlarge-up} {
 			width: 20%; 
+			float:left;
+		}
+		@media #{$large-only} {
+			width: 25%; 
+			float:left;
+		}
+		@media #{$medium-only} {
+			width: 40%; 
 			float:left;
 		}
 		@media #{$small-only} {
@@ -1515,7 +1544,7 @@ div.to-start{
 
 nav.tab-bar{
 	background-color: #3f4752 !important;
-	@media #{$medium-up} {
+	@media #{$xlarge-up} {
 		display: none;
 	}
 }
@@ -1559,7 +1588,7 @@ div#venue_name{
   	right: 25%;
   	margin-bottom: 0;
   	@media #{$small-only} {
-  		top: 98px;
+  		top: 85px;
 	  	left: 18px;
   	}
 }

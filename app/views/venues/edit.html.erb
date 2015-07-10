@@ -46,7 +46,6 @@
 
 <% content_for :title, "Yero -  Venues" %>
 
-
 <%if @device == "mobile"%>
 <div class="off-canvas-wrap" data-offcanvas>
 <%else%>
@@ -68,7 +67,7 @@
 
     <section class="main-section">
       <!-- content goes here -->
-        <%= render "header", title: @venue.name, notice: notice, venue_name: @venue.name %>
+        <%= render "header", title: 'Venue Profile', notice: notice, venue_name: @venue.name %>
 
       		<%= form_for(@venue) do |f| %>
 			  <% if @venue.errors.any? %>
@@ -118,7 +117,11 @@
 			    <label for="venue_logo" class="custom-file-upload" style="width:108px;">
 				    Upload Logo
 				</label>
-				&emsp;&emsp;&emsp;&emsp;&emsp;
+				<% if @device != "mobile"%>
+					&emsp;&emsp;&emsp;&emsp;&emsp;
+				<% else %>
+					&emsp;&nbsp;
+				<% end %>
 				<%= f.file_field :logo, {:onchange => "readURL(this)", :class => "upload"} %> 
 				<%if @venue.venue_logos.blank? %>
 			   		<%= image_tag('avatar_venue_default.png', :alt => "", :id => "img_prev", :height => 100, :width => 100, :style => "border-radius:10px;max-height:100px;max-width:100px") %>
