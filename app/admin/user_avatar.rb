@@ -36,7 +36,7 @@ ActiveAdmin.register UserAvatar do
     selectable_column
   	column :id
     column :avatar do |avatar|
-      link_to avatar.avatar.url do 
+      link_to avatar.avatar.url, :target => "_blank" do 
         image_tag avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}
       end
     end
