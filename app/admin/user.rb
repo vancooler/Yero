@@ -42,7 +42,7 @@ ActiveAdmin.register User do
       f.input :instagram_id
       f.inputs do
         f.has_many :user_avatars, heading: 'Avatars', allow_destroy: false, new_record: false do |b|
-          b.input :avatar, :image_preview => true, :style => "height:98px;width:98px;"
+          b.input :avatar, :image_preview => true, :style => "height:100px;width:100px;"
           b.input :default
           # b.input :is_active
         end
@@ -67,14 +67,14 @@ ActiveAdmin.register User do
       row :wechat_id
       row :instagram_id
       row("Default Avatar ID") { |ad| link_to ad.default_avatar.id, [ :admin, ad.default_avatar ] if !ad.default_avatar.nil?}
-      row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar.thumb.url, {:style => "height:98px;width:98px;"}) if !ad.default_avatar.nil?}
+      row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}) if !ad.default_avatar.nil?}
 
       table_for ad.secondary_avatars.order('id ASC') do
         column "Secondary Avatars ID" do |a|
           link_to a.id, [ :admin, a ]
         end
         column "Secondary Avatars" do |a|
-          image_tag a.avatar.thumb.url, {:style => "height:98px;width:98px;"}
+          image_tag a.avatar.thumb.url, {:style => "height:100px;width:100px;"}
         end
       end
 

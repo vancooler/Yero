@@ -1,7 +1,7 @@
 ActiveAdmin.register UserAvatar do
   menu :parent => "USERS"
   permit_params :user, :default, :avatar, :user_id, :is_active
-
+  config.per_page = 100
   actions :index, :show
   batch_action :destroy, false
   batch_action :disable, :confirm => "Are you sure you want to disable all of these avatars?" do |selection|
@@ -36,7 +36,9 @@ ActiveAdmin.register UserAvatar do
     selectable_column
   	column :id
     column :avatar do |avatar|
-      image_tag avatar.avatar.thumb.url, {:style => "height:98px;width:98px;"}
+      link_to avatar.avatar.url do 
+        image_tag avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}
+      end
     end
     column "User (ID)", :user
     column "Is default", :default
@@ -65,7 +67,7 @@ ActiveAdmin.register UserAvatar do
     attributes_table_for user do
       row :user
       row :avatar do
-          image_tag user.avatar.thumb.url, {:style => "height:98px;width:98px;"}
+          image_tag user.avatar.thumb.url, {:style => "height:100px;width:100px;"}
       end
       row :default
     end
