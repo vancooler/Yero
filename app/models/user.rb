@@ -591,24 +591,24 @@ class User < ActiveRecord::Base
             avatar_array[1] = {
                   avatar: main_avatar.blank? ? '' : main_avatar.first.avatar.url,
                   avatar_id: main_avatar.blank? ? '' : main_avatar.first.id,
-                  default: true
-                  is_active: true
+                  default: true,
+                  is_active: true,
                   order: main_avatar.first.order.nil? ? '100' : main_avatar.first.order
                 }
             if other_avatars.count > 0
               avatar_array[2] = {
                     avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
                     avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                    default: false
-                    is_active: true
+                    default: false,
+                    is_active: true,
                     order: other_avatars.first.order.nil? ? '100' : other_avatars.first.order
                   }
               if other_avatars.count > 1
                 avatar_array[3] = {
                       avatar: other_avatars.count > 1 ? other_avatars.second.avatar.url : '',
                       avatar_id: other_avatars.count > 1 ? other_avatars.second.id : '',
-                      default: false
-                      is_active: true
+                      default: false,
+                      is_active: true,
                       order: other_avatars.second.order.nil? ? '100' : other_avatars.second.order
                     }
               end
