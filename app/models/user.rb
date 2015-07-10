@@ -315,6 +315,7 @@ class User < ActiveRecord::Base
       json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
       json.instagram_id (instagram_id.blank? ? '' : instagram_id)
       json.wechat_id (wechat_id.blank? ? '' : wechat_id)
+      json.line_id (line_id.blank? ? '' : line_id)
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
       json.discovery discovery
       json.exclusive exclusive
@@ -661,6 +662,7 @@ class User < ActiveRecord::Base
             json.birthday       user.birthday
             # json.gender         user.gender
             # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
+            json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
             json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
             json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
@@ -802,6 +804,7 @@ class User < ActiveRecord::Base
       instagram_id:  self.instagram_id.blank? ? '' : self.instagram_id,
       snapchat_id:  self.snapchat_id.blank? ? '' : self.snapchat_id,
       wechat_id:  self.wechat_id.blank? ? '' : self.wechat_id,
+      line_id:  self.line_id.blank? ? '' : self.line_id,
       latitude:       self.latitude,
       longitude:      self.longitude,
       introduction_1: self.introduction_1.blank? ? '' : self.introduction_1

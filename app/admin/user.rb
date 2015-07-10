@@ -36,6 +36,7 @@ ActiveAdmin.register User do
       f.input :birthday
       f.input :gender, :as => :select, :collection => ['F', 'M']
       f.input :apn_token
+      f.input :line_id
       f.input :wechat_id
       f.input :snapchat_id
       f.input :instagram_id
@@ -62,6 +63,7 @@ ActiveAdmin.register User do
       row :apn_token
       row :is_connected
       row :snapchat_id
+      row :line_id
       row :wechat_id
       row :instagram_id
       row("Default Avatar ID") { |ad| link_to ad.default_avatar.id, [ :admin, ad.default_avatar ] if !ad.default_avatar.nil?}

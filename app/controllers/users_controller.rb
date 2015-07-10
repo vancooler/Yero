@@ -54,6 +54,7 @@ class UsersController < ApplicationController
       instagram_id:  current_user.instagram_id.blank? ? '' : current_user.instagram_id,
       snapchat_id:  current_user.snapchat_id.blank? ? '' : current_user.snapchat_id,
       wechat_id:  current_user.wechat_id.blank? ? '' : current_user.wechat_id,
+      line_id:  current_user.line_id.blank? ? '' : current_user.line_id,
       since_1970: (current_user.last_active - Time.new('1970')).seconds.to_i, #current_user.last_activity.present? ? current_user.last_activity.since_1970 : "",
       birthday: current_user.birthday,
       gender: current_user.gender,
@@ -556,6 +557,14 @@ class UsersController < ApplicationController
           @user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
         end
       end
+
+      if params[:line_id].present? 
+        if params[:line_id].match(/\s/).blank?
+          @user.line_id = params[:line_id]
+        else
+          @user.line_id = params[:line_id].gsub!(/\s+/, "") 
+        end
+      end
       @user.nonce = params[:nonce] if params[:nonce].present?
       @user.exclusive = params[:exclusive] if params[:exclusive].present?
       # create user key
@@ -643,6 +652,13 @@ class UsersController < ApplicationController
         user_registration.user.wechat_id = params[:wechat_id]
       else
         user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+      end
+    end
+    if params[:line_id].present? 
+      if params[:line_id].match(/\s/).blank?
+        user_registration.user.line_id = params[:line_id]
+      else
+        user_registration.user.line_id = params[:line_id].gsub!(/\s+/, "") 
       end
     end
     user_registration.user.password = params[:password] if params[:password].present?
@@ -800,6 +816,14 @@ class UsersController < ApplicationController
         user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
       end
     end
+
+    if !params[:line_id].blank? 
+      if params[:line_id].match(/\s/).blank?
+        user.line_id = params[:line_id]
+      else
+        user.line_id = params[:line_id].gsub!(/\s+/, "") 
+      end
+    end
     
     if user.save
       render json: success(user)
@@ -815,6 +839,9 @@ class UsersController < ApplicationController
     end
     if params[:wechat_id] == true
       user.wechat_id = nil
+    end
+    if params[:line_id] == true
+      user.line_id = nil
     end
     if params[:instagram_id] == true
       user.instagram_id = nil
@@ -1185,6 +1212,7 @@ class UsersController < ApplicationController
         json.instagram_id  user["target_user"]["instagram_id"]
         json.snapchat_id  user["target_user"]["snapchat_id"]
         json.wechat_id  user["target_user"]["wechat_id"]
+        json.line_id  user["target_user"]["line_id"]
         json.timestamp  user["timestamp"]
         json.seconds_left  user["seconds_left"]
         json.timestamp_read  Time.at(user["timestamp"])
@@ -1262,7 +1290,7 @@ class UsersController < ApplicationController
   end
 
   def sign_up_params
-    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
+    params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :line_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
     # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
   end
 
