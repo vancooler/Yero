@@ -1,10 +1,10 @@
-ActiveAdmin.register UserAvatar do
-  menu :parent => "USERS"
+ActiveAdmin.register UserAvatar  do
+  menu :parent => "USERS", :label => "User Screening"
   permit_params :user, :default, :avatar, :user_id, :is_active
   config.per_page = 100
   actions :index, :show
   batch_action :destroy, false
-  batch_action :disable, :confirm => "Are you sure you want to disable all of these avatars?" do |selection|
+  batch_action :disable, :confirm => "Are you sure you want to disable all of these images?" do |selection|
     UserAvatar.find(selection).each do |ua|
       ua.is_active = false
       if ua.save! and !ua.user_id.nil?
@@ -23,26 +23,26 @@ ActiveAdmin.register UserAvatar do
         end
       end
     end
-    redirect_to :back, :notice => "Selected avatars are disabled"
+    redirect_to :back, :notice => "Selected images are disabled"
   end
-  batch_action :enable, :confirm => "Are you sure you want to enable all of these avatars?" do |selection|
+  batch_action :enable, :confirm => "Are you sure you want to enable all of these images?" do |selection|
     UserAvatar.find(selection).each do |ua|
       ua.is_active = true
       ua.save!
     end
-    redirect_to :back, :notice => "Selected avatars are enabled"
+    redirect_to :back, :notice => "Selected images are enabled"
   end
   index do
     selectable_column
   	column :id
-    column :avatar do |avatar|
+    column "Image", :avatar do |avatar|
       link_to avatar.avatar.url, :target => "_blank" do 
         image_tag avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}
       end
     end
     column "User (ID)", :user
-    column "Is default", :default
-    column :is_active
+    # column "Is default", :default
+    column "Enabled", :is_active
     actions
   end
   filter :id
@@ -66,10 +66,10 @@ ActiveAdmin.register UserAvatar do
   show do |user|
     attributes_table_for user do
       row :user
-      row :avatar do
-          image_tag user.avatar.thumb.url, {:style => "height:100px;width:100px;"}
-      end
+      row "Image" do image_tag user.avatar.thumb.url, {:style => "height:100px;width:100px;"} end
+          
       row :default
+      row "Enabled" do user.is_active end
     end
   end
 end
