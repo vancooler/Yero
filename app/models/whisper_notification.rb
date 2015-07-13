@@ -224,7 +224,7 @@ class WhisperNotification < AWS::Record::HashModel
 
         # expire rule change!!
         # h['seconds_left'] = attributes['timestamp'].to_i + 4*3600 - Time.now.to_i + 60
-        expire_timestamp = UserLocation.tomorrow_close_timestamp(sender_id.to_i, attributes['timestamp'])
+        expire_timestamp = UserLocation.tomorrow_close_timestamp(user_id.to_i, attributes['timestamp'])
         h['seconds_left'] = expire_timestamp - Time.now.to_i + 60
         h['expire_timestamp'] = expire_timestamp
         h['accepted'] = attributes['accepted'].to_i
