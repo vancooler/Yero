@@ -1246,12 +1246,15 @@ class UsersController < ApplicationController
           json.accepted   user["accepted"].blank? ? 0 : user["accepted"]
           json.declined   user["declined"].blank? ? 0 : user["declined"]
           json.intro_message user["intro"].blank? ? '' : user["intro"]
+          json.whisper_id  user["whisper_id"].blank? ? '' : user["whisper_id"]
+          json.notification_type 2
+        else
+          json.notification_type 3
         end
+        json.id = user_object['id'] 
         json.timestamp  user["timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
-        json.whisper_id  user["whisper_id"].blank? ? '' : user["whisper_id"]
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]
-        json.notification_type 2
         json.object_type "user"
         json.object user_object
 
