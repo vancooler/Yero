@@ -294,8 +294,8 @@ class UsersController < ApplicationController
     puts "Venue time"
     puts runtime.inspect
     # yero_notify = WhisperNotification.yero_notification(current_user.id)
-
-    users = requests_user_whisper_json(return_users)
+    is_friends = false
+    users = requests_user_whisper_json(return_users, is_friends)
     venues = requests_venue_whisper_json(return_venues)
 
     users = JSON.parse(users).delete_if(&:blank?)
@@ -452,8 +452,8 @@ class UsersController < ApplicationController
       if !page_number.nil? and !friends_per_page.nil? and friends_per_page > 0 and page_number >= 0
         friends = Kaminari.paginate_array(friends).page(page_number).per(friends_per_page) 
       end
-
-      users = requests_user_whisper_json(friends)
+      is_friends = true
+      users = requests_user_whisper_json(friends, is_friends)
       users = JSON.parse(users).delete_if(&:blank?)
       users = users.sort_by { |hsh| hsh["timestamp"] }
       WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
@@ -573,7 +573,7 @@ class UsersController < ApplicationController
         break random_token unless User.exists?(key: random_token)
       end
       @user.key_expiration = Time.now + 3.hours
-
+      @user.account_status = 1
       @user.last_active = Time.now
       if !(User.exists? email: params[:email])
         if @user.save
@@ -669,6 +669,7 @@ class UsersController < ApplicationController
       if user_registration.create
         user = user_registration.user
         user.key_expiration = Time.now + 3.hours
+        user.account_status = 1
         user.save
         # save avatar order
         if !user.nil? and !user.default_avatar.nil?
@@ -1231,7 +1232,7 @@ class UsersController < ApplicationController
     return users 
   end
 
-  def requests_user_whisper_json(return_users)
+  def requests_user_whisper_json(return_users, is_friends)
     users = Jbuilder.encode do |json|
       json.array! return_users.each do |user|
         target_user = User.find_by_id(user["target_user"]["id"].to_i)
@@ -1239,14 +1240,16 @@ class UsersController < ApplicationController
           user_object = target_user.user_object(current_user)
         end
 
+        if !is_friends
+          json.seconds_left  user["seconds_left"]
+          json.expire_timestamp  user["expire_timestamp"]
+          json.accepted   user["accepted"].blank? ? 0 : user["accepted"]
+          json.declined   user["declined"].blank? ? 0 : user["declined"]
+          json.intro_message user["intro"].blank? ? '' : user["intro"]
+        end
         json.timestamp  user["timestamp"]
-        json.seconds_left  user["seconds_left"].nil? ? nil : user["seconds_left"]
-        json.expire_timestamp  user["expire_timestamp"].nil? ? nil : user["expire_timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
-        json.accepted   user["accepted"].blank? ? 0 : user["accepted"]
-        json.declined   user["declined"].blank? ? 0 : user["declined"]
         json.whisper_id  user["whisper_id"].blank? ? '' : user["whisper_id"]
-        json.intro_message user["intro"].blank? ? '' : user["intro"]
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]
         json.notification_type 2
         json.object_type "user"
@@ -1277,8 +1280,9 @@ class UsersController < ApplicationController
         json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
         json.declined   venue["declined"].blank? ? 0 : venue["declined"]
         json.viewed venue["viewed"]
+        json.intro_message venue["intro"].blank? ? '' : venue["intro"]
         # json.not_viewed_by_sender venue["not_viewed_by_sender"]
-        json.created_date venue["created_date"]
+        # json.created_date venue["created_date"]
         json.whisper_id venue["whisper_id"]
         json.notification_type  1
         json.object_type "venue"
