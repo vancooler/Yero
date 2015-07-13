@@ -449,7 +449,7 @@ class UsersController < ApplicationController
       page_number = params[:page].to_i + 1 if !params[:page].blank?
       friends_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
+      if !page_number.nil? and !friends_per_page.nil? and friends_per_page > 0 and page_number >= 0
         friends = Kaminari.paginate_array(friends).page(page_number).per(friends_per_page) 
       end
 
