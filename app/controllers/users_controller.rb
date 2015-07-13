@@ -8,7 +8,7 @@ class UsersController < ApplicationController
     puts "THE ID"
     puts current_user.id
     avatar_array = Array.new
-    if current_user.account_status == 1 or !current_user.default_avatar.nil?
+    if !current_user.default_avatar.nil?
       user_info = current_user.to_json(false)
       # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
       user_info["avatars"].each do |a|
@@ -575,7 +575,6 @@ class UsersController < ApplicationController
       @user.key_expiration = Time.now + 3.hours
 
       @user.last_active = Time.now
-      @user.account_status = 0  # inactive without avatar
       if !(User.exists? email: params[:email])
         if @user.save
           response = @user.to_json(true)
@@ -1242,6 +1241,7 @@ class UsersController < ApplicationController
 
         json.timestamp  user["timestamp"]
         json.seconds_left  user["seconds_left"]
+        json.expire_timestamp  user["expire_timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
         json.accepted   user["accepted"].blank? ? nil : user["accepted"]
         json.declined   user["declined"].blank? ? nil : user["declined"]

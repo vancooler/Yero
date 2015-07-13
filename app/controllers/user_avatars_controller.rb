@@ -107,7 +107,7 @@ class UserAvatarsController < ApplicationController
         else
           logger.info "Replace Main Avatar " + avatar.id.to_s + " " + avatar.default.to_s
           avatar.set_as_default 
-          current_user.account_status = 1
+          # current_user.account_status = 1
           current_user.save
         end
       end

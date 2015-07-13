@@ -12,11 +12,11 @@ class UserRegistration
     create_key
     @user.last_active = Time.now
     @user.save
-    if @user.default_avatar.nil?
-      @user.account_status = 0  # inactive without avatar
-    else
-      @user.account_status = 1  # active with avatar
-    end
+    # if @user.default_avatar.nil?
+    #   @user.account_status = 0  # inactive without avatar
+    # else
+    #   @user.account_status = 1  # active with avatar
+    # end
     @user.save
     # create_layer_account
   end
