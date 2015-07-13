@@ -1240,12 +1240,12 @@ class UsersController < ApplicationController
         end
 
         json.timestamp  user["timestamp"]
-        json.seconds_left  user["seconds_left"]
-        json.expire_timestamp  user["expire_timestamp"]
+        json.seconds_left  user["seconds_left"].nil? ? nil : user["seconds_left"]
+        json.expire_timestamp  user["expire_timestamp"].nil? ? nil : user["expire_timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
-        json.accepted   user["accepted"].blank? ? nil : user["accepted"]
-        json.declined   user["declined"].blank? ? nil : user["declined"]
-        json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
+        json.accepted   user["accepted"].blank? ? 0 : user["accepted"]
+        json.declined   user["declined"].blank? ? 0 : user["declined"]
+        json.whisper_id  user["whisper_id"].blank? ? '' : user["whisper_id"]
         json.intro_message user["intro"].blank? ? '' : user["intro"]
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]
         json.notification_type 2
@@ -1274,8 +1274,8 @@ class UsersController < ApplicationController
         json.timestamp venue["timestamp"]
         json.seconds_left  nil
         json.timestamp_read Time.at(venue['timestamp'])
-        json.accepted   venue["accepted"].blank? ? nil : venue["accepted"]
-        json.declined   venue["declined"].blank? ? nil : venue["declined"]
+        json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
+        json.declined   venue["declined"].blank? ? 0 : venue["declined"]
         json.viewed venue["viewed"]
         # json.not_viewed_by_sender venue["not_viewed_by_sender"]
         json.created_date venue["created_date"]
