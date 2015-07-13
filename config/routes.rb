@@ -47,6 +47,10 @@ Rails.application.routes.draw do
     put 'owner/greeting-message/:id', to: 'greeting_messages#update'
     get 'owner/greeting-message/:id', to: 'greeting_messages#show', as: :greeting_message
     post 'owner/greeting-message/approve', to: 'greeting_messages#approve', as: :greeting_message_approve
+    post 'admin/disable-single-image/:id', to: 'admin/user_avatars#disable_single_image', as: :admin_disable_single_image
+    post 'admin/enable-single-image/:id', to: 'admin/user_avatars#enable_single_image', as: :admin_enable_single_image
+    post 'admin/disable-single-user/:id', to: 'admin/user_avatars#disable_single_user', as: :admin_disable_user_account
+    post 'admin/enable-single-user/:id', to: 'admin/user_avatars#enable_single_user', as: :admin_enable_user_account
 
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
