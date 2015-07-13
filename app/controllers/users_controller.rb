@@ -1251,7 +1251,7 @@ class UsersController < ApplicationController
         else
           json.notification_type 3
         end
-        json.id = user_object['id'] 
+        json.id user_object['id'] 
         json.timestamp  user["timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]
@@ -1278,7 +1278,7 @@ class UsersController < ApplicationController
         # json.venue_name venue_obj["name"]
         # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
         json.timestamp venue["timestamp"]
-        json.seconds_left  nil
+        # json.seconds_left  nil
         json.timestamp_read Time.at(venue['timestamp'])
         json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
         json.declined   venue["declined"].blank? ? 0 : venue["declined"]
