@@ -16,10 +16,9 @@ ActiveAdmin.register UserAvatar  do
             # disconnect user
             default = 0
             if ua.default
-              u.is_connected = false
+              u.leave_network
               default = 1
             end
-            u.save
             # notification
             WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
             ReportUserHistory.notify_all_users(ua.user_id)
@@ -68,10 +67,9 @@ ActiveAdmin.register UserAvatar  do
           # disconnect user
           default = 0
           if ua.default
-            u.is_connected = false
+            u.leave_network
             default = 1
           end
-          u.save
           # notification
           WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
           ReportUserHistory.notify_all_users(ua.user_id)

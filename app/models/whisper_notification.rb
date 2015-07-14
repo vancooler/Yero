@@ -12,9 +12,13 @@ class WhisperNotification < AWS::Record::HashModel
               # '1' => enter venue greeting
               # '2' => chat whisper request
               # '3' => accept whisper request
+              # 100 level means system notifications
               # '100' => network open
               # '101' => avatar disable
               # '102' => enough users now
+              # 200 level means system activity records
+              # '200' => join network
+              # '201' => leave network
   boolean_attr :viewed                 #0->1
   boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
@@ -445,62 +449,73 @@ class WhisperNotification < AWS::Record::HashModel
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
     table.load_schema
-    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
-    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
+    current_user = user
+    activity_notification_types = ["200", "201"]
+    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :id, :timestamp)
+    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :id, :timestamp)
+    activity_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).in(*activity_notification_types).select(:id, :timestamp, :notification_type)
     origin_user_array = Array.new
     if target_items and target_items.count > 0
       target_items.each do |i|
         attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
-        a = Array.new
+        h['object_type'] = 'user'
         if origin_id > 0
           if User.exists? id: origin_id
             user = User.find(origin_id)
-            h['origin_user'] = user
-            h['origin_user_thumb'] = user.main_avatar.avatar.thumb.url
+            h['user'] = user.user_object(current_user)
           else
-            h['origin_user'] = ''
+            h['user'] = ''
           end
         else
-          h['origin_user'] = ''
+          h['user'] = ''
         end
         h['whisper_id'] = attributes['id']
-        h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
-        a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << a
+        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
       end
-      # return target_user_array
     end
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
-        a = Array.new
+        h['object_type'] = 'user'
         if target_id > 0
           if User.exists? id: target_id
             user = User.find(target_id)
-            h['target_user'] = user
-            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+            h['user'] = user.user_object(current_user)
           else
-            h['target_user'] = ''
+            h['user'] = ''
           end
         else
-          h['target_user'] = ''
+          h['user'] = ''
         end
         h['whisper_id'] = attributes['id'].to_i
-        h['accepted'] = attributes['accepted'].to_i
         h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
-        a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << a
+        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
       end
-      # return origin_user_array
     end
-    users = origin_user_array.sort_by! { |hsh| hsh[1] }
+    if activity_items and activity_items.count > 0
+      activity_items.each do |i|
+        attributes = i.attributes
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        h['object_type'] = 'system_activity'
+        h['system_activity'] = (attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Leave Network'
+        h['whisper_id'] = attributes['id'].to_i
+        h['my_role'] = 'target_user'
+        h['timestamp'] = attributes['timestamp'].to_i
+        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
+      end
+    end
+    users = origin_user_array.sort_by { |hsh| hsh['timestamp'] }
     users = users.reverse!
     if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
       users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?

@@ -482,6 +482,7 @@ class User < ActiveRecord::Base
       User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
       # expire all whispers with type 2 of these users
       WhisperNotification.expire(people_array, '2')
+      User.leave_activity(people_array)
     end
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
@@ -836,4 +837,45 @@ class User < ActiveRecord::Base
     return token
   end
 
+
+  def join_network
+    self.is_connected = true
+    self.save
+    WhisperNotification.create_in_aws(uid, nil, nil, "200", '')
+  end
+
+  def leave_network
+    self.is_connected = false
+    self.save
+    WhisperNotification.create_in_aws(uid, nil, nil, "201", '')
+  end
+
+  def self.leave_activity(people_array)
+    dynamo_db = AWS::DynamoDB.new
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name]
+    table.load_schema
+
+    people_array.each_slice(25) do |whisper_group|
+      batch = AWS::DynamoDB::BatchWrite.new
+      current_timestamp = Time.now
+      notification_array = Array.new
+      whisper_group.each do |w|
+        if !w.blank?
+          request = Hash.new()
+          request["target_id"] = w
+          request["timestamp"] = current_timestamp
+          request["accepted"] = 0
+          request["declined"] = 0
+          request["notification_type"] = '201'
+          request["viewed"] = 0
+          notification_array << request 
+        end
+      end
+      if notification_array.count > 0
+        batch.put(table_name, notification_array)
+        batch.process!
+      end
+    end
+  end
 end
