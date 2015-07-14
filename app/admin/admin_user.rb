@@ -36,7 +36,7 @@ ActiveAdmin.register AdminUser do
         f.input :email
         f.input :password
         f.input :password_confirmation
-        f.input :level
+        f.input :level, :as => :select, :collection => [["Super Admin", 0], ["Normal Admin", 1]], :selected => f.object.level.nil? ? 1 : f.object.level
       end
       f.actions
     end
