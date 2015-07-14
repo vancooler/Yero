@@ -283,14 +283,24 @@ class VenuesController < ApplicationController
   # List of venues
   # TODO Refactor out the JSON builder into venue.rb
   def list
+    user = current_user
     if !params[:distance].nil? and params[:distance].to_i > 0
       distance = params[:distance].to_i
     else
       distance = 10000
     end
-    user = current_user
+    if !params[:latitude].blank? 
+      latitude = params[:latitude].to_f
+    else
+      latitude = user.latitude
+    end
+    if !params[:longitude].blank? 
+      longitude = params[:longitude].to_f
+    else
+      longitude = user.longitude
+    end
     # venues = Venue.all
-    venues = Venue.near_venues(user, distance)
+    venues = Venue.near_venues(latitude, longitude, distance)
 
     campus = VenueType.find_by_name("Campus")
 
