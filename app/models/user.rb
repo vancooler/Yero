@@ -839,7 +839,7 @@ class User < ActiveRecord::Base
 
 
   def join_network
-    if self.is_connected = false
+    if self.is_connected == false
       self.is_connected = true
       self.save
       WhisperNotification.create_in_aws(uid, nil, nil, "200", '')
