@@ -92,8 +92,7 @@ class UsersController < ApplicationController
       render json: success(avatar_result, "avatar")
     else
       user = current_user
-      user.is_connected = true
-      user.save
+      user.join_network
       puts user
       gender = params[:gender] if !params[:gender].blank?
       min_age = params[:min_age].to_i if !params[:min_age].blank?
