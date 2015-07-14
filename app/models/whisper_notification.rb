@@ -471,7 +471,7 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['user'] = ''
         end
-        h['whisper_id'] = attributes['id']
+        h['activity_id'] = attributes['id']
         h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
@@ -494,7 +494,7 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['user'] = ''
         end
-        h['whisper_id'] = attributes['id'].to_i
+        h['activity_id'] = attributes['id'].to_i
         h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
@@ -508,7 +508,7 @@ class WhisperNotification < AWS::Record::HashModel
         h = Hash.new
         h['object_type'] = 'system_activity'
         h['system_activity'] = (attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Leave Network'
-        h['whisper_id'] = attributes['id'].to_i
+        h['activity_id'] = attributes['id']
         h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
