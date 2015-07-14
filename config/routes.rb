@@ -141,7 +141,7 @@ Rails.application.routes.draw do
   post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
   post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
   post 'api/v1/notification/get_info', to: 'whispers#get_info'
-  post 'api/v1/whisper/chat_request_history', to: 'whispers#chat_request_history'
+  post 'api/v1/activity', to: 'whispers#chat_request_history'
   post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
   post 'api/v1/notification/delete', to: 'whispers#api_delete'
   post 'api/v1/notification/decline_all_chat', to: 'whispers#api_decline_all_chat'
