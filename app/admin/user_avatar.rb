@@ -19,8 +19,10 @@ ActiveAdmin.register UserAvatar  do
             if ua.u.user_avatars.where(:is_active => true).blank?
               u.leave_network
               default = 1
-              WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+              WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
+
             end
+            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
 
             # notification
             ReportUserHistory.notify_all_users(ua.user_id)
@@ -75,8 +77,10 @@ ActiveAdmin.register UserAvatar  do
           if ua.u.user_avatars.where(:is_active => true).blank?
             u.leave_network
             default = 1
-            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+            WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
+
           end
+          WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
           ReportUserHistory.notify_all_users(ua.user_id)
         end
       end
