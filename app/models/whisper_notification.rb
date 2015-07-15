@@ -375,6 +375,28 @@ class WhisperNotification < AWS::Record::HashModel
 
   end
 
+  def self.friends_activity_to_json(friends, current_user)
+    origin_user_array = Array.new
+    if friends and friends.count > 0
+      friends.each do |i|
+        h = Hash.new
+        h['activity_type'] = 'friends'
+        h['object_type'] = 'user'
+        target_user = User.find_by_id(i["target_user"]["id"].to_i)
+        if !target_user.nil?
+          user_object = target_user.user_object(current_user)
+        end
+
+        h['object'] = user_object
+        h['activity_id'] = (attributes['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : attributes['id'])
+        # h['my_role'] = 'target_user'
+        h['timestamp'] = attributes['timestamp'].to_i
+        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
+      end
+    end
+    return origin_user_array
+  end
   
 
   def self.chat_action(id, handle_action)
@@ -454,25 +476,30 @@ class WhisperNotification < AWS::Record::HashModel
     target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :id, :timestamp)
     origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :id, :timestamp)
     activity_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).in(*activity_notification_types).select(:id, :timestamp, :notification_type)
+    friends = WhisperNotification.myfriends(user.id)
+    is_friends = true
+    friends = WhisperNotification.friends_activity_to_json(friends, user)
+    disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
     origin_user_array = Array.new
     if target_items and target_items.count > 0
       target_items.each do |i|
         attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
+        h['activity_type'] = 'received whisper'
         h['object_type'] = 'user'
         if origin_id > 0
           if User.exists? id: origin_id
             user = User.find(origin_id)
-            h['user'] = user.user_object(current_user)
+            h['object'] = user.user_object(current_user)
           else
-            h['user'] = ''
+            h['object'] = ''
           end
         else
-          h['user'] = ''
+          h['object'] = ''
         end
         h['activity_id'] = attributes['id']
-        h['my_role'] = 'target_user'
+        # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
@@ -483,19 +510,20 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
+        h['activity_type'] = 'sent whisper'
         h['object_type'] = 'user'
         if target_id > 0
           if User.exists? id: target_id
             user = User.find(target_id)
-            h['user'] = user.user_object(current_user)
+            h['object'] = user.user_object(current_user)
           else
-            h['user'] = ''
+            h['object'] = ''
           end
         else
-          h['user'] = ''
+          h['object'] = ''
         end
         h['activity_id'] = attributes['id'].to_i
-        h['my_role'] = 'origin_user'
+        # h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
@@ -506,14 +534,29 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
-        h['object_type'] = 'system_activity'
-        h['system_activity'] = (attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Leave Network'
+        h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Leave Network')
         h['activity_id'] = attributes['id']
-        h['my_role'] = 'target_user'
+        # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
       end
+    end
+    if disabled_avatars and disabled_avatars.count > 0
+      disabled_avatars.each do |i|
+        attributes = i.attributes
+        target_id = attributes['target_id'].to_i
+        h = Hash.new
+        h['activity_type'] = 'profile avatar disabled'
+        h['activity_id'] = attributes['id']
+        # h['my_role'] = 'target_user'
+        h['timestamp'] = attributes['timestamp'].to_i
+        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
+      end
+    end
+    if !friends.empty?
+      origin_user_array = origin_user_array + friends
     end
     users = origin_user_array.sort_by { |hsh| hsh['timestamp'] }
     users = users.reverse!
