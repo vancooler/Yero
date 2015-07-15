@@ -16,7 +16,7 @@ ActiveAdmin.register UserAvatar  do
             # disconnect user
             default = 0
             UserAvatar.order_minus_one(u.id, ua.order)
-            if ua.u.user_avatars.where(:is_active => true).blank?
+            if u.user_avatars.where(:is_active => true).blank?
               u.leave_network
               default = 1
               WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
@@ -74,7 +74,7 @@ ActiveAdmin.register UserAvatar  do
           # disconnect user
           default = 0
           UserAvatar.order_minus_one(u.id, ua.order)
-          if ua.u.user_avatars.where(:is_active => true).blank?
+          if u.user_avatars.where(:is_active => true).blank?
             u.leave_network
             default = 1
             WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
