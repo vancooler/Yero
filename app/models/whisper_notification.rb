@@ -258,8 +258,8 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables[table_name] # Choose the table
     table.load_schema 
     current_user = User.find(user_id)
-    friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
-    friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
+    friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :id, :timestamp)
+    friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :id, :timestamp)
     first_friends_array = Array.new
     second_friends_array = Array.new
     first_friends_id_array = Array.new
@@ -390,7 +390,7 @@ class WhisperNotification < AWS::Record::HashModel
         end
 
         h['object'] = user_object
-        h['activity_id'] = (i['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : attributes['id'])
+        h['activity_id'] = (i['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : i['id'])
         # h['my_role'] = 'target_user'
         h['timestamp'] = i['timestamp']
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
