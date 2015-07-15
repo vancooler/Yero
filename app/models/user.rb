@@ -855,7 +855,7 @@ class User < ActiveRecord::Base
 
     people_array.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
-      current_timestamp = Time.now
+      current_timestamp = Time.now.to_i
       notification_array = Array.new
       whisper_group.each do |w|
         if !w.blank?
