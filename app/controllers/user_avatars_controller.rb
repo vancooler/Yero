@@ -105,7 +105,7 @@ class UserAvatarsController < ApplicationController
   end
 
   def create
-    current_order = UserAvatar.where(:user_id => current_user.id).maximum(:order)
+    current_order = UserAvatar.where(:user_id => current_user.id).where(:is_active => true).maximum(:order)
     if !params[:avatar_id].nil?
       avatar_id = params[:avatar_id] 
       avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
@@ -160,13 +160,7 @@ class UserAvatarsController < ApplicationController
     if avatar and active_avatars_number > 1
       this_order = avatar.order
       if avatar.destroy
-        
-        greater_avatars = UserAvatar.where(user_id: current_user.id).where(is_active: true).where(order: (this_order)..Float::INFINITY)
-        greater_avatars.each do |ga|
-          ga.order = ga.order - 1
-          ga.save!
-        end
-
+        UserAvatar.order_minus_one(current_user.id, this_order)
 
         user_info = current_user.to_json(true)
         user_info["avatars"].each do |a|

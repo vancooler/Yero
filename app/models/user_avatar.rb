@@ -29,6 +29,14 @@ class UserAvatar < ActiveRecord::Base
     end
   end
 
+  def self.order_minus_one(user_id, starting_order)
+    greater_avatars = UserAvatar.where(user_id: user_id).where(is_active: true).where(order: (starting_order)..Float::INFINITY)
+    greater_avatars.each do |ga|
+      ga.order = ga.order - 1
+      ga.save!
+    end
+  end
+
   private
 
     def set_order_zero_if_only_one_avatar_present

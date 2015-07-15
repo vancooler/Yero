@@ -15,12 +15,14 @@ ActiveAdmin.register UserAvatar  do
           if !u.blank? 
             # disconnect user
             default = 0
-            if ua.default
+            UserAvatar.order_minus_one(u.id, ua.order)
+            if ua.u.user_avatars.where(:is_active => true).blank?
               u.leave_network
               default = 1
+              WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
             end
+
             # notification
-            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
             ReportUserHistory.notify_all_users(ua.user_id)
           end
         end
@@ -32,6 +34,9 @@ ActiveAdmin.register UserAvatar  do
       ua = UserAvatar.find_by_id(params[:id])
       if !ua.nil?
         ua.is_active = true
+        current_order = UserAvatar.where(:user_id => ua.user_id).where(:is_active => true).maximum(:order)
+      next_order = current_order.nil? ? 0 : current_order+1
+      ua.order = next_order
         ua.save!
       end
       redirect_to :back, :notice => "Image is enabled"
@@ -66,12 +71,12 @@ ActiveAdmin.register UserAvatar  do
         if !u.blank? 
           # disconnect user
           default = 0
-          if ua.default
+          UserAvatar.order_minus_one(u.id, ua.order)
+          if ua.u.user_avatars.where(:is_active => true).blank?
             u.leave_network
             default = 1
+            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
           end
-          # notification
-          WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
           ReportUserHistory.notify_all_users(ua.user_id)
         end
       end
@@ -81,6 +86,9 @@ ActiveAdmin.register UserAvatar  do
   batch_action :enable_image, :confirm => "Are you sure you want to enable all of these images?" do |selection|
     UserAvatar.find(selection).each do |ua|
       ua.is_active = true
+      current_order = UserAvatar.where(:user_id => ua.user_id).where(:is_active => true).maximum(:order)
+      next_order = current_order.nil? ? 0 : current_order+1
+      ua.order = next_order
       ua.save!
     end
     redirect_to :back, :notice => "Selected images are enabled"
