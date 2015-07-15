@@ -136,6 +136,30 @@ class UserAvatarsController < ApplicationController
     end
   end
 
+  def update
+    if !params[:avatar_id].nil? and !params[:avatar].nil?
+      avatar_id = params[:avatar_id] 
+      avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
+
+      if avatar.nil?
+        render json: error("Photo cannot be found")
+      else
+        avatar.avatar = params[:avatar]
+        if avatar.save
+          user_info = current_user.to_json(true)
+          user_info["avatars"].each do |a|
+            thumb = a['avatar']
+            a['avatar'] = thumb.gsub! 'thumb_', ''
+          end
+          render json: success(user_info)
+        else
+          render json: error(avatar.errors)
+        end
+      end
+    else  
+      render json: error("Invalid Parameters")
+    end
+  end
 
   ###################################################################
   #
