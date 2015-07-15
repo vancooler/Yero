@@ -1,9 +1,9 @@
 class UserAvatar < ActiveRecord::Base
-  after_save :set_default_avatar_if_only_one_avatar_present
-  before_destroy :validate_min_number_of_avatars, :validate_cant_delete_default_avatar
+  # after_save :set_default_avatar_if_only_one_avatar_present
+  before_destroy :validate_min_number_of_avatars
   belongs_to :user
-  scope :main_avatar, -> {find_by(default:true)}
-  scope :secondary_avatars, -> {where.not(default:true)}
+  scope :main_avatar, -> {find_by(order:0)}
+  scope :secondary_avatars, -> {where.not(order:0)}
   
   validate :max_number_of_avatars
 
@@ -43,8 +43,8 @@ class UserAvatar < ActiveRecord::Base
 
     def max_number_of_avatars
       return unless user_id_changed?
-      maximum_number_of_avatars = 3
-      unless self.user.user_avatars.size < maximum_number_of_avatars
+      maximum_number_of_avatars = 6
+      unless self.user.user_avatars.where(:is_active => true).size < maximum_number_of_avatars
         errors.add :base, "You cannot have more than #{maximum_number_of_avatars} avatars."
         return false
       end
@@ -52,7 +52,7 @@ class UserAvatar < ActiveRecord::Base
 
     def validate_min_number_of_avatars
       minimum_number_of_avatars = 1
-      unless self.user.user_avatars.size > minimum_number_of_avatars
+      unless self.user.user_avatars.where(:is_active => true).size > minimum_number_of_avatars
         errors.add :base, "You cannot have less than #{minimum_number_of_avatars} avatars."
         return false
       end
