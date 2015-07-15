@@ -382,7 +382,7 @@ class WhisperNotification < AWS::Record::HashModel
     if friends and friends.count > 0
       friends.each do |i|
         h = Hash.new
-        h['activity_type'] = 'friends'
+        h['activity_type'] = 'Friends'
         h['object_type'] = 'user'
         target_user = User.find_by_id(i["target_user"]["id"].to_i)
         if !target_user.nil?
@@ -488,7 +488,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
-        h['activity_type'] = 'received whisper'
+        h['activity_type'] = 'Received Whisper'
         h['object_type'] = 'user'
         if origin_id > 0
           if User.exists? id: origin_id
@@ -512,7 +512,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
-        h['activity_type'] = 'sent whisper'
+        h['activity_type'] = 'Sent Whisper'
         h['object_type'] = 'user'
         if target_id > 0
           if User.exists? id: target_id
@@ -549,7 +549,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
-        h['activity_type'] = 'profile avatar disabled'
+        h['activity_type'] = 'Profile Avatar Disabled'
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
