@@ -295,6 +295,7 @@ class WhisperNotification < AWS::Record::HashModel
           else
               h['target_user'] = ''
           end
+          h['id'] = attributes['id']
           h['timestamp'] = attributes['timestamp'].to_i
           h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
           first_friends_array << h  
@@ -333,6 +334,7 @@ class WhisperNotification < AWS::Record::HashModel
           else
               h['target_user'] = ''
           end
+          h['id'] = attributes['id']
           h['timestamp'] = attributes['timestamp'].to_i
           h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
           second_friends_array << h  
@@ -388,9 +390,9 @@ class WhisperNotification < AWS::Record::HashModel
         end
 
         h['object'] = user_object
-        h['activity_id'] = (attributes['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : attributes['id'])
+        h['activity_id'] = (i['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : attributes['id'])
         # h['my_role'] = 'target_user'
-        h['timestamp'] = attributes['timestamp'].to_i
+        h['timestamp'] = i['timestamp']
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
       end
