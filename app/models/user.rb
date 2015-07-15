@@ -849,7 +849,6 @@ class User < ActiveRecord::Base
   def leave_network
     self.is_connected = false
     self.save
-    WhisperNotification.create_in_aws(self.id, nil, nil, "201", '')
   end
 
   def self.leave_activity(people_array)
