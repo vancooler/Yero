@@ -761,6 +761,14 @@ class UsersController < ApplicationController
     end
   end
 
+
+  def logout
+    current_user.apn_token = ''
+    if current_user.save
+      render json: success(true)
+    end
+  end
+
   def update_settings
     user = current_user
 
