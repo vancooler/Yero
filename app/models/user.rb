@@ -864,6 +864,7 @@ class User < ActiveRecord::Base
           request["timestamp"] = current_timestamp
           request["accepted"] = 0
           request["declined"] = 0
+          request["id"] = "offline-"+w.to_s+"-"+current_timestamp.to_s + 
           request["notification_type"] = '201'
           request["viewed"] = 0
           notification_array << request 
