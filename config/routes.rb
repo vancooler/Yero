@@ -119,6 +119,7 @@ Rails.application.routes.draw do
   post 'api/v1/avatar/create_for_signup',  to: 'user_avatars#create_avatar'
   post 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
   post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
+  put 'api/v1/avatar/swap',        to: 'user_avatars#swap_photos'
   post 'api/v1/user/update_profile',       to: 'users#update_profile'
   post 'api/v1/user/show',                 to: 'users#show'
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'

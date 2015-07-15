@@ -2,8 +2,8 @@ class UserAvatar < ActiveRecord::Base
   after_save :set_order_zero_if_only_one_avatar_present
   before_destroy :validate_min_number_of_avatars
   belongs_to :user
-  scope :main_avatar, -> {find_by(default:true)}
-  scope :secondary_avatars, -> {where.not(default:true)}
+  scope :main_avatar, -> {find_by(order:0)}
+  scope :secondary_avatars, -> {where.not(order:0)}
   
   validate :max_number_of_avatars
 

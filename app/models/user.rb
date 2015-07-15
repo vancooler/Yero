@@ -32,7 +32,7 @@ class User < ActiveRecord::Base
   has_secure_password
 
   def main_avatar
-    user_avatars.find_by(default: true)
+    user_avatars.find_by(order: 0)
   end
 
   # Checks if you are in the same venue as the other person
@@ -96,7 +96,7 @@ class User < ActiveRecord::Base
   end
 
   def secondary_avatars
-    user_avatars.where.not(default: true)
+    user_avatars.where.not(order: 0)
   end
 
   ##########################################################################
@@ -166,7 +166,7 @@ class User < ActiveRecord::Base
     # only return users with avatar near current user 
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
-    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
+    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { level: 0}).near(self, max_distance, :units => :km)
     # users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
@@ -292,7 +292,7 @@ class User < ActiveRecord::Base
   end
 
   def default_avatar
-    self.user_avatars.where(default: true).first
+    self.user_avatars.where(level: 0).first
   end
 
   def age
@@ -326,7 +326,7 @@ class User < ActiveRecord::Base
         json.array! avatars do |a|
 
           json.avatar a.avatar.thumb.url
-          json.default a.default
+          json.default (!a.order.nil? and a.order == 0)
           json.is_active a.is_active
           json.avatar_id a.id
           json.order (a.order.nil? ? 100 : a.order)
@@ -584,8 +584,8 @@ class User < ActiveRecord::Base
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
             user_avatar_object(self)
-            main_avatar   =  user.user_avatars.where(default:true).where(is_active:true)
-            other_avatars =  user.user_avatars.where.not(default:true).where(is_active:true).order(:order)
+            main_avatar   =  user.user_avatars.where(level:0).where(is_active:true)
+            other_avatars =  user.user_avatars.where.not(level:0).where(is_active:true).order(:order)
             avatar_array = Array.new
             avatar_array[0] = {
                   thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
@@ -598,21 +598,15 @@ class User < ActiveRecord::Base
                   order: main_avatar.first.order.nil? ? '100' : main_avatar.first.order
                 }
             if other_avatars.count > 0
-              avatar_array[2] = {
-                    avatar: other_avatars.count > 0 ? other_avatars.first.avatar.url : '',
-                    avatar_id: other_avatars.count > 0 ? other_avatars.first.id : '',
-                    default: false,
-                    is_active: true,
-                    order: other_avatars.first.order.nil? ? '100' : other_avatars.first.order
-                  }
-              if other_avatars.count > 1
-                avatar_array[3] = {
-                      avatar: other_avatars.count > 1 ? other_avatars.second.avatar.url : '',
-                      avatar_id: other_avatars.count > 1 ? other_avatars.second.id : '',
-                      default: false,
-                      is_active: true,
-                      order: other_avatars.second.order.nil? ? '100' : other_avatars.second.order
-                    }
+              other_avatars.each do |oa|
+                new_item = {
+                  avatar: oa.count > 0 ? oa.first.avatar.url : '',
+                  avatar_id: oa.count > 0 ? oa.first.id : '',
+                  default: false,
+                  is_active: true,
+                  order: oa.first.order.nil? ? '100' : oa.first.order
+                }
+                avatar_array << new_item
               end
             end
             json.avatars do |a|
@@ -621,6 +615,8 @@ class User < ActiveRecord::Base
                 a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
                 a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
                 a.default     avatar[:default]   if !avatar[:default].nil?
+                a.is_active     avatar[:is_active]   if !avatar[:is_active].nil?
+                a.order     avatar[:order]   if !avatar[:order].nil?
               end
             end
 

@@ -3,6 +3,33 @@ class UserAvatarsController < ApplicationController
   before_action :authenticate_api, except: [:create_avatar]
   skip_before_filter  :verify_authenticity_token
 
+
+  # work as swap avatars
+  def swap_photos
+    avatar_one = UserAvatar.find_by(user: current_user, id: params[:avatar_id_one])
+    avatar_two = UserAvatar.find_by(user: current_user, id: params[:avatar_id_two])
+    tmp_order = avatar_one.order.to_s
+    avatar_one.order = avatar_two.order
+    avatar_two.order = tmp_order.to_i
+
+    if avatar_one.save 
+      if avatar_two.save
+        user_info = current_user.to_json(true)
+        user_info['avatars'].each do |a|
+          thumb = a['avatar']
+          # a['thumbnail'] = thumb
+          a['avatar'] = thumb.gsub! 'thumb_', ''
+        end
+        render json: success(user_info)
+      else
+        render json: error(avatar_two.errors)
+      end
+    else
+      render json: error(avatar_one.errors)
+    end
+  end
+
+
   def set_default
     current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     if !current_main_avatar.nil?
@@ -93,40 +120,9 @@ class UserAvatarsController < ApplicationController
       next_order = current_order.nil? ? 0 : current_order+1
       avatar.order = next_order
     end
-    current_main_avatar = UserAvatar.find_by(user: current_user, default: true)
     avatar.avatar = params[:avatar]
     if avatar.save
-      if params[:default].to_s == 'true'      
-        logger.info "AVATAR HERE: " + params[:default].to_s
-        if !current_main_avatar.nil? and current_main_avatar.id != avatar.id
-          logger.info "NOT MAIN"
-          current_main_avatar.default = false
-          if current_main_avatar.save
-            avatar.set_as_default 
-          end
-        else
-          logger.info "Replace Main Avatar " + avatar.id.to_s + " " + avatar.default.to_s
-          avatar.set_as_default 
-          # current_user.account_status = 1
-          current_user.save
-        end
-      end
       user_info = current_user.to_json(true)
-      user_info["key"] = current_user.key
-      # avatars = Array.new
-      # user_info['avatars'].each do |avatar|
-      #   real_avatar = UserAvatar.find(avatar['avatar_id'].to_i)
-      #   return_avatar = Hash.new
-      #   return_avatar['avatar'] = real_avatar.avatar.url
-      #   return_avatar['default'] = real_avatar.default
-      #   return_avatar['avatar_id'] = avatar['avatar_id'].to_i
-      #   if avatar['default'].to_s == "true"
-      #     avatars.unshift(return_avatar)
-      #   else
-      #     avatars.push(return_avatar)
-      #   end
-      # end
-      # user_info['avatars'] = avatars
       
       user_info["avatars"].each do |a|
         thumb = a['avatar']
@@ -160,50 +156,29 @@ class UserAvatarsController < ApplicationController
 
   def destroy
     avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
-
-    if avatar and !avatar.default
+    active_avatars_number = current_user.user_avatars.where(:is_active => true).size
+    if avatar and active_avatars_number > 1
       this_order = avatar.order
       if avatar.destroy
-        # check max order
-        current_order = UserAvatar.where(:user_id => current_user.id).maximum(:order)
-        next_order = current_order.nil? ? 0 : current_order+1
-        # minus one for all avatars with greater order
-        if this_order + 1 < next_order
-          greater_avatars = UserAvatar.where(order: (this_order + 1)..Float::INFINITY).where(user_id: current_user.id)
-          greater_avatars.each do |ga|
-            ga.order = ga.order - 1
-            ga.save!
-          end
+        
+        greater_avatars = UserAvatar.where(user_id: current_user.id).where(is_active: true).where(order: (this_order)..Float::INFINITY)
+        greater_avatars.each do |ga|
+          ga.order = ga.order - 1
+          ga.save!
         end
 
+
         user_info = current_user.to_json(true)
-        user_info["key"] = current_user.key
-        # avatars = Array.new
-        # user_info['avatars'].each do |a|
-        #   real_avatar = UserAvatar.find(a['avatar_id'].to_i)
-        #   return_avatar = Hash.new
-        #   return_avatar['avatar'] = real_avatar.avatar.url
-        #   return_avatar['default'] = real_avatar.default
-        #   return_avatar['avatar_id'] = a['avatar_id'].to_i
-        #   if a['default'].to_s == "true"
-        #     avatars.unshift(return_avatar)
-        #   else
-        #     avatars.push(return_avatar)
-        #   end
-        # end
-        # user_info['avatars'] = avatars
-        
         user_info["avatars"].each do |a|
           thumb = a['avatar']
-          # a['thumbnail'] = thumb
           a['avatar'] = thumb.gsub! 'thumb_', ''
         end
         render json: success(user_info)
       else
         render json: error(avatar.errors)
       end
-    elsif avatar and avatar.default
-      render json: error("This is the main avatar, please set another avatar as your main avatar and then delete it.")
+    elsif avatar and active_avatars_number == 1
+      render json: error("You must have at least one photo.")
     else
       render json: error("Avatar not found.")
     end
