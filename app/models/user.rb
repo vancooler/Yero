@@ -860,7 +860,7 @@ class User < ActiveRecord::Base
       whisper_group.each do |w|
         if !w.blank?
           request = Hash.new()
-          request["target_id"] = w
+          request["target_id"] = w.to_s
           request["timestamp"] = current_timestamp
           request["accepted"] = 0
           request["declined"] = 0
