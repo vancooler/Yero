@@ -534,7 +534,7 @@ class WhisperNotification < AWS::Record::HashModel
         attributes = i.attributes
         target_id = attributes['target_id'].to_i
         h = Hash.new
-        h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Leave Network')
+        h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Join Network' : 'Offline')
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
