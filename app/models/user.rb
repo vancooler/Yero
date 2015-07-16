@@ -601,12 +601,12 @@ class User < ActiveRecord::Base
             if other_avatars.count > 0
               other_avatars.each do |oa|
                 new_item = {
-                  avatar: oa.count > 0 ? oa.first.avatar.url : '',
-                  thumbnail: oa.count > 0 ? oa.first.avatar.thumb.url : '',
-                  avatar_id: oa.count > 0 ? oa.first.id : '',
+                  avatar: !oa.avatar.nil? ? oa.avatar.url : '',
+                  thumbnail: !oa.avatar.nil? ? oa.avatar.thumb.url : '',
+                  avatar_id: oa.id : '',
                   default: false,
                   is_active: true,
-                  order: oa.first.order.nil? ? '100' : oa.first.order
+                  order: oa.order.nil? ? '100' : oa.order
                 }
                 avatar_array << new_item
               end
