@@ -1,7 +1,7 @@
 ActiveAdmin.register AdminUser do
     menu :parent => "SuperAdmin", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
 
-    permit_params :email, :password, :password_confirmation
+    permit_params :email, :password, :password_confirmation, :level
 
     before_filter :check_super
 
@@ -11,6 +11,10 @@ ActiveAdmin.register AdminUser do
         # puts self
         puts current_admin_user.level
         redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+      end
+      def update_resource(object, attributes)
+        update_method = attributes.first[:password].present? ? :update_attributes : :update_without_password
+        object.send(update_method, *attributes)
       end
     end
 
