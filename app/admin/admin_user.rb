@@ -25,12 +25,15 @@ ActiveAdmin.register AdminUser do
       # column :current_sign_in_at
       # column :sign_in_count
       # column :created_at
-      column :level
+      # column :level
+      column "Level", :user do |ua|
+        ua.level.nil? ? '' : (ua.level == 1 ? raw('<span class="status_tag no">Normal Admin</span>') : raw('<span class="status_tag yes">Super Admin</span>'))
+      end
       actions
     end
 
     filter :email
-    filter :level
+    # filter :level
     # filter :current_sign_in_at
     # filter :sign_in_count
     # filter :created_at
@@ -45,4 +48,11 @@ ActiveAdmin.register AdminUser do
       f.actions
     end
 
+    show do |ad|
+      attributes_table_for ad do
+        row :email
+        row("level") { |ua| ua.level.nil? ? '' : (ua.level == 1 ? raw('<span class="status_tag no">Normal Admin</span>') : raw('<span class="status_tag yes">Super Admin</span>'))}
+
+      end
+    end
 end
