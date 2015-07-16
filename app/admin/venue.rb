@@ -6,8 +6,9 @@ ActiveAdmin.register Venue do
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
-
-
+  action_item :only => :index do 
+    link_to('CSV IMPORT', admin_import_venues_csv_url)
+  end
   action_item :only => :show do
     if !venue.draft_pending.nil? and venue.draft_pending
       link_to('Approve pending draft', venue_approve_url(:venue => venue), :method => "post", :data => {:confirm => 'Are you sure?'}) 

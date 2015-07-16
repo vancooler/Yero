@@ -147,4 +147,44 @@ class Venue < ActiveRecord::Base
 
     return venue_object
   end
+
+  def self.import(file)
+    CSV.foreach(file.path, headers: true) do |row|
+      venue_obj = row.to_hash
+      puts venue_obj
+      name = venue_obj['Name'].nil? ? '' : venue_obj['Name']
+      venue_name = venue_obj['Venue Name'].nil? ? '' : venue_obj['Venue Name']
+      venue_type = venue_obj['Type'].nil? ? '' : venue_obj['Type'].titleize
+      venue_address = venue_obj['Address']
+      venue_city = venue_obj['City']
+      venue_state = venue_obj['State']
+      venue_country = venue_obj['Country']
+      venue_zipcode = venue_obj['Zipcode']
+      venue_network = name.blank? ? '' : (name.split '_').first.titleize
+      if type = VenueType.find_by_name(venue_type) and city_network = VenueNetwork.find_by_name(venue_network)
+        if !name.blank? and !venue_name.blank?
+          if venue = Venue.find_by_name(venue_name)
+            # update
+            puts "UPDATE"
+            venue.update(:name => venue_name, :address_line_one => venue_address, :city => venue_city, :state => venue_state, :country => venue_country, :zipcode => venue_zipcode, :venue_type_id => type.id, :venue_network_id => city_network.id)
+            if !venue.beacons.blank?
+              venue.beacons.first.update(:key => name)
+            elsif !name.blank?
+              Beacon.create!(:key => name, :venue_id => venue.id)
+            end
+          else
+            # create
+            puts "CREATE"
+            venue = Venue.create!(:name => venue_name, :address_line_one => venue_address, :city => venue_city, :state => venue_state, :country => venue_country, :zipcode => venue_zipcode, :venue_type_id => type.id, :venue_network_id => city_network.id)
+            Beacon.create!(:key => name, :venue_id => venue.id)
+          end
+        else
+ 
+        end
+      else
+
+      end
+    end
+    return true
+  end
 end
