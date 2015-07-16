@@ -23,6 +23,11 @@ body{
 	@media #{$large-up}{
 		height: 900px
 	}
+
+	@media #{$screen} and (max-width: 21em){
+		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat left top;
+		background-size: cover;
+	}
 }
 .hero h5,
 .feature h3,
@@ -365,6 +370,26 @@ body{
 				width: auto;
 			}
 		}
+		@media #{$screen} and (max-width: 25em) {
+			height: 836px;
+			img {
+				right: 10%;
+				left: auto;
+				bottom: 0px;
+				height: 320px;
+				width: auto;
+			}
+		}
+		@media #{$screen} and (max-width: 21em) {
+			height: 787px;
+			img {
+				right: 10%;
+				left: auto;
+				bottom: 0px;
+				height: 320px;
+				width: auto;
+			}
+		}
 	}
 }
 .chatting {
@@ -587,6 +612,9 @@ body{
 	// margin-top: 50px;
 	@media #{$medium-up} {
 		margin-top: 225px;
+	}
+	@media #{$screen} and (max-width: 21em)  {
+		font-size: 1.5em;
 	}
 }
 
@@ -932,7 +960,16 @@ h5 {
 	//position: relative;
 	width: 79% !important;
 	height: 70% !important;
-	
+	@media #{$screen} and (max-width: 25em) {
+		left: 16%;
+		width: 68% !important;
+		height: 68% !important;
+	}
+	@media #{$screen} and (max-width: 21em) {
+		left: 16%;
+		width: 63% !important;
+		height: 63% !important;
+	}
 
 }
 
