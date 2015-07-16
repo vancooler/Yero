@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150713150532) do
+ActiveRecord::Schema.define(version: 20150716130434) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -230,6 +230,14 @@ ActiveRecord::Schema.define(version: 20150713150532) do
     t.datetime "updated_at"
   end
 
+  create_table "notification_preferences", force: true do |t|
+    t.string   "name",       null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "notification_preferences", ["name"], name: "index_notification_preferences_on_name", unique: true, using: :btree
+
   create_table "participants", force: true do |t|
     t.integer  "room_id",                                       null: false
     t.integer  "user_id",                                       null: false
@@ -340,6 +348,13 @@ ActiveRecord::Schema.define(version: 20150713150532) do
     t.boolean  "is_active",         default: true
     t.string   "avatar_tmp"
     t.integer  "order"
+  end
+
+  create_table "user_notification_preferences", force: true do |t|
+    t.integer  "notification_preference_id", null: false
+    t.integer  "user_id",                    null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "users", force: true do |t|

@@ -12,6 +12,7 @@ class User < ActiveRecord::Base
   has_one :read_notification, dependent: :destroy
   has_one :active_in_venue, dependent: :destroy
   has_one :active_in_venue_network, dependent: :destroy
+  has_many :user_notification_preference, dependent: :destroy
 
   # Like feature
   acts_as_follower
