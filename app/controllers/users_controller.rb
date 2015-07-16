@@ -72,7 +72,7 @@ class UsersController < ApplicationController
   # API
   def index
     disabled = !current_user.user_avatars.where(:is_active => false).blank?
-    default = !current_user.user_avatars.where(:is_active => false).where(:level => 0).blank?
+    default = !current_user.user_avatars.where(:is_active => false).where(:order => 0).blank?
     avatar_result = {
       disabled: disabled,
       main_avatar: default

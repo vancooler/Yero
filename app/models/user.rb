@@ -167,7 +167,7 @@ class User < ActiveRecord::Base
     # only return users with avatar near current user 
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
-    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { level: 0}).near(self, max_distance, :units => :km)
+    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
     # users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
@@ -293,7 +293,7 @@ class User < ActiveRecord::Base
   end
 
   def default_avatar
-    self.user_avatars.where(level: 0).first
+    self.user_avatars.where(order: 0).first
   end
 
   def age
@@ -326,7 +326,8 @@ class User < ActiveRecord::Base
 
         json.array! avatars do |a|
 
-          json.avatar a.avatar.thumb.url
+          json.avatar a.avatar.url
+          json.thumbnail a.avatar.thumb.url
           json.default (!a.order.nil? and a.order == 0)
           json.is_active a.is_active
           json.avatar_id a.id
@@ -585,8 +586,8 @@ class User < ActiveRecord::Base
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
             user_avatar_object(self)
-            main_avatar   =  user.user_avatars.where(level:0).where(is_active:true)
-            other_avatars =  user.user_avatars.where.not(level:0).where(is_active:true).order(:order)
+            main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
+            other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
             avatar_array = Array.new
             avatar_array[0] = {
                   thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
