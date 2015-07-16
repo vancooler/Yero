@@ -589,11 +589,10 @@ class User < ActiveRecord::Base
             main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
             other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
             avatar_array = Array.new
+
             avatar_array[0] = {
-                  thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
-                }
-            avatar_array[1] = {
                   avatar: main_avatar.blank? ? '' : main_avatar.first.avatar.url,
+                  thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
                   avatar_id: main_avatar.blank? ? '' : main_avatar.first.id,
                   default: true,
                   is_active: true,
@@ -603,6 +602,7 @@ class User < ActiveRecord::Base
               other_avatars.each do |oa|
                 new_item = {
                   avatar: oa.count > 0 ? oa.first.avatar.url : '',
+                  thumbnail: oa.count > 0 ? oa.first.avatar.thumb.url : '',
                   avatar_id: oa.count > 0 ? oa.first.id : '',
                   default: false,
                   is_active: true,
@@ -815,10 +815,7 @@ class User < ActiveRecord::Base
   def user_avatar_object(user)
     user_info = user.to_json(false)
     # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
-    user_info["avatars"].each do |a|
-      thumb = a['avatar']
-      a['avatar'] = thumb.gsub! 'thumb_', ''
-    end
+    
     return user_info["avatars"]
   end
 

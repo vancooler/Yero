@@ -15,11 +15,6 @@ class UserAvatarsController < ApplicationController
     if avatar_one.save 
       if avatar_two.save
         user_info = current_user.to_json(true)
-        user_info['avatars'].each do |a|
-          thumb = a['avatar']
-          # a['thumbnail'] = thumb
-          a['avatar'] = thumb.gsub! 'thumb_', ''
-        end
         render json: success(user_info)
       else
         render json: error(avatar_two.errors)
@@ -56,11 +51,6 @@ class UserAvatarsController < ApplicationController
             # end
             # user_info['avatars'] = avatars
             
-            user_info['avatars'].each do |a|
-              thumb = a['avatar']
-              # a['thumbnail'] = thumb
-              a['avatar'] = thumb.gsub! 'thumb_', ''
-            end
             render json: success(user_info)
           else
             render json: error(avatar.errors)
@@ -89,11 +79,6 @@ class UserAvatarsController < ApplicationController
             # end
             # user_info['avatars'] = avatars
             
-            user_info["avatars"].each do |a|
-              thumb = a['avatar']
-              # a['thumbnail'] = thumb
-              a['avatar'] = thumb.gsub! 'thumb_', ''
-            end
             render json: success(user_info)
         else
           render json: error(avatar.errors)
@@ -124,11 +109,7 @@ class UserAvatarsController < ApplicationController
     if avatar.save
       user_info = current_user.to_json(true)
       
-      user_info["avatars"].each do |a|
-        thumb = a['avatar']
-        # a['thumbnail'] = thumb
-        a['avatar'] = thumb.gsub! 'thumb_', ''
-      end
+      
       render json: success(user_info)
       # render json: success(current_user.to_json(true))
     else
@@ -147,10 +128,7 @@ class UserAvatarsController < ApplicationController
         avatar.avatar = params[:avatar]
         if avatar.save
           user_info = current_user.to_json(true)
-          user_info["avatars"].each do |a|
-            thumb = a['avatar']
-            a['avatar'] = thumb.gsub! 'thumb_', ''
-          end
+          
           render json: success(user_info)
         else
           render json: error(avatar.errors)
@@ -187,10 +165,6 @@ class UserAvatarsController < ApplicationController
         UserAvatar.order_minus_one(current_user.id, this_order)
 
         user_info = current_user.to_json(true)
-        user_info["avatars"].each do |a|
-          thumb = a['avatar']
-          a['avatar'] = thumb.gsub! 'thumb_', ''
-        end
         render json: success(user_info)
       else
         render json: error(avatar.errors)

@@ -11,11 +11,7 @@ class UsersController < ApplicationController
     if !current_user.default_avatar.nil?
       user_info = current_user.to_json(false)
       # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
-      user_info["avatars"].each do |a|
-        thumb = a['avatar']
-        # a['thumbnail'] = thumb
-        a['avatar'] = thumb.gsub! 'thumb_', ''
-      end
+      
       # avatars = Array.new
       # user_info['avatars'].each do |avatar|
       #   if avatar['default'].to_s == "true"
@@ -703,13 +699,13 @@ class UsersController < ApplicationController
         response = user.to_json(true)
         user_info = user
 
-        if !response["avatars"].empty?
-          thumb = response["avatars"].first['avatar']
-          if thumb
-            response["avatars"].first['thumbnail'] = thumb
-            response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-          end
-        end
+        # if !response["avatars"].empty?
+        #   thumb = response["avatars"].first['avatar']
+        #   if thumb
+        #     response["avatars"].first['thumbnail'] = thumb
+        #     response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+        #   end
+        # end
         response['token'] = user.generate_token
         # render json: user_registration.to_json.inspect
         # render json: user_avatar.to_json.inspect
