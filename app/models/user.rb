@@ -603,7 +603,7 @@ class User < ActiveRecord::Base
                 new_item = {
                   avatar: !oa.avatar.nil? ? oa.avatar.url : '',
                   thumbnail: !oa.avatar.nil? ? oa.avatar.thumb.url : '',
-                  avatar_id: oa.id : '',
+                  avatar_id: oa.id,
                   default: false,
                   is_active: true,
                   order: oa.order.nil? ? '100' : oa.order
