@@ -340,7 +340,7 @@ class User < ActiveRecord::Base
         preferences = NotificationPreference.all
         json.array! preferences do |p|
           json.type p.name
-          json.disabled (a.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
+          json.disabled (p.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
         end
       end
 

@@ -3,7 +3,7 @@ class VenuesController < ApplicationController
   before_action :authenticate_venue!, only: [:tonightly, :nightly, :pick_winner, :lottery_dash, :claim_drink]
   before_action :authenticate_api, only: [:list, :people]
   before_action :authenticate_web_user!, only: [:index, :edit, :show, :update]
-  before_action :authenticate_admin_user!, only: [:approve]
+  before_action :authenticate_admin_user!, only: [:approve, :import]
   # list all the venues for this owner
   def index
     WebUser.delay.mixpanel_event(current_web_user.id, 'View venues list', nil)
@@ -65,6 +65,23 @@ class VenuesController < ApplicationController
       @venue.pending_email = @venue.email
       @venue.pending_phone = @venue.phone
     end
+  end
+
+
+  def import
+    myfile = params[:csv_file]
+    require 'csv'    
+
+    if myfile.blank? or myfile.content_type != 'text/csv'
+      redirect_to :back, :notice => "Invalid file!" 
+    else
+      if Venue.import(myfile)
+        redirect_to admin_venues_url, :notice => "Venues Synchronized!" 
+      else
+        redirect_to :back, :notice => "Invalid csv structure!"
+      end
+    end
+    
   end
 
   def approve
