@@ -128,7 +128,7 @@ Rails.application.routes.draw do
   put 'api/v1/avatar/swap',        to: 'user_avatars#swap_photos'
   put 'api/v1/avatar/update',        to: 'user_avatars#update'
 
-  post 'api/v1/user/update_profile',       to: 'users#update_profile'
+  put 'api/v1/user/update_profile',       to: 'users#update_profile'
   post 'api/v1/user/show',                 to: 'users#show'
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
 

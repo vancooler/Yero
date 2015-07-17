@@ -883,4 +883,18 @@ class User < ActiveRecord::Base
       end
     end
   end
+
+  def avatar_reorder(avatar_ids)
+    order = 0
+    avatar_ids.each do |ua_id|
+      ua = UserAvatar.find_by_id(ua_id)
+      if ua and ua.user_id == self.id and ua.is_active
+        ua.order = order
+        if ua.save
+          order += 1
+        end
+      end
+    end
+    return true
+  end
 end

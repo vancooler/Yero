@@ -469,8 +469,10 @@ class UsersController < ApplicationController
 
 
   def update_profile
-    if current_user.update(introduction_1: CGI.unescape(params[:introduction_1].strip))
-      render json: success(current_user)
+    avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
+
+    if current_user.avatar_reorder(avatar_ids) and current_user.update(introduction_1: CGI.unescape(params[:introduction_1].strip))
+      render json: success(current_user.to_json(true))
     else
       render json: error(current_user.errors)
     end
