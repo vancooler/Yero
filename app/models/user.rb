@@ -336,6 +336,14 @@ class User < ActiveRecord::Base
         end
       end
 
+      json.notification_preferences do
+        preferences = NotificationPreference.all
+        json.array! preferences do |p|
+          json.type p.name
+          json.disabled (a.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
+        end
+      end
+
       if with_key
         json.key key
       end
@@ -794,8 +802,8 @@ class User < ActiveRecord::Base
       last_activity:  self.last_activity,
       since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
-      birthday:       (self.id != 307 ? self.birthday : ''),
-      distance:       (self.id != 307 ? current_user.distance_label(self) : ''),
+      birthday:       (self.id != 0 ? self.birthday : ''),
+      distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
       avatars:         user_avatar_object(self),

@@ -101,7 +101,8 @@ Rails.application.routes.draw do
   post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
   post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
-  
+  post 'api/v1/users/notification-preference', to: 'users#update_notification_preferences'
+
   post 'api/v1/users/connect',                to: 'users#connect'
   post 'api/v1/users/like-or-unlike',                to: 'users#like'
   post 'api/v1/users/update-apn',             to: 'users#update_apn'

@@ -9,7 +9,7 @@ class UsersController < ApplicationController
     puts current_user.id
     avatar_array = Array.new
     if !current_user.default_avatar.nil?
-      user_info = current_user.to_json(false)
+      user_info = current_user.to_json(true)
       # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
       
       # avatars = Array.new
@@ -576,7 +576,7 @@ class UsersController < ApplicationController
           response['token'] = @user.generate_token
           intro = "Welcome to Yero"
           # TODO: future feature
-          # n = WhisperNotification.create_in_aws(@user.id, 307, 1, 2, intro)
+          # n = WhisperNotification.create_in_aws(@user.id, 0, 1, 2, intro)
           
           render json: success(response)
         else
@@ -712,7 +712,7 @@ class UsersController < ApplicationController
         
         intro = "Welcome to Yero"
         # TODO: future feature
-        # n = WhisperNotification.create_in_aws(user_info.id, 307, 1, 2, intro)
+        # n = WhisperNotification.create_in_aws(user_info.id, 0, 1, 2, intro)
         
         render json: success(response)
       else
@@ -962,7 +962,7 @@ class UsersController < ApplicationController
     avatar = user.user_avatars.find(params[:avatar_id])
 
     if avatar && avatar.update_image(params[:avatar])
-      render json: success(user.to_json(false))
+      render json: success(user.to_json(true))
     else
       render json: error("Invalid image")
     end
@@ -976,6 +976,17 @@ class UsersController < ApplicationController
     else
       render json: error()
     end
+  end
+
+
+  def update_notification_preferences
+    network_online = (params['network_online'].blank? or params['network_online'] == '0')
+    enter_venue_network = (params['enter_venue_network'].blank? or params['enter_venue_network'] == '0')
+    leave_venue_network = (params['leave_venue_network'].blank? or params['leave_venue_network'] == '0')
+    
+    UserNotificationPreference.update_preferences_settings(current_user, network_online, enter_venue_network, leave_venue_network)
+    
+    render json: success(true)
   end
 
   # When user clicked "Connect" button, update field is_connect to true
@@ -992,7 +1003,7 @@ class UsersController < ApplicationController
 
   def get_profile
     user = current_user
-    render json: success(user.to_json(false))
+    render json: success(user.to_json(true))
   end
 
   def get_lotto
@@ -1201,7 +1212,7 @@ class UsersController < ApplicationController
         json.last_activity  user["target_user"]["last_activity"]
         json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
         json.gender         user["target_user"]["gender"]
-        if user["target_user"]["id"].to_i != 307
+        if user["target_user"]["id"].to_i != 0
           json.birthday       user["target_user"]["birthday"]
           json.distance       current_user.distance_label(user["target_user"])
         end
