@@ -31,16 +31,90 @@ class ApplicationController < ActionController::Base
 
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
-    if User.find_by_key(params[:key])
-      # check expiration and extend if still valid
+    if Rails.env == 'development'
+      secret = 'secret'
     else
-      render json: error("You must authenticate with an API Key")
+      secret = ENV['SECRET_KEY_BASE']
     end
+    if params[:token].blank?
+      render json: error("You must authenticate with a valid token")
+    else
+      token = params[:token].split(' ').last
+      begin
+        token_info = JWT.decode(token, secret)
+        if token_info.nil? or token_info.empty? or token_info.first.nil?
+          render json: error("You must authenticate with a valid token")
+        else
+          user_info = token_info.first
+          user_id = user_info['id']
+          if user_id.nil?
+            render json: error("You must authenticate with a valid token")
+          else
+            user = User.find_by_id(user_id.to_i)
+            if user.nil?
+              render json: error("You must authenticate with a valid token")
+            end
+          end
+        end
+
+      rescue JWT::ExpiredSignature
+        render json: error("Token Expired")
+      rescue JWT::DecodeError
+        render json: error("You must authenticate with a valid token")
+      end
+    end
+
+
+    ########################
+    # KEY auth
+    ######################## 
+    # user = User.find_by_key(params[:key])
+    # if !user.nil?
+    #   # check expiration and extend if still valid
+    #   if user.key_expiration.nil? or user.key_expiration > Time.now
+    #     user.key_expiration = Time.now + 3.hours
+    #     user.save!
+    #   else
+    #     render json: error("API Key Expired")
+    #   end
+    # else
+    #   render json: error("You must authenticate with an API Key")
+    # end
   end
 
   def current_user
-    logger.info "KEY: " + params[:key]
-    User.find_by_key(params[:key])
+    if Rails.env == 'development'
+      secret = 'secret'
+    else
+      secret = ENV['SECRET_KEY_BASE']
+    end
+    if params[:token].blank?
+      nil
+    end
+    token = params[:token].split(' ').last
+    begin
+      token_info = JWT.decode(token, secret)
+    rescue JWT::ExpiredSignature
+      token_info = nil
+    rescue JWT::DecodeError
+      token_info = nil
+    end
+
+    if token_info.nil? or token_info.empty? or token_info.first.nil?
+      nil
+    else
+      user_info = token_info.first
+      user_id = user_info['id']
+      if user_id.nil?
+        nil
+      else
+        User.find_by_id(user_id.to_i)
+      end
+    end
+
+
+    # logger.info "KEY: " + params[:key]
+    # User.find_by_key(params[:key])
   end
 
   protected
