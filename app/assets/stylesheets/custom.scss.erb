@@ -343,6 +343,16 @@ body{
 		max-width: 250px;
 	}
 	@media #{$small-only} {
+		height: 900px;
+		img {
+			right: 10%;
+			left: auto;
+			bottom: 0px;
+			height: 320px;
+			width: auto;
+		}
+	}
+	@media only screen and (max-width: 25em) {
 		height: 800px;
 		img {
 			right: 10%;
@@ -408,7 +418,7 @@ body{
 	.details{
 		margin-top: 25px;
 		@media #{$medium-up} {
-			margin-top: 13%;
+			margin-top: 11%;
 		}
 		p {
 			line-height: 2;
@@ -961,14 +971,22 @@ h5 {
 	width: 79% !important;
 	height: 70% !important;
 	@media #{$screen} and (max-width: 40em) {
-		left: 16%;
-		width: 68% !important;
-		height: 68% !important;
+		left: 19%;
+	    width: 70% !important;
+	    height: 70% !important;
+	    padding-top: 72px;
+	}
+	@media #{$screen} and (max-width: 25em) {
+		left: 19%;
+	    width: 63% !important;
+	    height: 63% !important;
+	    padding-top: 35px;
 	}
 	@media #{$screen} and (max-width: 21em) {
-		left: 16%;
+		left: 18%;
 		width: 63% !important;
 		height: 63% !important;
+		padding-top: 67px;
 	}
 
 }
@@ -1637,5 +1655,26 @@ div#venue_name{
   	@media #{$small-only} {
   		top: 85px;
 	  	left: 18px;
+  	}
+}
+
+img.chatting-icon{
+    position: relative;
+	left: 0px;
+	padding-left: 8px;
+    top: -8px;
+    width: 50px;
+  	height: 50px;
+    @media only screen and (max-width: 50em) {
+  		width: 55px;
+	  	height: 55px;
+  	}
+    @media only screen and (max-width: 25em) {
+  		width: 50px;
+	  	height: 50px;
+  	}
+  	@media only screen and (max-width: 21em) {
+  		width: 43px;
+	  	height: 43px;
   	}
 }
