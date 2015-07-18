@@ -835,7 +835,7 @@ class User < ActiveRecord::Base
     else
       secret = ENV['SECRET_KEY_BASE']
     end
-    token = JWT.encode(user, "secret")
+    token = JWT.encode(user, secret)
 
     return token
   end
