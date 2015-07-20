@@ -320,6 +320,7 @@ class User < ActiveRecord::Base
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
       json.discovery discovery
       json.exclusive exclusive
+      json.joined_today is_connected
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
@@ -896,5 +897,10 @@ class User < ActiveRecord::Base
       end
     end
     return true
+  end
+
+  def force_users_join_to_test
+    users = User.order("id DESC").limit(100) 
+    users.update_all(is_connected: true)
   end
 end

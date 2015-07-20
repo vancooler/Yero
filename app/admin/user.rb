@@ -66,12 +66,12 @@ ActiveAdmin.register User do
       row :line_id
       row :wechat_id
       row :instagram_id
-      row("Default Avatar ID") { |ad| link_to ad.default_avatar.id, [ :admin, ad.default_avatar ] if !ad.default_avatar.nil?}
+      row("Default Avatar ID") { |ad| ad.default_avatar.id if !ad.default_avatar.nil?}
       row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}) if !ad.default_avatar.nil?}
 
       table_for ad.secondary_avatars.order('id ASC') do
         column "Secondary Avatars ID" do |a|
-          link_to a.id, [ :admin, a ]
+          a.id
         end
         column "Secondary Avatars" do |a|
           image_tag a.avatar.thumb.url, {:style => "height:100px;width:100px;"}
