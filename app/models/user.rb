@@ -447,8 +447,10 @@ class User < ActiveRecord::Base
             request["accepted"] = 0
             notification_array << request
 
-            User.find(person['id'].to_i).delay.send_network_open_notification
-             
+            user = User.find(person['id'].to_i)
+            if UserNotificationPreference.no_preference_record_found(user, "Network online")
+              user.delay.send_network_open_notification
+            end
           end
         end
         if notification_array.count > 0

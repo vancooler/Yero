@@ -3,6 +3,15 @@ class UserNotificationPreference < ActiveRecord::Base
   belongs_to :user
   validates_uniqueness_of :notification_preference_id, :scope => [:user_id]
 
+  def self.no_preference_record_found(user, np_name)
+    np = NotificationPreference.find_by_name(np_name)
+    if !np.nil? and !user.user_notification_preference.where(:notification_preference_id => np.id).blank?
+      return false
+    end
+    return true
+  end
+
+
   def self.update_preferences_settings(current_user, network_online, enter_venue_network, leave_venue_network)
   	n_o = NotificationPreference.find_by_name("Network online")
 
