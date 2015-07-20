@@ -858,15 +858,15 @@ class UsersController < ApplicationController
     end
   end
 
-  # Renders a page for user to change password
-  def reset_password
-    @user = current_user
-    render "password_reset"
-  end
+  # # Renders a page for user to change password
+  # def reset_password
+  #   @user = current_user
+  #   render "password_reset"
+  # end
 
   def password_reset
-    if !params[:user].blank?
-      @user = User.find_by_key(params[:user][:key])
+    if !params[:user].blank? and !params[:user][:password_reset_token].blank?
+      @user = User.find_by_password_reset_token(params[:user][:password_reset_token])
       puts "params[:user].blank"
       puts @user.inspect
       @error = Array.new
@@ -933,6 +933,7 @@ class UsersController < ApplicationController
         puts "everything passed"
         @user.password = params[:user][:password]
         @user.password_confirmation = params[:user][:password_confirmation]
+        @user.password_reset_token = ''
         if @user.save
           puts "saved"
           UserMailer.delay.password_change_success(@user)
@@ -941,7 +942,8 @@ class UsersController < ApplicationController
         end
       end
     else
-      @user = current_user
+      # @user = current_user
+      @user = User.find_by_password_reset_token(params[:reset_password_token])
       @error = Array.new
       flash[:danger] = nil
       puts "we got into else"
@@ -952,8 +954,16 @@ class UsersController < ApplicationController
   def forgot_password
     @user = User.find_by_email(params[:email])
     if !@user.nil?
-      UserMailer.delay.forget_password(@user)
-      render json: success(true)
+      @user.password_reset_token = loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless User.exists?(password_reset_token: random_token)
+      end
+      if @user.save
+        UserMailer.delay.forget_password(@user)
+        render json: success(true)
+      else
+        render json: error("Cannot generate reset password token for this user.")
+      end
     else
       render json: error("The email you have used is not valid.")
     end

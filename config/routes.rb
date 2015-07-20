@@ -87,7 +87,7 @@ Rails.application.routes.draw do
   get 'android-thankyou', to: 'home#android-thankyou', as: :android_thankyou
   get 'venues-thankyou', to: 'home#venues-thankyou', as: :venues_thankyou
   # get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
-  match 'users/password_reset/:key',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
+  match 'users/password_reset/:reset_password_token',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
 
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
