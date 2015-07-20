@@ -149,11 +149,12 @@ class Venue < ActiveRecord::Base
   end
 
   def self.import(file)
+    
     CSV.foreach(file.path, headers: true) do |row|
       venue_obj = row.to_hash
       puts venue_obj
-      name = venue_obj['Name'].nil? ? '' : venue_obj['Name']
-      venue_name = venue_obj['Venue Name'].nil? ? '' : venue_obj['Venue Name']
+      name = venue_obj['Network Name'].nil? ? '' : venue_obj['Network Name']
+      venue_name = venue_obj['List Name'].nil? ? '' : venue_obj['List Name']
       venue_type = venue_obj['Type'].nil? ? '' : venue_obj['Type'].titleize
       venue_address = venue_obj['Address']
       venue_city = venue_obj['City']
@@ -168,15 +169,17 @@ class Venue < ActiveRecord::Base
             b.update(:key => name)
             if !b.venue.nil?
               # update
-              b.venue.update(:name => venue_name, :address_line_one => venue_address, :city => venue_city, :state => venue_state, :country => venue_country, :zipcode => venue_zipcode, :venue_type_id => type.id, :venue_network_id => city_network.id)
+              # if b.venue.draft_pending.nil? or !b.venue.draft_pending
+              #   b.venue.update(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+              # end
             else
               # create
-              venue = Venue.create!(:name => venue_name, :address_line_one => venue_address, :city => venue_city, :state => venue_state, :country => venue_country, :zipcode => venue_zipcode, :venue_type_id => type.id, :venue_network_id => city_network.id)
+              venue = Venue.create!(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
               b.update(:venue_id => venue.id)
             end
           else
             # create both
-            venue = Venue.create!(:name => venue_name, :address_line_one => venue_address, :city => venue_city, :state => venue_state, :country => venue_country, :zipcode => venue_zipcode, :venue_type_id => type.id, :venue_network_id => city_network.id)
+            venue = Venue.create!(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
             Beacon.create!(:key => name, :venue_id => venue.id)
           end
         else
