@@ -5,8 +5,16 @@ ActiveAdmin.register GreetingMessage do
                 :pending_admission_fee, :pending_drink_special, :pending_description, 
                 :pending_first_dj, :pending_second_dj, :pending_last_call,
                 greeting_posters_attributes: [:id, :avatar, :greeting_message_id, :default, :_destroy]
-  
-  action_item :only => :show do
+  before_filter :check_super, only: [:edit, :update, :create, :new, :destroy]
+  # actions :index, :show, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+  controller do
+    def check_super
+      puts current_admin_user.level
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
+
+  action_item :only => :show, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do
     if !greeting_message.draft_pending.nil? and greeting_message.draft_pending
       link_to('Approve pending draft', greeting_message_approve_url(:greeting_message => greeting_message), :method => "post", :data => {:confirm => 'Are you sure?'}) 
     end

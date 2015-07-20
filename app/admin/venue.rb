@@ -6,10 +6,19 @@ ActiveAdmin.register Venue do
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
-  action_item :only => :index do 
+  before_filter :check_super, only: [:edit, :update, :create, :new, :destroy]
+  # actions :index, :show, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+  controller do
+    def check_super
+      puts current_admin_user.level
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
+
+  action_item :only => :index, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do 
     link_to('CSV IMPORT', admin_import_venues_csv_url)
   end
-  action_item :only => :show do
+  action_item :only => :show, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do 
     if !venue.draft_pending.nil? and venue.draft_pending
       link_to('Approve pending draft', venue_approve_url(:venue => venue), :method => "post", :data => {:confirm => 'Are you sure?'}) 
     end

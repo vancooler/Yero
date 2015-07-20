@@ -2,6 +2,15 @@ ActiveAdmin.register PresetGreetingImage do
   menu :parent => "VENUE"
   permit_params :is_active, :avatar
   
+  before_filter :check_super, only: [:edit, :update, :create, :new, :destroy]
+  # actions :index, :show, if: proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+  controller do
+    def check_super
+      puts current_admin_user.level
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
+
   index do
   	column :id
     column "Image", :avatar do |avatar|
