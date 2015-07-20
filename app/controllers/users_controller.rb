@@ -943,7 +943,7 @@ class UsersController < ApplicationController
       end
     else
       # @user = current_user
-      @user = User.find_by_password_reset_token(params[:reset_password_token])
+      @user = User.find_by_password_reset_token(params[:password_reset_token])
       @error = Array.new
       flash[:danger] = nil
       puts "we got into else"
