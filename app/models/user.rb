@@ -654,9 +654,9 @@ class User < ActiveRecord::Base
             end
 
             if friends.blank?
-              json.mutual_like false
+              json.friend false
             else
-              json.mutual_like friends.map(&:id).include? user.id
+              json.friend friends.map(&:id).include? user.id
             end
 
             
