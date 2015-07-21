@@ -590,8 +590,8 @@ class User < ActiveRecord::Base
 
       # build json format
       users = Jbuilder.encode do |json|
-        whisper_time = 0
-        friend_time = 0
+        same_venue_time = 0
+        different_venue_time = 0
         check_badge_time = 0
         avatar_time = 0
         other_time = 0
@@ -603,6 +603,8 @@ class User < ActiveRecord::Base
             avatar_time_1 = Time.now
             main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
             other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
+            avatar_time_2 = Time.now
+            
             avatar_array = Array.new
 
             avatar_array[0] = {
@@ -626,22 +628,11 @@ class User < ActiveRecord::Base
                 avatar_array << new_item
               end
             end
-            # json.avatars do |a|
-            #   json.array! avatar_array do |avatar|
-            #     a.avatar      avatar[:avatar]    if !avatar[:avatar].nil?
-            #     a.thumbnail   avatar[:thumbnail] if !avatar[:thumbnail].nil?
-            #     a.avatar_id   avatar[:avatar_id] if !avatar[:avatar_id].nil?
-            #     a.default     avatar[:default]   if !avatar[:default].nil?
-            #     a.is_active     avatar[:is_active]   if !avatar[:is_active].nil?
-            #     a.order     avatar[:order]   if !avatar[:order].nil?
-            #   end
-            # end
 
             json.avatars avatar_array
-            
-            avatar_time_2 = Time.now
 
-            whisper_time_1 = Time.now
+
+
             sent = false
             collected_whispers.each do |cwid|
               if cwid.to_s == user.id.to_s
@@ -653,9 +644,7 @@ class User < ActiveRecord::Base
             if !sent
               json.whisper_sent false
             end
-            whisper_time_2 = Time.now
 
-            friend_time_1 = Time.now
             if followees.blank?
               json.like false
             else
@@ -667,16 +656,18 @@ class User < ActiveRecord::Base
             else
               json.mutual_like friends.map(&:id).include? user.id
             end
-            friend_time_2 = Time.now
+
             
             check_badge_time_1 = Time.now
             json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            different_venue_time_1 = Time.now
             json.different_venue_badge     self.different_venue_as?(user.id)
+            different_venue_time_2 = Time.now
             # json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
             check_badge_time_2 = Time.now
             
-            other_time_1 = Time.now
+
             json.id             user.id
             json.first_name     user.first_name
             # json.key            user.key
@@ -694,10 +685,10 @@ class User < ActiveRecord::Base
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
             json.exclusive      user.exclusive
-            other_time_2 = Time.now
 
-            whisper_time += (whisper_time_2 - whisper_time_1)
-            friend_time += (friend_time_2 - friend_time_1)
+
+            same_venue_time += (different_venue_time_1 - check_badge_time_1)
+            different_venue_time += (different_venue_time_2 - different_venue_time_1)
             check_badge_time += (check_badge_time_2 - check_badge_time_1)
             avatar_time += (avatar_time_2 - avatar_time_1)
             other_time += (other_time_2 - other_time_1)
@@ -711,14 +702,12 @@ class User < ActiveRecord::Base
         p j_time.inspect
         p "avatar time:"
         p avatar_time.inspect
-        p "whisper time:"
-        p whisper_time.inspect
-        p "friend time:"
-        p friend_time.inspect
+        p "same_venue time:"
+        p same_venue_time.inspect
+        p "different_venue time:"
+        p different_venue_time.inspect
         p "check badge time:"
         p check_badge_time.inspect
-        p "other time:"
-        p other_time.inspect
       end
       users = JSON.parse(users).delete_if(&:empty?)
       different_venue_users = [] # Make a empty array for users in the different venue
