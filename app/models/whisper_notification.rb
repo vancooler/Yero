@@ -661,14 +661,23 @@ class WhisperNotification < AWS::Record::HashModel
     table = dynamo_db.tables[table_name]
     table.load_schema
     timestamp = Time.now.to_i
-    puts timestamp
+    pre_time_1 = Time.now
     items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
+    pre_time_2 = Time.now
+    pre_time = pre_time_2 - pre_time_1
+    p "Get whisper time:"
+    p pre_time.inspect
     return_array = Array.new
     items.each do |p|
       attributes = p.attributes
       target_id = attributes['target_id'].to_i
       return_array << target_id
     end
+    pre_time_3 = Time.now
+    pre_time = pre_time_3 - pre_time_2
+    p "collect whisper time:"
+    p pre_time.inspect
+
     if items.present? and items.count > 0
       return return_array
     else

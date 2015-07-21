@@ -552,7 +552,7 @@ class User < ActiveRecord::Base
         attributes = friend.attributes
         friend_id = attributes['target_id'].to_i
         if first_friends_id_array.include? friend_id
-          p 'in the array'
+           # 'in the array'
         else
           first_friends_id_array << friend_id
         end 
@@ -564,7 +564,7 @@ class User < ActiveRecord::Base
         attributes = friend.attributes
         friend_id = attributes['origin_id'].to_i
         if second_friends_id_array.include? friend_id
-          p 'in the array'
+           # 'in the array'
         else
           second_friends_id_array << friend_id 
         end 
