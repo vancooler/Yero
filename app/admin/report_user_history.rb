@@ -22,7 +22,7 @@ ActiveAdmin.register ReportUserHistory do
     # column :reporting_user
     column :reported_user, sortable: "reported_user_id"
     column :report_type
-    column :frequency, sortable: "frequency"
+    column "Reported Count",:frequency, sortable: "frequency"
     column "Recent Report Time", :updated_at, sortable: "updated_at"
     column "Recent Notify Time", :notified_at, sortable: "notified_at"
   	actions
@@ -35,7 +35,7 @@ ActiveAdmin.register ReportUserHistory do
     attributes_table_for history do
       row :reported_user
       row :report_type
-      row :frequency
+      row("Reported Count") { |history| history.frequency}
       row :updated_at
       row :notified_at
       puts history.all_reporting_users

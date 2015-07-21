@@ -47,14 +47,14 @@ Rails.application.routes.draw do
     put 'owner/greeting-message/:id', to: 'greeting_messages#update'
     get 'owner/greeting-message/:id', to: 'greeting_messages#show', as: :greeting_message
     post 'owner/greeting-message/approve', to: 'greeting_messages#approve', as: :greeting_message_approve
-    post 'admin/disable-single-image/:id', to: 'admin/user_avatars#disable_single_image', as: :admin_disable_single_image
-    post 'admin/enable-single-image/:id', to: 'admin/user_avatars#enable_single_image', as: :admin_enable_single_image
-    post 'admin/disable-single-user/:id', to: 'admin/user_avatars#disable_single_user', as: :admin_disable_user_account
-    post 'admin/enable-single-user/:id', to: 'admin/user_avatars#enable_single_user', as: :admin_enable_user_account
+    post 'admin/disable-single-image/:id', to: 'admin/user_screenings#disable_single_image', as: :admin_disable_single_image
+    post 'admin/enable-single-image/:id', to: 'admin/user_screenings#enable_single_image', as: :admin_enable_single_image
+    post 'admin/disable-single-user/:id', to: 'admin/user_screenings#disable_single_user', as: :admin_disable_user_account
+    post 'admin/enable-single-user/:id', to: 'admin/user_screenings#enable_single_user', as: :admin_enable_user_account
     post 'venues-csv-import', to: 'venues#import', :as => "venue_import_csv"
-    put 'admin/remove-snapchat-id/:id', to: 'admin/user_avatars#remove_snapchat', as: :admin_remove_snapchat_id
-    put 'admin/remove-wechat-id/:id', to: 'admin/user_avatars#remove_wechat', as: :admin_remove_wechat_id
-    put 'admin/remove-line-id/:id', to: 'admin/user_avatars#remove_line', as: :admin_remove_line_id
+    put 'admin/remove-snapchat-id/:id', to: 'admin/user_screenings#remove_snapchat', as: :admin_remove_snapchat_id
+    put 'admin/remove-wechat-id/:id', to: 'admin/user_screenings#remove_wechat', as: :admin_remove_wechat_id
+    put 'admin/remove-line-id/:id', to: 'admin/user_screenings#remove_line', as: :admin_remove_line_id
 
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly

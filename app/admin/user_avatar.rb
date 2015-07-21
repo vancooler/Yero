@@ -13,6 +13,8 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
         if ua.save! and !ua.user_id.nil?
           u = User.find_by_id(ua.user_id)
           if !u.blank? 
+            u.avatar_disabled_count = u.avatar_disabled_count.nil? ? 1 : u.avatar_disabled_count+1
+            u.save
             # disconnect user
             default = 0
             UserAvatar.order_minus_one(u.id, ua.order)
@@ -110,6 +112,8 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       if ua.save! and !ua.user_id.nil?
         u = User.find_by_id(ua.user_id)
         if !u.blank? 
+          u.avatar_disabled_count = u.avatar_disabled_count.nil? ? 1 : u.avatar_disabled_count+1
+          u.save
           # disconnect user
           default = 0
           UserAvatar.order_minus_one(u.id, ua.order)
@@ -187,12 +191,15 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       (ua.user.blank? or ua.user.line_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_line_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.line_id)
     end
     # column "Is default", :default
-    column "Avatar Enabled", :user do |ua|
+    column "Image Enabled", :user do |ua|
       ua.is_active.nil? ? '' : (ua.is_active == false ? raw('<span class="status_tag no">Disabled</span>') : raw('<span class="status_tag yes">Active</span>'))
     end
-    column "Account Status", :user do |ua|
-      ua.user.nil? ? '' : (ua.user.account_status == 0 ? raw('<span class="status_tag no">Disabled</span>') : raw('<span class="status_tag yes">Active</span>'))
+    column "Image Enabled Count", :user do |ua|
+      ua.user.nil? ? 0 : (ua.user.avatar_disabled_count.nil? ? 0 : ua.user.avatar_disabled_count)
     end
+    # column "Account Status", :user do |ua|
+    #   ua.user.nil? ? '' : (ua.user.account_status == 0 ? raw('<span class="status_tag no">Disabled</span>') : raw('<span class="status_tag yes">Active</span>'))
+    # end
     column "Actions", :actions do |ua|
       link_to("Disable Image", admin_disable_single_image_path(ua), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to disable this image?"}) + link_to("Enable Image", admin_enable_single_image_path(ua), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to enable this image?"}) #+ link_to("Disable User", admin_disable_user_account_path(ua), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to disable this user?"}) + link_to("Enable User", admin_enable_user_account_path(ua), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to enable this user?"})
     end
