@@ -737,7 +737,7 @@ class User < ActiveRecord::Base
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
       
-      users = same_venue_users.shuffle + different_venue_users.sort_by  #Sort users by distance
+      users = same_venue_users.shuffle + different_venue_users  #Sort users by distance
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
