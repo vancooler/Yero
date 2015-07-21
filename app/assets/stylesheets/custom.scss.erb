@@ -1679,3 +1679,28 @@ img.chatting-icon{
 	  	height: 43px;
   	}
 }
+
+
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 1300px),
+only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 1300px),
+only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 1300px),
+only screen and (        min-device-pixel-ratio: 2)      and (min-width: 1300px),
+only screen and (                min-resolution: 192dpi) and (min-width: 1300px),
+only screen and (                min-resolution: 2dppx)  and (min-width: 1300px) { 
+	.hero {
+		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+		background-size: 70%;
+		h2, h5, p {
+			color: #fff;
+		}
+		p {
+			letter-spacing: 0.1em;
+			font-family: "GothamBook";
+			line-height: 1.6;
+			@media #{$medium-up}{
+				line-height: 3;
+			}
+		}
+	}
+}
