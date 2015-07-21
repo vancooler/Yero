@@ -718,7 +718,7 @@ class User < ActiveRecord::Base
         j_time = json_e-json_s
         puts "The dbtime is: "
         puts dbtime.inspect 
-        pre_time = pre_time_2 - pre_time_1
+        pre_time = pre_time_2 - s_time
         friend_time = pre_time_3 - pre_time_2
         p "Pre time:"
         p pre_time.inspect
