@@ -391,19 +391,20 @@ class UsersController < ApplicationController
           render json: success(false)
         end
       else
-        if record.frequency.blank?
-          record.frequency = 1
-        else
-          record.frequency += 1
-        end
-        if record.save!
-          # update other records
-          reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id, :report_type_id => report_type.id)
-          reports_need_update.update_all(:frequency => record.frequency)
-          render json: success(true)
-        else
-          render json: success(false)
-        end
+        # if record.frequency.blank?
+        #   record.frequency = 1
+        # else
+        #   record.frequency += 1
+        # end
+        # if record.save!
+        #   # update other records
+        #   reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id, :report_type_id => report_type.id)
+        #   reports_need_update.update_all(:frequency => record.frequency)
+        #   render json: success(true)
+        # else
+        #   render json: success(false)
+        # end
+        render json: error("You have reported this user before")
       end
 
 
