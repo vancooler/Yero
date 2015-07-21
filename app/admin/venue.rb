@@ -69,7 +69,7 @@ ActiveAdmin.register Venue do
     column "Name", :name
     column "Type", :venue_type
     column "Owner", :web_user
-    column :venue_network
+    column "City Network", :venue_network
     column "Address" do |venue|
       (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.city.nil? ? '' : ', ' + venue.city)
     end
@@ -125,7 +125,7 @@ ActiveAdmin.register Venue do
       f.input :name, :label => "Name"
       f.input :venue_type
       f.input :web_user, :label => "Owner"
-      f.input :venue_network
+      f.input :venue_network, :label => "City Network"
       f.input :address_line_one
       f.input :address_line_two
       f.input :city
@@ -239,7 +239,7 @@ ActiveAdmin.register Venue do
       # row("Address") { |venue| (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.zipcode.nil? ? '' : ' ' + venue.zipcode) + (venue.city.nil? ? '' : ', ' + venue.city) + (venue.state.nil? ? '' : ' ' + venue.state) + (venue.country_name.nil? ? '' : ', ' + venue.country_name) }
       row("Owner") { |venue| venue.web_user }
       row :age_requirement
-      row :venue_network
+      row("City Network") { |venue| venue.venue_network }
       row :latitude
       row :longitude
       

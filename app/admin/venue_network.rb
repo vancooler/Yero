@@ -1,4 +1,4 @@
-ActiveAdmin.register VenueNetwork do
+ActiveAdmin.register VenueNetwork, :as => "City Network" do
   menu :parent => "VENUE"
   permit_params :name, :timezone
   index do
