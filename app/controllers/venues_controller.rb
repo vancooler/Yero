@@ -316,21 +316,30 @@ class VenuesController < ApplicationController
     else
       longitude = user.longitude
     end
-    # venues = Venue.all
-    venues = Venue.near_venues(latitude, longitude, distance)
 
-    campus = VenueType.find_by_name("Campus")
-
-    if !campus.nil?
-      venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
+    if !params[:without_featured_venues].blank? 
+      without_featured_venues = params[:without_featured_venues]=='1'
+    else
+      without_featured_venues = false
     end
 
-    # reorder it based on featured and featured order
-    featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
-    if !featured_venues.empty?
-      other_venues = venues - featured_venues
-      featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
-      venues = featured_venues + other_venues
+    # venues = Venue.all
+    venues = Venue.near_venues(latitude, longitude, distance)
+    
+    if !without_featured_venues
+      campus = VenueType.find_by_name("Campus")
+
+      if !campus.nil?
+        venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
+      end
+
+      # reorder it based on featured and featured order
+      featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
+      if !featured_venues.empty?
+        other_venues = venues - featured_venues
+        featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
+        venues = featured_venues + other_venues
+      end
     end
 
     page_number = nil
@@ -343,47 +352,7 @@ class VenuesController < ApplicationController
     end
 
     data = Venue.venues_object(venues)
-    # data = Jbuilder.encode do |json|
-      
-    #   json.array! venues do |v|
-    #     # puts "venue:" 
-    #     # puts v.inspect
-    #     images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
-    #     json.id v.id
-    #     json.name (v.name.blank? ? '' : v.name.upcase)
-    #     json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
-    #     json.address v.address_line_one
-    #     json.city v.city
-    #     json.state v.state
-    #     json.longitude v.longitude
-    #     json.latitude v.latitude
-    #     json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
-    #     if !images.empty?
-    #       avatars = Array.new
-    #       images.each do |i|
-    #         # avatar = Hash.new
-    #         # avatar['url'] = i.avatar.url
-    #         # avatar['default'] = i.default
-    #         avatars << i.avatar.url
-    #       end
-    #       json.images do
-    #         json.array! avatars
-    #       end
-    #     end
-
-    #     json.nightly do
-    #       nightly = Nightly.today_or_create(v)
-    #       json.boy_count nightly.boy_count
-    #       json.girl_count nightly.girl_count
-    #       json.guest_wait_time nightly.guest_wait_time
-    #       json.regular_wait_time nightly.regular_wait_time
-    #     end
-    #   end
-    # end
-
-    # render json: {
-    #   list: JSON.parse(data)
-    # }
+    
     render json: success(JSON.parse data)
   end
 
