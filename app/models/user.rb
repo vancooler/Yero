@@ -691,7 +691,7 @@ class User < ActiveRecord::Base
             different_venue_time += (different_venue_time_2 - different_venue_time_1)
             check_badge_time += (check_badge_time_2 - check_badge_time_1)
             avatar_time += (avatar_time_2 - avatar_time_1)
-            other_time += (other_time_2 - other_time_1)
+            # other_time += (other_time_2 - other_time_1)
           end
         end
         json_e = Time.now
