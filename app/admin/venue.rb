@@ -6,6 +6,7 @@ ActiveAdmin.register Venue do
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
   
+  config.per_page = 100
   before_filter :check_super, only: [:edit, :update, :create, :new, :destroy]
   # actions :index, :show, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
   controller do

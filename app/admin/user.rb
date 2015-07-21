@@ -3,6 +3,7 @@ ActiveAdmin.register User do
   permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id,
                 user_avatars_attributes: [:id, :avatar, :venue_id, :default, :is_active, :_destroy]
 
+  config.per_page = 100
   actions :index, :show, :edit, :update, :destroy
   index do
   	column :id

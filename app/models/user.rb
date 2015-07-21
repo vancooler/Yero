@@ -590,7 +590,9 @@ class User < ActiveRecord::Base
 
       # build json format
       users = Jbuilder.encode do |json|
-        
+        whisper_time = 0
+        friend_time = 0
+        check_badge_time = 0
         json_s = Time.now
         json.array! return_users do |user|
           if user.id != self.id
@@ -633,6 +635,7 @@ class User < ActiveRecord::Base
               end
             end
 
+            whisper_time_1 = Time.now
             sent = false
             collected_whispers.each do |cwid|
               if cwid.to_s == user.id.to_s
@@ -644,7 +647,9 @@ class User < ActiveRecord::Base
             if !sent
               json.whisper_sent false
             end
+            whisper_time_2 = Time.now
 
+            friend_time_1 = Time.now
             if followees.blank?
               json.like false
             else
@@ -656,15 +661,14 @@ class User < ActiveRecord::Base
             else
               json.mutual_like friends.map(&:id).include? user.id
             end
-
-            start_time = Time.now
-            # json.whisper_sent WhisperNotification.whisper_sent(self, user) #Returns a boolean of whether a whisper was sent between this user and target user
-            end_time = Time.now
-            diff_1 += (end_time - start_time)
+            friend_time_2 = Time.now
+            
+            check_badge_time_1 = Time.now
             json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.different_venue_badge     self.different_venue_as?(user.id)
             json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
+            check_badge_time_2 = Time.now
             json.id             user.id
             json.first_name     user.first_name
             # json.key            user.key
@@ -682,6 +686,10 @@ class User < ActiveRecord::Base
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
             json.exclusive      user.exclusive
+
+            whisper_time += (whisper_time_2 - whisper_time_1)
+            friend_time += (friend_time_2 - friend_time_1)
+            check_badge_time += (check_badge_time_2 - check_badge_time_1)
           end
         end
         json_e = Time.now
@@ -690,6 +698,12 @@ class User < ActiveRecord::Base
         puts dbtime.inspect 
         p "Json time:"
         p j_time.inspect
+        p "whisper time:"
+        p whisper_time.inspect
+        p "friend time:"
+        p friend_time.inspect
+        p "check badge time:"
+        p check_badge_time.inspect
       end
       users = JSON.parse(users).delete_if(&:empty?)
       different_venue_users = [] # Make a empty array for users in the different venue
@@ -721,8 +735,6 @@ class User < ActiveRecord::Base
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
       end
 
-      final_time = Time.now
-      # diff_2 = final_time - end_time
       e_time = Time.now
       runtime = e_time - s_time
       
@@ -730,7 +742,7 @@ class User < ActiveRecord::Base
 
       puts "The runtime is: "
       puts runtime.inspect
-      logger.info "NEWTIME: " + diff_1.to_s 
+
       # count = users.count
       result['users'] = users
     else
@@ -903,6 +915,8 @@ class User < ActiveRecord::Base
 
   def force_users_join_to_test
     users = User.order("id DESC").limit(100) 
-    users.update_all(is_connected: true)
+    users.each do |user|
+      user.join_network
+    end
   end
 end
