@@ -662,10 +662,12 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     timestamp = Time.now.to_i
     puts timestamp
-    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600)
+    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
     return_array = Array.new
     items.each do |p|
-      return_array << p.hash_value
+      attributes = p.attributes
+      target_id = attributes['target_id'].to_i
+      return_array << target_id
     end
     if items.present? and items.count > 0
       return return_array
