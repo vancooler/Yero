@@ -13,6 +13,7 @@ class LocationsController < ApplicationController
       user = current_user
       user.latitude = params[:latitude].to_f
       user.longitude = params[:longitude].to_f
+      user.timezone_name = params[:timezone]
 
       puts 'current_user'
       puts current_user

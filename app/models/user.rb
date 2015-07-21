@@ -504,7 +504,8 @@ class User < ActiveRecord::Base
     # disconnect all users
     people_array = Array.new 
     if !times_array.empty?    
-      people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
+      people_array = User.where(:timezone_name => times_array).map(&:id)
+      # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
     puts "CLOSE People:"
     puts people_array.inspect
