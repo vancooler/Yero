@@ -57,25 +57,41 @@ class User < ActiveRecord::Base
 
   # Checks if you are in a different venue as the other person
   def different_venue_as?(user_id)
+    
     if User.exists? id: user_id 
       fellow_participant = User.find(user_id)
-      
-      fellow_participant_venue = fellow_participant.current_venue
-      self_venue = self.current_venue
 
-      if fellow_participant_venue.nil? or fellow_participant_venue.venue_type.nil? or fellow_participant_venue.venue_type.name.nil? or fellow_participant_venue.venue_type.name.include? "Campus" 
-          # fellow not in venue or in campus
-          return false
-      elsif !fellow_participant_venue.nil? and !self_venue.nil? and !self_venue.venue_type.nil? and !self_venue.venue_type.name.nil? and !(self_venue.venue_type.name.include? "Campus") and self_venue.id == fellow_participant_venue.id
-          # in a same non-campus venue as fellow
-          return false
+      if fellow_participant.current_venue.nil? 
+        return false
+      elsif self.current_venue.nil?
+        return false
       else
-          # other situation
-          return true
+        return self.current_venue.id != fellow_participant.current_venue.id
       end
     else
       false
     end
+
+
+    # if User.exists? id: user_id 
+    #   fellow_participant = User.find(user_id)
+      
+    #   fellow_participant_venue = fellow_participant.current_venue
+    #   self_venue = self.current_venue
+
+    #   if fellow_participant_venue.nil? or fellow_participant_venue.venue_type.nil? or fellow_participant_venue.venue_type.name.nil? or fellow_participant_venue.venue_type.name.include? "Campus" 
+    #       # fellow not in venue or in campus
+    #       return false
+    #   elsif !fellow_participant_venue.nil? and !self_venue.nil? and !self_venue.venue_type.nil? and !self_venue.venue_type.name.nil? and !(self_venue.venue_type.name.include? "Campus") and self_venue.id == fellow_participant_venue.id
+    #       # in a same non-campus venue as fellow
+    #       return false
+    #   else
+    #       # other situation
+    #       return true
+    #   end
+    # else
+    #   false
+    # end
   end
 
 
@@ -570,6 +586,7 @@ class User < ActiveRecord::Base
     result = Hash.new
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
+    pre_time_1 = Time.now
     all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
     number_of_users = all_users.length
     if number_of_users >= gate_number  
@@ -583,6 +600,7 @@ class User < ActiveRecord::Base
       whisper_friends = self.friends_by_whisper
       friends = mutual_follow | whisper_friends
 
+      pre_time_2 = Time.now
 
       retus = Time.now
       # get all users with filter params
@@ -700,6 +718,10 @@ class User < ActiveRecord::Base
         j_time = json_e-json_s
         puts "The dbtime is: "
         puts dbtime.inspect 
+        pre_time = pre_time_2 - pre_time_1
+        p "Pre time:"
+        p pre_time.inspect
+
         p "Json time:"
         p j_time.inspect
         p "avatar time:"
