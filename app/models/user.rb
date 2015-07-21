@@ -38,18 +38,20 @@ class User < ActiveRecord::Base
 
   # Checks if you are in the same venue as the other person
   def same_venue_as?(user_id)
-    if User.exists? id: user_id 
-      fellow_participant = User.find(user_id)
-      
-      fellow_participant_venue = fellow_participant.current_venue
-      self_venue = self.current_venue
+    if self.current_venue.nil?
+      return false
+    else 
+      if User.exists? id: user_id 
+        fellow_participant = User.find(user_id)
 
-      return false if fellow_participant_venue.nil? || self_venue.nil?
+        if fellow_participant.current_venue.nil? 
+          return false
+        end
+        return self.current_venue.id == fellow_participant.current_venue.id
 
-      return self.current_venue.id == fellow_participant.current_venue.id
-
-    else
-      false
+      else
+        false
+      end
     end
   end
 
@@ -600,11 +602,10 @@ class User < ActiveRecord::Base
           if user.id != self.id
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
-            avatar_time_1 = Time.now
             main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
             other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
-            avatar_time_2 = Time.now
             
+            avatar_time_1 = Time.now
             avatar_array = Array.new
 
             avatar_array[0] = {
@@ -630,6 +631,7 @@ class User < ActiveRecord::Base
             end
 
             json.avatars avatar_array
+            avatar_time_2 = Time.now
 
 
 
@@ -709,6 +711,8 @@ class User < ActiveRecord::Base
         p "check badge time:"
         p check_badge_time.inspect
       end
+
+      adj_time = Time.now
       users = JSON.parse(users).delete_if(&:empty?)
       different_venue_users = [] # Make a empty array for users in the different venue
       same_venue_users = [] #Make a empty array for users in the same venue
@@ -733,17 +737,20 @@ class User < ActiveRecord::Base
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
       
-      users = same_venue_users.sort_by { |hsh| hsh[:actual_distance] } + different_venue_users.sort_by { |hsh| hsh[:actual_distance] }  #Sort users by distance
+      users = same_venue_users.shuffle + different_venue_users.sort_by  #Sort users by distance
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
       end
 
+
       e_time = Time.now
       runtime = e_time - s_time
       
 
-
+      adjust_time = e_time - adj_time
+      p "adjust time:"
+      p adjust_time.inspect
       puts "The runtime is: "
       puts runtime.inspect
 
