@@ -41,8 +41,8 @@ class User < ActiveRecord::Base
     if self.current_venue.nil?
       return false
     else 
-      if User.exists? id: user_id 
-        fellow_participant = User.find(user_id)
+      fellow_participant = User.find_by_id(user_id)
+      if !fellow_participant.nil? 
 
         if fellow_participant.current_venue.nil? 
           return false
@@ -58,9 +58,8 @@ class User < ActiveRecord::Base
   # Checks if you are in a different venue as the other person
   def different_venue_as?(user_id)
     
-    if User.exists? id: user_id 
-      fellow_participant = User.find(user_id)
-
+    fellow_participant = User.find_by_id(user_id)
+    if !fellow_participant.nil? 
       if fellow_participant.current_venue.nil? 
         return false
       elsif self.current_venue.nil?
@@ -593,6 +592,7 @@ class User < ActiveRecord::Base
       s_time = Time.now
       # collect all whispers sent 
       collected_whispers = WhisperNotification.collect_whispers(self)
+      pre_time_2 = Time.now
       # colect all users with "like"
       followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends
@@ -600,7 +600,7 @@ class User < ActiveRecord::Base
       whisper_friends = self.friends_by_whisper
       friends = mutual_follow | whisper_friends
 
-      pre_time_2 = Time.now
+      pre_time_3 = Time.now
 
       retus = Time.now
       # get all users with filter params
@@ -719,8 +719,11 @@ class User < ActiveRecord::Base
         puts "The dbtime is: "
         puts dbtime.inspect 
         pre_time = pre_time_2 - pre_time_1
+        friend_time = pre_time_3 - pre_time_2
         p "Pre time:"
         p pre_time.inspect
+        p "friend time:"
+        p friend_time.inspect
 
         p "Json time:"
         p j_time.inspect
