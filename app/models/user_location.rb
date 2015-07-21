@@ -84,6 +84,7 @@ class UserLocation < AWS::Record::HashModel
         end
       end
     end
+    user_ids = user_ids.uniq
     return user_ids
   end
 
