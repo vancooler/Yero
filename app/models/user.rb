@@ -693,7 +693,7 @@ class User < ActiveRecord::Base
             # json.key            user.key
             json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
-            # json.gender         user.gender
+            json.gender         user.gender
             # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
             json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
@@ -711,7 +711,6 @@ class User < ActiveRecord::Base
             different_venue_time += (different_venue_time_2 - different_venue_time_1)
             check_badge_time += (check_badge_time_2 - check_badge_time_1)
             avatar_time += (avatar_time_2 - avatar_time_1)
-            # other_time += (other_time_2 - other_time_1)
           end
         end
         json_e = Time.now
@@ -737,7 +736,6 @@ class User < ActiveRecord::Base
         p check_badge_time.inspect
       end
 
-      adj_time = Time.now
       users = JSON.parse(users).delete_if(&:empty?)
       different_venue_users = [] # Make a empty array for users in the different venue
       same_venue_users = [] #Make a empty array for users in the same venue
@@ -772,10 +770,6 @@ class User < ActiveRecord::Base
       e_time = Time.now
       runtime = e_time - s_time
       
-
-      adjust_time = e_time - adj_time
-      p "adjust time:"
-      p adjust_time.inspect
       puts "The runtime is: "
       puts runtime.inspect
 
