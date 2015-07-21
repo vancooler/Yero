@@ -663,7 +663,7 @@ class WhisperNotification < AWS::Record::HashModel
     table.load_schema
     timestamp = Time.now.to_i
     pre_time_1 = Time.now
-    pre_time = pre_time_2 - pre_time_1
+    pre_time = pre_time_1 - pre_time_0
     p "Load schema time:"
     p pre_time.inspect
     items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
