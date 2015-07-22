@@ -1691,16 +1691,22 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 	.hero {
 		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
 		background-size: 100%;
-		h2, h5, p {
-			color: #fff;
+		h2{
+			font-size: 1.6625rem;
 		}
-		p {
-			letter-spacing: 0.1em;
-			font-family: "GothamBook";
-			line-height: 1.6;
-			@media #{$medium-up}{
-				line-height: 3;
-			}
+		p.homepage-subtitle{
+			font-size: 14px;
+		}
+		a.android-user{
+			font-size: 11px;
 		}
 	}
+	h3{
+		font-size: 1.18215rem;
+	}
+
+	ul, ol, dl, p{
+		font-size: 0.7rem;
+	}
+
 }
