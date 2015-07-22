@@ -606,6 +606,27 @@ class User < ActiveRecord::Base
       retus = Time.now
       # get all users with filter params
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      if self.current_venue.blank?
+        same_venue_user_ids = Array.new
+      else
+        same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
+      end
+
+      campus_id = VenueType.find_by_name("Campus")
+      if campus_id
+        campus_venue_ids = Venue.where(venue_type_id: campus_id).map(&:id)
+      else
+        campus_venue_ids = [nil]
+      end
+      if self.current_venue.blank?
+        different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
+      else
+        campus_venue_ids << self.venue.id
+        different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
+      end
+
+        
+
       reten = Time.now
       dbtime = reten-retus
 
@@ -621,27 +642,27 @@ class User < ActiveRecord::Base
           if user.id != self.id
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
-            main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
-            other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
-            
+            # main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
+            # other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
+            other_avatars = user.user_avatars.where(is_active:true).order(:order)
             avatar_time_1 = Time.now
             avatar_array = Array.new
 
-            avatar_array[0] = {
-                  avatar: main_avatar.blank? ? '' : main_avatar.first.avatar.url,
-                  thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
-                  avatar_id: main_avatar.blank? ? '' : main_avatar.first.id,
-                  default: true,
-                  is_active: true,
-                  order: main_avatar.first.order.nil? ? '100' : main_avatar.first.order
-                }
+            # avatar_array[0] = {
+            #       avatar: main_avatar.blank? ? '' : main_avatar.first.avatar.url,
+            #       thumbnail: main_avatar.blank? ? '' : main_avatar.first.avatar.thumb.url,
+            #       avatar_id: main_avatar.blank? ? '' : main_avatar.first.id,
+            #       default: true,
+            #       is_active: true,
+            #       order: main_avatar.first.order.nil? ? '100' : main_avatar.first.order
+            #     }
             if other_avatars.count > 0
               other_avatars.each do |oa|
                 new_item = {
                   avatar: !oa.avatar.nil? ? oa.avatar.url : '',
                   thumbnail: !oa.avatar.nil? ? oa.avatar.thumb.url : '',
                   avatar_id: oa.id,
-                  default: false,
+                  default: oa.order.nil? ? true : (oa.order==0),
                   is_active: true,
                   order: oa.order.nil? ? '100' : oa.order
                 }
@@ -680,9 +701,11 @@ class User < ActiveRecord::Base
 
             
             check_badge_time_1 = Time.now
-            json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            # json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
+            json.same_venue_badge          same_venue_user_ids.include? user.id
             different_venue_time_1 = Time.now
-            json.different_venue_badge     self.different_venue_as?(user.id)
+            # json.different_venue_badge     self.different_venue_as?(user.id)
+            json.different_venue_badge          different_venue_user_ids.include? user.id
             different_venue_time_2 = Time.now
             # json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name

@@ -27,7 +27,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
 
             # notification
-            ReportUserHistory.notify_all_users(ua.user_id)
+            ReportUserHistory.mark_as_notified(ua.user_id)
           end
         end
       end
@@ -124,7 +124,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
 
           end
           WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
-          ReportUserHistory.notify_all_users(ua.user_id)
+          ReportUserHistory.mark_as_notified(ua.user_id)
         end
       end
     end

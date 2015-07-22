@@ -9,7 +9,7 @@ class ReportUserHistory < ActiveRecord::Base
   end
 
 
-  def self.notify_all_users(user_id)
+  def self.mark_as_notified(user_id)
   	all_history = ReportUserHistory.where("reported_user_id = ?", user_id)
   	all_history.update_all(:notified_at => Time.now)
   end
