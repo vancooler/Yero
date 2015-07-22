@@ -20,8 +20,20 @@ body{
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
 	background-size: cover;
-	@media #{$large-up}{
-		height: 900px
+	@media #{$medium-up}{
+		width: 100%;
+		min-height: 600px;
+		display: table;
+	    text-align: center;
+		div.row{
+			display: table-cell;
+		    vertical-align: middle;
+		}
+	}
+
+	@media #{$small-only} {
+		padding: 50px 0;
+		min-height: 400px;
 	}
 
 	@media #{$screen} and (max-width: 21em){
@@ -79,12 +91,20 @@ body{
 	transition: all .4s ease;
 }
 
+.fixed.top-header.contain-to-grid {
+	@media #{$medium-up}{
+		.title-area {
+			margin-left: 5%;
+		}
+	}
+}
+
 .transparent.top-header.contain-to-grid {
 	// position: fixed;
 	@media #{$medium-up}{
 		background: transparent;
 		.title-area {
-			margin-left: 200px;
+			margin-left: 13%;
 		}
 		.contain-to-grid,
 		.top-bar {
@@ -297,7 +317,7 @@ body{
 }
 
 // homepage features
-.hero,
+
 .email-signup,
 .padding {
 	padding: 100px 0;
@@ -621,7 +641,7 @@ body{
 .hero h2 {
 	// margin-top: 50px;
 	@media #{$medium-up} {
-		margin-top: 225px;
+		//margin-top: 225px;
 	}
 	@media #{$screen} and (max-width: 21em)  {
 		font-size: 1.5em;
