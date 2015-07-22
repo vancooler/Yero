@@ -614,7 +614,7 @@ class User < ActiveRecord::Base
 
       campus_id = VenueType.find_by_name("Campus")
       if campus_id
-        campus_venue_ids = Venue.where(venue_type_id: campus_id).map(&:id)
+        campus_venue_ids = Venue.where(venue_type_id: campus_id.to_s).map(&:id)
       else
         campus_venue_ids = [nil]
       end
