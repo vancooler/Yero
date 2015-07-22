@@ -70,7 +70,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     puts "Read time: "
     people_array_string = Array.new
     people_array.each do |p|
@@ -146,7 +148,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:id).equals(id.to_s)
     if items and items.count > 0
       return items.first
@@ -160,7 +164,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name] # Choose the table
-    table.load_schema 
+    if !table.schema_loaded?
+      table.load_schema 
+    end
     # Retrieve the system notifications that were sent by the venue, with notification_type = 1
     # Expire rule change!!!
     venue_items = table.items.where(:target_id).equals(user_id.to_s).where(:expired).equals(0).where(:notification_type).equals("1").select(:venue_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
@@ -196,7 +202,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name] # Choose the table
-    table.load_schema 
+    if !table.schema_loaded?
+      table.load_schema 
+    end
     # Target_id is the receiver of the messages
     # Expire rule change!!!
     receiver_items = table.items.where(:target_id).equals(user_id.to_s).where(:expired).equals(0).where(:notification_type).equals("2").where(:accepted).equals(0).where(:declined).not_equal_to(1).select(:origin_id, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted, :declined, :intro)
@@ -264,7 +272,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name] # Choose the table
-    table.load_schema 
+    if !table.schema_loaded?
+      table.load_schema 
+    end
     current_user = User.find(user_id)
     friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :id, :timestamp)
     friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :id, :timestamp)
@@ -440,7 +450,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:target_id).equals(target_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0)
     if items and items.count > 0
       request_user_array = Array.new
@@ -480,7 +492,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     current_user = user
     activity_notification_types = ["200", "201"]
     target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :id, :timestamp)
@@ -580,7 +594,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals('1')
     if items and items.count > 0
       # * venue name
@@ -644,7 +660,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").where(:accepted).equals(0)
     items.each do |item|
       attributes = item.attributes.to_h
@@ -668,7 +686,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     timestamp = Time.now.to_i
     pre_time_1 = Time.now
     pre_time = pre_time_1 - pre_time_0
@@ -702,7 +722,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:target_id).equals(target_user_id.to_s).where(:origin_id).equals(origin_user_id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600)
     puts "whisper sent"
     puts items.count.inspect
@@ -740,7 +762,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     item = table.items.where(:id).equals(whisper_id.to_s)
     if item.count == 1
       item.each do |i|
@@ -772,7 +796,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     whisper_array.each do |id|
       item = WhisperNotification.find_by_dynamodb_id(id.to_s)
       item.attributes.update do |u|
@@ -786,7 +812,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:target_id).equals(id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
     if items.count > 0
       items.each do |i|
@@ -831,26 +859,6 @@ class WhisperNotification < AWS::Record::HashModel
     # p notification.inspect
     notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
     
-    #get badge number
-    # dynamo_db = AWS::DynamoDB.new
-    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    # table = dynamo_db.tables[table_name]
-    # table.load_schema
-    # chat_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    # greeting_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    # accept_items = table.items.where(:target_id).equals(target_user.id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
-    # chat_request_number = 0
-    # venue_greeting_number = 0
-    # chat_accept_number = 0
-    # if chat_items.present?
-    #   chat_request_number = chat_items.count
-    # end
-    # if greeting_items.present?
-    #   venue_greeting_number = greeting_items.count
-    # end
-    # if accept_items.present?
-    #   chat_accept_number = accept_items.count
-    # end
 
     notification.badge = 1
     notification.sound = "sosumi.aiff"
@@ -1008,7 +1016,9 @@ class WhisperNotification < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
 
     chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)

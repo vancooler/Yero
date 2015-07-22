@@ -540,7 +540,9 @@ class User < ActiveRecord::Base
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name] # Choose the table
-    table.load_schema 
+    if !table.schema_loaded?
+      table.load_schema 
+    end
 
     friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
     friends_whispered = table.items.where(:target_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:origin_id)
@@ -813,7 +815,9 @@ class User < ActiveRecord::Base
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     puts "Read time: "
 
     items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0").select(:target_id, :timestamp, :id, :origin_id, :accepted, :declined, :created_date, :venue_id, :notification_type, :intro, :expired, :viewed, :not_viewed_by_sender)
@@ -927,7 +931,9 @@ class User < ActiveRecord::Base
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
 
     people_array.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new

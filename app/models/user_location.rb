@@ -31,7 +31,9 @@ class UserLocation < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = UserLocation.table_prefix + 'UserLocation'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:user_id).equals(user_id.to_s).select(:timezone)
     puts "COUNT"
@@ -59,7 +61,9 @@ class UserLocation < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = UserLocation.table_prefix + 'UserLocation'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     # items = table.items.where(:timezone).equals(timezone.to_s)
     items = table.items.where(:timezone).in(*timezones).select(:user_id)
 
@@ -92,7 +96,9 @@ class UserLocation < AWS::Record::HashModel
     dynamo_db = AWS::DynamoDB.new
     table_name = UserLocation.table_prefix + 'UserLocation'
     table = dynamo_db.tables[table_name]
-    table.load_schema
+    if !table.schema_loaded?
+      table.load_schema
+    end
     items = table.items.where(:user_id).equals(id.to_s)
     if items.count > 0
       items.each do |i|
