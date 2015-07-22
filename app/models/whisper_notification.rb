@@ -829,186 +829,216 @@ class WhisperNotification < AWS::Record::HashModel
 
 
   def send_push_notification_to_target_user(message)
-    #this shall be refactored once we have more phones to test with
-    app_local_path = Rails.root
+    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment"}
+    push = Parse::Push.new(data, "User_" + self.target_id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result 
 
-    # if self.origin_id != "0"
-    #   origin_user = User.find(self.origin_id) 
-    #   origin_user_key = origin_user.key
+    
+    # #this shall be refactored once we have more phones to test with
+    # app_local_path = Rails.root
+
+    # # if self.origin_id != "0"
+    # #   origin_user = User.find(self.origin_id) 
+    # #   origin_user_key = origin_user.key
+    # # else
+    # #   origin_user_key = "SYSTEM"
+    # # end
+    # target_user = User.find(self.target_id) 
+    # p "Target user: "
+    # p target_user.inspect
+    # if !ENV['DYNAMODB_PREFIX'].blank?
+    #   apn = Houston::Client.development
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
     # else
-    #   origin_user_key = "SYSTEM"
+    #   apn = Houston::Client.production
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
     # end
-    target_user = User.find(self.target_id) 
-    p "Target user: "
-    p target_user.inspect
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      apn = Houston::Client.development
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
-    else
-      apn = Houston::Client.production
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-    end
 
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
-    p 'the token'
-    p token.inspect
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    # p "notification before message"
-    # p notification.inspect
-    notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
+    # # An example of the token sent back when a device registers for notifications
+    # token = User.find(self.target_id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+    # p 'the token'
+    # p token.inspect
+    # # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    # notification = Houston::Notification.new(device: token)
+    # # p "notification before message"
+    # # p notification.inspect
+    # notification.alert = message # "Hi #{target_user.first_name || "Whisper User"}, You got a Whisper!"
     
 
-    notification.badge = 1
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    # if self.notification_type.to_i == 1
-    #   notification.custom_data = {
-    #       # whisper_id: self.id,
-    #       # origin_user: origin_user_key,
-    #       # target_user: target_user.key,
-    #       # timestamp: self.timestamp,
-    #       # target_apn: token,
-    #       # viewed: self.viewed,
-    #       # accepted: self.accepted,
-    #       type: self.notification_type.to_i,
-    #       venue_greeting_number: venue_greeting_number
-    #   }
-    # elsif self.notification_type.to_i == 2
-    #   notification.custom_data = {
-    #       type: self.notification_type.to_i,
-    #       chat_request_number: chat_request_number
-    #   }
-    # elsif self.notification_type.to_i == 3
-    #   notification.custom_data = {
-    #       type: self.notification_type.to_i,
-    #       chat_accept_number: chat_accept_number
-    #   }
+    # notification.badge = 1
+    # notification.sound = "sosumi.aiff"
+    # notification.category = "INVITE_CATEGORY"
+    # notification.content_available = true
+
+    # notification.custom_data = {
+    #   type: self.notification_type.to_i,
+    #   friend_or_whisper: (self.notification_type.to_i == 3 ? "friend" : "whisper")
+    # }
+
+    # # And... sent! That's all it takes.
+
+    # if !token.nil? and !token.empty?
+    #   begin  
+    #     p "Notification object"
+    #     p notification.inspect
+    #     apn.push(notification)
+    #     return true  
+    #   rescue  
+    #     p "Notification object error"
+    #     p notification.inspect
+    #     return false 
+    #   end  
+    # else
+    #   return false
     # end
-
-    notification.custom_data = {
-      type: self.notification_type.to_i,
-      friend_or_whisper: (self.notification_type.to_i == 3 ? "friend" : "whisper")
-    }
-
-    # And... sent! That's all it takes.
-
-    if !token.nil? and !token.empty?
-      begin  
-        p "Notification object"
-        p notification.inspect
-        apn.push(notification)
-        return true  
-      rescue  
-        p "Notification object error"
-        p notification.inspect
-        return false 
-      end  
-    else
-      return false
-    end
   end
 
 
   # send network open notification
   def self.send_nightopen_notification(id)
-    app_local_path = Rails.root
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      apn = Houston::Client.development
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
-    else
-      apn = Houston::Client.production
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-    end
+    data = { :alert => "Your city's network is now online.", :type => 100}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result 
 
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+    # app_local_path = Rails.root
+    # if !ENV['DYNAMODB_PREFIX'].blank?
+    #   apn = Houston::Client.development
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    # else
+    #   apn = Houston::Client.production
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    # end
+
+    # # An example of the token sent back when a device registers for notifications
+    # token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
    
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = "Your city's network is now online."
+    # # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    # notification = Houston::Notification.new(device: token)
+    # notification.alert = "Your city's network is now online."
     
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    notification.custom_data = {         
-          type: 100
-    }
+    # # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+    # notification.sound = "sosumi.aiff"
+    # notification.category = "INVITE_CATEGORY"
+    # notification.content_available = true
+    # notification.custom_data = {         
+    #       type: 100
+    # }
 
-    # And... sent! That's all it takes.
-    if !token.nil? and !token.empty?
-      puts token
-      apn.push(notification)
-    end
+    # # And... sent! That's all it takes.
+    # if !token.nil? and !token.empty?
+    #   puts token
+    #   apn.push(notification)
+    # end
   end
 
   # send enough users notification
   def self.send_enough_users_notification(id)
-    app_local_path = Rails.root
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      apn = Houston::Client.development
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
-    else
-      apn = Houston::Client.production
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-    end
 
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+    data = { :alert => "There are now enough users. See who else is online.", :type => 102}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result 
+
+    # app_local_path = Rails.root
+    # if !ENV['DYNAMODB_PREFIX'].blank?
+    #   apn = Houston::Client.development
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    # else
+    #   apn = Houston::Client.production
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    # end
+
+    # # An example of the token sent back when a device registers for notifications
+    # token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
    
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = "There are now enough users. See who else is online."
+    # # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    # notification = Houston::Notification.new(device: token)
+    # notification.alert = "There are now enough users. See who else is online."
     
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    notification.custom_data = {         
-          type: 102
-    }
+    # # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+    # notification.sound = "sosumi.aiff"
+    # notification.category = "INVITE_CATEGORY"
+    # notification.content_available = true
+    # notification.custom_data = {         
+    #       type: 102
+    # }
 
-    # And... sent! That's all it takes.
-    if !token.nil? and !token.empty?
-      puts token
-      apn.push(notification)
-    end
+    # # And... sent! That's all it takes.
+    # if !token.nil? and !token.empty?
+    #   puts token
+    #   apn.push(notification)
+    # end
   end
 
   # Send notification when the avatar is disabled by admin
   def self.send_avatar_disabled_notification(id, default)
-    app_local_path = Rails.root
-    if !ENV['DYNAMODB_PREFIX'].blank?
-      apn = Houston::Client.development
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
-    else
-      apn = Houston::Client.production
-      apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
-    end
 
-    # An example of the token sent back when a device registers for notifications
-    token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
+
+    data = { :alert => "Your main avatar looks not so good... Please use another one as your main avatar.", :type => 101, :is_default => default}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result 
+
+
+    # app_local_path = Rails.root
+    # if !ENV['DYNAMODB_PREFIX'].blank?
+    #   apn = Houston::Client.development
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification_sandbox.pem")
+    # else
+    #   apn = Houston::Client.production
+    #   apn.certificate = File.read("#{app_local_path}/apple_push_notification.pem")
+    # end
+
+    # # An example of the token sent back when a device registers for notifications
+    # token = User.find(id).apn_token # "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>"
    
-    # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
-    notification = Houston::Notification.new(device: token)
-    notification.alert = "Your main avatar looks not so good... Please use another one as your main avatar."
+    # # Create a notification that alerts a message to the user, plays a sound, and sets the badge on the app
+    # notification = Houston::Notification.new(device: token)
+    # notification.alert = "Your main avatar looks not so good... Please use another one as your main avatar."
     
-    # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
-    notification.sound = "sosumi.aiff"
-    notification.category = "INVITE_CATEGORY"
-    notification.content_available = true
-    notification.custom_data = {   
-          type: 101,      
-          is_default: default
-    }
+    # # Notifications can also change the badge count, have a custom sound, have a category identifier, indicate available Newsstand content, or pass along arbitrary data.
+    # notification.sound = "sosumi.aiff"
+    # notification.category = "INVITE_CATEGORY"
+    # notification.content_available = true
+    # notification.custom_data = {   
+    #       type: 101,      
+    #       is_default: default
+    # }
 
-    # And... sent! That's all it takes.
-    if !token.nil? and !token.empty?
-      apn.push(notification)
-    end
+    # # And... sent! That's all it takes.
+    # if !token.nil? and !token.empty?
+    #   apn.push(notification)
+    # end
   end
 
 
