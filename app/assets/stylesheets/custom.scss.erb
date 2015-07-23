@@ -22,6 +22,16 @@ body{
 	background-size: cover;
 	@media #{$medium-up}{
 		width: 100%;
+		min-height: 450px;
+		display: table;
+	    text-align: center;
+		div.row{
+			display: table-cell;
+		    vertical-align: middle;
+		}
+	}
+	@media #{$large-up}{
+		width: 100%;
 		min-height: 600px;
 		display: table;
 	    text-align: center;
@@ -33,7 +43,7 @@ body{
 	@media #{$xlarge-up}{
 		min-height: 900px;
 	}
-	@media #{$small-only} {
+	@media #{$screen} and (max-width: 40em){
 		padding: 50px 0;
 		min-height: 335px;
 	}
@@ -261,6 +271,9 @@ body{
 			}
 		}
 		 a:not(.button).tw {
+		 	@media #{$small-only} {
+			 	margin-left:16px;
+			}
 			background: url(<%= asset_path 'twitter.png' %>) no-repeat center;// -37px 0px !important;
 			background-size: contain;
 			&:hover {
@@ -1714,21 +1727,48 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
 		background-size: 100%;
 		h2{
-			font-size: 1.6625rem;
+			font-size: 1.5rem;
 		}
 		p.homepage-subtitle{
-			font-size: 14px;
+			font-size: 12px;
 		}
 		a.android-user{
-			font-size: 11px;
+			font-size: 10px;
 		}
 	}
 	h3{
-		font-size: 1.18215rem;
+		font-size: 1.05rem;
 	}
 
 	ul, ol, dl, p{
-		font-size: 0.7rem;
+		font-size: 0.6rem;
 	}
-
+	div.medium-4.medium-pull-6.small-pull-6.small-6.columns.show-for-medium-up .show-for-medium-up {
+	  width: 70%;
+	  height: 70%;
+	  left: 50%;
+	  position: relative;
+	}
+	div.feature.medium-text-right.small-text-center.grey.matching.padding.no-bottom .show-for-medium-up {
+	  height: 82%;
+	}
+	div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .show-for-medium-up {
+	  height: 79%;
+	}
+	.what-is .image img {
+	  position: relative;
+	  bottom: 15%;
+	  left: 5%;
+	  max-width: 400px;
+	  width: 90%;
+	  height: 90%;
+	}
+	div.medium-4.columns.text-center img{
+		height: 90%;
+		width: 90%;
+	}
+	img.macbook{
+		height: 90%;
+		width: 90%;
+	}
 }
