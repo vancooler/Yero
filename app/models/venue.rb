@@ -109,6 +109,7 @@ class Venue < ActiveRecord::Base
             json.array! avatars
           end
         end
+        json.gimbal_name  (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
         json.logo         logo.empty? ? default_logo : logo.first.avatar.url
 
         # json.nightly do
