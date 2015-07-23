@@ -623,7 +623,7 @@ class User < ActiveRecord::Base
       if self.current_venue.blank?
         different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
       else
-        campus_venue_ids << self.venue.id
+        campus_venue_ids << self.current_venue.id
         different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
       end
 
