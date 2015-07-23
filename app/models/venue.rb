@@ -142,6 +142,7 @@ class Venue < ActiveRecord::Base
       featured_order:     self.featured_order,
       venue_message: "Welcome to "+(self.name.blank? ? '' : self.name.upcase)+"! Open this Whisper to learn more about tonight.",
       images:         images,
+      gimbal_name:  (self.beacons.blank? ? '' : (self.beacons.first.key.blank? ? '' : self.beacons.first.key))
       logo:         logo.empty? ? default_logo : logo.first.avatar.url
     }
 
@@ -149,7 +150,7 @@ class Venue < ActiveRecord::Base
   end
 
   def self.import(file)
-    
+
     CSV.foreach(file.path, headers: true) do |row|
       venue_obj = row.to_hash
       puts venue_obj
