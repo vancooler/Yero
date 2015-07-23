@@ -799,7 +799,7 @@ class UsersController < ApplicationController
   def update_chat_accounts
     user = current_user
 
-    if !params[:instagram_id].blank? 
+    if !params[:instagram_id].nil? 
       if params[:instagram_id].match(/\s/).blank?
         user.instagram_id = params[:instagram_id]
       else
@@ -807,7 +807,7 @@ class UsersController < ApplicationController
       end
     end
 
-    if !params[:snapchat_id].blank? 
+    if !params[:snapchat_id].nil? 
       if params[:snapchat_id].match(/\s/).blank?
         user.snapchat_id = params[:snapchat_id]
       else
@@ -815,7 +815,7 @@ class UsersController < ApplicationController
       end
     end
 
-    if !params[:wechat_id].blank? 
+    if !params[:wechat_id].nil? 
       if params[:wechat_id].match(/\s/).blank?
         user.wechat_id = params[:wechat_id]
       else
@@ -823,18 +823,22 @@ class UsersController < ApplicationController
       end
     end
 
-    if !params[:line_id].blank? 
+    if !params[:line_id].nil? 
       if params[:line_id].match(/\s/).blank?
         user.line_id = params[:line_id]
       else
         user.line_id = params[:line_id].gsub!(/\s+/, "") 
       end
     end
-    
-    if user.save
-      render json: success(user)
+
+    if user.snapchat_id.blank? and user.wechat_id.blank? and user.line_id.blank?
+      render json: error("You must have at least one chatting account")
     else
-      render json: error(JSON.parse(user.errors.messages.to_json))
+      if user.save
+        render json: success(user)
+      else
+        render json: error(JSON.parse(user.errors.messages.to_json))
+      end
     end
   end
 
