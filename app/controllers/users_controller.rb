@@ -1039,9 +1039,9 @@ class UsersController < ApplicationController
 
 
   def update_notification_preferences
-    network_online = (params['network_online'].blank? or params['network_online'] == '0')
-    enter_venue_network = (params['enter_venue_network'].blank? or params['enter_venue_network'] == '0')
-    leave_venue_network = (params['leave_venue_network'].blank? or params['leave_venue_network'] == '0')
+    network_online = (!params['network_online'].nil? and params['network_online'] == '0')
+    enter_venue_network = (!params['enter_venue_network'].nil? and params['enter_venue_network'] == '0')
+    leave_venue_network = (!params['leave_venue_network'].nil? and params['leave_venue_network'] == '0')
     
     UserNotificationPreference.update_preferences_settings(current_user, network_online, enter_venue_network, leave_venue_network)
     
