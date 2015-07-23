@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type' />
+  </head>
+  <body>
+    <p>Hey there,</p>
+    <p>
+      This message is to confirm that the Yero account with the username <%= @user.first_name %> belongs to you. Verifying your email address helps you secure your account. If you forget your password, you will now be able to reset it by email. <br>
+      To confirm that this is your Snapchat account, click here: <br>
+      <%= link_to 'Confirm Email',email_reset_url(@user.email_reset_token,  only_path: false)%>
+
+      <br>
+      <p>If this is not your Yero account then you can ignore this message &mdash; someone probably typed in your email address by mistake.
+      </p>
+      <p>
+        Thanks! <br>
+        Team Yero
+      </p>      
+    </p>
+  </body>
+</html>

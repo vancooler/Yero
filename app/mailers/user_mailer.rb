@@ -6,6 +6,11 @@ class UserMailer < ActionMailer::Base
   	mail(to: @user.email, subject: "Password Recovery at Yero")
   end
 
+  def email_reset(user)
+    @user = user
+    mail(to: @user.email, subject: "Yero Email Address Confirmation")
+  end
+
   def password_change_success(user)
   	@user = user
   	mail(to:@user.email, subject: "Password Successfully Changed.")

@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-  prepend_before_filter :get_api_token, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
-  before_action :authenticate_api, except: [:set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  prepend_before_filter :get_api_token, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_api, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
   skip_before_filter  :verify_authenticity_token
 
   def show
@@ -832,8 +832,10 @@ class UsersController < ApplicationController
     end
 
     if user.snapchat_id.blank? and user.wechat_id.blank? and user.line_id.blank?
+      puts "errorssssss"
       render json: error("You must have at least one chatting account")
     else
+      puts "SAVE"
       if user.save
         render json: success(user)
       else
@@ -971,6 +973,46 @@ class UsersController < ApplicationController
       end
     else
       render json: error("The email you have used is not valid.")
+    end
+  end
+
+  # reset email
+  def generate_reset_email_verify
+    new_email = params[:new_email]
+    @user = current_user
+    if !new_email.blank? 
+      if User.find_by_email(new_email).nil?
+        @user.email_reset_token = Base64.urlsafe_encode64(email)
+        if @user.save
+          UserMailer.delay.email_reset(@user)
+          render json: success(true)
+        else
+          render json: error("Cannot generate reset email token for this user.")
+        end
+      else
+        render json: error("There is already an account with this email address.")
+      end
+
+    else
+      render json: error("New email cannot be blank")
+    end
+  end
+
+  def email_reset
+    if params[:email_reset_token].blank?
+      @message = "Invalid email reset token"
+    else
+      @user = User.find_by_email_reset_token(params[:email_reset_token])
+      if @user.nil?
+        @message = "Invalid email reset token"
+      else
+        new_email = Base64.urlsafe_decode64(params[:email_reset_token])
+        if User.find_by_email(new_email).nil?
+          @message = "Email verified successfully"
+        else
+          @message = "There is already an account with this email address."
+        end
+      end
     end
   end
 

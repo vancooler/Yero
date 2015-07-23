@@ -1,0 +1,31 @@
+<% body_class "contact" %>
+<% content_for :title , "Email Reset" %>
+<header class="page-header">
+<!-- 	<div class="row">
+		
+		    <% if !flash[:danger].blank? %>
+		    	<div class="medium-12 columns">
+		    		<h2>Please try again!</h2>
+		    	</div>
+		    <% elsif !flash[:success].blank? %>
+		    	<div class="medium-12 columns">
+			    	<div class="alert-box success"><%= flash[:success] %></div>
+			    	<h2>Your password has been reset</h2>
+			    </div>
+		   	<% else %>
+		   		<div class="medium-12 columns">
+		   			<h2>Change your password</h2>
+		   		</div>
+		    <% end %>		
+		</div>
+	</div>
+</header> -->
+
+<section class="page-content contact-content">
+	<div class="row">
+		<div class="medium-11 medium-offset-1 columns">
+			<h2><%=@message%></h2>
+			
+		</div>
+	</div>
+</section>

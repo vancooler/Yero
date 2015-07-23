@@ -88,6 +88,7 @@ Rails.application.routes.draw do
   get 'venues-thankyou', to: 'home#venues-thankyou', as: :venues_thankyou
   # get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
   match 'users/password_reset/:password_reset_token',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
+  match 'users/email_reset/:email_reset_token',          to: 'users#email_reset', as: "email_reset", via: [:get]
 
   # User API
   post 'api/v1/users/signup',                 to: 'users#sign_up'
