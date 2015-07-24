@@ -59,7 +59,7 @@ class UserAvatar < ActiveRecord::Base
     end
 
     def validate_min_number_of_avatars
-      minimum_number_of_avatars = 1
+      minimum_number_of_avatars = 0
       unless self.user.user_avatars.where(:is_active => true).size > minimum_number_of_avatars
         errors.add :base, "You cannot have less than #{minimum_number_of_avatars} avatars."
         return false
