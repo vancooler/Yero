@@ -532,9 +532,13 @@ class WhisperNotification < AWS::Record::HashModel
     disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
     origin_user_array = Array.new
     t1 = Time.now
+    t = 0
     if target_items and target_items.count > 0
       target_items.each do |i|
+        tb = Time.now
         attributes = i.attributes
+        ta = Time.now
+        t += (ta-tb)
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Received Whisper'
@@ -558,7 +562,10 @@ class WhisperNotification < AWS::Record::HashModel
     end
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
+        tb = Time.now
         attributes = i.attributes
+        ta = Time.now
+        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Sent Whisper'
@@ -582,7 +589,10 @@ class WhisperNotification < AWS::Record::HashModel
     end
     if activity_items and activity_items.count > 0
       activity_items.each do |i|
+        tb = Time.now
         attributes = i.attributes
+        ta = Time.now
+        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Joined Network' : 'Offline')
@@ -595,7 +605,10 @@ class WhisperNotification < AWS::Record::HashModel
     end
     if disabled_avatars and disabled_avatars.count > 0
       disabled_avatars.each do |i|
+        tb = Time.now
         attributes = i.attributes
+        ta = Time.now
+        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Profile Avatar Disabled'
@@ -621,6 +634,9 @@ class WhisperNotification < AWS::Record::HashModel
     puts (t2-t1).inspect
     puts "Activity time: "
     puts (t2-t0).inspect
+    puts "Special time: "
+    puts t.inspect
+
     return users
   end
 
