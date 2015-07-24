@@ -837,7 +837,7 @@ class UsersController < ApplicationController
     else
       puts "SAVE"
       if user.save
-        render json: success(user)
+        render json: success(user.to_json(true))
       else
         render json: error(JSON.parse(user.errors.messages.to_json))
       end
