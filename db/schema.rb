@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150724180606) do
+ActiveRecord::Schema.define(version: 20150725131212) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -153,6 +153,12 @@ ActiveRecord::Schema.define(version: 20150724180606) do
 
   add_index "follows", ["followable_id", "followable_type"], name: "fk_followables", using: :btree
   add_index "follows", ["follower_id", "follower_type"], name: "fk_follows", using: :btree
+
+  create_table "friend_by_whispers", force: true do |t|
+    t.integer  "target_user_id",                                 null: false
+    t.integer  "origin_user_id",                                 null: false
+    t.datetime "friend_time",    default: '2015-07-24 20:45:56', null: false
+  end
 
   create_table "global_variables", force: true do |t|
     t.string   "name"
