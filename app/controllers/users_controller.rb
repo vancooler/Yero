@@ -440,7 +440,7 @@ class UsersController < ApplicationController
     t0 = Time.now
     friends = WhisperNotification.myfriends(current_user.id)
     t1 = Time.now
-    badge = WhisperNotification.unviewd_whisper_number(current_user.id)
+    # badge = WhisperNotification.unviewd_whisper_number(current_user.id)
     t2 = Time.now
     if !friends.blank?
       page_number = nil
@@ -459,12 +459,10 @@ class UsersController < ApplicationController
       puts "USER ORDER:"
       puts users.inspect
       response_data = {
-        badge_number: badge,
         friends: users.reverse
       }
     else
       response_data = {
-        badge_number: badge,
         friends: Array.new
       }
     end
