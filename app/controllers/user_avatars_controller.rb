@@ -159,7 +159,7 @@ class UserAvatarsController < ApplicationController
   def destroy
     avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
     active_avatars_number = current_user.user_avatars.where(:is_active => true).size
-    if avatar and active_avatars_number > 1
+    if avatar
       this_order = avatar.order
       if avatar.destroy
         UserAvatar.order_minus_one(current_user.id, this_order)
@@ -169,8 +169,6 @@ class UserAvatarsController < ApplicationController
       else
         render json: error(avatar.errors)
       end
-    elsif avatar and active_avatars_number == 1
-      render json: error("You must have at least one photo.")
     else
       render json: error("Avatar not found.")
     end
