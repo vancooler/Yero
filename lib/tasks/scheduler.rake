@@ -36,6 +36,12 @@ task :network_close => :environment do
   puts "Done."
 end
 
+task :sync_gimbal => :environment do
+  puts "Start to sync gimbal places"
+  CityNetwork.sync_gimbal
+  puts "Done."
+end
+
 
 task :enough_users => :environment do
   puts "Checking for enough users"

@@ -66,6 +66,7 @@ gem 'mixpanel-ruby'
 gem 'timezone'
 gem 'tzinfo'
 gem 'bcrypt', '3.1.7'
+gem 'httparty'
 
 # Speed up Heroku deploys
 gem 'dalli'

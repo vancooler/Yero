@@ -763,6 +763,8 @@ class User < ActiveRecord::Base
       end
 
       users = JSON.parse(users).delete_if(&:empty?)
+
+      # TODO: Move to db level to improve performance
       different_venue_users = [] # Make a empty array for users in the different venue
       same_venue_users = [] #Make a empty array for users in the same venue
       no_badge_users = [] # Make an empty array for no badge users
