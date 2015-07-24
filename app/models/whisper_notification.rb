@@ -708,39 +708,25 @@ class WhisperNotification < AWS::Record::HashModel
 
   # Function that gets all the users received whisper from current user
   def self.collect_whispers(current_user)
-    pre_time_0 = Time.now
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    if !table.schema_loaded?
-      table.load_schema
-    end
-    timestamp = Time.now.to_i
-    pre_time_1 = Time.now
-    pre_time = pre_time_1 - pre_time_0
-    p "Load schema time:"
-    p pre_time.inspect
-    items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
-    pre_time_2 = Time.now
-    pre_time = pre_time_2 - pre_time_1
-    p "Get whisper time:"
-    p pre_time.inspect
-    return_array = Array.new
-    items.each do |p|
-      attributes = p.attributes
-      target_id = attributes['target_id'].to_i
-      return_array << target_id
-    end
-    pre_time_3 = Time.now
-    pre_time = pre_time_3 - pre_time_2
-    p "collect whisper time:"
-    p pre_time.inspect
-
-    if items.present? and items.count > 0
-      return return_array
-    else
-      return []
-    end
+    array = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).map(&:target_user_id)
+    # dynamo_db = AWS::DynamoDB.new
+    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    # table = dynamo_db.tables[table_name]
+    # if !table.schema_loaded?
+    #   table.load_schema
+    # end
+    # timestamp = Time.now.to_i
+    
+    # items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
+    
+    # return_array = Array.new
+    # items.each do |p|
+    #   attributes = p.attributes
+    #   target_id = attributes['target_id'].to_i
+    #   return_array << target_id
+    # end
+    
+    return array.uniq
   end
 
   # Function signifies whether the user has sent a whisper to the target user
@@ -1079,7 +1065,7 @@ class WhisperNotification < AWS::Record::HashModel
     chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
     accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:accepted).equals(1).where(:viewed).equals(0)
-    
+
     chat_request_number = 0
     venue_greeting_number = 0
     accept_number = 0

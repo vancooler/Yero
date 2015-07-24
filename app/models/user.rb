@@ -680,7 +680,7 @@ class User < ActiveRecord::Base
 
             sent = false
             collected_whispers.each do |cwid|
-              if cwid.to_s == user.id.to_s
+              if cwid.to_i == user.id.to_i
                 json.whisper_sent true
                 sent = true
               end
