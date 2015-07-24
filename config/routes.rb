@@ -89,11 +89,16 @@ Rails.application.routes.draw do
   # get  'users/reset_password/:key',           to: 'users#reset_password', as: "reset_password"
   match 'users/password_reset/:password_reset_token',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
   match 'users/email_reset/:email_reset_token',          to: 'users#email_reset', as: "email_reset", via: [:get]
+  match 'welcome',          to: 'home#welcome_reference', as: "share_reference", via: [:get]
 
   # User API
-  post 'api/v1/users/signup',                 to: 'users#sign_up'
-  post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
-  post 'api/v1/users/login',                  to: 'users#login'
+  
+    scope constraints: { protocol: 'https' } do
+      post 'api/v1/users/signup',                 to: 'users#sign_up'
+      post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
+      post 'api/v1/users/login',                  to: 'users#login'
+    end
+
   delete 'api/v1/users/logout',                  to: 'users#logout'
   post 'api/v1/users/check-email',                  to: 'users#check_email'
   post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
