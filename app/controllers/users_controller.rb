@@ -982,7 +982,7 @@ class UsersController < ApplicationController
     @user = current_user
     if !new_email.blank? 
       if User.find_by_email(new_email).nil?
-        @user.email_reset_token = Base64.urlsafe_encode64(email)
+        @user.email_reset_token = Base64.urlsafe_encode64(new_email)
         if @user.save
           UserMailer.delay.email_reset(@user)
           render json: success(true)
