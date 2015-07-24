@@ -303,17 +303,17 @@ class WhisperNotification < AWS::Record::HashModel
           if friend_id > 0
             if User.exists? id: friend_id
               user = User.find(friend_id)
-              h['intro'] = user.introduction_1
-              h['target_user'] = user
               h['target_user_id'] = user.id          
-              if user.main_avatar
-                h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-                h['target_user_main'] = user.main_avatar.avatar.url
-                if user.secondary_avatars
-                  h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-                  h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-                end
-              end
+              h['intro'] = user.introduction_1
+              # h['target_user'] = user
+              # if user.main_avatar
+              #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+              #   h['target_user_main'] = user.main_avatar.avatar.url
+              #   if user.secondary_avatars
+              #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+              #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+              #   end
+              # end
             else
               h['target_user'] = ''
             end
@@ -342,17 +342,17 @@ class WhisperNotification < AWS::Record::HashModel
           if friend_id > 0
             if User.exists? id: friend_id
               user = User.find(friend_id)
-              h['intro'] = user.introduction_1
-              h['target_user'] = user
               h['target_user_id'] = user.id
-              if user.main_avatar
-                h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-                h['target_user_main'] = user.main_avatar.avatar.url
-                if user.secondary_avatars
-                  h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-                  h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-                end
-              end
+              h['intro'] = user.introduction_1
+              # h['target_user'] = user
+              # if user.main_avatar
+              #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+              #   h['target_user_main'] = user.main_avatar.avatar.url
+              #   if user.secondary_avatars
+              #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+              #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+              #   end
+              # end
             else
               h['target_user'] = ''
             end
@@ -374,16 +374,16 @@ class WhisperNotification < AWS::Record::HashModel
       h = Hash.new
       friend_id = user.id
           h['intro'] = user.introduction_1
-          h['target_user'] = user
           h['target_user_id'] = user.id
-          if user.main_avatar
-            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-            h['target_user_main'] = user.main_avatar.avatar.url
-            if user.secondary_avatars
-              h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-              h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-            end
-          end
+          # h['target_user'] = user
+          # if user.main_avatar
+          #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          #   h['target_user_main'] = user.main_avatar.avatar.url
+          #   if user.secondary_avatars
+          #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+          #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+          #   end
+          # end
           
           timestamp_1 = Follow.where(:follower_type => "User", :follower_id => user.id, :followable_type => "User", :followable_id => current_user.id).first.created_at.to_i
           timestamp_2 = Follow.where(:follower_type => "User", :follower_id => current_user.id, :followable_type => "User", :followable_id => user.id).first.created_at.to_i
