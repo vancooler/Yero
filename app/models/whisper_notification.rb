@@ -531,6 +531,7 @@ class WhisperNotification < AWS::Record::HashModel
     friends = WhisperNotification.friends_activity_to_json(friends, user)
     disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
     origin_user_array = Array.new
+    t1 = Time.now
     if target_items and target_items.count > 0
       target_items.each do |i|
         attributes = i.attributes
@@ -613,9 +614,13 @@ class WhisperNotification < AWS::Record::HashModel
     if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
       users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?
     end
-    t1 = Time.now
-    puts "ACtivity time: "
+    t2 = Time.now
+    puts "gether time: "
     puts (t1-t0).inspect
+    puts "json time: "
+    puts (t2-t1).inspect
+    puts "Activity time: "
+    puts (t2-t0).inspect
     return users
   end
 
