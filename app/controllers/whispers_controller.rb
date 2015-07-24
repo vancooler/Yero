@@ -56,6 +56,8 @@ class WhispersController < ApplicationController
       record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
       if record_found.count <= 0
         WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+      else
+        record_found.first.update(:whisper_time => Time.now)
       end
     end
     n.send_push_notification_to_target_user(message)
@@ -150,14 +152,17 @@ class WhispersController < ApplicationController
           target_id = attributes['target_id'].to_i
           venue_id = attributes['venue_id'].to_i
         end
-        n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
         if origin_id.to_i <= 0 
           render json: success
         elsif !n.nil?
-          user = User.find(target_id.to_i)
-          message = user.first_name + " is now your friend!"
-          n.send_push_notification_to_target_user(message)
-
+          if FriendByWhisper.check_friends(origin_id, target_id)
+          else
+            n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
+            FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id)
+            user = User.find(target_id.to_i)
+            message = user.first_name + " is now your friend!"
+            n.send_push_notification_to_target_user(message)
+          end
           render json: success
         else
           render json: error('There was an error.')

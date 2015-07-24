@@ -594,13 +594,14 @@ class User < ActiveRecord::Base
     if number_of_users >= gate_number  
       s_time = Time.now
       # collect all whispers sent 
+      # TODO: use model to do it
       collected_whispers = WhisperNotification.collect_whispers(self)
       pre_time_2 = Time.now
       # colect all users with "like"
       followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends
       mutual_follow = self.friends_by_like
-      whisper_friends = self.friends_by_whisper
+      whisper_friends = FriendByWhisper.friends(self.id)
       friends = mutual_follow | whisper_friends
 
       pre_time_3 = Time.now
