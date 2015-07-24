@@ -240,8 +240,12 @@ class WhisperNotification < AWS::Record::HashModel
         # expire_timestamp = UserLocation.tomorrow_close_timestamp(user_id.to_i, attributes['timestamp'])
         current_user = User.find_by_id(user_id)
         if current_user
-          expire_timestamp = DateTime.strptime(attributes['timestamp'].to_s,'%s').in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
-
+          hour = DateTime.strptime(attributes['timestamp'].to_s, "%s").in_time_zone(current_user.timezone_name).hour
+          if hour >= 5
+            expire_timestamp = DateTime.strptime(attributes['timestamp'].to_s,'%s').in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
+          else
+            expire_timestamp = DateTime.strptime(attributes['timestamp'].to_s,'%s').in_time_zone(current_user.timezone_name).beginning_of_day + 5.hours            
+          end
           h['seconds_left'] = expire_timestamp.to_i - Time.now.to_i + 60
           h['expire_timestamp'] = expire_timestamp.to_i
         else
