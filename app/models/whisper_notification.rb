@@ -433,7 +433,7 @@ class WhisperNotification < AWS::Record::HashModel
         end
 
         h['object'] = user_object
-        h['activity_id'] = (i['id'].blank? ? 'friends-by-like-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+attributes['timestamp'].to_i.to_s : i['id'])
+        h['activity_id'] = (i['id'].blank? ? 'friends-'+current_user.id.to_s+'-'+target_user.id.to_s+'-'+i['timestamp'].to_i.to_s : i['id'])
         # h['my_role'] = 'target_user'
         h['timestamp'] = i['timestamp']
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
