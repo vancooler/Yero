@@ -196,6 +196,7 @@ class WhisperNotification < AWS::Record::HashModel
     return venue
   end
 
+  # Retrive whispers
   def self.find_friends(user_id)
     time_0 = Time.now
 
@@ -241,8 +242,8 @@ class WhisperNotification < AWS::Record::HashModel
         if current_user
           expire_timestamp = DateTime.strptime(attributes['timestamp'].to_s,'%s').in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
 
-          h['seconds_left'] = expire_timestamp - Time.now.to_i + 60
-          h['expire_timestamp'] = expire_timestamp
+          h['seconds_left'] = expire_timestamp.to_i - Time.now.to_i + 60
+          h['expire_timestamp'] = expire_timestamp.to_i
         else
           h['seconds_left'] = 3600*12
           h['expire_timestamp'] = Time.now.to_i + 3600*12
@@ -841,7 +842,7 @@ class WhisperNotification < AWS::Record::HashModel
     end 
     return result 
 
-    
+
     # #this shall be refactored once we have more phones to test with
     # app_local_path = Rails.root
 
