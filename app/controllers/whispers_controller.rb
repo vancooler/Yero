@@ -156,6 +156,7 @@ class WhispersController < ApplicationController
           render json: success
         elsif !n.nil?
           if FriendByWhisper.check_friends(origin_id, target_id)
+            render json: error('You are already friends.')
           else
             n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
             FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id)
