@@ -358,7 +358,12 @@ class User < ActiveRecord::Base
         preferences = NotificationPreference.all
         json.array! preferences do |p|
           json.type p.name
-          json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? true : false)
+          if p.name == "Leave venue network"
+            json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
+
+          else
+            json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? true : false)
+          end
         end
       end
 
