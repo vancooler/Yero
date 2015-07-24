@@ -810,8 +810,8 @@ class User < ActiveRecord::Base
       users = Array.new
       result['percentage'] = (count * 100 / gate_number).to_i
     end
-    puts "USERS RESULT:"
-    puts result.inspect
+    # puts "USERS RESULT:"
+    # puts result.inspect
     return result
   end
 

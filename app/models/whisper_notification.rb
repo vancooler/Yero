@@ -613,6 +613,9 @@ class WhisperNotification < AWS::Record::HashModel
     if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
       users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?
     end
+    t1 = Time.now
+    puts "ACtivity time: "
+    puts (t1-t0).inspect
     return users
   end
 
