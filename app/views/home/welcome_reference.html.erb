@@ -1,0 +1,18 @@
+<html>
+<head>
+<script type="text/javascript">
+function delayedRedirect(){
+    window.location = "http://www.yero.co"
+}
+</script>
+</head>
+<% if @mobile %>
+	<body onLoad="setTimeout('delayedRedirect()', 5000)">
+		<div class="welcome-ref">Welcome!</div>
+	</body>
+<% else %>
+	<body>
+		<div class="welcome-ref">Welcome!</div>
+	</body>
+<% end %>
+</html>
