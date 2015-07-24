@@ -437,8 +437,11 @@ class UsersController < ApplicationController
 
   # new API for friends list
   def myfriends_new
+    t0 = Time.now
     friends = WhisperNotification.myfriends(current_user.id)
+    t1 = Time.now
     badge = WhisperNotification.unviewd_whisper_number(current_user.id)
+    t2 = Time.now
     if !friends.blank?
       page_number = nil
       friends_per_page = nil
@@ -465,6 +468,15 @@ class UsersController < ApplicationController
         friends: Array.new
       }
     end
+    t3 = Time.now
+
+    puts "GETHER friends"
+    puts (t1-t0).inspect
+    puts "GETHER badge"
+    puts (t2-t1).inspect
+    puts "serialize friends"
+    puts (t3-t2).inspect
+
     render json: success(response_data, "data")
   end
 
