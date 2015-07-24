@@ -90,9 +90,7 @@ Rails.application.routes.draw do
   match 'users/password_reset/:password_reset_token',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
   match 'users/email_reset/:email_reset_token',          to: 'users#email_reset', as: "email_reset", via: [:get]
   match 'welcome',          to: 'home#welcome_reference', as: "share_reference", via: [:get]
-  match 'api/v1/users/generate_reset_email_verify',          to: 'home#generate_reset_email_verify', as: "generate_reset_email_verify", via: [:post]
-
-  # User API
+  post 'api/v1/users/generate_reset_email_verify',          to: 'home#generate_reset_email_verify', as: :generate_reset_email_verify
   
   # scope constraints: { protocol: 'https' } do
     post 'api/v1/users/signup',                 to: 'users#sign_up'
