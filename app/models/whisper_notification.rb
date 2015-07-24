@@ -274,6 +274,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   # TODO: use it for friends request
   def self.myfriends(user_id)
+    t0 = Time.now
     dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name] # Choose the table
@@ -283,6 +284,7 @@ class WhisperNotification < AWS::Record::HashModel
     current_user = User.find(user_id)
     friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :id, :timestamp)
     friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :id, :timestamp)
+    t1 = Time.now
     first_friends_array = Array.new
     second_friends_array = Array.new
     first_friends_id_array = Array.new
@@ -364,7 +366,7 @@ class WhisperNotification < AWS::Record::HashModel
         end 
       end
     end
-
+    t2 = Time.now
     # Friends by like
     mutual_follow = current_user.friends_by_like
     mutual_follow_array = Array.new
@@ -390,6 +392,13 @@ class WhisperNotification < AWS::Record::HashModel
           mutual_follow_array << h  
 
     end
+    t3 = Time.now
+    puts "retrive friends"
+    puts (t1-t0).inspect
+    puts "ss friends"
+    puts (t2-t1).inspect
+    puts "mutual like friends"
+    puts (t3-t2).inspect
     users = Array.new
     users = first_friends_array | second_friends_array | mutual_follow_array
     users = users.group_by { |x| x['target_user_id'] }.map {|x,y|y.max_by {|x|x['timestamp']}}

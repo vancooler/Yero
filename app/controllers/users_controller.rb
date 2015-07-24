@@ -455,7 +455,7 @@ class UsersController < ApplicationController
       users = requests_user_whisper_json(friends, is_friends)
       users = JSON.parse(users).delete_if(&:blank?)
       users = users.sort_by { |hsh| hsh["timestamp"] }
-      WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
+      WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
       puts "USER ORDER:"
       puts users.inspect
       response_data = {
