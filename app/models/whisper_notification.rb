@@ -551,13 +551,13 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['object'] = ''
         end
-        ta = Time.now
-        t += (ta-tb)
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
+        ta = Time.now
+        t += (ta-tb)
       end
     end
     if origin_items and origin_items.count > 0
@@ -578,13 +578,13 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['object'] = ''
         end
-        ta = Time.now
-        t += (ta-tb)
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
+        ta = Time.now
+        t += (ta-tb)
       end 
     end
     if activity_items and activity_items.count > 0
@@ -598,9 +598,9 @@ class WhisperNotification < AWS::Record::HashModel
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        origin_user_array << h
         ta = Time.now
         t += (ta-tb)
-        origin_user_array << h
       end
     end
     if disabled_avatars and disabled_avatars.count > 0
@@ -637,6 +637,8 @@ class WhisperNotification < AWS::Record::HashModel
     puts (t3-t2).inspect
     puts "Activity time: "
     puts (t3-t0).inspect
+    puts "Special time: "
+    puts (t).inspect
 
     return users
   end
