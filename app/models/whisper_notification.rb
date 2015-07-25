@@ -533,9 +533,9 @@ class WhisperNotification < AWS::Record::HashModel
     origin_user_array = Array.new
     t1 = Time.now
     t = 0
+    tb = Time.now
     if target_items and target_items.count > 0
       target_items.each do |i|
-        tb = Time.now
         attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
@@ -556,10 +556,11 @@ class WhisperNotification < AWS::Record::HashModel
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
-        ta = Time.now
-        t += (ta-tb)
       end
     end
+    ta = Time.now
+    puts "Part time"
+    puts (ta-tb).inspect
     if origin_items and origin_items.count > 0
       origin_items.each do |i|
         tb = Time.now

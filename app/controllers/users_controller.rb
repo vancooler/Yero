@@ -1018,7 +1018,13 @@ class UsersController < ApplicationController
       else
         new_email = Base64.urlsafe_decode64(params[:email_reset_token])
         if User.find_by_email(new_email).nil?
-          @message = "Email verified successfully"
+          @user.email = new_email
+          @user.email_reset_token = nil
+          if @user.save
+            @message = "Email verified successfully"
+          else
+            @message = "Failed to verify your email"
+          end
         else
           @message = "There is already an account with this email address."
         end
