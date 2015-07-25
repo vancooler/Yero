@@ -341,16 +341,19 @@ class User < ActiveRecord::Base
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
+        if avatars.blank?
+          Array.new 
+        else
+          json.array! avatars do |a|
 
-        json.array! avatars do |a|
+            json.avatar a.avatar.url
+            json.thumbnail a.avatar.thumb.url
+            json.default (!a.order.nil? and a.order == 0)
+            json.is_active a.is_active
+            json.avatar_id a.id
+            json.order (a.order.nil? ? 100 : a.order)
 
-          json.avatar a.avatar.url
-          json.thumbnail a.avatar.thumb.url
-          json.default (!a.order.nil? and a.order == 0)
-          json.is_active a.is_active
-          json.avatar_id a.id
-          json.order (a.order.nil? ? 100 : a.order)
-
+          end
         end
       end
 
@@ -372,7 +375,11 @@ class User < ActiveRecord::Base
       end
     end
 
-    JSON.parse(data)
+    response = JSON.parse(data)
+    if response['avatars'].blank?
+      response['avatars'] = Array.new
+    end
+    response
   end
 
   # keeps track of the latest activity of a user
