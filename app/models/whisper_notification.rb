@@ -619,6 +619,7 @@ class WhisperNotification < AWS::Record::HashModel
         t += (ta-tb)
       end
     end
+    t2 = Time.now
     if !friends.empty?
       origin_user_array = origin_user_array + friends
     end
@@ -627,15 +628,15 @@ class WhisperNotification < AWS::Record::HashModel
     if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
       users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?
     end
-    t2 = Time.now
+    t3 = Time.now
     puts "gether time: "
     puts (t1-t0).inspect
     puts "json time: "
     puts (t2-t1).inspect
+    puts "reorder & page time: "
+    puts (t3-t2).inspect
     puts "Activity time: "
-    puts (t2-t0).inspect
-    puts "Special time: "
-    puts t.inspect
+    puts (t3-t0).inspect
 
     return users
   end

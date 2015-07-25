@@ -889,7 +889,7 @@ class User < ActiveRecord::Base
       # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
-      avatars:         user_avatar_object(self),
+      avatars:         self.user_avatar_object,
       email:  self.email,
       instagram_id:  self.instagram_id.blank? ? '' : self.instagram_id,
       snapchat_id:  self.snapchat_id.blank? ? '' : self.snapchat_id,
@@ -903,7 +903,7 @@ class User < ActiveRecord::Base
     return user_object
   end
 
-  def user_avatar_object(user)
+  def user_avatar_object
     # user_info = user.to_json(false)
     # return user_info["avatars"]
 
