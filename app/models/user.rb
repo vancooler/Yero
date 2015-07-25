@@ -909,7 +909,7 @@ class User < ActiveRecord::Base
 
     data = Jbuilder.encode do |json|
       json.avatars do
-        avatars = user.user_avatars.where(is_active: true).order(:order)
+        avatars = self.user_avatars.where(is_active: true).order(:order)
 
         json.array! avatars do |a|
 
