@@ -92,7 +92,7 @@ function scrollHeader(){
 		homeHeader.addClass('transparent');
 		logoImg.attr('src', newSource );
 	}else{
-		homeHeader.addClass('fixed');
+		// homeHeader.addClass('fixed');
 	}
 
 	$(window).scroll(function(event) {
@@ -122,7 +122,7 @@ function scrollHeader(){
 	$(window).resize(function(event) {
 		/* Act on the event */
 		if($(window).width() < 768  ){
-			homeHeader.addClass('sticky fixed');
+			// homeHeader.addClass('sticky fixed');
 			$('body').removeClass('f-topbar-fixed ');
 			social.removeClass('green')
 			logoImg.attr('src', logoSource );
