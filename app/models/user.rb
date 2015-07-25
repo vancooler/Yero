@@ -904,26 +904,10 @@ class User < ActiveRecord::Base
   end
 
   def user_avatar_object(user)
+    user_info = user.to_json(false)
+    # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
     
-
-    data = Jbuilder.encode do |json|
-      json.avatars do
-        avatars = user.user_avatars.where(is_active: true).order(:order)
-
-        json.array! avatars do |a|
-
-          json.avatar a.avatar.url
-          json.thumbnail a.avatar.thumb.url
-          json.default (!a.order.nil? and a.order == 0)
-          json.is_active a.is_active
-          json.avatar_id a.id
-          json.order (a.order.nil? ? 100 : a.order)
-
-        end
-      end
-    end
-    
-    return data["avatars"]
+    return user_info["avatars"]
   end
 
 
