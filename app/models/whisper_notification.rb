@@ -537,12 +537,12 @@ class WhisperNotification < AWS::Record::HashModel
       target_items.each do |i|
         tb = Time.now
         attributes = i.attributes
-        ta = Time.now
-        t += (ta-tb)
         origin_id = attributes['origin_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Received Whisper'
         h['object_type'] = 'user'
+        ta = Time.now
+        t += (ta-tb)
         if origin_id > 0
           if User.exists? id: origin_id
             user = User.find(origin_id)
@@ -564,12 +564,12 @@ class WhisperNotification < AWS::Record::HashModel
       origin_items.each do |i|
         tb = Time.now
         attributes = i.attributes
-        ta = Time.now
-        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Sent Whisper'
         h['object_type'] = 'user'
+        ta = Time.now
+        t += (ta-tb)
         if target_id > 0
           if User.exists? id: target_id
             user = User.find(target_id)
@@ -591,8 +591,6 @@ class WhisperNotification < AWS::Record::HashModel
       activity_items.each do |i|
         tb = Time.now
         attributes = i.attributes
-        ta = Time.now
-        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Joined Network' : 'Offline')
@@ -600,6 +598,8 @@ class WhisperNotification < AWS::Record::HashModel
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+        ta = Time.now
+        t += (ta-tb)
         origin_user_array << h
       end
     end
@@ -607,8 +607,6 @@ class WhisperNotification < AWS::Record::HashModel
       disabled_avatars.each do |i|
         tb = Time.now
         attributes = i.attributes
-        ta = Time.now
-        t += (ta-tb)
         target_id = attributes['target_id'].to_i
         h = Hash.new
         h['activity_type'] = 'Profile Avatar Disabled'
@@ -617,6 +615,8 @@ class WhisperNotification < AWS::Record::HashModel
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
         origin_user_array << h
+        ta = Time.now
+        t += (ta-tb)
       end
     end
     if !friends.empty?
