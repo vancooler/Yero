@@ -878,7 +878,7 @@ class User < ActiveRecord::Base
     user_object = {
       # same_venue_badge:          current_user.same_venue_as?(self.id),
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
-      actual_distance:           current_user.actual_distance(self),
+      # actual_distance:           current_user.actual_distance(self),
       id:             self.id,
       first_name:     self.first_name,
       last_active:    self.last_active,
@@ -886,7 +886,7 @@ class User < ActiveRecord::Base
       since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
       birthday:       (self.id != 0 ? self.birthday : ''),
-      distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
+      # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
       avatars:         user_avatar_object(self),
@@ -904,10 +904,26 @@ class User < ActiveRecord::Base
   end
 
   def user_avatar_object(user)
-    user_info = user.to_json(false)
-    # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
     
-    return user_info["avatars"]
+
+    data = Jbuilder.encode do |json|
+      json.avatars do
+        avatars = user.user_avatars.where(is_active: true).order(:order)
+
+        json.array! avatars do |a|
+
+          json.avatar a.avatar.url
+          json.thumbnail a.avatar.thumb.url
+          json.default (!a.order.nil? and a.order == 0)
+          json.is_active a.is_active
+          json.avatar_id a.id
+          json.order (a.order.nil? ? 100 : a.order)
+
+        end
+      end
+    end
+    
+    return data["avatars"]
   end
 
 

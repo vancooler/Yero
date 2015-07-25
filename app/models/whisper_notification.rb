@@ -541,8 +541,6 @@ class WhisperNotification < AWS::Record::HashModel
         h = Hash.new
         h['activity_type'] = 'Received Whisper'
         h['object_type'] = 'user'
-        ta = Time.now
-        t += (ta-tb)
         if origin_id > 0
           if User.exists? id: origin_id
             user = User.find(origin_id)
@@ -553,6 +551,8 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['object'] = ''
         end
+        ta = Time.now
+        t += (ta-tb)
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
@@ -568,8 +568,6 @@ class WhisperNotification < AWS::Record::HashModel
         h = Hash.new
         h['activity_type'] = 'Sent Whisper'
         h['object_type'] = 'user'
-        ta = Time.now
-        t += (ta-tb)
         if target_id > 0
           if User.exists? id: target_id
             user = User.find(target_id)
@@ -580,6 +578,8 @@ class WhisperNotification < AWS::Record::HashModel
         else
           h['object'] = ''
         end
+        ta = Time.now
+        t += (ta-tb)
         h['activity_id'] = attributes['id']
         # h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
