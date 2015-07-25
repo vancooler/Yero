@@ -317,6 +317,12 @@ class VenuesController < ApplicationController
       longitude = user.longitude
     end
 
+    if !params[:latitude].blank? and !params[:longitude].blank? 
+      user.latitude = latitude
+      user.longitude = longitude
+      user.save
+    end
+
     if !params[:without_featured_venues].blank? 
       without_featured_venues = params[:without_featured_venues]=='1'
     else
@@ -325,7 +331,7 @@ class VenuesController < ApplicationController
 
     # venues = Venue.all
     venues = Venue.near_venues(latitude, longitude, distance)
-    
+
     if !without_featured_venues
       campus = VenueType.find_by_name("Campus")
 
