@@ -8,8 +8,8 @@ Rails.application.routes.draw do
   resources :beta_signup_users
 
   constraints(Domain) do
-    devise_for :admin_users, ActiveAdmin::Devise.config
     ActiveAdmin.routes(self)
+    devise_for :admin_users, ActiveAdmin::Devise.config
   end
   devise_for :web_users, path: '', path_names: { sign_in: 'venues/login', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   
