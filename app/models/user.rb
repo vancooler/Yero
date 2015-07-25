@@ -889,7 +889,7 @@ class User < ActiveRecord::Base
       # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
-      avatars:         self.user_avatar_object,
+      avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
       email:  self.email,
       instagram_id:  self.instagram_id.blank? ? '' : self.instagram_id,
       snapchat_id:  self.snapchat_id.blank? ? '' : self.snapchat_id,
