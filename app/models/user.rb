@@ -876,8 +876,8 @@ class User < ActiveRecord::Base
 
 
     user_object = {
-      same_venue_badge:          current_user.same_venue_as?(self.id),
-      different_venue_badge:     current_user.different_venue_as?(self.id) ,
+      # same_venue_badge:          current_user.same_venue_as?(self.id),
+      # different_venue_badge:     current_user.different_venue_as?(self.id) ,
       actual_distance:           current_user.actual_distance(self),
       id:             self.id,
       first_name:     self.first_name,
