@@ -532,9 +532,10 @@ class WhisperNotification < AWS::Record::HashModel
     disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
     origin_user_array = Array.new
     t1 = Time.now
-    t = 0
+    target_items.first.nil?
     tb = Time.now
-    if target_items and target_items.count > 0
+    puts (tb-t1).inspect
+    if target_items
       target_items.each do |i|
         attributes = i.attributes
         origin_id = attributes['origin_id'].to_i
@@ -561,7 +562,7 @@ class WhisperNotification < AWS::Record::HashModel
     ta = Time.now
     puts "Part time"
     puts (ta-tb).inspect
-    if origin_items and origin_items.count > 0
+    if origin_items
       origin_items.each do |i|
         tb = Time.now
         attributes = i.attributes
@@ -588,7 +589,7 @@ class WhisperNotification < AWS::Record::HashModel
         t += (ta-tb)
       end 
     end
-    if activity_items and activity_items.count > 0
+    if activity_items
       activity_items.each do |i|
         tb = Time.now
         attributes = i.attributes
@@ -604,7 +605,7 @@ class WhisperNotification < AWS::Record::HashModel
         t += (ta-tb)
       end
     end
-    if disabled_avatars and disabled_avatars.count > 0
+    if disabled_avatars
       disabled_avatars.each do |i|
         tb = Time.now
         attributes = i.attributes
