@@ -532,9 +532,8 @@ class WhisperNotification < AWS::Record::HashModel
     disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
     origin_user_array = Array.new
     t1 = Time.now
-    target_items.first.nil?
+    t = 0
     tb = Time.now
-    puts (tb-t1).inspect
     if target_items
       target_items.each do |i|
         attributes = i.attributes
