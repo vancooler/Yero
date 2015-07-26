@@ -21,7 +21,7 @@ class RoomsController < ApplicationController
         result_tmp = ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
         result = result && result_tmp
         #log in aws dynamoDB
-        UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
+        # UserActivity.create_in_aws(current_user, "Enter Beacon", "Beacon", beacon.id)
         first_entry_flag = 0
         n2 = true
         # #check whether the user entered this venue today, if not push greeting notification
@@ -88,39 +88,20 @@ class RoomsController < ApplicationController
   end
 
   def user_leave
-    beacons = Beacon.where(:key => params[:beacon_key])
-    if beacons.blank? or beacons.length <= 0
-      render json: error("Could not leave.")
-    else
-      result = true
-      beacons.each do |beacon|
-        result_tmp = ActiveInVenue.leave_venue(beacon.venue, current_user)
-        result = result && result_tmp
-        #log in aws dynamoDB
-        UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
-      end
+    # beacons = Beacon.where(:key => params[:beacon_key])
+    # if beacons.blank? or beacons.length <= 0
+    #   render json: error("Could not leave.")
+    # else
+
+      result = ActiveInVenue.leave_venue(nil, current_user)
+      #log in aws dynamoDB
+      # UserActivity.create_in_aws(current_user, "Leave Beacon", "Beacon", beacon.id)
+
       if result
         render json: success
       else
         render json: error("Could not leave.")
       end
-    end
-
-
-    # activity_item = ActivityItem.new(current_user, beacon, "Leave Beacon")
-    # if activity_item.create
-    #   render json: success(beacon.to_json)
-    # else
-    #   render json: error("Could not log leaving.")
-    # end
-
-    # participant = Participant.find_by_user_id(current_user.id)
-
-    # if participant
-    #   participant.delete
-    #   render json: success(nil)
-    # else
-    #   render json: error("Participant does not exist")
     # end
   end
 

@@ -51,17 +51,17 @@ class ActiveInVenue < ActiveRecord::Base
 
   def self.leave_venue(venue, user)
     # venue_network = venue.venue_network
-    if !venue.nil?
-      if venue.is_a? Venue
-        venue_id = venue.id
-      elsif venue.is_a? Integer
-        venue_id = venue
-      else
-        venue_id = 0
-      end
-    else
-      venue_id = 0
-    end
+    # if !venue.nil?
+    #   if venue.is_a? Venue
+    #     venue_id = venue.id
+    #   elsif venue.is_a? Integer
+    #     venue_id = venue
+    #   else
+    #     venue_id = 0
+    #   end
+    # else
+    #   venue_id = 0
+    # end
 
     if !user.nil?
       if user.is_a? User
@@ -76,7 +76,7 @@ class ActiveInVenue < ActiveRecord::Base
     end
 
     #delete venue activity
-    v = ActiveInVenue.where("venue_id = ? and user_id = ?", venue_id, user_id)
+    v = ActiveInVenue.where("user_id = ?", user_id)
     if v and v.count == 1
       result = v.first.destroy
     else
