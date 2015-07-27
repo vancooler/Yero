@@ -1110,6 +1110,8 @@ class WhisperNotification < AWS::Record::HashModel
       friend_number: accept_number
     }
 
+    puts "BADGEEEEEE"
+    puts badge.inspect
     return badge
   end
 end
