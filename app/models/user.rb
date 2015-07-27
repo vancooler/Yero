@@ -419,20 +419,7 @@ class User < ActiveRecord::Base
       user_ids = User.where(:timezone_name => times_array).map(&:id)
       # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
-    
-    # usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
 
-
-    # user_ids = Array.new
-    # if !usersInTimezone.nil? # If there are people in that timezone
-    #   usersInTimezone.each do |user|
-    #     attributes = user.attributes.to_h # Turn the people into usable attributes
-    #     if !attributes["user_id"].nil? 
-    #       user_ids << attributes["user_id"].to_i
-
-    #     end  
-    #   end
-    # end 
 
     time3 = Time.now
     dbtime = time3 - time2

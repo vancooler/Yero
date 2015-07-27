@@ -222,14 +222,14 @@ class WhisperNotification < AWS::Record::HashModel
         if User.exists? id: sender_id
           user = User.find(sender_id)
           h['target_user'] = user
-          if user.main_avatar
-            h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-            h['target_user_main'] = user.main_avatar.avatar.url
-            if user.secondary_avatars
-              h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-              h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-            end
-          end
+          # if user.main_avatar
+          #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
+          #   h['target_user_main'] = user.main_avatar.avatar.url
+          #   if user.secondary_avatars
+          #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
+          #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
+          #   end
+          # end
         else
           h['target_user'] = ''
         end
