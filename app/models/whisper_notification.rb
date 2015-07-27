@@ -867,7 +867,7 @@ class WhisperNotification < AWS::Record::HashModel
 
 
   def send_push_notification_to_target_user(message)
-    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment", :'content-available' => 1}
+    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment"}
     push = Parse::Push.new(data, "User_" + self.target_id.to_s)
     push.type = "ios"
     begin  
