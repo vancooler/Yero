@@ -338,6 +338,7 @@ class UsersController < ApplicationController
       whispers_array << whisp["whisper_id"]
     end
 
+    badge = WhisperNotification.unviewd_whisper_number(current_user.id)
     time_3 = Time.now
     if !whispers_array.nil? and whispers_array.count > 0
       current_user.delay.viewed_by_sender(whispers_array)
@@ -348,7 +349,6 @@ class UsersController < ApplicationController
     puts "Update time"
     puts runtime.inspect
 
-    badge = WhisperNotification.unviewd_whisper_number(current_user.id)
     response_data = {
       badge_number: badge,
       whispers: users
