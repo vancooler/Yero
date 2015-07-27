@@ -990,7 +990,7 @@ class WhisperNotification < AWS::Record::HashModel
   # send enough users notification
   def self.send_enough_users_notification(id)
 
-    data = { :alert => "There are now enough users. See who else is online.", :type => 102}
+    data = { :alert => "Enough users have joined your city’s network.", :type => 102}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  
@@ -1037,7 +1037,7 @@ class WhisperNotification < AWS::Record::HashModel
   def self.send_avatar_disabled_notification(id, default)
 
 
-    data = { :alert => "Your main avatar looks not so good... Please use another one as your main avatar.", :type => 101, :is_default => default}
+    data = { :alert => "One of your photos has been flagged as inappropriate and removed", :type => 101, :is_default => default}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  

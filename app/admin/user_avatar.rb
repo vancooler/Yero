@@ -194,7 +194,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     column "Image Enabled", :user do |ua|
       ua.is_active.nil? ? '' : (ua.is_active == false ? raw('<span class="status_tag no">Disabled</span>') : raw('<span class="status_tag yes">Active</span>'))
     end
-    column "Image Enabled Count", :user do |ua|
+    column "Image Disabled Count", :user do |ua|
       ua.user.nil? ? 0 : (ua.user.avatar_disabled_count.nil? ? 0 : ua.user.avatar_disabled_count)
     end
     # column "Account Status", :user do |ua|
