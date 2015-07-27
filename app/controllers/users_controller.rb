@@ -343,6 +343,7 @@ class UsersController < ApplicationController
     if !whispers_array.nil? and whispers_array.count > 0
       current_user.delay.viewed_by_sender(whispers_array)
     end
+    WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
 
     time_4 = Time.now
     runtime = time_4 - time_3
@@ -422,7 +423,7 @@ class UsersController < ApplicationController
     friends = WhisperNotification.myfriends(current_user.id)
     puts "friends123: "
     puts friends.inspect
-    WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
+    # WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
     if !friends.blank?
       users = requests_friends_json(friends)
       users = JSON.parse(users).delete_if(&:blank?)
@@ -455,7 +456,7 @@ class UsersController < ApplicationController
       users = requests_user_whisper_json(friends, is_friends)
       users = JSON.parse(users).delete_if(&:blank?)
       users = users.sort_by { |hsh| hsh["timestamp"] }
-      WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+      # WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
       puts "USER ORDER:"
       puts users.inspect
       response_data = {
