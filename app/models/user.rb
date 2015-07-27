@@ -411,9 +411,15 @@ class User < ActiveRecord::Base
     puts "runtime2: "
     puts dbtime.inspect
 
-    if !times_array.empty?
-      user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
+    # if !times_array.empty?
+    #   user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
+    # end
+
+    if !times_array.empty?    
+      user_ids = User.where(:timezone_name => times_array).map(&:id)
+      # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
+    
     # usersInTimezone = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
 
 

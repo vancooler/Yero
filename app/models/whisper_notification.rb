@@ -373,41 +373,35 @@ class WhisperNotification < AWS::Record::HashModel
     # Friends by whisper
     friends_by_whisper = FriendByWhisper.friends(user_id)
     friends_by_whisper.each do |user|
-      h = Hash.new
-      friend_id = user.id
-      h['intro'] = user.introduction_1
-      h['target_user_id'] = user.id
-      h['target_user'] = user
-      timestamp = FriendByWhisper.find_time(user.id, user_id).to_i
-      h['timestamp'] = timestamp
-      h['timestamp_read'] = Time.at(timestamp) # TODO: change format
-      friends << h  
+      if user and !user.user_avatars.where(is_active: true).blank?
+        h = Hash.new
+        friend_id = user.id
+        h['intro'] = user.introduction_1
+        h['target_user_id'] = user.id
+        h['target_user'] = user
+        timestamp = FriendByWhisper.find_time(user.id, user_id).to_i
+        h['timestamp'] = timestamp
+        h['timestamp_read'] = Time.at(timestamp) # TODO: change format
+        friends << h  
+      end
 
     end
     # Friends by like
     mutual_follow = current_user.friends_by_like
     mutual_follow_array = Array.new
     mutual_follow.each do |user|
-      h = Hash.new
-      friend_id = user.id
-          h['intro'] = user.introduction_1
-          h['target_user_id'] = user.id
-          h['target_user'] = user
-          # if user.main_avatar
-          #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-          #   h['target_user_main'] = user.main_avatar.avatar.url
-          #   if user.secondary_avatars
-          #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-          #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-          #   end
-          # end
-          
-          timestamp_1 = Follow.where(:follower_type => "User", :follower_id => user.id, :followable_type => "User", :followable_id => current_user.id).first.created_at.to_i
-          timestamp_2 = Follow.where(:follower_type => "User", :follower_id => current_user.id, :followable_type => "User", :followable_id => user.id).first.created_at.to_i
-          h['timestamp'] = (timestamp_1 > timestamp_2) ? timestamp_1 : timestamp_2
-          h['timestamp_read'] = Time.at(h['timestamp']) # TODO: change format
-          mutual_follow_array << h  
-
+      if user and !user.user_avatars.where(is_active: true).blank?
+        h = Hash.new
+        friend_id = user.id
+        h['intro'] = user.introduction_1
+        h['target_user_id'] = user.id
+        h['target_user'] = user
+        timestamp_1 = Follow.where(:follower_type => "User", :follower_id => user.id, :followable_type => "User", :followable_id => current_user.id).first.created_at.to_i
+        timestamp_2 = Follow.where(:follower_type => "User", :follower_id => current_user.id, :followable_type => "User", :followable_id => user.id).first.created_at.to_i
+        h['timestamp'] = (timestamp_1 > timestamp_2) ? timestamp_1 : timestamp_2
+        h['timestamp_read'] = Time.at(h['timestamp']) # TODO: change format
+        mutual_follow_array << h  
+      end
     end
     
     users = Array.new
@@ -555,7 +549,9 @@ class WhisperNotification < AWS::Record::HashModel
         # h['my_role'] = 'target_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << h
+        if user and !user.user_avatars.where(is_active: true).blank?
+          origin_user_array << h
+        end
       end
     end
     ta = Time.now
@@ -583,7 +579,9 @@ class WhisperNotification < AWS::Record::HashModel
         # h['my_role'] = 'origin_user'
         h['timestamp'] = attributes['timestamp'].to_i
         # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << h
+        if user and !user.user_avatars.where(is_active: true).blank?
+          origin_user_array << h
+        end
         ta = Time.now
         t += (ta-tb)
       end 
