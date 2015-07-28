@@ -22,11 +22,11 @@ class LocationsController < ApplicationController
       puts user.latitude
       puts user.longitude
 
-      if user.save and UserLocation.find_if_user_exist(current_user.id, user.latitude, user.longitude, params[:timezone])
+      if user.save #and UserLocation.find_if_user_exist(current_user.id, user.latitude, user.longitude, params[:timezone])
         render json: success
       # elsif location_history.save && user.save
-      elsif user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f, params[:timezone])
-        render json: success
+      # elsif user.save and UserLocation.create_in_aws(user, params[:latitude].to_f, params[:longitude].to_f, params[:timezone])
+      #   render json: success
       else
         render json: error("Could not save location.")
       end

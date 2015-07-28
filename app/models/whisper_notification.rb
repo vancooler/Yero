@@ -222,14 +222,6 @@ class WhisperNotification < AWS::Record::HashModel
         if User.exists? id: sender_id
           user = User.find(sender_id)
           h['target_user'] = user
-          # if user.main_avatar
-          #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-          #   h['target_user_main'] = user.main_avatar.avatar.url
-          #   if user.secondary_avatars
-          #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-          #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-          #   end
-          # end
         else
           h['target_user'] = ''
         end
@@ -274,99 +266,6 @@ class WhisperNotification < AWS::Record::HashModel
 
   # TODO: use it for friends request
   def self.myfriends(user_id)
-    # t0 = Time.now
-    # dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    # table = dynamo_db.tables[table_name] # Choose the table
-    # if !table.schema_loaded?
-    #   table.load_schema 
-    # end
-    # current_user = User.find(user_id)
-    # friends_accepted = table.items.where(:origin_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:target_id, :id, :timestamp)
-    # friends_whispered = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").select(:origin_id, :id, :timestamp)
-    # t1 = Time.now
-    # first_friends_array = Array.new
-    # second_friends_array = Array.new
-    # first_friends_id_array = Array.new
-    # second_friends_id_array = Array.new
-    # if friends_accepted and friends_accepted.count > 0
-    #   friends_accepted.each do |friend|
-    #     attributes = friend.attributes
-    #     friend_id = attributes['target_id'].to_i
-    #     h = Hash.new
-    #     p 'in the loop'
-    #     p friend_id
-    #     if first_friends_id_array.include? friend_id
-    #       p 'in the array'
-    #     else
-    #       first_friends_id_array << friend_id
-    #       if friend_id > 0
-    #         if User.exists? id: friend_id
-    #           user = User.find(friend_id)
-    #           h['target_user_id'] = user.id          
-    #           h['intro'] = user.introduction_1
-    #           h['target_user'] = user
-    #           # if user.main_avatar
-    #           #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-    #           #   h['target_user_main'] = user.main_avatar.avatar.url
-    #           #   if user.secondary_avatars
-    #           #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-    #           #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-    #           #   end
-    #           # end
-    #         else
-    #           h['target_user'] = ''
-    #         end
-    #       else
-    #           h['target_user'] = ''
-    #       end
-    #       h['id'] = attributes['id']
-    #       h['timestamp'] = attributes['timestamp'].to_i
-    #       h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
-    #       first_friends_array << h  
-    #     end 
-    #   end
-    # end
-
-    # if friends_whispered and friends_whispered.count > 0
-    #   friends_whispered.each do |friend|
-    #     attributes = friend.attributes
-    #     friend_id = attributes['origin_id'].to_i
-    #     h = Hash.new
-    #     p 'in the loop'
-    #     p friend_id
-    #     if second_friends_id_array.include? friend_id
-    #       p 'in the array'
-    #     else
-    #       second_friends_id_array << friend_id
-    #       if friend_id > 0
-    #         if User.exists? id: friend_id
-    #           user = User.find(friend_id)
-    #           h['target_user_id'] = user.id
-    #           h['intro'] = user.introduction_1
-    #           h['target_user'] = user
-    #           # if user.main_avatar
-    #           #   h['target_user_thumb'] = user.main_avatar.avatar.thumb.url
-    #           #   h['target_user_main'] = user.main_avatar.avatar.url
-    #           #   if user.secondary_avatars
-    #           #     h['target_user_secondary1'] = user.user_avatars.count > 1 ? user.secondary_avatars.first.avatar.url : ""
-    #           #     h['target_user_secondary2'] = user.user_avatars.count > 2 ? user.secondary_avatars.last.avatar.url : ""
-    #           #   end
-    #           # end
-    #         else
-    #           h['target_user'] = ''
-    #         end
-    #       else
-    #           h['target_user'] = ''
-    #       end
-    #       h['id'] = attributes['id']
-    #       h['timestamp'] = attributes['timestamp'].to_i
-    #       h['timestamp_read'] = Time.at(attributes['timestamp']) # TODO: change format
-    #       second_friends_array << h  
-    #     end 
-    #   end
-    # end
-    # t2 = Time.now
 
     current_user = User.find(user_id)
     friends = Array.new
