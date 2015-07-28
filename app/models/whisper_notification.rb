@@ -1106,7 +1106,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
 
     badge = {
-      whisper_number: chat_request_number + venue_greeting_number,
+      whisper_number: chat_request_number + venue_greeting_number + accept_number,
       friend_number: accept_number
     }
 
