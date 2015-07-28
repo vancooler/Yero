@@ -150,6 +150,9 @@
           </ul>
         </div>
       </div>
+      <%if params[:controller] == 'home' &&  params[:action] == 'index'%>
+      <a href="https://mixpanel.com/f/partner" class='mixpanel-link'><img src="//cdn.mxpnl.com/site_media/images/partner/badge_light.png" alt="Mobile Analytics" /></a>
+      <%end%>
     </footer>
 
     <% end %>
