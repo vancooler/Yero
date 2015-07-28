@@ -78,7 +78,7 @@ class WhisperNotification < AWS::Record::HashModel
     people_array.each do |p|
       people_array_string << p.to_s
     end
-    items = table.items.where(:target_id).in(*people_array_string).where(:notification_type).equals(notification_type).select(:target_id, :origin_id, :declined, :intro, :venue_id, :notification_type, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
+    items = table.items.where(:target_id).in(*people_array_string).where(:notification_type).equals(notification_type).where(:expired).equals(0).select(:target_id, :origin_id, :declined, :intro, :venue_id, :notification_type, :viewed, :id, :created_date, :timestamp, :not_viewed_by_sender, :accepted)
     
     items.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
