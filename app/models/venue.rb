@@ -45,9 +45,9 @@ class Venue < ActiveRecord::Base
 
   def self.near_venues(latitude, longitude, distance)
     if latitude.nil? or longitude.nil?
-      return Venue.geocoded.near([49, -123], distance, units: :km)
+      return Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
     else
-      return Venue.geocoded.near([latitude, longitude], distance, units: :km)
+      return Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
     end
   end
 

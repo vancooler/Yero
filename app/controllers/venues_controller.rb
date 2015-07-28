@@ -52,6 +52,7 @@ class VenuesController < ApplicationController
         'Venue Name' => @venue.name,
         'Venue ID' => @venue.id.to_s
     })
+    @types_array = VenueType.all.where("lower(name) not like ? and lower(name) not like ?", "%campus%", "%test%").collect  { |type| [type.name, type.id] }
     if @venue.draft_pending.nil? or !@venue.draft_pending
       @venue.pending_name = @venue.name
       @venue.pending_venue_type_id = @venue.venue_type_id

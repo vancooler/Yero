@@ -1,4 +1,4 @@
-ActiveAdmin.register WebUser do
+ActiveAdmin.register WebUser, :as => "Venue Owner" do
   menu :parent => "USERS"
   permit_params :email, :web_user_name, :first_name, :last_name, :business_name, :business_phone, :address_line_1, :address_line_2, :city, :state, :country, :zipcode, :password, :password_confirmation, venue_ids: []
   #               beacons_attributes: [:id, :key, :venue_id, :_destroy],
