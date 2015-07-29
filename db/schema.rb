@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150729125719) do
+ActiveRecord::Schema.define(version: 20150729160010) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -158,6 +158,7 @@ ActiveRecord::Schema.define(version: 20150729125719) do
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
     t.datetime "friend_time",    default: '2015-07-24 20:45:56', null: false
+    t.boolean  "viewed"
   end
 
   create_table "global_variables", force: true do |t|
@@ -298,6 +299,7 @@ ActiveRecord::Schema.define(version: 20150729125719) do
     t.string   "activity_type",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "dynamo_id"
   end
 
   add_index "recent_activities", ["target_user_id"], name: "index_recent_activities_on_target_user_id", using: :btree
@@ -572,6 +574,7 @@ ActiveRecord::Schema.define(version: 20150729125719) do
     t.text     "message",        default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "dynamo_id"
   end
 
   add_index "whisper_todays", ["target_user_id"], name: "index_whisper_todays_on_target_user_id", using: :btree
