@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150725203320) do
+ActiveRecord::Schema.define(version: 20150729125719) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -300,6 +300,8 @@ ActiveRecord::Schema.define(version: 20150725203320) do
     t.datetime "updated_at"
   end
 
+  add_index "recent_activities", ["target_user_id"], name: "index_recent_activities_on_target_user_id", using: :btree
+
   create_table "report_types", force: true do |t|
     t.string   "report_type_name"
     t.datetime "created_at"
@@ -558,6 +560,21 @@ ActiveRecord::Schema.define(version: 20150725203320) do
     t.integer  "origin_user_id",                                 null: false
     t.datetime "whisper_time",   default: '2014-09-25 23:02:29', null: false
   end
+
+  create_table "whisper_todays", force: true do |t|
+    t.integer  "target_user_id",                 null: false
+    t.integer  "origin_user_id"
+    t.integer  "venue_id"
+    t.integer  "whisper_type",                   null: false
+    t.boolean  "viewed",         default: false
+    t.boolean  "accepted",       default: false
+    t.boolean  "declined",       default: false
+    t.text     "message",        default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "whisper_todays", ["target_user_id"], name: "index_whisper_todays_on_target_user_id", using: :btree
 
   create_table "whispers", force: true do |t|
     t.integer  "origin_id"
