@@ -29,6 +29,15 @@ task :network_open => :environment do
   puts "Done."
 end
 
+task :join_some_users => :environment do
+  if user = User.find_by_id(700)
+    user.join_network
+  end
+  if user = User.find_by_id(704)
+    user.join_network
+  end
+end
+
 
 task :network_close => :environment do
   puts "Checking for networks approaching 5am"
