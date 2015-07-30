@@ -406,137 +406,142 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-  def self.my_chat_request_history(user, page_number, whispers_per_page)
-    t0 = Time.now
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    if !table.schema_loaded?
-      table.load_schema
+  def self.my_chat_request_history(user, page_number, activities_per_page)
+    # t0 = Time.now
+    # dynamo_db = AWS::DynamoDB.new
+    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    # table = dynamo_db.tables[table_name]
+    # if !table.schema_loaded?
+    #   table.load_schema
+    # end
+    # current_user = user
+    # activity_notification_types = ["200", "201"]
+    # target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :id, :timestamp)
+    # origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :id, :timestamp)
+    # activity_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).in(*activity_notification_types).select(:id, :timestamp, :notification_type)
+    # friends = WhisperNotification.myfriends(user.id)
+    # is_friends = true
+    # friends = WhisperNotification.friends_activity_to_json(friends, user)
+    # disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
+    # origin_user_array = Array.new
+    # t1 = Time.now
+    # t = 0
+    # tb = Time.now
+    # if target_items
+    #   target_items.each do |i|
+    #     attributes = i.attributes
+    #     origin_id = attributes['origin_id'].to_i
+    #     h = Hash.new
+    #     h['activity_type'] = 'Received Whisper'
+    #     h['object_type'] = 'user'
+    #     if origin_id > 0
+    #       if User.exists? id: origin_id
+    #         user = User.find(origin_id)
+    #         h['object'] = user.user_object(current_user)
+    #       else
+    #         h['object'] = ''
+    #       end
+    #     else
+    #       h['object'] = ''
+    #     end
+    #     h['activity_id'] = attributes['id']
+    #     # h['my_role'] = 'target_user'
+    #     h['timestamp'] = attributes['timestamp'].to_i
+    #     # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+    #     if user and !user.user_avatars.where(is_active: true).blank?
+    #       origin_user_array << h
+    #     end
+    #   end
+    # end
+    # ta = Time.now
+    # puts "Part time"
+    # puts (ta-tb).inspect
+    # if origin_items
+    #   origin_items.each do |i|
+    #     tb = Time.now
+    #     attributes = i.attributes
+    #     target_id = attributes['target_id'].to_i
+    #     h = Hash.new
+    #     h['activity_type'] = 'Sent Whisper'
+    #     h['object_type'] = 'user'
+    #     if target_id > 0
+    #       if User.exists? id: target_id
+    #         user = User.find(target_id)
+    #         h['object'] = user.user_object(current_user)
+    #       else
+    #         h['object'] = ''
+    #       end
+    #     else
+    #       h['object'] = ''
+    #     end
+    #     h['activity_id'] = attributes['id']
+    #     # h['my_role'] = 'origin_user'
+    #     h['timestamp'] = attributes['timestamp'].to_i
+    #     # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+    #     if user and !user.user_avatars.where(is_active: true).blank?
+    #       origin_user_array << h
+    #     end
+    #     ta = Time.now
+    #     t += (ta-tb)
+    #   end 
+    # end
+    # if activity_items
+    #   activity_items.each do |i|
+    #     tb = Time.now
+    #     attributes = i.attributes
+    #     target_id = attributes['target_id'].to_i
+    #     h = Hash.new
+    #     h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Joined Network' : 'Offline')
+    #     h['activity_id'] = attributes['id']
+    #     # h['my_role'] = 'target_user'
+    #     h['timestamp'] = attributes['timestamp'].to_i
+    #     # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+    #     origin_user_array << h
+    #     ta = Time.now
+    #     t += (ta-tb)
+    #   end
+    # end
+    # if disabled_avatars
+    #   disabled_avatars.each do |i|
+    #     tb = Time.now
+    #     attributes = i.attributes
+    #     target_id = attributes['target_id'].to_i
+    #     h = Hash.new
+    #     h['activity_type'] = 'Profile Avatar Disabled'
+    #     h['activity_id'] = attributes['id']
+    #     # h['my_role'] = 'target_user'
+    #     h['timestamp'] = attributes['timestamp'].to_i
+    #     # a = [h, Time.at(attributes['timestamp'].to_i).utc]
+    #     origin_user_array << h
+    #     ta = Time.now
+    #     t += (ta-tb)
+    #   end
+    # end
+    # t2 = Time.now
+    # if !friends.empty?
+    #   origin_user_array = origin_user_array + friends
+    # end
+
+
+    # use local table to get activity history
+    users = RecentActivity.all_activities(user.id)
+
+    if !page_number.nil? and !activities_per_page.nil? and activities_per_page > 0 and page_number >= 0
+      users = Kaminari.paginate_array(users).page(page_number).per(activities_per_page) if !users.nil?
     end
-    current_user = user
-    activity_notification_types = ["200", "201"]
-    target_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:origin_id, :id, :timestamp)
-    origin_items = table.items.where(:origin_id).equals(user.id.to_s).where(:notification_type).equals("2").select(:target_id, :id, :timestamp)
-    activity_items = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).in(*activity_notification_types).select(:id, :timestamp, :notification_type)
-    friends = WhisperNotification.myfriends(user.id)
-    is_friends = true
-    friends = WhisperNotification.friends_activity_to_json(friends, user)
-    disabled_avatars = table.items.where(:target_id).equals(user.id.to_s).where(:notification_type).equals("101").select(:id, :timestamp)
-    origin_user_array = Array.new
-    t1 = Time.now
-    t = 0
-    tb = Time.now
-    if target_items
-      target_items.each do |i|
-        attributes = i.attributes
-        origin_id = attributes['origin_id'].to_i
-        h = Hash.new
-        h['activity_type'] = 'Received Whisper'
-        h['object_type'] = 'user'
-        if origin_id > 0
-          if User.exists? id: origin_id
-            user = User.find(origin_id)
-            h['object'] = user.user_object(current_user)
-          else
-            h['object'] = ''
-          end
-        else
-          h['object'] = ''
-        end
-        h['activity_id'] = attributes['id']
-        # h['my_role'] = 'target_user'
-        h['timestamp'] = attributes['timestamp'].to_i
-        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        if user and !user.user_avatars.where(is_active: true).blank?
-          origin_user_array << h
-        end
-      end
-    end
-    ta = Time.now
-    puts "Part time"
-    puts (ta-tb).inspect
-    if origin_items
-      origin_items.each do |i|
-        tb = Time.now
-        attributes = i.attributes
-        target_id = attributes['target_id'].to_i
-        h = Hash.new
-        h['activity_type'] = 'Sent Whisper'
-        h['object_type'] = 'user'
-        if target_id > 0
-          if User.exists? id: target_id
-            user = User.find(target_id)
-            h['object'] = user.user_object(current_user)
-          else
-            h['object'] = ''
-          end
-        else
-          h['object'] = ''
-        end
-        h['activity_id'] = attributes['id']
-        # h['my_role'] = 'origin_user'
-        h['timestamp'] = attributes['timestamp'].to_i
-        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        if user and !user.user_avatars.where(is_active: true).blank?
-          origin_user_array << h
-        end
-        ta = Time.now
-        t += (ta-tb)
-      end 
-    end
-    if activity_items
-      activity_items.each do |i|
-        tb = Time.now
-        attributes = i.attributes
-        target_id = attributes['target_id'].to_i
-        h = Hash.new
-        h['activity_type'] = ((attributes['notification_type'].to_i == 200) ? 'Joined Network' : 'Offline')
-        h['activity_id'] = attributes['id']
-        # h['my_role'] = 'target_user'
-        h['timestamp'] = attributes['timestamp'].to_i
-        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << h
-        ta = Time.now
-        t += (ta-tb)
-      end
-    end
-    if disabled_avatars
-      disabled_avatars.each do |i|
-        tb = Time.now
-        attributes = i.attributes
-        target_id = attributes['target_id'].to_i
-        h = Hash.new
-        h['activity_type'] = 'Profile Avatar Disabled'
-        h['activity_id'] = attributes['id']
-        # h['my_role'] = 'target_user'
-        h['timestamp'] = attributes['timestamp'].to_i
-        # a = [h, Time.at(attributes['timestamp'].to_i).utc]
-        origin_user_array << h
-        ta = Time.now
-        t += (ta-tb)
-      end
-    end
-    t2 = Time.now
-    if !friends.empty?
-      origin_user_array = origin_user_array + friends
-    end
-    users = origin_user_array.sort_by { |hsh| hsh['timestamp'] }
-    users = users.reverse!
-    if !page_number.nil? and !whispers_per_page.nil? and whispers_per_page > 0 and page_number >= 0
-      users = Kaminari.paginate_array(users).page(page_number).per(whispers_per_page) if !users.nil?
-    end
-    t3 = Time.now
-    puts "gether time: "
-    puts (t1-t0).inspect
-    puts "json time: "
-    puts (t2-t1).inspect
-    puts "reorder & page time: "
-    puts (t3-t2).inspect
-    puts "Activity time: "
-    puts (t3-t0).inspect
-    puts "Special time: "
-    puts (t).inspect
+
+    users = RecentActivity.to_json(users)
+    # t3 = Time.now
+    # puts "gether time: "
+    # puts (t1-t0).inspect
+    # puts "json time: "
+    # puts (t2-t1).inspect
+    # puts "reorder & page time: "
+    # puts (t3-t2).inspect
+    # puts "Activity time: "
+    # puts (t3-t0).inspect
+    # puts "Special time: "
+    # puts (t).inspect
 
     return users
   end
@@ -708,24 +713,27 @@ class WhisperNotification < AWS::Record::HashModel
         if state == 'accepted'
           i.attributes.update do |u|
               hash = i.attributes.to_h
-              # UserFriends.create_in_aws(hash["target_id"], hash["origin_id"])
-              # UserFriends.create_in_aws(hash["origin_id"], hash["target_id"])
               u.set 'accepted' => 1
               u.set 'viewed' => 1
           end
           item_info = i.attributes.to_h
-          return item_info
         elsif state == 'declined'
           puts "updating declined"
           i.attributes.update do |u|
               u.set 'declined' => 1
               u.set 'viewed' => 1
           end
-          return true
         end
       end
     end
-    return false
+    whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+    if !whisper.nil?
+      whisper.viewed = true
+      whisper.declined = (state == 'declined')
+      whisper.accepted = (state == 'accepted')
+      whisper.save
+    end
+    return true
   end
 
   # decline whispers in array -> TODO: performance change one by one to batch
@@ -761,6 +769,7 @@ class WhisperNotification < AWS::Record::HashModel
         item_info = i.attributes.to_h
       end
     end
+    
     return true
   end
 
@@ -980,32 +989,30 @@ class WhisperNotification < AWS::Record::HashModel
 
 
   def self.unviewd_whisper_number(user_id)
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    if !table.schema_loaded?
-      table.load_schema
-    end
+    # dynamo_db = AWS::DynamoDB.new
+    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    # table = dynamo_db.tables[table_name]
+    # if !table.schema_loaded?
+    #   table.load_schema
+    # end
 
-    chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
-    greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
-    accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
-
-    chat_request_number = 0
-    venue_greeting_number = 0
+    # chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
+    # greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
+    # accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
+    whisper_items = WhisperToday.where(target_user_id: user_id.to_i, viewed: false)
+    accept_items = FriendByWhisper.where(viewed: false, target_user_id: user_id.to_i)
+    whisper_number = 0
     accept_number = 0
-    if chat_items.present?
-      chat_request_number = chat_items.count
-    end
-    if greeting_items.present?
-      venue_greeting_number = greeting_items.count
+    
+    if whisper_items.present?
+      whisper_number = whisper_items.count
     end
     if accept_items.present?
       accept_number = accept_items.count
     end
 
     badge = {
-      whisper_number: chat_request_number + venue_greeting_number + accept_number,
+      whisper_number: whisper_number + accept_number,
       friend_number: accept_number
     }
 

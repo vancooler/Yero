@@ -821,7 +821,9 @@ class User < ActiveRecord::Base
   end
 
   def viewed_by_sender(whispers)
+    
     result = true
+    # update dynamodb
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
     table = dynamo_db.tables[table_name]
@@ -829,9 +831,7 @@ class User < ActiveRecord::Base
       table.load_schema
     end
     puts "Read time: "
-
     items = table.items.where(:id).in(*whispers).where(:notification_type).not_equal_to("0").select(:target_id, :timestamp, :id, :origin_id, :accepted, :declined, :created_date, :venue_id, :notification_type, :intro, :expired, :viewed, :not_viewed_by_sender)
-    
     items.each_slice(25) do |whisper_group|
       batch = AWS::DynamoDB::BatchWrite.new
       notification_array = Array.new
@@ -948,7 +948,8 @@ class User < ActiveRecord::Base
     if self.is_connected == false
       self.is_connected = true
       self.save
-      WhisperNotification.create_in_aws(self.id, nil, nil, "200", '')
+      # w = WhisperNotification.create_in_aws(self.id, nil, nil, "200", '')
+      RecentActivity.add_activity(self.id, '200', nil, nil, "online-"+self.id.to_s+"-"+Time.now.to_i.to_s)
     end
   end
 
@@ -964,29 +965,32 @@ class User < ActiveRecord::Base
     if !table.schema_loaded?
       table.load_schema
     end
-
-    people_array.each_slice(25) do |whisper_group|
-      batch = AWS::DynamoDB::BatchWrite.new
-      current_timestamp = Time.now.to_i
-      notification_array = Array.new
-      whisper_group.each do |w|
-        if !w.blank?
-          request = Hash.new()
-          request["target_id"] = w.to_s
-          request["timestamp"] = current_timestamp
-          request["accepted"] = 0
-          request["declined"] = 0
-          request["id"] = "offline-"+w.to_s+"-"+current_timestamp.to_s + 
-          request["notification_type"] = '201'
-          request["viewed"] = 0
-          notification_array << request 
-        end
-      end
-      if notification_array.count > 0
-        batch.put(table_name, notification_array)
-        batch.process!
-      end
+    current_timestamp = Time.now.to_i
+    people_array.each do |user|
+      RecentActivity.add_activity(user.id, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
     end
+    # people_array.each_slice(25) do |whisper_group|
+    #   batch = AWS::DynamoDB::BatchWrite.new
+    #   current_timestamp = Time.now.to_i
+    #   notification_array = Array.new
+    #   whisper_group.each do |w|
+    #     if !w.blank?
+    #       request = Hash.new()
+    #       request["target_id"] = w.to_s
+    #       request["timestamp"] = current_timestamp
+    #       request["accepted"] = 0
+    #       request["declined"] = 0
+    #       request["id"] = "offline-"+w.to_s+"-"+current_timestamp.to_s
+    #       request["notification_type"] = '201'
+    #       request["viewed"] = 0
+    #       notification_array << request 
+    #     end
+    #   end
+    #   if notification_array.count > 0
+    #     batch.put(table_name, notification_array)
+    #     batch.process!
+    #   end
+    # end
   end
 
   def avatar_reorder(avatar_ids)

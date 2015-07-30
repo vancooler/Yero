@@ -277,82 +277,90 @@ class UsersController < ApplicationController
     unread =  !params[:unread].blank? ? (params[:unread].to_i == 1) : false
 
     # TODO: check venue/user exist
-    time_0 = Time.now
-    return_users = current_user.whisper_friends
-    time_1 = Time.now
-    runtime = time_1 - time_0
-    puts "User time"
-    puts runtime.inspect
-    return_venues = current_user.whisper_venue
-    time_2 = Time.now
-    runtime = time_2 - time_1
-    puts "Venue time"
-    puts runtime.inspect
-    # yero_notify = WhisperNotification.yero_notification(current_user.id)
-    is_friends = false
-    users = requests_user_whisper_json(return_users, is_friends)
-    venues = requests_venue_whisper_json(return_venues)
+    # time_0 = Time.now
+    # return_users = current_user.whisper_friends
+    # time_1 = Time.now
+    # runtime = time_1 - time_0
+    # puts "User time"
+    # puts runtime.inspect
+    # return_venues = current_user.whisper_venue
+    # time_2 = Time.now
+    # runtime = time_2 - time_1
+    # puts "Venue time"
+    # puts runtime.inspect
+    # # yero_notify = WhisperNotification.yero_notification(current_user.id)
+    # is_friends = false
+    # users = requests_user_whisper_json(return_users, is_friends)
+    # venues = requests_venue_whisper_json(return_venues)
 
-    users = JSON.parse(users).delete_if(&:blank?)
-    venues  = JSON.parse(venues).delete_if(&:blank?)
-    # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+    # users = JSON.parse(users).delete_if(&:blank?)
+    # venues  = JSON.parse(venues).delete_if(&:blank?)
+    # # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
 
+    # unviewed_whisper_number = 0
+    # unviewed_whispers = []
+    # users.each do |u|
+    #   # if u["viewed"].to_i == 0
+    #   #   unviewed_whisper_number = unviewed_whisper_number + 1
+    #   # end
+    #   if unread 
+    #     if u["viewed"].nil? or u["viewed"].to_i == 0
+    #       unviewed_whispers << u
+    #     end
+    #   else
+    #     unviewed_whispers << u
+    #   end
+    # end
 
-    unviewed_whisper_number = 0
-    unviewed_whispers = []
-    users.each do |u|
-      # if u["viewed"].to_i == 0
-      #   unviewed_whisper_number = unviewed_whisper_number + 1
-      # end
-      if unread 
-        if u["viewed"].nil? or u["viewed"].to_i == 0
-          unviewed_whispers << u
-        end
-      else
-        unviewed_whispers << u
-      end
-    end
+    # venues.each do |v|
+    #   if unread 
+    #     if v["viewed"].nil? or v["viewed"].to_i == 0
+    #       unviewed_whispers << v
+    #     end
+    #   else
+    #     unviewed_whispers << v
+    #   end
 
-    venues.each do |v|
-      if unread 
-        if v["viewed"].nil? or v["viewed"].to_i == 0
-          unviewed_whispers << v
-        end
-      else
-        unviewed_whispers << v
-      end
+    #   # if v["viewed"].nil? or v["viewed"].to_i == 0
+    #   #   unviewed_whisper_number = unviewed_whisper_number + 1
+    #   # end
+    # end
 
-      # if v["viewed"].nil? or v["viewed"].to_i == 0
-      #   unviewed_whisper_number = unviewed_whisper_number + 1
-      # end
-    end
-
-    return_data = Array.new
-    unviewed_whispers.each do |r|
-      return_data << r
-    end 
-    
-    whispers_array = Array.new
-    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
-    users.each do |whisp|
-      whispers_array << whisp["whisper_id"]
-    end
+    # return_data = Array.new
+    # unviewed_whispers.each do |r|
+    #   return_data << r
+    # end 
 
     badge = WhisperNotification.unviewd_whisper_number(current_user.id)
-    time_3 = Time.now
-    if !whispers_array.nil? and whispers_array.count > 0
-      current_user.delay.viewed_by_sender(whispers_array)
-    end
-    WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
 
-    time_4 = Time.now
-    runtime = time_4 - time_3
-    puts "Update time"
-    puts runtime.inspect
+    if unread
+      whispers = WhisperToday.all_whispers(current_user.id)
+    else
+      whispers = WhisperToday.all_whispers(current_user.id)
+    end
+    if !whispers.blank?
+      whispers = WhisperToday.to_json(whispers)
+      whispers_array = Array.new
+      # users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
+      whispers.each do |whisp|
+        whispers_array << whisp["whisper_id"]
+      end
+
+      if !whispers_array.nil? and whispers_array.count > 0
+        # update local tmp db
+        WhisperToday.where(:target_user_id => self.id).update_all(:viewed => true)
+        # update dynamodb
+        current_user.delay.viewed_by_sender(whispers_array)
+      end
+    end
+    # update local tmp db
+    FriendByWhisper.where(:target_user_id => id.to_i).update_all(:viewed => true)
+    # update dynamodb
+    WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
 
     response_data = {
       badge_number: badge,
-      whispers: users
+      whispers: whispers
     }
     render json: success(response_data, "data")
   end

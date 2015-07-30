@@ -30,8 +30,10 @@ class WhispersController < ApplicationController
     message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
     intro = params[:intro].blank? ? "" : params[:intro].to_s
     n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
-
     n.send_push_notification_to_target_user(message)
+    
+    # number = WhisperNotification.unviewd_whisper_number(User.last.id)
+    # render json: success(number)
   end
 
   def api_create
@@ -51,16 +53,28 @@ class WhispersController < ApplicationController
       origin_id = current_user.id.to_s
     end
     
-    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
-    if n and notification_type == "2"
-      record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
-      if record_found.count <= 0
-        WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
-      else
-        record_found.first.update(:whisper_time => Time.now)
+    # only users with active avatar can send whispers
+    if current_user.user_avatars.where(:is_active => true).count > 0
+      whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
+      # check if whisper sent today
+      if whispers_sent_today.count <= 0
+        n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+        WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
+        if n and notification_type == "2"
+          time = Time.now
+          RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
+          RecentActivity.add_activity(target.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
+
+          record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
+          if record_found.count <= 0
+            WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+          else
+            record_found.first.update(:whisper_time => time)
+          end
+        end
+        n.send_push_notification_to_target_user(message)
       end
     end
-    n.send_push_notification_to_target_user(message)
       
     render json: success
   end
@@ -89,27 +103,27 @@ class WhispersController < ApplicationController
     end
   end
 
-  def api_delete
-    id = params[:notification_id]
-    result = WhisperNotification.delete_notification(id, current_user)
+  # def api_delete
+  #   id = params[:notification_id]
+  #   result = WhisperNotification.delete_notification(id, current_user)
 
-    if result
-      render json: success 
-    else
-      render json: error("Cannot delete!")
-    end
-  end
+  #   if result
+  #     render json: success 
+  #   else
+  #     render json: error("Cannot delete!")
+  #   end
+  # end
 
-  def api_decline_all_chat
-    ids = params[:notification_ids]
-    result = WhisperNotification.decline_all_chat(current_user, ids)
+  # def api_decline_all_chat
+  #   ids = params[:notification_ids]
+  #   result = WhisperNotification.decline_all_chat(current_user, ids)
 
-    if result
-      render json: success 
-    else
-      render json: error("Cannot decline!")
-    end
-  end
+  #   if result
+  #     render json: success 
+  #   else
+  #     render json: error("Cannot decline!")
+  #   end
+  # end
 
   def chat_action
     id = params[:notification_id]
@@ -160,7 +174,12 @@ class WhispersController < ApplicationController
           else
             n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
             if !n.nil?
-              FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id, :friend_time => Time.now)
+              current_time = Time.now
+              FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id, :friend_time => current_time, :viewed => false)
+              RecentActivity.add_activity(origin_id.to_i, '3', target_id.to_i, nil, "friend-"+origin_id.to_s+"-"+target_id.to_s+"-"+current_time.to_i.to_s)
+              RecentActivity.add_activity(target_id.to_i, '3', origin_id.to_i, nil, "friend-"+target_id.to_s+"-"+origin_id.to_s+"-"+current_time.to_i.to_s)
+    
+    
               user = User.find(target_id.to_i)
               message = user.first_name + " is now your friend!"
               n.send_push_notification_to_target_user(message)
@@ -203,7 +222,8 @@ class WhispersController < ApplicationController
     if params[:array].blank?
       render json: error("ID array is empty")
     else
-      whispers_delete = WhisperNotification.delete_whispers(params[:array].to_a)
+      WhisperNotification.delay.delete_whispers(params[:array].to_a)
+      whispers_delete = WhisperToday.where(dynamo_id: params[:array].to_a).update_all(:declined => true)
       render json: success(whispers_delete)
     end
   end
