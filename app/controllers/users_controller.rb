@@ -67,12 +67,8 @@ class UsersController < ApplicationController
 
   # API
   def index
-    disabled = !current_user.user_avatars.where(:is_active => false).blank?
-    default = !current_user.user_avatars.where(:is_active => false).where(:order => 0).blank?
-    avatar_result = {
-      disabled: disabled,
-      main_avatar: default
-    }
+    disabled = current_user.user_avatars.where(:is_active => true).blank?
+
     gate_number = 4
     # if set in db, use the db value
     if GlobalVariable.exists? name: "min_ppl_size"
@@ -82,10 +78,8 @@ class UsersController < ApplicationController
       end
     end
 
-    disabled = false
-    default = false
-    if disabled and default
-      render json: success(avatar_result, "avatar")
+    if disabled 
+      render json: error("No photos")
     else
       user = current_user
       user.join_network
@@ -105,22 +99,22 @@ class UsersController < ApplicationController
 
       result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
       
-      if disabled and !default
-        if result['users'].nil?
-          final_result = {
-            avatar: avatar_result,
-            percentage: result['percentage']
-          }
-        else
-          user.enough_user_notification_sent_tonight = true
-          user.save
-          final_result = {
-            avatar: avatar_result,
-            users: result['users']
-          }
-        end   
-        render json: success(final_result) #Return users
-      else
+      # if disabled and !default
+      #   if result['users'].nil?
+      #     final_result = {
+      #       avatar: avatar_result,
+      #       percentage: result['percentage']
+      #     }
+      #   else
+      #     user.enough_user_notification_sent_tonight = true
+      #     user.save
+      #     final_result = {
+      #       avatar: avatar_result,
+      #       users: result['users']
+      #     }
+      #   end   
+      #   render json: success(final_result) #Return users
+      # else
         if result['users'].nil?
           render json: success(result) #Return users
         else
@@ -128,7 +122,7 @@ class UsersController < ApplicationController
           user.save
           render json: success(result['users'], "users")
         end 
-      end   
+      # end   
     end
   end
 
