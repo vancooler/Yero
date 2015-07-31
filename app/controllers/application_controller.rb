@@ -6,8 +6,6 @@ class ApplicationController < ActionController::Base
 
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-  after_action :allow_optimizely_editor
-
   def after_sign_in_path_for(resource)
     if resource.is_a?(Venue)
       venue_root_path
@@ -154,12 +152,5 @@ class ApplicationController < ActionController::Base
     end
   end
   helper_method :mobile_device?
-
-  private
-
-  def allow_optimizely_editor
-    response.headers['Access-Control-Allow-Origin'] = '*'
-    response.headers['Access-Control-Request-Method'] = 'GET'
-  end
 
 end

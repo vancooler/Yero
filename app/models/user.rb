@@ -516,9 +516,15 @@ class User < ActiveRecord::Base
     puts people_array.inspect
     if !people_array.empty? 
       User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
-      # expire all whispers with type 2 of these users
-      WhisperNotification.expire(people_array, '2')
+      # WhisperNotification.expire(people_array, '2')
       User.leave_activity(people_array)
+      # expire all whispers with type 2 of these users
+      whispers_today = WhisperToday.where(target_user_id: people_array)
+      if whispers_today.count == 1
+        whispers_today.first.delete
+      elsif whispers_today.count > 1
+        whispers_today.destroy_all
+      end
     end
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
@@ -967,7 +973,7 @@ class User < ActiveRecord::Base
     end
     current_timestamp = Time.now.to_i
     people_array.each do |user|
-      RecentActivity.add_activity(user.id, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
     end
     # people_array.each_slice(25) do |whisper_group|
     #   batch = AWS::DynamoDB::BatchWrite.new
