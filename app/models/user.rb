@@ -973,7 +973,7 @@ class User < ActiveRecord::Base
     end
     current_timestamp = Time.now.to_i
     people_array.each do |user|
-      RecentActivity.add_activity(user.id, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
     end
     # people_array.each_slice(25) do |whisper_group|
     #   batch = AWS::DynamoDB::BatchWrite.new
