@@ -214,6 +214,8 @@ class WhispersController < ApplicationController
     whispers_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
     items = WhisperNotification.my_chat_request_history(current_user, page_number, whispers_per_page)
+    puts "ACtivity"
+    puts items.inspect
     render json: success(items)
   end
 

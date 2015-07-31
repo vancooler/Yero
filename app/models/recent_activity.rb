@@ -38,7 +38,7 @@ class RecentActivity < ActiveRecord::Base
 				when '2-received'
 					json.activity_type 'Received Whisper'
 				end
-				json.timestamp a.created_at
+				json.timestamp a.created_at.to_i
 				if !a.origin_user_id.nil? and !a.target_user_id.nil?
 					origin_user = User.find_by_id(a.origin_user_id)
 					target_user = User.find_by_id(a.target_user_id)

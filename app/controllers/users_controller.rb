@@ -348,13 +348,13 @@ class UsersController < ApplicationController
 
       if !whispers_array.nil? and whispers_array.count > 0
         # update local tmp db
-        WhisperToday.where(:target_user_id => self.id).update_all(:viewed => true)
+        WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
         # update dynamodb
         current_user.delay.viewed_by_sender(whispers_array)
       end
     end
     # update local tmp db
-    FriendByWhisper.where(:target_user_id => id.to_i).update_all(:viewed => true)
+    FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
     # update dynamodb
     WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
 
