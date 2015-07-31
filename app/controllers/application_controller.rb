@@ -158,6 +158,7 @@ class ApplicationController < ActionController::Base
   private
 
   def allow_optimizely_editor
+    response.headers['Access-Control-Allow-Origin'] = request.headers['Origin'] || '*'
     response.headers['X-Frame-Options'] = 'ALLOW-FROM https://app.optimizely.com'
   end
 
