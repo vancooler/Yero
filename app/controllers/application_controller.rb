@@ -158,7 +158,7 @@ class ApplicationController < ActionController::Base
   private
 
   def allow_optimizely_editor
-    response.headers['X-Frame-Options'] = 'ALLOW-FROM https://www.optimizely.com'
+    response.headers['X-Frame-Options'] = 'ALLOW-FROM https://app.optimizely.com'
   end
 
 end
