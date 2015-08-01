@@ -348,7 +348,7 @@ class UsersController < ApplicationController
       if badge[:whisper_number].to_i > badge[:friend_number].to_i
         if !whispers_array.nil? and whispers_array.count > 0
           # update local tmp db
-          WhisperToday.where(:origin_user_id => current_user.id).update_all(:viewed => true)
+          WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
           # update dynamodb
           current_user.delay.viewed_by_sender(whispers_array)
         end
@@ -358,11 +358,7 @@ class UsersController < ApplicationController
     puts badge.inspect
     if badge[:friend_number].to_i > 0
       # update local tmp db
-      result = FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
-      puts "RESULT OF FRIEND"
-      puts result.to_s
-      test = FriendByWhisper.where(:target_user_id => current_user.id)
-      puts test.inspect
+      FriendByWhisper.where(:origin_user_id => current_user.id).update_all(:viewed => true)
       # update dynamodb
       WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
     end
