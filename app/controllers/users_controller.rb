@@ -354,6 +354,8 @@ class UsersController < ApplicationController
         end
       end
     end
+    puts "Friend Number:"
+    puts badge.inspect
     if badge[:friend_number].to_i > 0
       # update local tmp db
       FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
