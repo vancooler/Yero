@@ -358,7 +358,11 @@ class UsersController < ApplicationController
     puts badge.inspect
     if badge[:friend_number].to_i > 0
       # update local tmp db
-      FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
+      result = FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
+      puts "RESULT OF FRIEND"
+      puts result.to_s
+      test = FriendByWhisper.where(:target_user_id => current_user.id)
+      puts test.inspect
       # update dynamodb
       WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
     end
