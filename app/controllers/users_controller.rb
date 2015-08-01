@@ -345,18 +345,21 @@ class UsersController < ApplicationController
       whispers.each do |whisp|
         whispers_array << whisp["whisper_id"]
       end
-
-      if !whispers_array.nil? and whispers_array.count > 0
-        # update local tmp db
-        WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
-        # update dynamodb
-        current_user.delay.viewed_by_sender(whispers_array)
+      if badge[:whisper_number].to_i > badge[:friend_number].to_i
+        if !whispers_array.nil? and whispers_array.count > 0
+          # update local tmp db
+          WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
+          # update dynamodb
+          current_user.delay.viewed_by_sender(whispers_array)
+        end
       end
     end
-    # update local tmp db
-    FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
-    # update dynamodb
-    WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+    if badge[:friend_number].to_i > 0
+      # update local tmp db
+      FriendByWhisper.where(:target_user_id => current_user.id).update_all(:viewed => true)
+      # update dynamodb
+      WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+    end
 
     response_data = {
       badge_number: badge,
