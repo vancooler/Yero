@@ -1000,7 +1000,7 @@ class WhisperNotification < AWS::Record::HashModel
     # greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
     # accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
     whisper_items = WhisperToday.where(target_user_id: user_id.to_i, viewed: false)
-    accept_items = FriendByWhisper.where(viewed: false, target_user_id: user_id.to_i)
+    accept_items = FriendByWhisper.where(viewed: false, origin_user_id: user_id.to_i)
     whisper_number = 0
     accept_number = 0
     
