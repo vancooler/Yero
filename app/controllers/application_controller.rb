@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 
   before_action :configure_permitted_parameters, if: :devise_controller?
+  after_action :allow_optimizely_editor
 
   def after_sign_in_path_for(resource)
     if resource.is_a?(Venue)
@@ -152,5 +153,13 @@ class ApplicationController < ActionController::Base
     end
   end
   helper_method :mobile_device?
+
+  private
+
+  def allow_optimizely_editor
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Request-Method'] = 'GET'
+  end
+
 
 end

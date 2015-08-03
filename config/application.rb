@@ -48,5 +48,11 @@ module PurpleOctopus
       c.google_api_key = 'AIzaSyCN5wCxkgGWj9v9hr0auqmEGi1I-nxSoUQ'
     end
     
+    
+    config.action_dispatch.default_headers.merge!({
+      'Access-Control-Allow-Origin' => '*',
+      'Access-Control-Request-Method' => '*'
+    })
+
   end
 end
