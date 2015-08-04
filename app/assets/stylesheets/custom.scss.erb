@@ -134,6 +134,7 @@ body{
 			}
 			li.social-link a img{
 				 background: #2effa5;
+
 			}
 		}
 
@@ -1774,6 +1775,7 @@ div.event-top-bar.contain-to-grid.top-header{
 }
 
 
+
 @media
 only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 700px),
 only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 700px),
@@ -1790,13 +1792,15 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 		p.homepage-subtitle{
 			font-size: 15px;
 		}
-		a.android-user{
-			font-size: 12px;
-		}
+	}
+	a.android-user{
+		font-size: 12px;
 	}
 	h3{
 		font-size: 1.5rem !important;
 	}
+
+
 
 	ul, ol, dl, p{
 		font-size: 0.85rem !important;
@@ -1833,5 +1837,46 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 	img.logo{
 		height: 90%;
 		width: 90%;
+	}
+
+	.transparent.top-header.contain-to-grid {
+		// position: fixed;
+		@media #{$medium-up}{
+			background: transparent;
+			.title-area {
+				margin-left: 13%;
+			}
+			.contain-to-grid,
+			.top-bar {
+				li,
+				.top-bar-section li:not(.has-form) a:not(.button){
+					background: none;
+					color: #2effa5;
+					font-size: 0.7rem;
+				}
+				li.social-link a img{
+					 background: #2effa5;
+					 width:90%;
+					 height:90%;
+				}
+			}
+
+			.top-bar-section {
+				// margin-right: 100px;
+				ul {
+					 background: transparent;
+					li {
+						background: transparent;
+
+						a {
+							color: #fff;
+							background: transparent;
+							font-size: 0.7rem;
+						}
+					}
+				}
+			}
+
+		}
 	}
 }
