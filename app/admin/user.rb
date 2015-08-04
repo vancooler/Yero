@@ -41,6 +41,7 @@ ActiveAdmin.register User do
       f.input :wechat_id
       f.input :snapchat_id
       f.input :instagram_id
+      f.input :introduction_1, :label => "Intrduction"
       f.inputs do
         f.has_many :user_avatars, heading: 'Avatars', allow_destroy: false, new_record: false do |b|
           b.input :avatar, :image_preview => true, :style => "height:100px;width:100px;"
@@ -67,6 +68,7 @@ ActiveAdmin.register User do
       row :line_id
       row :wechat_id
       row :instagram_id
+      row("Intrduction") { |ad| ad.introduction_1}
       row("Default Avatar ID") { |ad| ad.default_avatar.id if !ad.default_avatar.nil?}
       row("Default Avatar") { |ad| image_tag(ad.default_avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}) if !ad.default_avatar.nil?}
 
