@@ -26,8 +26,8 @@ body{
 		display: table;
 	    text-align: center;
 		div.row{
-			display: table-cell;
-		    vertical-align: middle;
+			
+			padding-top: 180px;
 		}
 	}
 	@media #{$large-up}{
@@ -36,8 +36,8 @@ body{
 		display: table;
 	    text-align: center;
 		div.row{
-			display: table-cell;
-		    vertical-align: middle;
+			
+			padding-top: 180px;
 		}
 	}
 	@media #{$xlarge-up}{
@@ -59,7 +59,14 @@ body{
 	text-transform: none;
 }
 
+.f-topbar-fixed {
+    padding-top: 0px !important;
+}
+
 .hero {
+	h2 {
+		font-size: 2.075rem;
+	}
 	h2, h5, p {
 		color: #fff;
 	}
@@ -665,8 +672,11 @@ body{
 	@media #{$medium-up} {
 		//margin-top: 225px;
 	}
-	@media #{$screen} and (max-width: 21em)  {
+	@media #{$small-only} {
 		font-size: 1.5em;
+	}
+	@media #{$screen} and (max-width: 21em)  {
+		font-size: 1.36em;
 	}
 }
 
@@ -1223,7 +1233,7 @@ div.venue-field{
 }
 
 p.homepage-subtitle{
-	font-size: 20px;
+	font-size: 19px;
 	line-height: 2;
 }
 
@@ -1758,6 +1768,9 @@ div.event-top-bar.contain-to-grid.top-header{
 	background-color: #2effa5;
 	text-align: center;
 	height: 25px;
+	line-height: 25px;
+	font-family: HelveticaNeue;
+	font-size: 13.5px !important;
 }
 
 
@@ -1786,7 +1799,7 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 	}
 
 	ul, ol, dl, p{
-		font-size: 0.5rem;
+		font-size: 0.85rem !important;
 	}
 	div.medium-4.medium-pull-6.small-pull-6.small-6.columns.show-for-medium-up .show-for-medium-up {
 	  width: 70%;
