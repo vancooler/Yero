@@ -40,8 +40,18 @@ body{
 			padding-top: 180px;
 		}
 	}
+	@media #{$screen} and (min-width: 110em){
+		width: 100%;
+		min-height: 600px;
+		display: table;
+	    text-align: center;
+		div.row{
+			
+			padding-top: 240px;
+		}
+	}
 	@media #{$xlarge-up}{
-		min-height: 840px;
+		min-height: 780px;
 	}
 	@media #{$screen} and (max-width: 40em){
 		padding: 50px 0;
@@ -1765,7 +1775,7 @@ a.mixpanel-link{
 	}
 }
 
-div.event-top-bar.contain-to-grid.top-header{
+div.event-top-bar{
 	background-color: #2effa5;
 	text-align: center;
 	height: 25px;
