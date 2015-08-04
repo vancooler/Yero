@@ -102,7 +102,7 @@ function scrollHeader(){
 			if($(window).width() >= 768  ){
 				var top = $(window).scrollTop();
 				// console.log('top = '+top);
-				if ( top > 150 ){
+				if ( top > 80 ){
 					homeHeader.removeClass('transparent');
 					logoImg.attr('src', logoSource );
 					social.removeClass('green');
