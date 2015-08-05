@@ -19,6 +19,9 @@ body{
 }
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+	float: left;
+	position: relative;
+    top: -65px;
 	background-size: cover;
 	@media #{$medium-up}{
 		width: 100%;
@@ -28,6 +31,7 @@ body{
 		div.row{
 			
 			padding-top: 180px;
+			padding-bottom: 180px;
 		}
 	}
 	@media #{$large-up}{
@@ -38,6 +42,7 @@ body{
 		div.row{
 			
 			padding-top: 180px;
+			padding-bottom: 180px;
 		}
 	}
 	
@@ -48,6 +53,7 @@ body{
 	    text-align: center;
 		div.row{			
 			padding-top: 240px;
+			padding-bottom: 240px;
 		}
 	}
 	@media #{$screen} and (max-width: 40em){
