@@ -5,8 +5,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :null_session
 
   before_action :configure_permitted_parameters, if: :devise_controller?
-
   after_action :allow_optimizely_editor
+  before_filter :add_www_subdomain
+
 
   def after_sign_in_path_for(resource)
     if resource.is_a?(Venue)
@@ -160,6 +161,15 @@ class ApplicationController < ActionController::Base
   def allow_optimizely_editor
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Request-Method'] = 'GET'
+  end
+
+  def add_www_subdomain
+    # puts "request"
+    # puts request.path
+    unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com'
+      redirect_to("#{request.protocol}www.#{request.host_with_port}#{request.path}",
+                  :status => 301)
+    end
   end
 
 end

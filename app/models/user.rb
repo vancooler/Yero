@@ -518,7 +518,7 @@ class User < ActiveRecord::Base
       User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
       # WhisperNotification.expire(people_array, '2')
       User.leave_activity(people_array)
-      # expire all whispers of these users
+      # expire all whispers with type 2 of these users
       whispers_today = WhisperToday.where(target_user_id: people_array)
       if whispers_today.count == 1
         whispers_today.first.delete

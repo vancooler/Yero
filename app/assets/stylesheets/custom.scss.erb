@@ -19,15 +19,20 @@ body{
 }
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+	float: left;
+	position: relative;
+    top: -65px;
 	background-size: cover;
+	z-index: -1;
 	@media #{$medium-up}{
 		width: 100%;
 		min-height: 450px;
 		display: table;
 	    text-align: center;
 		div.row{
-			display: table-cell;
-		    vertical-align: middle;
+			
+			padding-top: 190px;
+			padding-bottom: 190px;
 		}
 	}
 	@media #{$large-up}{
@@ -36,12 +41,21 @@ body{
 		display: table;
 	    text-align: center;
 		div.row{
-			display: table-cell;
-		    vertical-align: middle;
+			
+			padding-top: 190px;
+			padding-bottom: 190px;
 		}
 	}
+	
 	@media #{$xlarge-up}{
-		min-height: 900px;
+		width: 100%;
+		min-height: 720px;
+		display: table;
+	    text-align: center;
+		div.row{			
+			padding-top: 240px;
+			padding-bottom: 240px;
+		}
 	}
 	@media #{$screen} and (max-width: 40em){
 		padding: 50px 0;
@@ -59,7 +73,14 @@ body{
 	text-transform: none;
 }
 
+.f-topbar-fixed {
+    padding-top: 0px !important;
+}
+
 .hero {
+	h2 {
+		font-size: 2.075rem;
+	}
 	h2, h5, p {
 		color: #fff;
 	}
@@ -127,6 +148,7 @@ body{
 			}
 			li.social-link a img{
 				 background: #2effa5;
+
 			}
 		}
 
@@ -517,7 +539,7 @@ body{
 		right: 54%;
 		img {
 			position: relative;
-			bottom: 15%;
+			bottom: 16.5%;
 			left: 5%;
 			max-width: 400px;
 			
@@ -534,12 +556,19 @@ body{
 				position: relative;
 				left: 0%;
 				width: 94%;
+				bottom: 1%;
 				top: 4.8%;
 			}
 		}
 	}
 	@media #{$small-only} {
-		height: 825px;
+		height: 831px;
+	}
+	@media #{$screen} and (max-width: 25em) {
+		height: 809px;
+	}
+	@media #{$screen} and (max-width: 21em) {
+		height: 791px;
 	}
 }
 
@@ -567,7 +596,7 @@ body{
 	}
 	.venues-hero {
 		color: #fff;
-		background: url(<%= asset_path 'venueheader.png' %>) no-repeat center;
+		background: url(<%= asset_path 'venueheader.jpg' %>) no-repeat center;
 		background-size: cover;
 		padding-bottom: 50px;
 		@media #{$medium-up} {
@@ -658,15 +687,18 @@ body{
 	@media #{$medium-up} {
 		//margin-top: 225px;
 	}
-	@media #{$screen} and (max-width: 21em)  {
+	@media #{$small-only} {
 		font-size: 1.5em;
+	}
+	@media #{$screen} and (max-width: 21em)  {
+		font-size: 1.36em;
 	}
 }
 
 .hero-download-link {
 	display: block;
 	margin-top: 3rem;
-	margin-bottom: 2rem;
+	margin-bottom: 1.7rem;
 	width: 135px;
 	margin-left: auto;
 	margin-right: auto;
@@ -1216,7 +1248,7 @@ div.venue-field{
 }
 
 p.homepage-subtitle{
-	font-size: 20px;
+	font-size: 19px;
 	line-height: 2;
 }
 
@@ -1747,6 +1779,17 @@ a.mixpanel-link{
 	}
 }
 
+div.event-top-bar{
+	background-color: #2effa5;
+	text-align: center;
+	height: 25px;
+	line-height: 25px;
+	font-family: GothamBook;
+	font-size: 13.5px !important;
+}
+
+
+
 @media
 only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 700px),
 only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 700px),
@@ -1758,37 +1801,39 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
 		background-size: 100%;
 		h2{
-			font-size: 1.5rem;
+			font-size: 1.7rem;
 		}
 		p.homepage-subtitle{
-			font-size: 12px;
+			font-size: 15px;
 		}
-		a.android-user{
-			font-size: 10px;
-		}
+	}
+	a.android-user{
+		font-size: 12px;
 	}
 	h3{
-		font-size: 1.05rem;
+		font-size: 1.5rem !important;
 	}
 
+
+
 	ul, ol, dl, p{
-		font-size: 0.6rem;
+		font-size: 0.85rem !important;
 	}
 	div.medium-4.medium-pull-6.small-pull-6.small-6.columns.show-for-medium-up .show-for-medium-up {
 	  width: 70%;
 	  height: 70%;
-	  left: 50%;
+	  left: 60%;
 	  position: relative;
 	}
 	div.feature.medium-text-right.small-text-center.grey.matching.padding.no-bottom .show-for-medium-up {
-	  height: 82%;
+	  //height: 78%;
 	}
 	div.feature.medium-text-right.network.grey.small-text-center.padding.no-bottom .show-for-medium-up {
-	  height: 79%;
+	  //height: 75%;
 	}
 	.what-is .image img {
 	  position: relative;
-	  bottom: 15%;
+	  bottom: 16.5%;
 	  left: 5%;
 	  max-width: 400px;
 	  width: 90%;
@@ -1801,5 +1846,51 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 	img.macbook{
 		height: 90%;
 		width: 90%;
+	}
+
+	img.logo{
+		height: 90%;
+		width: 90%;
+	}
+
+	.transparent.top-header.contain-to-grid {
+		// position: fixed;
+		@media #{$medium-up}{
+			background: transparent;
+			.title-area {
+				margin-left: 13%;
+			}
+			.contain-to-grid,
+			.top-bar {
+				li,
+				.top-bar-section li:not(.has-form) a:not(.button){
+					background: none;
+					color: #2effa5;
+					font-size: 0.7rem;
+				}
+				li.social-link a img{
+					 background: #2effa5;
+					 width:90%;
+					 height:90%;
+				}
+			}
+
+			.top-bar-section {
+				// margin-right: 100px;
+				ul {
+					 background: transparent;
+					li {
+						background: transparent;
+
+						a {
+							color: #fff;
+							background: transparent;
+							font-size: 0.7rem;
+						}
+					}
+				}
+			}
+
+		}
 	}
 }
