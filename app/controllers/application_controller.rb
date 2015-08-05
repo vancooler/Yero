@@ -166,7 +166,7 @@ class ApplicationController < ActionController::Base
   def add_www_subdomain
     # puts "request"
     # puts request.path
-    unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com'
+    unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com'
       redirect_to("#{request.protocol}www.#{request.host_with_port}#{request.path}",
                   :status => 301)
     end
