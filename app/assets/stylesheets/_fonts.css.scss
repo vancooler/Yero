@@ -1,16 +1,13 @@
-//= depend_on_asset "Gotham/Gotham-Light.woff"
-//= depend_on_asset "Gotham/Gotham-Medium.woff"
-//= depend_on_asset "Gotham/Gotham-Book.woff"
-//= depend_on_asset "Gotham/helveticaneue.woff"
 //= depend_on_asset "Gotham/Gotham-Medium.otf"
-//= depend_on_asset "Gotham/Gotham-Book.otf"
 //= depend_on_asset "Gotham/Gotham-Light.otf"
+//= depend_on_asset "Gotham/Gotham-Thin.otf"
+//= depend_on_asset "Gotham/Gotham-Book.otf"
 
 @import "compass/css3";
 
-@include font-face("GothamMedium", font-files("Gotham/Gotham-Medium.otf", "Gotham/Gotham-Medium.woff"));
-@include font-face("GothamLight", font-files(Gotham/Gotham-Light.otf", "Gotham/Gotham-Light.woff"));
+@include font-face("GothamMedium", font-files("Gotham/Gotham-Medium.otf"));
+@include font-face("GothamLight", font-files("Gotham/Gotham-Light.otf"));
+@include font-face("GothamThin", font-files("Gotham/Gotham-Thin.otf"));
+@include font-face("GothamBook", font-files("Gotham/Gotham-Book.otf"));
 
-@include font-face("GothamBook", font-files(Gotham/Gotham-Book.otf", "Gotham/Gotham-Book.woff"));
-@include font-face("HelveticaNeue", font-files("Gotham/helveticaneue.woff"));
 
