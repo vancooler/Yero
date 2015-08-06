@@ -55,7 +55,7 @@ Rails.application.routes.draw do
     put 'admin/remove-snapchat-id/:id', to: 'admin/user_screenings#remove_snapchat', as: :admin_remove_snapchat_id
     put 'admin/remove-wechat-id/:id', to: 'admin/user_screenings#remove_wechat', as: :admin_remove_wechat_id
     put 'admin/remove-line-id/:id', to: 'admin/user_screenings#remove_line', as: :admin_remove_line_id
-
+    post 'admin/user-join/:id', to: 'admin/users#join_network', as: :admin_user_join
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
     post 'api/nightly/update_regular',   to: 'nightlies#update_regular', as: :update_regular_nightly
@@ -138,7 +138,9 @@ Rails.application.routes.draw do
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
-  post 'api/v1/users', to: 'users#index'
+  get 'api/v1/users', to: 'users#index'
+  put 'api/v1/users/join', to: 'users#join'
+
   post 'api/v1/requests', to: 'users#requests'
   post 'api/v1/whispers', to: 'users#requests_new'
   post 'api/v1/report', to: 'users#report'

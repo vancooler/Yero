@@ -600,9 +600,7 @@ class User < ActiveRecord::Base
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
     pre_time_1 = Time.now
-    all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
-    number_of_users = all_users.length + 1
-    if number_of_users >= gate_number  
+    if true 
       s_time = Time.now
       # collect all whispers sent 
       # TODO: use model to do it
@@ -815,11 +813,7 @@ class User < ActiveRecord::Base
 
       # count = users.count
       result['users'] = users
-    else
-      # count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
-      count = number_of_users
-      users = Array.new
-      result['percentage'] = (count * 100 / gate_number).to_i
+    
     end
     # puts "USERS RESULT:"
     # puts result.inspect

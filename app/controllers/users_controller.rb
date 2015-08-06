@@ -4,43 +4,12 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def show
-    # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
     puts "THE ID"
     puts current_user.id
     avatar_array = Array.new
     if !current_user.default_avatar.nil?
       user_info = current_user.to_json(true)
-      # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
       
-      # avatars = Array.new
-      # user_info['avatars'].each do |avatar|
-      #   if avatar['default'].to_s == "true"
-      #     avatars.unshift(avatar)
-      #   else
-      #     avatars.push(avatar)
-      #   end
-      # end
-      # user_info['avatars'] = avatars
-      # user_info['avatars'].each do |a|
-      #   thumb = a['avatar']
-      #   a['avatar'] = thumb.gsub! 'thumb_', ''
-      # end
-
-      # avatar_array[0] = {
-      #       avatar: current_user.main_avatar.avatar.url,
-      #       avatar_id: current_user.main_avatar.id,
-      #       default: true
-      #     }
-      # avatar_array[1] = {
-      #       avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
-      #       avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
-      #       default: false
-      #     }
-      # avatar_array[2] = {
-      #       avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
-      #       avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
-      #       default: false
-      #     }
     end
     user = {
       id: current_user.id,
@@ -65,18 +34,45 @@ class UsersController < ApplicationController
     render json: success(user)
   end
 
+
+  def join
+    disabled = current_user.user_avatars.where(:is_active => true).blank?
+    if disabled
+      result = {
+        no_avatar: true,
+        percentage: 0
+      }
+    else
+      gate_number = 4
+      # if set in db, use the db value
+      if GlobalVariable.exists? name: "min_ppl_size"
+        size = GlobalVariable.find_by_name("min_ppl_size")
+        if !size.nil? and !size.value.nil? and size.value.to_i > 0
+          gate_number = size.value.to_i
+        end
+      end
+      user.join_network
+      number_of_users = current_user.fellow_participants(nil, 0, 100, nil, 0, 60, true).length + 1
+      if number_of_users < gate_number
+        percentage = (number_of_users * 100 / gate_number).to_i
+      else
+        current_user.enough_user_notification_sent_tonight = true
+        current_user.save
+        percentage = 100
+      end
+      result = {
+        no_avatar: false,
+        percentage: percentage
+      }
+    end
+    render json: success(result)
+  end
+
+  
   # API
   def index
     disabled = current_user.user_avatars.where(:is_active => true).blank?
 
-    gate_number = 4
-    # if set in db, use the db value
-    if GlobalVariable.exists? name: "min_ppl_size"
-      size = GlobalVariable.find_by_name("min_ppl_size")
-      if !size.nil? and !size.value.nil? and size.value.to_i > 0
-        gate_number = size.value.to_i
-      end
-    end
 
     if disabled 
       render json: error("No photos")
@@ -97,32 +93,14 @@ class UsersController < ApplicationController
       page_number = params[:page].to_i + 1 if !params[:page].blank?
       users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+      result = current_user.people_list(0, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
       
-      # if disabled and !default
-      #   if result['users'].nil?
-      #     final_result = {
-      #       avatar: avatar_result,
-      #       percentage: result['percentage']
-      #     }
-      #   else
-      #     user.enough_user_notification_sent_tonight = true
-      #     user.save
-      #     final_result = {
-      #       avatar: avatar_result,
-      #       users: result['users']
-      #     }
-      #   end   
-      #   render json: success(final_result) #Return users
-      # else
-        if result['users'].nil?
-          render json: success(result) #Return users
-        else
-          user.enough_user_notification_sent_tonight = true
-          user.save
-          render json: success(result['users'], "users")
-        end 
-      # end   
+    
+      if result['users'].nil?
+        render json: success(result) #Return users
+      else
+        render json: success(result['users'], "users")
+      end 
     end
   end
 
