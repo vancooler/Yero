@@ -9,8 +9,8 @@
 @import "compass/css3";
 
 @include font-face("GothamMedium", font-files("Gotham/Gotham-Medium.otf", "Gotham/Gotham-Medium.woff"));
-@include font-face("GothamLight", font-files(Gotham/Gotham-Light.otf", "Gotham/Gotham-Light.woff"));
+@include font-face("GothamLight", font-files("Gotham/Gotham-Light.otf", "Gotham/Gotham-Light.woff"));
 
-@include font-face("GothamBook", font-files(Gotham/Gotham-Book.otf", "Gotham/Gotham-Book.woff"));
+@include font-face("GothamBook", font-files("Gotham/Gotham-Book.otf", "Gotham/Gotham-Book.woff"));
 @include font-face("HelveticaNeue", font-files("Gotham/helveticaneue.woff"));
 
