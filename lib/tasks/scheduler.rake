@@ -67,8 +67,6 @@ task :enough_users => :environment do
       end
     end
 
-    previous_joint_users = previous_joint_users.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
-
     previous_joint_users.each do |joint_user|
       all_users = joint_user.fellow_participants(nil, 0, 100, nil, 0, 60, true)
       number_of_users = all_users.length

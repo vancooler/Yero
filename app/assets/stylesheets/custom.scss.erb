@@ -19,11 +19,11 @@ body{
 }
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+	background-size: cover;
 	@media #{$medium-up}{
 		float: left;
 		position: relative;
 	    top: -65px;
-		background-size: cover;
 		z-index: -1;
 	}
 	@media #{$medium-up}{
