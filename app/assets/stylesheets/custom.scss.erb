@@ -19,11 +19,13 @@ body{
 }
 .hero {
 	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
-	float: left;
-	position: relative;
-    top: -65px;
-	background-size: cover;
-	z-index: -1;
+	@media #{$medium-up}{
+		float: left;
+		position: relative;
+	    top: -65px;
+		background-size: cover;
+		z-index: -1;
+	}
 	@media #{$medium-up}{
 		width: 100%;
 		min-height: 450px;
@@ -245,7 +247,7 @@ body{
 		}
 	}
 	a:not(.button) {
-		line-height: 3 !important;
+		line-height: 1 !important;
 		margin-top: 12px;
 		border-radius: 5px;
 		background: transparent;
