@@ -601,7 +601,7 @@ class User < ActiveRecord::Base
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
     pre_time_1 = Time.now
     all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
-    number_of_users = all_users.length
+    number_of_users = all_users.length + 1
     if number_of_users >= gate_number  
       s_time = Time.now
       # collect all whispers sent 
