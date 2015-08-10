@@ -11,8 +11,13 @@ value "MyString"
 
   factory :user do
     sequence(:first_name)  { |n| "Person-#{n}" }
-    birthday Time.now - ((19...100).to_a).sample.years
+    birthday Time.now - 20.years
     gender ['M','F'].sample
+    email "test@yero.co"
+    password "123456"
+    latitude 49.3457234
+    longitude -123.0846173
+    id 1
     key {
       loop do
         random_token = SecureRandom.urlsafe_base64(nil, false)
@@ -21,9 +26,36 @@ value "MyString"
     }
     factory :user_with_avatar do
       after(:create) do |user|
-        UserAvatar.create(user: user, default: true)
+        UserAvatar.create(user: user, default: true, order: 0)
       end
     end
+  end
+
+  factory :user_2 do
+    sequence(:first_name)  { |n| "Person-#{n}" }
+    birthday Time.now - 21.years
+    gender ['M','F'].sample
+    email "test+2@yero.co"
+    password "123456"
+    latitude 49.3457234
+    longitude -123.0846173
+    id 2
+    key {
+      loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless User.exists?(key: random_token)
+      end
+    }
+    factory :user_with_avatar_2 do
+      after(:create) do |user|
+        UserAvatar.create(user: user, default: true, order: 0)
+      end
+    end
+  end
+
+  factory :active_in_venue do
+    user_id 1
+    venue_id 1
   end
 
   factory :venue do

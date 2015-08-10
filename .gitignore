@@ -19,3 +19,4 @@
 .idea/*
 config/local_env.yml
 dump.rdb
+coverage

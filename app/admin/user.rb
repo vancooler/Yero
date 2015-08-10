@@ -5,6 +5,32 @@ ActiveAdmin.register User do
 
   config.per_page = 100
   actions :index, :show, :edit, :update, :destroy
+
+  controller do
+    def join_network
+      user = User.find_by_id(params[:id])
+      if !user.nil?
+        user.join_network
+
+        gate_number = 4
+        # if set in db, use the db value
+        if GlobalVariable.exists? name: "min_ppl_size"
+          size = GlobalVariable.find_by_name("min_ppl_size")
+          if !size.nil? and !size.value.nil? and size.value.to_i > 0
+            gate_number = size.value.to_i
+          end
+        end
+
+        all_users = user.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+        number_of_users = all_users.length + 1
+        if number_of_users >= gate_number
+          user.enough_user_notification_sent_tonight = true
+          user.save
+        end
+      end
+      redirect_to :back, :notice => "User is joined"
+    end
+  end
   index do
   	column :id
     column :email
@@ -20,7 +46,10 @@ ActiveAdmin.register User do
 
     # column :is_active
     
-  	actions
+  	# actions
+    column "Actions", :actions do |user|
+      link_to("Join network", admin_user_join_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this join?"})
+    end
   end
 
   filter :id
