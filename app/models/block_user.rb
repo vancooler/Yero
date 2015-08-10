@@ -1,5 +1,6 @@
 class BlockUser < ActiveRecord::Base
-
+    belongs_to :target_user, class_name: "User"
+    belongs_to :origin_user, class_name: "User"
 
 	def self.check_block(origin_id, target_id)
 		return !(BlockUser.find_by_target_user_id_and_origin_user_id(target_id, origin_id) or BlockUser.find_by_target_user_id_and_origin_user_id(origin_id, target_id)).nil?

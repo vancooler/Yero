@@ -46,6 +46,9 @@ ActiveAdmin.register ReportUserHistory do
         column "Reported at" do |a|
           a.updated_at
         end
+        column "Reason" do |a|
+          a.reason
+        end
       end
     end
   end
