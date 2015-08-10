@@ -88,6 +88,10 @@ gem 'country_select', github: 'stefanpenner/country_select'
 # For like feature
 gem 'socialization'
 
+
+gem 'rails-perftest'
+gem 'ruby-prof'
+
 group :development do 
   gem 'rest-client'
 end
@@ -97,6 +101,7 @@ group :development, :test do
   gem 'rspec-rails', '2.13.1'
   gem 'factory_girl_rails'
   gem 'faker'
+  gem 'simplecov'
   # Use debugger
   # gem 'debugger'
 end

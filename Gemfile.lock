@@ -146,6 +146,7 @@ GEM
       thread_safe (~> 0.1)
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    docile (1.1.5)
     erubis (2.7.0)
     excon (0.13.4)
     execjs (2.4.0)
@@ -265,6 +266,7 @@ GEM
       bundler (>= 1.3.0, < 2.0)
       railties (= 4.1.0)
       sprockets-rails (~> 2.0)
+    rails-perftest (0.0.6)
     rails_12factor (0.0.3)
       rails_serve_static_assets
       rails_stdout_logging
@@ -303,6 +305,7 @@ GEM
       rspec-expectations (~> 2.13.0)
       rspec-mocks (~> 2.13.0)
     ruby-hmac (0.4.0)
+    ruby-prof (0.15.8)
     rubyzip (0.9.9)
     sass (3.2.19)
     sass-rails (4.0.3)
@@ -321,6 +324,11 @@ GEM
       websocket (~> 1.0.4)
     sendgrid (1.2.0)
       json
+    simplecov (0.10.0)
+      docile (~> 1.1.0)
+      json (~> 1.8)
+      simplecov-html (~> 0.10.0)
+    simplecov-html (0.10.0)
     socialization (1.1.0)
       activerecord
     sort_alphabetical (1.0.1)
@@ -404,15 +412,18 @@ DEPENDENCIES
   pg
   phonelib
   rails (= 4.1.0)
+  rails-perftest
   rails_12factor
   rest-client
   rmagick (= 2.13.2)
   rspec-rails (= 2.13.1)
+  ruby-prof
   sass (~> 3.2.0)
   sass-rails (= 4.0.3)
   sdoc (~> 0.4.0)
   selenium-webdriver (= 2.35.1)
   sendgrid
+  simplecov
   socialization
   sprockets (= 2.11.0)
   stripe!

@@ -1228,7 +1228,8 @@ class UsersController < ApplicationController
         friends = WhisperNotification.myfriends(current_user.id)
 
         if !friends.blank?
-          users = requests_friends_json(friends)
+          is_friends = true
+          users = requests_user_whisper_json(friends, is_friends)
           users = JSON.parse(users).delete_if(&:blank?)
           users = users.sort_by { |hsh| hsh[:timestamp] }
 

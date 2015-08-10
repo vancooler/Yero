@@ -154,7 +154,7 @@ class WhispersController < ApplicationController
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       if params[:accepted].to_i == 1
         state = 'accepted'
-        WhisperNotification.find_whisper(whisperId, state)
+        WhisperNotification.delay.find_whisper(whisperId, state)
         item = WhisperNotification.find_by_dynamodb_id(whisperId)
         origin_id = 0
         target_id = 0

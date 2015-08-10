@@ -132,7 +132,7 @@ class Venue < ActiveRecord::Base
     venue_object = {
       id:             self.id,
       first_name:     (self.name.blank? ? '' : self.name.upcase),
-      type:            self.type,
+      type:            (!self.venue_type.nil? and !self.venue_type.name.nil?) ? self.venue_type.name : '',
       address:    self.address_line_one,
       city:  self.city,
       state:         self.state,
