@@ -54,7 +54,7 @@ class WhispersController < ApplicationController
     end
     
     # only users with active avatar can send whispers
-    if current_user.user_avatars.where(:is_active => true).count > 0 and BlockUser.check_block(origin_id.to_i, target_id.to_i)
+    if current_user.user_avatars.where(:is_active => true).count > 0 and !BlockUser.check_block(origin_id.to_i, target_id.to_i)
       whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
       # check if whisper sent today
       if whispers_sent_today.count <= 0
