@@ -1,13 +1,16 @@
 class RecentActivity < ActiveRecord::Base
 
 	def self.all_activities(user_id)
-		RecentActivity.where(:target_user_id => user_id).order("created_at DESC")
+		black_list = BlockUser.blocked_user_ids(user_id)
+		all_activity = RecentActivity.where(:target_user_id => user_id).order("created_at DESC")
+		black_activity = RecentActivity.where(target_user_id: user_id).where(origin_user_id: black_list).order("created_at DESC")
+		return (all_activity - black_activity)
 	end
 
 
 
 	def self.can_add_more(user_id)
-		RecentActivity.where(:target_user_id => user_id).count < 50
+		RecentActivity.where(:target_user_id => user_id).count < 48
 	end
 
 

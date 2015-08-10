@@ -1,12 +1,14 @@
 class WhisperToday < ActiveRecord::Base
 
 	def self.all_whispers(user_id)
-		WhisperToday.where(:target_user_id => user_id).where(:declined => false).where(:accepted => false).order("created_at DESC")
+		black_list = BlockUser.blocked_user_ids(user_id)
+		WhisperToday.where(:target_user_id => user_id).where.not(origin_user_id: black_list).where(:declined => false).where(:accepted => false).order("created_at DESC")
 	end
 
 
 	def self.unviewed_whispers_count(user_id)
-		WhisperToday.where(:target_user_id => user_id).where(:viewed => false).count
+		black_list = BlockUser.blocked_user_ids(user_id)
+		WhisperToday.where(:target_user_id => user_id).where.not(origin_user_id: black_list).where(:viewed => false).count
 	end
 
 	def self.to_json(whispers)

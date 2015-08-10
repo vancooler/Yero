@@ -271,6 +271,8 @@ class WhisperNotification < AWS::Record::HashModel
     friends = Array.new
     # Friends by whisper
     friends_by_whisper = FriendByWhisper.friends(user_id)
+    blocked_users = BlockUser.blocked_users(user_id)
+    friends_by_whisper = friends_by_whisper - blocked_users
     friends_by_whisper.each do |user|
       if user and !user.user_avatars.where(is_active: true).blank?
         h = Hash.new
@@ -999,8 +1001,9 @@ class WhisperNotification < AWS::Record::HashModel
     # chat_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("2").where(:viewed).equals(0)
     # greeting_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("1").where(:viewed).equals(0)
     # accept_items = table.items.where(:target_id).equals(user_id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
-    whisper_items = WhisperToday.where(target_user_id: user_id.to_i, viewed: false)
-    accept_items = FriendByWhisper.where(viewed: false, origin_user_id: user_id.to_i)
+    black_list = BlockUser.blocked_user_ids(user_id)
+    whisper_items = WhisperToday.where(target_user_id: user_id.to_i).where(viewed: false).where.not(origin_user_id: black_list)
+    accept_items = FriendByWhisper.where(viewed: false).where(origin_user_id: user_id.to_i).where.not(target_user_id: black_list)
     whisper_number = 0
     accept_number = 0
     

@@ -161,7 +161,7 @@ class User < ActiveRecord::Base
       aivs = ActiveInVenueNetwork.where("user_id != ?", self.id)
     else # else we will just search the people in the venue
       aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
-      aivn = ActiveInVenueNetwork.where("user_id != ?", self.id)
+      # aivn = ActiveInVenueNetwork.where("user_id != ?", self.id)
       if !venue_id.nil? #If a parameter was passed in for venue_id
         aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
       end
@@ -170,14 +170,14 @@ class User < ActiveRecord::Base
     aivs.each do |aiv| 
       active_users_id << aiv.user_id #Toss into the array the user_id's of the people that are out or in a particular venue.
     end
-    if aivn # If there are people acitve in venue network
-      aivn.each do |aivn| # Loop
-        if active_users_id.include? aivn.user_id
-        else
-          active_users_id << aivn.user_id # Throw each one into the array
-        end
-      end
-    end
+    # if aivn # If there are people acitve in venue network
+    #   aivn.each do |aivn| # Loop
+    #     if active_users_id.include? aivn.user_id
+    #     else
+    #       active_users_id << aivn.user_id # Throw each one into the array
+    #     end
+    #   end
+    # end
 
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
@@ -185,6 +185,8 @@ class User < ActiveRecord::Base
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
     users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    blocked_users = BlockUser.blocked_users(self.id)
+    users = users - blocked_users
     # users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"

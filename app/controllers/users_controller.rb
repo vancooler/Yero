@@ -1230,6 +1230,28 @@ class UsersController < ApplicationController
     end
   end
 
+
+  # block user
+  def block
+    # user = current_user
+    if !params[:user_id].nil?
+      user_id = params[:user_id].to_i
+      if User.exists? id: user_id
+        if BlockUser.check_block(current_user.id, user_id)
+          BlockUser.create!(origin_user_id: current_user.id, target_user_id: user_id)
+        else
+          
+        end
+        black_list = BlockUser.blocked_user_ids(current_user.id)
+        render json: success(black_list)
+      else
+        render json: error("Sorry, this user doesn't exist")
+      end
+    else
+      render json: error("Sorry, user_id required")
+    end
+  end
+
   # Like / Unlike feature
   def like
     # user = current_user
