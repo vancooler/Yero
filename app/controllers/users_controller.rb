@@ -739,7 +739,7 @@ class UsersController < ApplicationController
           user_info['token'] = user.generate_token
           render json: success(user_info)
         else
-          render json: error("Email/Password does not match")
+          render json: error("Your email or password is incorrect")
         end  
       else
         render json: error("Email address not found")

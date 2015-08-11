@@ -83,7 +83,7 @@ describe User do
 	        expect(user.name).to eql user.first_name+' (1)'
 	      end
 
-	      it "same_venue_as?" do
+	      it "ppl" do
 	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
 	      	venue_network = VenueNetwork.create!(id:1, name: "V")
 	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
@@ -107,7 +107,51 @@ describe User do
 	        user_2.destroy
 	      end
 
-	      
+
+	      it "to_json" do
+	      	birthday = (Time.now - 21.years)
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
+	      	active_in_venue = ActiveInVenue.create!(user_id: 2, venue_id:1)
+	      	ua = UserAvatar.create!(user: user_2, default: true, order: 0)
+	      	NotificationPreference.create!(name: "Network online")
+			NotificationPreference.create!(name: "Enter venue network")
+			NotificationPreference.create!(name: "Leave venue network")
+			UserNotificationPreference.update_preferences_settings(user_2, true, true, true)
+	      	expect(user_2.to_json(true)["id"]).to eql 2
+	      	expect(user_2.to_json(true)["birthday"].to_date).to eql birthday.to_date
+	      	expect(user_2.to_json(true)["first_name"]).to eql "SF"
+	      	expect(user_2.to_json(true)["email"]).to eql "test2@yero.co"
+	      	expect(user_2.to_json(true)["snapchat_id"]).to eql 'snapchat_id'
+	      	expect(user_2.to_json(true)["wechat_id"]).to eql ''
+	      	expect(user_2.to_json(true)["line_id"]).to eql 'line_id'
+	      	expect(user_2.to_json(true)["instagram_id"]).to eql 'instagram_id'
+	      	expect(user_2.to_json(true)["discovery"]).to eql false
+	      	expect(user_2.to_json(true)["exclusive"]).to eql false
+	      	expect(user_2.to_json(true)["joined_today"]).to eql true
+	      	expect(user_2.to_json(true)["key"]).to eql "1"
+	      	expect(user_2.to_json(true)["current_venue"]).to eql "TestVenue"
+	      	expect(user_2.to_json(true)["current_city"]).to eql "Vancouver"
+	      	expect(user_2.to_json(true)["avatars"][0]['order']).to eql 0
+	      	expect(user_2.to_json(true)["notification_preferences"].length).to eql 3
+	      	expect(user_2.to_json(true)["notification_preferences"][0]["type"]).to eql "Network online"
+	      	expect(user_2.to_json(true)["notification_preferences"][0]["enabled"]).to eql false
+			expect(user_2.to_json(true)["notification_preferences"][1]["type"]).to eql "Enter venue network"
+	      	expect(user_2.to_json(true)["notification_preferences"][1]["enabled"]).to eql false
+	      	expect(user_2.to_json(true)["notification_preferences"][2]["type"]).to eql "Leave venue network"
+	      	expect(user_2.to_json(true)["notification_preferences"][2]["enabled"]).to eql true
+	      	active_in_venue.destroy
+	      	venue_network.destroy
+	        venue.destroy
+	        beacon.destroy
+			UserNotificationPreference.update_preferences_settings(user, false, false, false)
+			NotificationPreference.destroy_all
+	      	ua.destroy
+	      	expect(user_2.to_json(true)["avatars"]).to eql []
+	        user_2.destroy
+	      end
 
 	      # it "same_beacon_as?" do
 	      #   expect(user.same_beacon_as?(2)).to eql false

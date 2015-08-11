@@ -342,6 +342,8 @@ class User < ActiveRecord::Base
       json.discovery discovery
       json.exclusive exclusive
       json.joined_today is_connected
+      json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
+      json.current_city current_city.blank? ? '' : current_city
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
