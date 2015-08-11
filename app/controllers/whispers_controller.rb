@@ -44,7 +44,7 @@ class WhispersController < ApplicationController
     intro = params[:intro].blank? ? "" : params[:intro].to_s
     
     if params[:message].nil? and notification_type == "2"
-      message = current_user.first_name + " just sent you a Whisper!"   
+      message = current_user.first_name + " just sent you a whisper!"   
     else
       message = params[:message]
     end
