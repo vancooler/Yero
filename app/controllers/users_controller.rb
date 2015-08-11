@@ -4,43 +4,12 @@ class UsersController < ApplicationController
   skip_before_filter  :verify_authenticity_token
 
   def show
-    # render json: success(Hash[*current_user.as_json.map{|k, v| [k, v || ""]}.flatten])
     puts "THE ID"
     puts current_user.id
     avatar_array = Array.new
     if !current_user.default_avatar.nil?
       user_info = current_user.to_json(true)
-      # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
       
-      # avatars = Array.new
-      # user_info['avatars'].each do |avatar|
-      #   if avatar['default'].to_s == "true"
-      #     avatars.unshift(avatar)
-      #   else
-      #     avatars.push(avatar)
-      #   end
-      # end
-      # user_info['avatars'] = avatars
-      # user_info['avatars'].each do |a|
-      #   thumb = a['avatar']
-      #   a['avatar'] = thumb.gsub! 'thumb_', ''
-      # end
-
-      # avatar_array[0] = {
-      #       avatar: current_user.main_avatar.avatar.url,
-      #       avatar_id: current_user.main_avatar.id,
-      #       default: true
-      #     }
-      # avatar_array[1] = {
-      #       avatar: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.avatar.url : "",
-      #       avatar_id: current_user.user_avatars.count > 1 ? current_user.secondary_avatars.first.id : "",
-      #       default: false
-      #     }
-      # avatar_array[2] = {
-      #       avatar: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.avatar.url : "",
-      #       avatar_id: current_user.user_avatars.count > 2 ? current_user.secondary_avatars.last.id : "",
-      #       default: false
-      #     }
     end
     user = {
       id: current_user.id,

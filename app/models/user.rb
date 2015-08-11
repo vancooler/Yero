@@ -519,9 +519,9 @@ class User < ActiveRecord::Base
     puts "CLOSE People:"
     puts people_array.inspect
     if !people_array.empty? 
+      User.leave_activity(people_array)
       User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
       # WhisperNotification.expire(people_array, '2')
-      User.leave_activity(people_array)
       # expire all whispers with type 2 of these users
       whispers_today = WhisperToday.where(target_user_id: people_array)
       if whispers_today.count == 1
@@ -977,30 +977,11 @@ class User < ActiveRecord::Base
     end
     current_timestamp = Time.now.to_i
     people_array.each do |user|
-      RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      check_user = User.find_by_id(user.to_i)
+      if check_user and check_user.is_connected
+        RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      end
     end
-    # people_array.each_slice(25) do |whisper_group|
-    #   batch = AWS::DynamoDB::BatchWrite.new
-    #   current_timestamp = Time.now.to_i
-    #   notification_array = Array.new
-    #   whisper_group.each do |w|
-    #     if !w.blank?
-    #       request = Hash.new()
-    #       request["target_id"] = w.to_s
-    #       request["timestamp"] = current_timestamp
-    #       request["accepted"] = 0
-    #       request["declined"] = 0
-    #       request["id"] = "offline-"+w.to_s+"-"+current_timestamp.to_s
-    #       request["notification_type"] = '201'
-    #       request["viewed"] = 0
-    #       notification_array << request 
-    #     end
-    #   end
-    #   if notification_array.count > 0
-    #     batch.put(table_name, notification_array)
-    #     batch.process!
-    #   end
-    # end
   end
 
   def avatar_reorder(avatar_ids)
