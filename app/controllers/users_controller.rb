@@ -132,108 +132,108 @@ class UsersController < ApplicationController
   end 
 
 
-  def requests
+  # def requests
 
-    # TODO: check venue/user exist
-    time_0 = Time.now
-    return_users = current_user.whisper_friends
-    time_1 = Time.now
-    runtime = time_1 - time_0
-    puts "User time"
-    puts runtime.inspect
-    return_venues = current_user.whisper_venue
-    time_2 = Time.now
-    runtime = time_2 - time_1
-    puts "Venue time"
-    puts runtime.inspect
-    # yero_notify = WhisperNotification.yero_notification(current_user.id)
+  #   # TODO: check venue/user exist
+  #   time_0 = Time.now
+  #   return_users = current_user.whisper_friends
+  #   time_1 = Time.now
+  #   runtime = time_1 - time_0
+  #   puts "User time"
+  #   puts runtime.inspect
+  #   return_venues = current_user.whisper_venue
+  #   time_2 = Time.now
+  #   runtime = time_2 - time_1
+  #   puts "Venue time"
+  #   puts runtime.inspect
+  #   # yero_notify = WhisperNotification.yero_notification(current_user.id)
 
-    users = requests_friends_json(return_users)
+  #   users = requests_friends_json(return_users)
 
-    venues_array = Jbuilder.encode do |json|
-      #Loop through the return_venues ids and do a find to get the object
-      # Then do the json dance to include venue id, link to venue_avatars to get the picture
-      # And make a dynamic name with the welcome message
-      json.array! return_venues.each do |venue|
-        venue_obj = Venue.find(venue["venue_id"])
-        venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
-        if venue_avatar 
-          json.venue_avatar venue_avatar["avatar"]
-        end
+  #   venues_array = Jbuilder.encode do |json|
+  #     #Loop through the return_venues ids and do a find to get the object
+  #     # Then do the json dance to include venue id, link to venue_avatars to get the picture
+  #     # And make a dynamic name with the welcome message
+  #     json.array! return_venues.each do |venue|
+  #       venue_obj = Venue.find(venue["venue_id"])
+  #       venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+  #       if venue_avatar 
+  #         json.venue_avatar venue_avatar["avatar"]
+  #       end
 
-        json.venue_name venue_obj["name"]
-        json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
-        json.timestamp venue["timestamp"]
-        json.timestamp_read Time.at(venue['timestamp'])
-        json.accepted venue["accepted"]
-        json.viewed venue["viewed"]
-        json.not_viewed_by_sender venue["not_viewed_by_sender"]
-        json.created_date venue["created_date"]
-        json.whisper_id venue["whisper_id"]
-        json.notification_type  1
-      end
-    end
+  #       json.venue_name venue_obj["name"]
+  #       json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+  #       json.timestamp venue["timestamp"]
+  #       json.timestamp_read Time.at(venue['timestamp'])
+  #       json.accepted venue["accepted"]
+  #       json.viewed venue["viewed"]
+  #       json.not_viewed_by_sender venue["not_viewed_by_sender"]
+  #       json.created_date venue["created_date"]
+  #       json.whisper_id venue["whisper_id"]
+  #       json.notification_type  1
+  #     end
+  #   end
 
-    users = JSON.parse(users).delete_if(&:blank?)
-    venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
-    # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+  #   users = JSON.parse(users).delete_if(&:blank?)
+  #   venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
+  #   # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
 
-    same_venue_users = []
-    different_venue_users = [] 
-    no_badge_users = []
-    venues = []
+  #   same_venue_users = []
+  #   different_venue_users = [] 
+  #   no_badge_users = []
+  #   venues = []
 
-    unviewed_badge = 0
-    unviewed_whispers = []
-    users.each do |u|
-      if u['different_venue_badge'].to_s == "true"
-        different_venue_users << u
-      elsif u['same_venue_badge'].to_s == "true"
-        same_venue_users << u
-      else
-        no_badge_users << u
-      end
-      if u["viewed"].to_i == 0
-        p 'entered into users'
-        unviewed_badge = unviewed_badge + 1
-        unviewed_whispers << u
-      end
-      # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
-      # end
-    end
+  #   unviewed_badge = 0
+  #   unviewed_whispers = []
+  #   users.each do |u|
+  #     if u['different_venue_badge'].to_s == "true"
+  #       different_venue_users << u
+  #     elsif u['same_venue_badge'].to_s == "true"
+  #       same_venue_users << u
+  #     else
+  #       no_badge_users << u
+  #     end
+  #     if u["viewed"].to_i == 0
+  #       p 'entered into users'
+  #       unviewed_badge = unviewed_badge + 1
+  #       unviewed_whispers << u
+  #     end
+  #     # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
+  #     # end
+  #   end
 
-    venues_array.each do |v|
-      venues << v
-      unviewed_whispers << v
-      if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
-        p 'entered into venues'
-        unviewed_badge = unviewed_badge + 1
-      end
-    end
+  #   venues_array.each do |v|
+  #     venues << v
+  #     unviewed_whispers << v
+  #     if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
+  #       p 'entered into venues'
+  #       unviewed_badge = unviewed_badge + 1
+  #     end
+  #   end
 
-    # result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
-    return_data = Array.new
-    unviewed_whispers.each do |r|
-      return_data << r
-    end 
+  #   # result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
+  #   return_data = Array.new
+  #   unviewed_whispers.each do |r|
+  #     return_data << r
+  #   end 
     
-    whispers_array = Array.new
-    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
-    users.each do |whisp|
-      whispers_array << whisp["whisper_id"]
-    end
+  #   whispers_array = Array.new
+  #   users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
+  #   users.each do |whisp|
+  #     whispers_array << whisp["whisper_id"]
+  #   end
 
-    time_3 = Time.now
-    if !whispers_array.nil? and whispers_array.count > 0
-      current_user.delay.viewed_by_sender(whispers_array)
-    end
+  #   time_3 = Time.now
+  #   if !whispers_array.nil? and whispers_array.count > 0
+  #     current_user.delay.viewed_by_sender(whispers_array)
+  #   end
 
-    time_4 = Time.now
-    runtime = time_4 - time_3
-    puts "Update time"
-    puts runtime.inspect
-    render json: success(users, "data")
-  end
+  #   time_4 = Time.now
+  #   runtime = time_4 - time_3
+  #   puts "Update time"
+  #   puts runtime.inspect
+  #   render json: success(users, "data")
+  # end
 
   # New API for whispers requests
   def requests_new
@@ -346,7 +346,7 @@ class UsersController < ApplicationController
     if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
       record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id_and_report_type_id(reporting_user.id, reported_user.id, report_type.id)
       # no report record found
-      if record.blank?
+      if true or record.blank?
         rep = ReportUserHistory.new
         rep.reporting_user_id = reporting_user.id
         rep.reported_user_id = reported_user.id
@@ -392,25 +392,25 @@ class UsersController < ApplicationController
     
   end
 
-  def myfriends
-    p 'user_id'
-    p current_user.id
-    # friends = UserFriends.return_friends(current_user.id)
-    friends = WhisperNotification.myfriends(current_user.id)
-    puts "friends123: "
-    puts friends.inspect
-    # WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
-    if !friends.blank?
-      users = requests_friends_json(friends)
-      users = JSON.parse(users).delete_if(&:blank?)
-      users = users.sort_by { |hsh| hsh["timestamp"] }
-      puts "USER ORDER:"
-      puts users.inspect
-      render json: success(users.reverse, "data")
-    else
-      render json: success(Array.new, "data")
-    end
-  end
+  # def myfriends
+  #   p 'user_id'
+  #   p current_user.id
+  #   # friends = UserFriends.return_friends(current_user.id)
+  #   friends = WhisperNotification.myfriends(current_user.id)
+  #   puts "friends123: "
+  #   puts friends.inspect
+  #   # WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
+  #   if !friends.blank?
+  #     users = requests_friends_json(friends)
+  #     users = JSON.parse(users).delete_if(&:blank?)
+  #     users = users.sort_by { |hsh| hsh["timestamp"] }
+  #     puts "USER ORDER:"
+  #     puts users.inspect
+  #     render json: success(users.reverse, "data")
+  #   else
+  #     render json: success(Array.new, "data")
+  #   end
+  # end
 
   # new API for friends list
   def myfriends_new

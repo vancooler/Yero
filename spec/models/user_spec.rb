@@ -115,7 +115,8 @@ describe User do
 	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
 	      	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
 	      	active_in_venue = ActiveInVenue.create!(user_id: 2, venue_id:1)
-	      	ua = UserAvatar.create!(user: user_2, default: true, order: 0)
+	      	ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+	      	ua_2 = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 1)
 	      	NotificationPreference.create!(name: "Network online")
 			NotificationPreference.create!(name: "Enter venue network")
 			NotificationPreference.create!(name: "Leave venue network")
@@ -142,6 +143,18 @@ describe User do
 	      	expect(user_2.to_json(true)["notification_preferences"][1]["enabled"]).to eql false
 	      	expect(user_2.to_json(true)["notification_preferences"][2]["type"]).to eql "Leave venue network"
 	      	expect(user_2.to_json(true)["notification_preferences"][2]["enabled"]).to eql true
+	      	
+	      	user_2.avatar_reorder([2, 1])
+	      	expect(user_2.to_json(true)["avatars"][0]['avatar_id']).to eql 2
+	      	expect(user_2.to_json(true)["avatars"][1]['avatar_id']).to eql 1
+
+	      	user_2.leave_network
+	      	expect(user_2.to_json(true)["joined_today"]).to eql false
+
+	      	user_2.join_network
+	      	User.leave_activity([2])
+	      	expect(RecentActivity.all.count).to eql 2
+	      	RecentActivity.destroy_all
 	      	active_in_venue.destroy
 	      	venue_network.destroy
 	        venue.destroy
@@ -149,6 +162,7 @@ describe User do
 			UserNotificationPreference.update_preferences_settings(user, false, false, false)
 			NotificationPreference.destroy_all
 	      	ua.destroy
+	      	ua_2.destroy
 	      	expect(user_2.to_json(true)["avatars"]).to eql []
 	        user_2.destroy
 	      end
