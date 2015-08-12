@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   before_save   :update_activity
 
   validates :email, :birthday, :first_name, :gender, presence: true
+  validates :email, :email => true
 
   scope :sort_by_last_active, -> { 
     where.not(last_active: nil).

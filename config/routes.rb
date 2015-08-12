@@ -150,7 +150,7 @@ Rails.application.routes.draw do
   get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
   get  'api/v1/set-variable', to: 'users#set_global_variable'
   post 'api/v1/whisper/create', to: 'whispers#api_create'
-  post 'api/v1/whisper/read', to: 'whispers#api_read'
+  # post 'api/v1/whisper/read', to: 'whispers#api_read'
   post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
   post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
   post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'

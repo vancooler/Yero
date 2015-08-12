@@ -578,141 +578,141 @@ class UsersController < ApplicationController
     end
   end
 
-  def sign_up
-    # Rails.logger.info "PARAMETERS: "
-    # Rails.logger.debug sign_up_params.inspect
-    # Rails.logger.debug params.inspect
-    # tmp_params = sign_up_params
-    # tmp_params.delete('avatar_id')
+  # def sign_up
+  #   # Rails.logger.info "PARAMETERS: "
+  #   # Rails.logger.debug sign_up_params.inspect
+  #   # Rails.logger.debug params.inspect
+  #   # tmp_params = sign_up_params
+  #   # tmp_params.delete('avatar_id')
     
-    user_registration = UserRegistration.new(sign_up_params)
+  #   user_registration = UserRegistration.new(sign_up_params)
     
-    if params[:email].present? 
-      if params[:email].match(/\s/).blank?
-        user_registration.user.email = params[:email]
-      else
-        user_registration.user.email = params[:email].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:email].present? 
+  #     if params[:email].match(/\s/).blank?
+  #       user_registration.user.email = params[:email]
+  #     else
+  #       user_registration.user.email = params[:email].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:gender].present? 
-      if params[:gender].match(/\s/).blank?
-        user_registration.user.gender = params[:gender]
-      else
-        user_registration.user.gender = params[:gender].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:gender].present? 
+  #     if params[:gender].match(/\s/).blank?
+  #       user_registration.user.gender = params[:gender]
+  #     else
+  #       user_registration.user.gender = params[:gender].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:first_name].present? 
-      if params[:first_name].match(/\s/).blank?
-        first_name = params[:first_name]
-        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+  #   if params[:first_name].present? 
+  #     if params[:first_name].match(/\s/).blank?
+  #       first_name = params[:first_name]
+  #       user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
 
-      else
-        first_name = params[:first_name].gsub!(/\s+/, "") 
-        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+  #     else
+  #       first_name = params[:first_name].gsub!(/\s+/, "") 
+  #       user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
 
-      end
-    end
+  #     end
+  #   end
 
-    if params[:instagram_id].present? 
-      if params[:instagram_id].match(/\s/).blank?
-        user_registration.user.instagram_id = params[:instagram_id]
-      else
-        user_registration.user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:instagram_id].present? 
+  #     if params[:instagram_id].match(/\s/).blank?
+  #       user_registration.user.instagram_id = params[:instagram_id]
+  #     else
+  #       user_registration.user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:snapchat_id].present? 
-      if params[:snapchat_id].match(/\s/).blank?
-        user_registration.user.snapchat_id = params[:snapchat_id]
-      else
-        user_registration.user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:snapchat_id].present? 
+  #     if params[:snapchat_id].match(/\s/).blank?
+  #       user_registration.user.snapchat_id = params[:snapchat_id]
+  #     else
+  #       user_registration.user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:wechat_id].present? 
-      if params[:wechat_id].match(/\s/).blank?
-        user_registration.user.wechat_id = params[:wechat_id]
-      else
-        user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
-      end
-    end
-    if params[:line_id].present? 
-      if params[:line_id].match(/\s/).blank?
-        user_registration.user.line_id = params[:line_id]
-      else
-        user_registration.user.line_id = params[:line_id].gsub!(/\s+/, "") 
-      end
-    end
-    user_registration.user.password = params[:password] if params[:password].present?
-    user_registration.user.birthday = params[:birthday] if params[:birthday].present?                       
-    user_registration.user.nonce = params[:nonce] if params[:nonce].present?
-    user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
+  #   if params[:wechat_id].present? 
+  #     if params[:wechat_id].match(/\s/).blank?
+  #       user_registration.user.wechat_id = params[:wechat_id]
+  #     else
+  #       user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
+  #   if params[:line_id].present? 
+  #     if params[:line_id].match(/\s/).blank?
+  #       user_registration.user.line_id = params[:line_id]
+  #     else
+  #       user_registration.user.line_id = params[:line_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
+  #   user_registration.user.password = params[:password] if params[:password].present?
+  #   user_registration.user.birthday = params[:birthday] if params[:birthday].present?                       
+  #   user_registration.user.nonce = params[:nonce] if params[:nonce].present?
+  #   user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
-    if !(User.exists? email: params[:email])
-      if user_registration.create
-        user = user_registration.user
-        user.key_expiration = Time.now + 3.hours
-        user.account_status = 1
-        user.save
-        # save avatar order
-        if !user.nil? and !user.default_avatar.nil?
-          avatar = user.default_avatar
-          avatar.order = 0
-          avatar.save!
-        end
+  #   if !(User.exists? email: params[:email])
+  #     if user_registration.create
+  #       user = user_registration.user
+  #       user.key_expiration = Time.now + 3.hours
+  #       user.account_status = 1
+  #       user.save
+  #       # save avatar order
+  #       if !user.nil? and !user.default_avatar.nil?
+  #         avatar = user.default_avatar
+  #         avatar.order = 0
+  #         avatar.save!
+  #       end
 
-        # #signup with the avatar id
-        # avatar_id = sign_up_params[:avatar_id]
-        # response = user.to_json(true)
-        # response["avatars"] = Array.new
-        # if avatar_id.to_i > 0
-        #   avatar = UserAvatar.find(avatar_id.to_i)
-        #   if !avatar.nil?
-        #     avatar.user_id = user.id
-        #     avatar.save
-        #     user_avatar = Hash.new
-        #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
-        #     user_avatar['avatar'] = avatar.avatar.url
-        #     response["avatars"] = [user_avatar]
-        #   end
-        # end
+  #       # #signup with the avatar id
+  #       # avatar_id = sign_up_params[:avatar_id]
+  #       # response = user.to_json(true)
+  #       # response["avatars"] = Array.new
+  #       # if avatar_id.to_i > 0
+  #       #   avatar = UserAvatar.find(avatar_id.to_i)
+  #       #   if !avatar.nil?
+  #       #     avatar.user_id = user.id
+  #       #     avatar.save
+  #       #     user_avatar = Hash.new
+  #       #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
+  #       #     user_avatar['avatar'] = avatar.avatar.url
+  #       #     response["avatars"] = [user_avatar]
+  #       #   end
+  #       # end
 
-        # avatar = sign_up_params[:avatar]
-        # if avatar
-        #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
-        # else
-        # end
+  #       # avatar = sign_up_params[:avatar]
+  #       # if avatar
+  #       #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
+  #       # else
+  #       # end
         
-        # The way in one step
-        response = user.to_json(true)
-        user_info = user
+  #       # The way in one step
+  #       response = user.to_json(true)
+  #       user_info = user
 
-        # if !response["avatars"].empty?
-        #   thumb = response["avatars"].first['avatar']
-        #   if thumb
-        #     response["avatars"].first['thumbnail'] = thumb
-        #     response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-        #   end
-        # end
-        response['token'] = user.generate_token
-        # render json: user_registration.to_json.inspect
-        # render json: user_avatar.to_json.inspect
+  #       # if !response["avatars"].empty?
+  #       #   thumb = response["avatars"].first['avatar']
+  #       #   if thumb
+  #       #     response["avatars"].first['thumbnail'] = thumb
+  #       #     response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+  #       #   end
+  #       # end
+  #       response['token'] = user.generate_token
+  #       # render json: user_registration.to_json.inspect
+  #       # render json: user_avatar.to_json.inspect
         
-        intro = "Welcome to Yero"
-        # TODO: future feature
-        # n = WhisperNotification.create_in_aws(user_info.id, 0, 1, 2, intro)
+  #       intro = "Welcome to Yero"
+  #       # TODO: future feature
+  #       # n = WhisperNotification.create_in_aws(user_info.id, 0, 1, 2, intro)
         
-        render json: success(response)
-      else
-        puts user_registration.user.errors.messages
-        render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
-      end
-    else
-        render json: error("This email has already been taken.")
-    end
-  end
+  #       render json: success(response)
+  #     else
+  #       puts user_registration.user.errors.messages
+  #       render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
+  #     end
+  #   else
+  #       render json: error("This email has already been taken.")
+  #   end
+  # end
 
   # API to login a user
   def login
