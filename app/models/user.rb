@@ -307,11 +307,11 @@ class User < ActiveRecord::Base
     self.activities.last
   end
 
-  def venue_network
-    if self.participant
-      self.participant.room.venue.venue_network
-    end
-  end
+  # def venue_network
+  #   if self.participant
+  #     self.participant.room.venue.venue_network
+  #   end
+  # end
 
   def default_avatar
     self.user_avatars.where(order: 0).first
@@ -393,9 +393,9 @@ class User < ActiveRecord::Base
     self.last_activity = Time.now
   end
 
-  def send_network_open_notification
-    WhisperNotification.send_nightopen_notification(self.id) 
-  end
+  # def send_network_open_notification
+  #   WhisperNotification.send_nightopen_notification(self.id) 
+  # end
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   # def self.network_open
@@ -497,9 +497,39 @@ class User < ActiveRecord::Base
   #   puts (time5 - time1).inspect
   # end
 
+  def self.handle_close(times_array)
+    time1 = Time.now
+    # disconnect all users
+    people_array = Array.new 
+    if !times_array.empty?    
+      people_array = User.where(:timezone_name => times_array).map(&:id)
+      # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
+    end
+    if !people_array.empty? 
+      User.leave_activity(people_array)
+      User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
+      # WhisperNotification.expire(people_array, '2')
+      # expire all whispers with type 2 of these users
+      whispers_today = WhisperToday.where(target_user_id: people_array)
+      if whispers_today.count == 1
+        whispers_today.first.destroy
+      elsif whispers_today.count > 1
+        whispers_today.destroy_all
+      end
+    end
+    # cleanup active_in_venue_network & active_in_venue & enter_today
+    venue_networks = VenueNetwork.where(:timezone => times_array)
+    venue_networks.each do |vn|
+      ActiveInVenueNetwork.five_am_cleanup(vn)
+    end
+    time2 = Time.now
+    puts "CLOSE runtimeALL: "
+    puts (time2 - time1).inspect
+    return true
+  end
+
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def self.network_close
-    time1 = Time.now
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
@@ -510,38 +540,8 @@ class User < ActiveRecord::Base
         times_array << open_network_tz #Throw into array
       end
     end
-    puts "CLOSE Timezones:"
-    puts times_array.inspect
-    # disconnect all users
-    people_array = Array.new 
-    if !times_array.empty?    
-      people_array = User.where(:timezone_name => times_array).map(&:id)
-      # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
-    end
-    puts "CLOSE People:"
-    puts people_array.inspect
-    if !people_array.empty? 
-      User.leave_activity(people_array)
-      User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
-      # WhisperNotification.expire(people_array, '2')
-      # expire all whispers with type 2 of these users
-      whispers_today = WhisperToday.where(target_user_id: people_array)
-      if whispers_today.count == 1
-        whispers_today.first.delete
-      elsif whispers_today.count > 1
-        whispers_today.destroy_all
-      end
-    end
-    # cleanup active_in_venue_network & active_in_venue & enter_today
-    venue_networks = VenueNetwork.where(:timezone => times_array)
-    venue_networks.each do |vn|
-      ActiveInVenueNetwork.five_am_cleanup(vn)
-    end
-    puts "CLOSE Networks:"
-    puts venue_networks.inspect
-    time2 = Time.now
-    puts "CLOSE runtimeALL: "
-    puts (time2 - time1).inspect
+    User.handle_close(times_array)
+    
   end
 
   def friends_by_like

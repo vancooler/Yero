@@ -67,13 +67,7 @@ describe User do
 	        expect(user.current_beacon).to eql nil
 	      end
 
-	      it "test main_avatar" do
-	        expect(user.main_avatar).to eql nil
-	      end
-
-	      it "test secondary_avatars" do
-	        expect(user.secondary_avatars.blank?).to eql true
-	      end
+	      
 
 	      it "test age" do
 	        expect(user.age).to eql 20
@@ -90,6 +84,7 @@ describe User do
 	      	active_in_venue = ActiveInVenue.create!(user_id: 1, venue_id:1)
 	      	active_in_venue_2 = ActiveInVenue.create!(user_id: 2, venue_id:1)
 	      	ua = UserAvatar.create!(user: user_2, default: true, order: 0)
+	      	wt = WhisperSent.create!(target_user_id: 2, origin_user_id: 1, whisper_time: Time.now)
 	        expect(user.same_venue_as?(2)).to eql true
 	        expect(user.different_venue_as?(2)).to eql false
 	        expect(user.fellow_participants(nil, 19, 50, nil, 0, 1000, true).length).to eql 1
@@ -105,13 +100,14 @@ describe User do
 	        venue_network.destroy
 	        ua.destroy
 	        user_2.destroy
+	        wt.destroy
 	      end
 
 
 	      it "to_json" do
 	      	birthday = (Time.now - 21.years)
-	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver")
-	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
 	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
 	      	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
 	      	active_in_venue = ActiveInVenue.create!(user_id: 2, venue_id:1)
@@ -143,6 +139,9 @@ describe User do
 	      	expect(user_2.to_json(true)["notification_preferences"][1]["enabled"]).to eql false
 	      	expect(user_2.to_json(true)["notification_preferences"][2]["type"]).to eql "Leave venue network"
 	      	expect(user_2.to_json(true)["notification_preferences"][2]["enabled"]).to eql true
+	        expect(user_2.main_avatar.id).to eql 1
+	        expect(user_2.default_avatar.id).to eql 1
+	        expect(user_2.secondary_avatars.first.id).to eql 2
 	      	
 	      	user_2.avatar_reorder([2, 1])
 	      	expect(user_2.to_json(true)["avatars"][0]['avatar_id']).to eql 2
@@ -152,8 +151,15 @@ describe User do
 	      	expect(user_2.to_json(true)["joined_today"]).to eql false
 
 	      	user_2.join_network
-	      	User.leave_activity([2])
+	      	expect(user_2.to_json(true)["joined_today"]).to eql true
+	      	WhisperToday.create(target_user_id: 2, origin_user_id: 1, whisper_type: "2")
+	      	User.handle_close(["America/Vancouver"])
+
 	      	expect(RecentActivity.all.count).to eql 2
+	      	expect(WhisperToday.all.count).to eql 0
+	      	expect(ActiveInVenue.all.count).to eql 0
+
+
 	      	RecentActivity.destroy_all
 	      	active_in_venue.destroy
 	      	venue_network.destroy
