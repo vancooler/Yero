@@ -33,6 +33,7 @@
     <% if (false && params[:controller] == 'home' && params[:action] == 'index') %>
       <div class="event-top-bar show-for-medium-up">
         Squamish Valley Music Festival network is online from August 7 to 10!
+        <span id='close' onclick='this.parentNode.parentNode.removeChild(this.parentNode); return false;'>x</span>
       </div>
     <% end %>
     <% if !(params[:controller] == 'venues' &&  (params[:action] == 'edit' || params[:action] == 'show' || params[:action] == 'index' )) && !(params[:controller] == 'web_users' &&  params[:action] == 'edit') && !(params[:controller] == 'greeting_messages' &&  (params[:action] == 'edit_message' || params[:action] == 'day_pick' || params[:action] == 'venues')) %>
