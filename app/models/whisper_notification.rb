@@ -755,25 +755,40 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
-  # def self.accept_friend_viewed_by_sender(id)
-  #   dynamo_db = AWS::DynamoDB.new
-  #   table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-  #   table = dynamo_db.tables[table_name]
-  #   if !table.schema_loaded?
-  #     table.load_schema
-  #   end
-  #   items = table.items.where(:target_id).equals(id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
-  #   if items.count > 0
-  #     items.each do |i|
-  #       i.attributes.update do |u|
-  #           u.set 'viewed' => 1
-  #       end
-  #       item_info = i.attributes.to_h
-  #     end
-  #   end
-    
-  #   return true
-  # end
+  def self.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
+    origin_id = current_user.id.to_s
+    # only users with active avatar can send whispers
+    if current_user.user_avatars.where(:is_active => true).count <= 0 
+      return "No photos"
+    elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
+      return "User blocked"
+    else
+      whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
+      # check if whisper sent today
+      if whispers_sent_today.count <= 0
+        n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+        WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
+        if n and notification_type == "2"
+          time = Time.now
+          RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
+          RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
+
+          record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
+          if record_found.count <= 0
+            WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+          else
+            record_found.first.update(:whisper_time => time)
+          end
+        end
+        n.send_push_notification_to_target_user(message)
+
+        return "true"
+      else
+        return "Cannot send more today"
+      end
+      
+    end
+  end
 
 
   def send_push_notification_to_target_user(message)

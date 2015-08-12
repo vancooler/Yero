@@ -38,47 +38,18 @@ class WhispersController < ApplicationController
 
   def api_create
     target_id = params[:target_id]
-    origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
     venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
     notification_type = params[:notification_type].to_s
     intro = params[:intro].blank? ? "" : params[:intro].to_s
+    message = current_user.first_name + " just sent you a whisper"   
     
-    if params[:message].nil? and notification_type == "2"
-      message = current_user.first_name + " just sent you a whisper"   
-    else
-      message = params[:message]
-    end
+    result = WhisperNotification.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
 
-    if notification_type == "2"
-      origin_id = current_user.id.to_s
-    end
-    
-    # only users with active avatar can send whispers
-    if current_user.user_avatars.where(:is_active => true).count > 0 and !BlockUser.check_block(origin_id.to_i, target_id.to_i)
-      whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
-      # check if whisper sent today
-      if whispers_sent_today.count <= 0
-        n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
-        WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
-        if n and notification_type == "2"
-          time = Time.now
-          RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
-          RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
-
-          record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
-          if record_found.count <= 0
-            WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
-          else
-            record_found.first.update(:whisper_time => time)
-          end
-        end
-        n.send_push_notification_to_target_user(message)
-      end
+    if result == "true"
       render json: success
     else
-      render json: error("Cannot send whisper for some reason")
-    end
-      
+      render json: error(result)
+    end  
   end
 
   # def api_read
