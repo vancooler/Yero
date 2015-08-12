@@ -1,6 +1,6 @@
 ActiveAdmin.register BlockUser do
   menu :parent => "REPORT"
-  actions :index, :delete
+  actions :index, :destroy
   # config.sort_order = 'frequency_desc'
   # def scoped_collection
   #   super.includes :reported_user, :reporting_user # prevents N+1 queries to your database
