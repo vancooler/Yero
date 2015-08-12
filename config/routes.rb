@@ -140,9 +140,7 @@ Rails.application.routes.draw do
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
-  get 'api/v1/users', to: 'users#index'
-  put 'api/v1/users/join', to: 'users#join'
-
+  post 'api/v1/users', to: 'users#index'
   post 'api/v1/requests', to: 'users#requests'
   post 'api/v1/whispers', to: 'users#requests_new'
   post 'api/v1/report', to: 'users#report'
