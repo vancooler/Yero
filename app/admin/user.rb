@@ -60,11 +60,9 @@ ActiveAdmin.register User do
   index do
   	column :id
     column :email
-    column :key
     column :birthday
     column :first_name
     column :gender
-    column :apn_token
     column :is_connected
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
