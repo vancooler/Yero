@@ -115,21 +115,21 @@ class UsersController < ApplicationController
     end
   end
 
-  def whisper_sent
-    if params[:timestamp].nil?
-      timestamp = Time.now.to_i
-    else
-      timestamp = params[:timestamp].to_i
-    end
-    state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id], timestamp)
-    p 'state'
-    p state
-    if state == true
-      render json: success(true)
-    else
-      render json: success(false)
-    end
-  end 
+  # def whisper_sent
+  #   if params[:timestamp].nil?
+  #     timestamp = Time.now.to_i
+  #   else
+  #     timestamp = params[:timestamp].to_i
+  #   end
+  #   state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id], timestamp)
+  #   p 'state'
+  #   p state
+  #   if state == true
+  #     render json: success(true)
+  #   else
+  #     render json: success(false)
+  #   end
+  # end 
 
 
   # def requests
