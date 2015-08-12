@@ -57,7 +57,7 @@ Rails.application.routes.draw do
     put 'admin/remove-line-id/:id', to: 'admin/user_screenings#remove_line', as: :admin_remove_line_id
     post 'admin/user-join/:id', to: 'admin/users#join_network', as: :admin_user_join
     post 'admin/user-leave/:id', to: 'admin/users#leave_network', as: :admin_user_leave
-    post 'admin/user-send-whisper/:id', to: 'admin/users#send-whisper', as: :admin_user_send_whisper
+    post 'admin/user-send-whisper/:id', to: 'admin/users#send_whisper', as: :admin_user_send_whisper
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
     post 'api/nightly/update_regular',   to: 'nightlies#update_regular', as: :update_regular_nightly
@@ -140,7 +140,9 @@ Rails.application.routes.draw do
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
-  post 'api/v1/users', to: 'users#index'
+  get 'api/v1/users', to: 'users#index'
+  put 'api/v1/users/join', to: 'users#join'
+
   post 'api/v1/requests', to: 'users#requests'
   post 'api/v1/whispers', to: 'users#requests_new'
   post 'api/v1/report', to: 'users#report'
