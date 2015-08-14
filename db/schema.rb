@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150811123739) do
+ActiveRecord::Schema.define(version: 20150814111505) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -393,6 +393,8 @@ ActiveRecord::Schema.define(version: 20150811123739) do
     t.boolean  "is_active",         default: true
     t.string   "avatar_tmp"
     t.integer  "order"
+    t.text     "origin_url"
+    t.text     "thumb_url"
   end
 
   create_table "user_notification_preferences", force: true do |t|
@@ -437,6 +439,7 @@ ActiveRecord::Schema.define(version: 20150811123739) do
     t.string   "email_reset_token"
     t.string   "current_venue"
     t.string   "current_city"
+    t.boolean  "fake_user",                             default: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
