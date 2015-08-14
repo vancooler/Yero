@@ -755,6 +755,26 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
+  def self.accept_friend_viewed_by_sender(id)
+    dynamo_db = AWS::DynamoDB.new
+    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    table = dynamo_db.tables[table_name]
+    if !table.schema_loaded?
+      table.load_schema
+    end
+    items = table.items.where(:target_id).equals(id.to_s).where(:notification_type).equals("3").where(:viewed).equals(0)
+    if items.count > 0
+      items.each do |i|
+        i.attributes.update do |u|
+            u.set 'viewed' => 1
+        end
+        item_info = i.attributes.to_h
+      end
+    end
+    return true
+  end
+
+
   def self.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
     origin_id = current_user.id.to_s
     # only users with active avatar can send whispers

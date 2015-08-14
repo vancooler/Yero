@@ -1,0 +1,43 @@
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<link rel="stylesheet" href="http://d3q6uu7asevdsg.cloudfront.net/1.3/css/link_texting.min.css">
+<style type="text/css">
+  /* Add your own LinkTexting form style overrides in your site stylesheet or in this style block.
+  We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
+  .linkTextingInner{
+    width: 420px;
+  }
+  .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
+    width: 240px;
+  }
+  .linkTextingButton{
+    height: 42px;
+  }
+</style>
+<div class="linkTextingWidget">
+  <div class="linkTextingInner">
+    <input type="hidden" class="linkID" value="91cf03dc-e5f1-4f80-84fc-455ac9f9bde1">
+    <div>
+    <span class="linkTexting">
+      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting"></input>
+    </span>
+    <span class="linkTexting">
+      <button class="linkTextingButton" type="button" id="sendButton_linkTexting">Text me a link</button>
+    </span>
+  </div>
+    <div class="linkTextingError" id="linkTextingError" style="display:none;"></div>
+    <!-- <div class="poweredDiv">Powered by <a class="poweredLink" href="https://www.linktexting.com" target="_blank">LinkTexting</a></div> -->
+  </div>
+</div>
+<script type="text/javascript">
+  /* All Country data is lowercase ISO2 standard http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 */
+  /* Default Country, if set to "auto" will determine the visiting user's country via their location */
+  var linkTextingDefaultCountry = "ca";
+  /* If using automatic country detection with https or over 1,000 visits/day go to http://ipinfo.io, get a token, and place it here */ 
+  var linkTextingIpinfoToken = "";
+  /* Preferred Countries in Dropdown */
+  var linkTextingPreferredCountries = ["ca", "us"];
+  /* Countries available in dropdown */
+  var linkTextingOnlyCountries = ["af","al","dz","as","ad","ao","ai","ag","ar","am","aw","au","at","az","bs","bh","bd","bb","by","be","bz","bj","bm","bt","bo","ba","bw","br","io","vg","bn","bg","bf","bi","kh","cm","ca","cv","bq","ky","cf","td","cl","cn","co","km","cd","cg","ck","cr","ci","hr","cu","cw","cy","cz","dk","dj","dm","do","ec","eg","sv","gq","er","ee","et","fk","fo","fj","fi","fr","gf","pf","ga","gm","ge","de","gh","gi","gr","gl","gd","gp","gu","gt","gn","gw","gy","ht","hn","hk","hu","is","in","id","ir","iq","ie","il","it","jm","jp","jo","kz","ke","ki","kw","kg","la","lv","lb","ls","lr","ly","li","lt","lu","mo","mk","mg","mw","my","mv","ml","mt","mh","mq","mr","mu","mx","fm","md","mc","mn","me","ms","ma","mz","mm","na","nr","np","nl","nc","nz","ni","ne","ng","nu","nf","kp","mp","no","om","pk","pw","ps","pa","pg","py","pe","ph","pl","pt","pr","qa","re","ro","ru","rw","bl","sh","kn","lc","mf","pm","vc","ws","sm","st","sa","sn","rs","sc","sl","sg","sx","sk","si","sb","so","za","kr","ss","es","lk","sd","sr","sz","se","ch","sy","tw","tj","tz","th","tl","tg","tk","to","tt","tn","tr","tm","tc","tv","vi","ug","ua","ae","gb","us","uy","uz","vu","va","ve","vn","wf","ye","zm","zw"];
+</script>
+<script type="text/javascript" src="http://d3q6uu7asevdsg.cloudfront.net/1.3/js/link_texting.min.js"></script>
+  
