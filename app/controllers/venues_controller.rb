@@ -331,23 +331,7 @@ class VenuesController < ApplicationController
     end
 
     # venues = Venue.all
-    venues = Venue.near_venues(latitude, longitude, distance)
-
-    if !without_featured_venues
-      campus = VenueType.find_by_name("Campus")
-
-      if !campus.nil?
-        venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
-      end
-
-      # reorder it based on featured and featured order
-      featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
-      if !featured_venues.empty?
-        other_venues = venues - featured_venues
-        featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
-        venues = featured_venues + other_venues
-      end
-    end
+    venues = Venue.near_venues(latitude, longitude, distance, without_featured_venues)
 
     page_number = nil
     venues_per_page = nil
