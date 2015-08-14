@@ -19,7 +19,7 @@
 			<a href="https://itunes.apple.com/app/id972272976" class="hero-download-link" target="_blank">
 				<%= image_tag "app-store.svg"%>
 			</a>
-			<% if ENV['DYNAMODB_PREFIX'].nil? or ENV['DYNAMODB_PREFIX'] == 'Production'%>
+			<% if ENV['DYNAMODB_PREFIX'].nil? or ENV['DYNAMODB_PREFIX'] == 'hhProduction'%>
 				<div class="show-for-medium-up">
 					<%= render "linktexting"%>
 				</div>
