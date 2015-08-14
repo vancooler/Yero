@@ -168,8 +168,8 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     selectable_column
   	column :id
     column "Image", :avatar do |avatar|
-      link_to avatar.avatar.url, :target => "_blank" do 
-        image_tag avatar.avatar.thumb.url, {:style => "height:100px;width:100px;"}
+      link_to avatar.origin_url, :target => "_blank" do 
+        image_tag avatar.thumb_url, {:style => "height:100px;width:100px;"}
       end
     end
     column "User (ID)", :user

@@ -353,8 +353,8 @@ class User < ActiveRecord::Base
         else
           json.array! avatars do |a|
 
-            json.avatar a.avatar.url
-            json.thumbnail a.avatar.thumb.url
+            json.avatar a.origin_url
+            json.thumbnail a.thumb_url
             json.default (!a.order.nil? and a.order == 0)
             json.is_active a.is_active
             json.avatar_id a.id
@@ -680,8 +680,8 @@ class User < ActiveRecord::Base
             if other_avatars.count > 0
               other_avatars.each do |oa|
                 new_item = {
-                  avatar: !oa.avatar.nil? ? oa.avatar.url : '',
-                  thumbnail: !oa.avatar.nil? ? oa.avatar.thumb.url : '',
+                  avatar: !oa.avatar.nil? ? oa.origin_url : '',
+                  thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
                   avatar_id: oa.id,
                   default: oa.order.nil? ? true : (oa.order==0),
                   is_active: true,
@@ -928,8 +928,8 @@ class User < ActiveRecord::Base
         else
           json.array! avatars do |a|
 
-            json.avatar a.avatar.url
-            json.thumbnail a.avatar.thumb.url
+            json.avatar a.origin_url
+            json.thumbnail a.thumb_url
             json.default (!a.order.nil? and a.order == 0)
             json.is_active a.is_active
             json.avatar_id a.id
