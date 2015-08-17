@@ -1,3 +1,8 @@
+
+
+<%if true%>
+
+
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 <link rel="stylesheet" href="http://d3q6uu7asevdsg.cloudfront.net/1.3/css/link_texting.min.css">
 <style type="text/css">
@@ -11,21 +16,15 @@
   }
   .linkTextingButton{
     height: 42px;
+    margin-left: 24px;
   }
 </style>
 <div class="linkTextingWidget">
   <div class="linkTextingInner">
     <input type="hidden" class="linkID" value="91cf03dc-e5f1-4f80-84fc-455ac9f9bde1">
-    <div>
-    <span class="linkTexting">
-      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting"></input>
-    </span>
-    <span class="linkTexting">
-      <button class="linkTextingButton" type="button" id="sendButton_linkTexting">Text me a link</button>
-    </span>
-  </div>
+    <input class="linkTextingInput" type="tel" id="numberToText_linkTexting"></input>
+    <button class="linkTextingButton" type="button" id="sendButton_linkTexting">Text me a link</button>
     <div class="linkTextingError" id="linkTextingError" style="display:none;"></div>
-    <!-- <div class="poweredDiv">Powered by <a class="poweredLink" href="https://www.linktexting.com" target="_blank">LinkTexting</a></div> -->
   </div>
 </div>
 <script type="text/javascript">
@@ -41,3 +40,4 @@
 </script>
 <script type="text/javascript" src="http://d3q6uu7asevdsg.cloudfront.net/1.3/js/link_texting.min.js"></script>
   
+<%end%>

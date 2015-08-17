@@ -60,6 +60,7 @@ class UsersController < ApplicationController
       max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
       venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
       puts "EVERYONE: " + params[:everyone].to_s
+      everyone = true
       everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
       page_number = nil
       users_per_page = nil
@@ -1394,6 +1395,9 @@ class UsersController < ApplicationController
   end
 
   def get_api_token
+    if api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]
+      params[:token] = api_token
+    end
     if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
       params[:token] = api_token
     end

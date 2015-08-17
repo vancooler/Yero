@@ -18,7 +18,7 @@ body{
 	}
 }
 .hero {
-	background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+	background: url(<%= asset_path 'homepagebg_ver2.jpg' %>) no-repeat center top;
 	background-size: cover;
 	@media #{$medium-up}{
 		float: left;
@@ -68,7 +68,7 @@ body{
 	}
 
 	@media #{$screen} and (max-width: 21em){
-		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat left top;
+		background: url(<%= asset_path 'homepagebg_ver2.jpg' %>) no-repeat left top;
 		background-size: cover;
 	}
 }
@@ -611,7 +611,7 @@ body{
 	}
 	.venues-hero {
 		color: #fff;
-		background: url(<%= asset_path 'venueheader.jpg' %>) no-repeat center;
+		background: url(<%= asset_path 'venuebg.jpg' %>) no-repeat center;
 		background-size: cover;
 		padding-bottom: 50px;
 		@media #{$medium-up} {
@@ -1827,7 +1827,7 @@ only screen and (        min-device-pixel-ratio: 2)      and (min-width: 700px),
 only screen and (                min-resolution: 192dpi) and (min-width: 700px),
 only screen and (                min-resolution: 2dppx)  and (min-width: 700px) { 
 	.hero {
-		background: url(<%= asset_path 'bg-new.jpg' %>) no-repeat center top;
+		background: url(<%= asset_path 'homepagebg_ver2_retina.jpg' %>) no-repeat center top;
 		background-size: 100%;
 		h2{
 			font-size: 1.7rem;
@@ -1937,6 +1937,12 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 				}
 			}
 
+		}
+	}
+	.for-venues {
+	
+		.venues-hero {
+			background: url(<%= asset_path 'venuebg_retina.jpg' %>) no-repeat center;
 		}
 	}
 }
