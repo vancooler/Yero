@@ -795,6 +795,14 @@ class UsersController < ApplicationController
       end
     end
 
+    if !params[:instagram_token].nil? 
+      if params[:instagram_token].match(/\s/).blank?
+        user.instagram_token = params[:instagram_token]
+      else
+        user.instagram_token = params[:instagram_token].gsub!(/\s+/, "") 
+      end
+    end
+
     if !params[:snapchat_id].nil? 
       if params[:snapchat_id].match(/\s/).blank?
         user.snapchat_id = params[:snapchat_id]

@@ -337,6 +337,7 @@ class User < ActiveRecord::Base
       json.email email
       json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
       json.instagram_id (instagram_id.blank? ? '' : instagram_id)
+      json.instagram_token (instagram_token.blank? ? '' : instagram_token)
       json.wechat_id (wechat_id.blank? ? '' : wechat_id)
       json.line_id (line_id.blank? ? '' : line_id)
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
@@ -1006,5 +1007,32 @@ class User < ActiveRecord::Base
     users.each do |user|
       user.join_network
     end
+  end
+
+  def self.import(file)
+
+    CSV.foreach(file.path, headers: true) do |row|
+      user_obj = row.to_hash
+      puts user_obj
+      email = user_obj['Email'].nil? ? '' : user_obj['Email']
+      first_name = user_obj['First Name'].nil? ? '' : user_obj['First Name']
+      password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
+      key = loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless User.exists?(key: random_token)
+      end
+      instagram_id = user_obj['Instagram Id']
+      snapchat_id = user_obj['Snapchat Id']
+      wechat_id = user_obj['Wechat Id']
+      line_id = user_obj['Line Id']
+      birthday = user_obj['Birthday']
+      gender = user_obj['Gender']
+      introduction_1 = user_obj['Introduction']
+      is_connected = false
+      exclusive = false
+      fake_user = true
+
+    end
+    return true
   end
 end
