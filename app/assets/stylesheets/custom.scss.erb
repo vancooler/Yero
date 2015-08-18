@@ -32,8 +32,8 @@ body{
 	    text-align: center;
 		div.row{
 			
-			padding-top: 230px;
-			padding-bottom: 170px;
+			padding-top: 240px;
+			padding-bottom: 130px;
 		}
 	}
 	@media #{$large-up}{
@@ -65,11 +65,26 @@ body{
 	@media #{$screen} and (max-width: 25em){
 		padding: 50px 0;
 		min-height: 335px;
+		.row{
+			padding-top: 20px;	
+		}
 	}
 
 	@media #{$screen} and (max-width: 21em){
 		background: url(<%= asset_path 'homepagebg_ver2.jpg' %>) no-repeat left top;
 		background-size: cover;
+		min-height: 100px;
+	    max-height: 280px;
+	    padding-top: 24px;
+		.row{
+
+			p, a{
+				font-size: 14px;
+			}
+			h2{
+				font-size: 1.16em;
+			}
+		}
 	}
 }
 .hero h5,
@@ -95,6 +110,10 @@ body{
 		line-height: 1.6;
 		@media #{$medium-up}{
 			line-height: 3;
+		}
+
+		@media #{$small-only}{
+			letter-spacing: 0.01em;
 		}
 	}
 }
@@ -703,7 +722,7 @@ body{
 		//margin-top: 225px;
 	}
 	@media #{$small-only} {
-		font-size: 1.5em;
+		font-size: 1.3em;
 	}
 	@media #{$screen} and (max-width: 21em)  {
 		font-size: 1.36em;
@@ -712,8 +731,8 @@ body{
 
 .hero-download-link {
 	display: block;
-	margin-top: 3rem;
-	margin-bottom: 1.7rem;
+	margin-top: 2rem;
+	margin-bottom: 2rem;
 	width: 135px;
 	margin-left: auto;
 	margin-right: auto;

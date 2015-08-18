@@ -13,15 +13,29 @@
     width: 420px;
   }
   .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
-    width: 240px;
+    width: 175px;
     height: 32px;
     padding-top: 12px;
+    padding-left: 40px;
+    font-size: 14px;
   }
   .linkTextingButton{
     height: 32px;
-    margin-left: 24px;
+    margin-left: 12px;
     line-height: 24px;
-
+    width: 120px;
+    background-color: #888888;
+  }
+  .linkTextingButton:disabled{
+    background-color: #888888;
+    color: #ffffff;
+  }
+  .linkTextingButton:hover{
+    background-color: #2effa5;
+  }
+  .linkTextingWidget{
+    margin-top: 60px;
+    margin-bottom: 10px;
   }
 </style>
 <div class="linkTextingWidget">
@@ -29,7 +43,7 @@
     <input type="hidden" class="linkID" value="91cf03dc-e5f1-4f80-84fc-455ac9f9bde1">
     <div>
     <span class="linkTexting">
-      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting" placeholder="(604) 123-4567"></input>
+      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting" placeholder="(604) 555-5555"></input>
     </span>
     <span class="linkTexting">
       <button class="linkTextingButton" type="button" id="sendButton_linkTexting">Text me a link</button>
