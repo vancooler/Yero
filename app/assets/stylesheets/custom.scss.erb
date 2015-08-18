@@ -1853,9 +1853,14 @@ only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 700px),
 only screen and (        min-device-pixel-ratio: 2)      and (min-width: 700px),
 only screen and (                min-resolution: 192dpi) and (min-width: 700px),
 only screen and (                min-resolution: 2dppx)  and (min-width: 700px) { 
+	.top-bar-section {
+		ul{
+			line-height: 3.2;
+		}
+	}
 	.hero {
 		background: url(<%= asset_path 'homepagebg_ver2_retina.jpg' %>) no-repeat center top;
-		background-size: 100%;
+		background-size: cover;
 		h2{
 			font-size: 1.7rem;
 		}
