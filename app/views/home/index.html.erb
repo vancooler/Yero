@@ -16,7 +16,7 @@
 				Connect with people in the same club, college,
 				festival or just around your city.
 			</p>
-			<% if ENV['DYNAMODB_PREFIX'].nil? or ENV['DYNAMODB_PREFIX'] == 'Dev'%>
+			<% if ENV['DYNAMODB_PREFIX'].nil? or ENV['DYNAMODB_PREFIX'] == 'Production'%>
 				<div class="show-for-medium-up">
 					<%= render "linktexting"%>
 				</div>
