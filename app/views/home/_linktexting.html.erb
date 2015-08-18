@@ -9,14 +9,19 @@
   /* Add your own LinkTexting form style overrides in your site stylesheet or in this style block.
   We recommend moving this block and the preceding CSS link to the HEAD of your HTML file. */
   .linkTextingInner{
+    height: 32px;
     width: 420px;
   }
   .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
     width: 240px;
+    height: 32px;
+    padding-top: 12px;
   }
   .linkTextingButton{
-    height: 42px;
+    height: 32px;
     margin-left: 24px;
+    line-height: 24px;
+
   }
 </style>
 <div class="linkTextingWidget">
@@ -24,7 +29,7 @@
     <input type="hidden" class="linkID" value="91cf03dc-e5f1-4f80-84fc-455ac9f9bde1">
     <div>
     <span class="linkTexting">
-      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting"></input>
+      <input class="linkTextingInput" type="tel" id="numberToText_linkTexting" placeholder="(604) 123-4567"></input>
     </span>
     <span class="linkTexting">
       <button class="linkTextingButton" type="button" id="sendButton_linkTexting">Text me a link</button>
