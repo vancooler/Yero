@@ -1065,8 +1065,8 @@ class User < ActiveRecord::Base
         introduction_1 = user_obj['Bio']
         timezone_name = "America/Vancouver"
         current_city = "Vancovuer"
-        latitude = user_obj['latitude'].to_f
-        longitude = user_obj['longitude'].to_f
+        latitude = user_obj['Latitude'].to_f
+        longitude = user_obj['Longitude'].to_f
         is_connected = false
         exclusive = false
         fake_user = true
@@ -1115,6 +1115,9 @@ class User < ActiveRecord::Base
         end
       else
         # create photos
+        latitude = user_obj['Latitude'].to_f
+        longitude = user_obj['Longitude'].to_f
+        check_user.update(:latitude => latitude, :longitude => longitude)
         id_array = ['1', '2', '3', '4', '5', '6']
         id_array.each do |avatar_id|
           current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
