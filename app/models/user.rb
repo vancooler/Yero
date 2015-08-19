@@ -1075,8 +1075,43 @@ class User < ActiveRecord::Base
               end
             end
           end
-
         end
+      else
+        # create photos
+        id_array = ['1', '2', '3', '4', '5', '6']
+        id_array.each do |avatar_id|
+          current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
+          
+          avatar = UserAvatar.new(user: check_user)
+          next_order = current_order.nil? ? 0 : current_order+1
+          if next_order > avatar_id.to_i
+            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name+avatar_id+'.jpg'
+            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name.downcase+avatar_id+'.jpg'
+            res = Net::HTTP.get_response(URI.parse(origin_img_url))
+            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+
+            if res.code == '200'
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = origin_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            elsif downcase_res.code == '200'
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = downcase_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            end
+          end
+        end
+
       end
     end
     return true
