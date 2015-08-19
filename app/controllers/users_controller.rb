@@ -1,7 +1,25 @@
 class UsersController < ApplicationController
-  prepend_before_filter :get_api_token, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
-  before_action :authenticate_api, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  prepend_before_filter :get_api_token, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_api, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_admin_user!, only: [:import]
   skip_before_filter  :verify_authenticity_token
+
+
+  def import
+    myfile = params[:csv_file]
+    require 'csv'    
+
+    if myfile.blank? or myfile.content_type != 'text/csv'
+      redirect_to :back, :notice => "Invalid file!" 
+    else
+      if User.import(myfile)
+        redirect_to admin_users_url, :notice => "Users Imported!" 
+      else
+        redirect_to :back, :notice => "Invalid csv structure!"
+      end
+    end
+    
+  end
 
   def show
     puts "THE ID"

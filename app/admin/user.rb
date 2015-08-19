@@ -6,6 +6,10 @@ ActiveAdmin.register User do
   config.per_page = 100
   actions :index, :show, :edit, :update, :destroy
 
+  action_item :only => :index, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do 
+    link_to('CSV IMPORT', admin_import_users_csv_url)
+  end
+
   controller do
     def join_network
       user = User.find_by_id(params[:id])

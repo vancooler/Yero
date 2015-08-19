@@ -1010,28 +1010,74 @@ class User < ActiveRecord::Base
   end
 
   def self.import(file)
-
     CSV.foreach(file.path, headers: true) do |row|
       user_obj = row.to_hash
       puts user_obj
       email = user_obj['Email'].nil? ? '' : user_obj['Email']
-      first_name = user_obj['First Name'].nil? ? '' : user_obj['First Name']
-      password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
-      key = loop do
-        random_token = SecureRandom.urlsafe_base64(nil, false)
-        break random_token unless User.exists?(key: random_token)
-      end
-      instagram_id = user_obj['Instagram Id']
-      snapchat_id = user_obj['Snapchat Id']
-      wechat_id = user_obj['Wechat Id']
-      line_id = user_obj['Line Id']
-      birthday = user_obj['Birthday']
-      gender = user_obj['Gender']
-      introduction_1 = user_obj['Introduction']
-      is_connected = false
-      exclusive = false
-      fake_user = true
+      check_user = User.find_by_email(email)
+      if check_user.nil?
+        first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
+        password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
+        key = loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
+        snapchat_id = rand(36**5).to_s(36)
+        birthday = user_obj['Birthday']
+        gender = user_obj['Gender']
+        introduction_1 = user_obj['Bio']
+        timezone_name = "America/Vancouver"
+        current_city = "Vancovuer"
+        latitude = user_obj['latitude'].to_f
+        longitude = user_obj['longitude'].to_f
+        is_connected = false
+        exclusive = false
+        fake_user = true
 
+        # create user
+        user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true)
+
+        if !user.nil?
+          user.birthday = user.birthday + 1900.years
+          user.save
+          # create photos
+          id_array = ['1', '2', '3', '4', '5', '6']
+          id_array.each do |avatar_id|
+            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name+avatar_id+'.jpg'
+            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name.downcase+avatar_id+'.jpg'
+            res = Net::HTTP.get_response(URI.parse(origin_img_url))
+            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+            if res.code == '200'
+              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+              
+              avatar = UserAvatar.new(user: user)
+              next_order = current_order.nil? ? 0 : current_order+1
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = origin_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            elsif downcase_res.code == '200'
+              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+              
+              avatar = UserAvatar.new(user: user)
+              next_order = current_order.nil? ? 0 : current_order+1
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = downcase_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            end
+          end
+
+        end
+      end
     end
     return true
   end
