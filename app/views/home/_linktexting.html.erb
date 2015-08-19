@@ -37,6 +37,29 @@
     margin-top: 60px;
     margin-bottom: 10px;
   }
+  @media
+  only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 700px),
+  only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 700px),
+  only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 700px),
+  only screen and (        min-device-pixel-ratio: 2)      and (min-width: 700px),
+  only screen and (                min-resolution: 192dpi) and (min-width: 700px),
+  only screen and (                min-resolution: 2dppx)  and (min-width: 700px) { 
+    .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
+      width: 155px;
+      height: 26px;
+      padding-top: 10px;
+      padding-left: 40px;
+      font-size: 12px;
+    }
+    .linkTextingButton{
+      height: 26px;
+      margin-left: 8px;
+      line-height: 24px;
+      width: 100px;
+      font-size: 12px;
+      background-color: #888888;
+    }
+  }
 </style>
 <div class="linkTextingWidget">
   <div class="linkTextingInner">
