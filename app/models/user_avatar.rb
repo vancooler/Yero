@@ -46,11 +46,11 @@ class UserAvatar < ActiveRecord::Base
     end
   end
 
-  def save_and_copy_url
-    if self.save
-      self.origin_url = self.avatar.url
-      self.thumb_url = self.avatar.thumb.url
-      self.save
+  def self.save_and_copy_url(avatar)
+    if avatar.save
+      avatar.origin_url = avatar.avatar.url
+      avatar.thumb_url = avatar.avatar.thumb.url
+      avatar.save
     end
   end
 
