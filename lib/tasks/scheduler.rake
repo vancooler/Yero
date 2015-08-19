@@ -22,21 +22,21 @@ task :venue_locs => :environment do
   puts "Done"
 end
 
-desc "CRON Job, 5pm - Network Open task"
-task :network_open => :environment do
-  puts "Checking for networks approaching 5pm"
-  User.network_open
-  puts "Done."
-end
+# desc "CRON Job, 5pm - Network Open task"
+# task :network_open => :environment do
+#   puts "Checking for networks approaching 5pm"
+#   User.network_open
+#   puts "Done."
+# end
 
-task :join_some_users => :environment do
-  if user = User.find_by_id(700)
-    user.join_network
-  end
-  if user = User.find_by_id(704)
-    user.join_network
-  end
-end
+# task :join_some_users => :environment do
+#   if user = User.find_by_id(700)
+#     user.join_network
+#   end
+#   if user = User.find_by_id(704)
+#     user.join_network
+#   end
+# end
 
 
 task :network_close => :environment do
@@ -44,6 +44,14 @@ task :network_close => :environment do
   User.network_close
   puts "Done."
 end
+
+task :fake_users_join => :environment do
+  puts "Random join fake users at 5pm"
+  User.fake_users_join
+  puts "Done."
+end
+
+
 
 task :sync_gimbal => :environment do
   puts "Start to sync gimbal places"

@@ -1009,6 +1009,43 @@ class User < ActiveRecord::Base
     end
   end
 
+
+  def self.random_join_fake_users(timezone, number_of_male, number_of_female)
+    female_fake_users = User.where(timezone_name: timezone).where(is_connected: false).where(fake_user: true).where(gender: 'F').sample(number_of_female)
+    male_fake_users = User.where(timezone_name: timezone).where(is_connected: false).where(fake_user: true).where(gender: 'M').sample(number_of_male)
+
+    if !female_fake_users.blank?
+      female_fake_users.each do |user|
+        user.join_network
+      end
+    end
+    if !male_fake_users.blank?
+      male_fake_users.each do |user|
+        user.join_network
+      end
+    end
+  end
+
+  def self.fake_users_join
+    times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
+    times_array = Array.new # Make a new array to hold the times that are at 5:00pm
+    times_result.each do |timezone| # Check each timezone
+      Time.zone = timezone["timezone"] # Assign timezone
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 1700 and int_time < 1719 # If time is 17:00 ~ 17:19
+        open_network_tz = Time.zone.name.to_s #format it
+        times_array << open_network_tz #Throw into array
+      end
+    end
+
+    round_array = [2, 3]
+    random_round = round_array.sample
+    (1..random_round).each do |i|
+      User.delay(run_at: (5*i).minutes.from_now).random_join_fake_users(times_array, 2, 3)
+    end
+    User.random_join_fake_users(times_array, 2, 3)
+  end
+
   def self.import(file)
     CSV.foreach(file.path, headers: true) do |row|
       user_obj = row.to_hash
@@ -1055,11 +1092,7 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = origin_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
+              avatar.delay.save_and_copy_url
             elsif downcase_res.code == '200'
               current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
               
@@ -1068,11 +1101,7 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = downcase_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
+              avatar.delay.save_and_copy_url
             end
           end
         end
@@ -1094,20 +1123,12 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = origin_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
+              avatar.delay.save_and_copy_url
             elsif downcase_res.code == '200'
               avatar.order = next_order
 
               avatar.remote_avatar_url = downcase_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
+              avatar.delay.save_and_copy_url
             end
           end
         end

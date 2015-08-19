@@ -46,6 +46,14 @@ class UserAvatar < ActiveRecord::Base
     end
   end
 
+  def save_and_copy_url
+    if self.save
+      self.origin_url = self.avatar.url
+      self.thumb_url = self.avatar.thumb.url
+      self.save
+    end
+  end
+
   private
 
     def set_order_zero_if_only_one_avatar_present
