@@ -1066,7 +1066,7 @@ class User < ActiveRecord::Base
         timezone_name = "America/Vancouver"
         current_city = "Vancovuer"
         latitude = user_obj['Latitude'].to_f
-        longitude = user_obj['Longitude'].to_f
+        longitude = user_obj['Longtitude'].to_f
         is_connected = false
         exclusive = false
         fake_user = true
@@ -1116,7 +1116,7 @@ class User < ActiveRecord::Base
       else
         # create photos
         latitude = user_obj['Latitude'].to_f
-        longitude = user_obj['Longitude'].to_f
+        longitude = user_obj['Longtitude'].to_f
         check_user.update(:latitude => latitude, :longitude => longitude)
         id_array = ['1', '2', '3', '4', '5', '6']
         id_array.each do |avatar_id|
