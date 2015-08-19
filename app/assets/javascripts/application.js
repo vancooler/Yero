@@ -11,6 +11,7 @@
 // about supported directives.
 //
 
+//= require css_browser_selector
 //= require jquery_ujs
 //= require jquery.ui.autocomplete
 //= require foundation

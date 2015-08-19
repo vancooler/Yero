@@ -117,6 +117,28 @@ body{
 		}
 	}
 }
+
+.venues-hero {
+	h2 {
+		font-size: 2.075rem;
+	}
+	h2, h5, p {
+		color: #fff;
+	}
+	p {
+		letter-spacing: 0.1em;
+		font-family: "GothamBook";
+		line-height: 1.6;
+		@media #{$medium-up}{
+			line-height: 3;
+		}
+
+		@media #{$small-only}{
+			letter-spacing: 0.01em;
+		}
+	}
+}
+
 .feature h4 {
 	margin-bottom: 0.3rem;
 }
@@ -655,7 +677,15 @@ body{
 		margin-top: -25px;
 	}
 	#get-in-touch{
-		margin-top: 40px;
+		@media #{$medium-up}{
+			margin-top: 100px;
+		}
+		@media #{$large-up}{
+			margin-top: 80px;
+		}
+		@media #{$xlarge-up}{
+			margin-top: 120px;
+		}
 	}
 	.venues-hero {
 		color: #fff;
@@ -670,8 +700,8 @@ body{
 		    text-align: center;
 			div.row{
 				
-				padding-top: 240px;
-				padding-bottom: 216px;
+				padding-top: 200px;
+				padding-bottom: 190px;
 			}
 		}
 		@media #{$large-up}{
@@ -681,8 +711,8 @@ body{
 		    text-align: center;
 			div.row{
 				
-				padding-top: 230px;
-				padding-bottom: 232px;
+				padding-top: 190px;
+				padding-bottom: 212px;
 			}
 		}
 		
@@ -692,7 +722,7 @@ body{
 			display: table;
 		    text-align: center;
 			div.row{			
-				padding-top: 270px;
+				padding-top: 230px;
 				padding-bottom: 210px;
 			}
 		}
@@ -1952,13 +1982,22 @@ span#close:hover {
 	}
 }
 
+
+.venue-download-link {
+	@media #{$medium-up} {
+		img{
+			width: 20%;
+		}
+	}
+}
+
 @media
-only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 700px),
-only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 700px),
-only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 700px),
-only screen and (        min-device-pixel-ratio: 2)      and (min-width: 700px),
-only screen and (                min-resolution: 192dpi) and (min-width: 700px),
-only screen and (                min-resolution: 2dppx)  and (min-width: 700px) { 
+only screen and (-webkit-min-device-pixel-ratio: 2)      and (min-width: 1025px),
+only screen and (   min--moz-device-pixel-ratio: 2)      and (min-width: 1025px),
+only screen and (     -o-min-device-pixel-ratio: 2/1)    and (min-width: 1025px),
+only screen and (        min-device-pixel-ratio: 2)      and (min-width: 1025px),
+only screen and (                min-resolution: 192dpi) and (min-width: 1025px),
+only screen and (                min-resolution: 2dppx)  and (min-width: 1025px) { 
 	.contain-to-grid.top-header.sticky.show-for-medium-up.transparent{
 		.top-bar-section {
 			ul{
