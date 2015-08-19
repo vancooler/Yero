@@ -1128,7 +1128,7 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = downcase_img_url
-              UserAvatar.delay.save_and_copy_url(avatar)
+              UserAvatar.save_and_copy_url(avatar)
             end
           end
         end
