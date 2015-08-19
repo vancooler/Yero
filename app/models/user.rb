@@ -1084,7 +1084,7 @@ class User < ActiveRecord::Base
           
           avatar = UserAvatar.new(user: check_user)
           next_order = current_order.nil? ? 0 : current_order+1
-          if next_order > avatar_id.to_i
+          if next_order < avatar_id.to_i
             origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name+avatar_id+'.jpg'
             downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name.downcase+avatar_id+'.jpg'
             res = Net::HTTP.get_response(URI.parse(origin_img_url))
