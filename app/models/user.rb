@@ -1092,7 +1092,11 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = origin_img_url
-              UserAvatar.delay.save_and_copy_url(avatar)
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
             elsif downcase_res.code == '200'
               current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
               
@@ -1101,7 +1105,11 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = downcase_img_url
-              UserAvatar.delay.save_and_copy_url(avatar)
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
             end
           end
         end
@@ -1123,12 +1131,20 @@ class User < ActiveRecord::Base
               avatar.order = next_order
 
               avatar.remote_avatar_url = origin_img_url
-              UserAvatar.delay.save_and_copy_url(avatar)
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
             elsif downcase_res.code == '200'
               avatar.order = next_order
 
               avatar.remote_avatar_url = downcase_img_url
-              UserAvatar.save_and_copy_url(avatar)
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
             end
           end
         end
