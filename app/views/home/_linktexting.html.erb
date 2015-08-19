@@ -12,7 +12,7 @@
     height: 32px;
     width: 420px;
   }
-  .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
+  input.linkTextingInput{
     width: 175px;
     height: 32px;
     padding-top: 12px;
@@ -20,7 +20,7 @@
     font-size: 14px;
   }
 
-  .win .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
+  input.linkTextingInput.win{
     width: 175px;
     height: 32px;
     padding-top: 8px;
@@ -57,7 +57,14 @@
       margin-top: 40px;
       margin-bottom: 10px;
     }
-    .intl-tel-input input, .intl-tel-input input[type=tel], .intl-tel-input input[type=text]{
+    input.linkTextingInput{
+      width: 170px;
+      height: 26px;
+      padding-top: 10px;
+      padding-left: 40px;
+      font-size: 11px;
+    }
+    input.linkTextingInput.win{
       width: 170px;
       height: 26px;
       padding-top: 10px;
@@ -90,6 +97,17 @@
   </div>
 </div>
 <script type="text/javascript">
+  var OSName="Unknown OS";
+  if (navigator.appVersion.indexOf("Win")!=-1) OSName="Windows";
+  if (navigator.appVersion.indexOf("Mac")!=-1) OSName="MacOS";
+  if (navigator.appVersion.indexOf("X11")!=-1) OSName="UNIX";
+  if (navigator.appVersion.indexOf("Linux")!=-1) OSName="Linux";
+
+  if (OSName=="Windows"){
+    a = document.getElementsByClassName("linkTextingInput")[0];
+    a.className += " win";
+  }
+
   /* All Country data is lowercase ISO2 standard http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2 */
   /* Default Country, if set to "auto" will determine the visiting user's country via their location */
   var linkTextingDefaultCountry = "ca";
