@@ -559,12 +559,20 @@ body{
 	padding-bottom: 0px;
 	height: 600px;
 	position: relative;
-	@media #{$medium-up} {
+	@media #{$medium-only} {
+		height: 548px;
+		.text-content {
+			margin-top: 6%;
+			left: 50%;
+		}
+	}
+	@media #{$large-up} {
 		.text-content {
 			margin-top: 8%;
 			left: 50%;
 		}
 	}
+	
 	.image {
 		float: left !important;
 		position: relative;
@@ -576,11 +584,18 @@ body{
 			bottom: 16.5%;
 			left: 5%;
 			max-width: 400px;
+			@media #{$medium-only} {
+				max-width: 360px;
+			}
 			
 		}
-		@media #{$medium-up} {
+		@media #{$medium-only} {
+			margin-left: 5%;
+		}
+		@media #{$large-up} {
 			margin-left: 10%;
 		}
+		
 		@media #{$small-only} {
 			position: relative;
 			height: 275px;
@@ -596,13 +611,13 @@ body{
 		}
 	}
 	@media #{$small-only} {
-		height: 831px;
+		height: 859px;
 	}
 	@media #{$screen} and (max-width: 25em) {
-		height: 809px;
+		height: 837px;
 	}
 	@media #{$screen} and (max-width: 21em) {
-		height: 791px;
+		height: 795px;
 	}
 }
 
@@ -619,6 +634,17 @@ body{
 	// 		color: #2effa5;
 	// 	}
 	// }
+	p.page-content-details {
+	    width: 79%;
+	    margin-left: auto;
+	    margin-right: auto;
+	}
+	.pull-up{
+		@media #{$medium-up}{
+			position: relative;
+			top: -75px;
+		}
+	}
 	h1 img.logo {
 			margin-top: 10px;
 		@media #{$small-only} {
@@ -628,22 +654,89 @@ body{
 	.top-bar .toggle-topbar.menu-icon {
 		margin-top: -25px;
 	}
+	#get-in-touch{
+		margin-top: 40px;
+	}
 	.venues-hero {
 		color: #fff;
 		background: url(<%= asset_path 'venuebg.jpg' %>) no-repeat center;
 		background-size: cover;
-		padding-bottom: 50px;
+		//padding-bottom: 50px;
+		
+		@media #{$medium-up}{
+			width: 100%;
+			min-height: 450px;
+			display: table;
+		    text-align: center;
+			div.row{
+				
+				padding-top: 240px;
+				padding-bottom: 216px;
+			}
+		}
+		@media #{$large-up}{
+			width: 100%;
+			min-height: 600px;
+			display: table;
+		    text-align: center;
+			div.row{
+				
+				padding-top: 230px;
+				padding-bottom: 232px;
+			}
+		}
+		
+		@media #{$xlarge-up}{
+			width: 100%;
+			min-height: 720px;
+			display: table;
+		    text-align: center;
+			div.row{			
+				padding-top: 270px;
+				padding-bottom: 210px;
+			}
+		}
+		@media #{$screen} and (max-width: 40em){
+			padding: 50px 0;
+			min-height: 315px;
+		}
+		@media #{$screen} and (max-width: 25em){
+			padding: 50px 0;
+			min-height: 335px;
+			.row{
+				padding-top: 20px;	
+			}
+		}
+
+		@media #{$screen} and (max-width: 21em){
+			background: url(<%= asset_path 'homepagebg_ver2.jpg' %>) no-repeat left top;
+			background-size: cover;
+			min-height: 100px;
+		    max-height: 280px;
+		    padding-top: 24px;
+			.row{
+
+				p, a{
+					font-size: 14px;
+				}
+				h2{
+					font-size: 1.16em;
+				}
+			}
+		}
+		/*
 		@media #{$medium-up} {
 			margin-top: -65px;
 			height: 670px;
 			padding-top: 40px;
 		}
+		*/
 		h3 {
 			color: #fff;
 			text-transform: uppercase;
 		}
 		h2 {
-			font-size: 30px;
+			//font-size: 30px;
 			color: #fff;
 		}
 	}
@@ -717,6 +810,19 @@ body{
 }
 
 .hero h2 {
+	// margin-top: 50px;
+	@media #{$medium-up} {
+		//margin-top: 225px;
+	}
+	@media #{$small-only} {
+		font-size: 1.3em;
+	}
+	@media #{$screen} and (max-width: 21em)  {
+		font-size: 1.36em;
+	}
+}
+
+.venues-hero h2 {
 	// margin-top: 50px;
 	@media #{$medium-up} {
 		//margin-top: 225px;
@@ -1996,6 +2102,19 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 700px) 
 	.hero-download-link {
 		margin-top: 1.25rem;
 		margin-bottom: 1.25rem;
+		img{
+			height: 80%;
+			width: 80%;
+		}
+	}
+	.venue-download-link {
+		img{
+			height: 80%;
+			width: 80%;
+		}
+	}
+
+	a.mixpanel-link {
 		img{
 			height: 80%;
 			width: 80%;
