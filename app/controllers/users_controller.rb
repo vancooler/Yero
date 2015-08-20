@@ -80,6 +80,7 @@ class UsersController < ApplicationController
       puts "EVERYONE: " + params[:everyone].to_s
       everyone = true
       everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
+      puts "EVERYONE2: " + everyone.to_s
       page_number = nil
       users_per_page = nil
       page_number = params[:page].to_i + 1 if !params[:page].blank?

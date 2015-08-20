@@ -633,6 +633,7 @@ class User < ActiveRecord::Base
       # get all users with filter params
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       puts "RETURN USERS:"
+      puts everyone.to_s
       puts return_users.length
       if self.current_venue.blank?
         same_venue_user_ids = Array.new
