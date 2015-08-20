@@ -737,7 +737,7 @@ class User < ActiveRecord::Base
             json.id             user.id
             json.first_name     user.first_name
             # json.key            user.key
-            json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+            # json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
             json.gender         user.gender
             # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
