@@ -906,7 +906,7 @@ class User < ActiveRecord::Base
       first_name:     self.first_name,
       last_active:    self.last_active,
       last_activity:  self.last_activity,
-      since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
+      # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
       birthday:       (self.id != 0 ? self.birthday : ''),
       # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),

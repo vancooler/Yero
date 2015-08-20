@@ -63,7 +63,7 @@ end
 task :enough_users => :environment do
   puts "Checking for enough users"
 
-  previous_joint_users = User.where(:is_connected => true).where(:enough_user_notification_sent_tonight => false)
+  previous_joint_users = User.where(:is_connected => true).where(:fake_user => false).where(:enough_user_notification_sent_tonight => false)
   if previous_joint_users 
     # Send a notification to previous joint users -> enough users now
     gate_number = 4
