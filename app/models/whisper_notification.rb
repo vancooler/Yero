@@ -786,7 +786,9 @@ class WhisperNotification < AWS::Record::HashModel
       whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
       # check if whisper sent today
       if whispers_sent_today.count <= 0
-        n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+        if Rails.env == 'production'
+          n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+        end
         WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
         if n and notification_type == "2"
           time = Time.now
@@ -800,7 +802,9 @@ class WhisperNotification < AWS::Record::HashModel
             record_found.first.update(:whisper_time => time)
           end
         end
-        n.send_push_notification_to_target_user(message)
+        if Rails.env == 'production'
+          n.send_push_notification_to_target_user(message)
+        end
 
         return "true"
       else

@@ -333,7 +333,9 @@ class UsersController < ApplicationController
           # update local tmp db
           WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
           # update dynamodb
-          current_user.delay.viewed_by_sender(whispers_array)
+          if Rails.env == 'production'
+            current_user.delay.viewed_by_sender(whispers_array)
+          end
         end
       end
     end
@@ -343,7 +345,9 @@ class UsersController < ApplicationController
       # update local tmp db
       FriendByWhisper.where(:origin_user_id => current_user.id).update_all(:viewed => true)
       # update dynamodb
-      WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+      if Rails.env == 'production'
+        WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+      end
     end
 
     response_data = {
@@ -1288,65 +1292,65 @@ class UsersController < ApplicationController
 
   private
 
-  def requests_friends_json(return_users)
-    users = Jbuilder.encode do |json|
-      json.array! return_users.each do |user|
-        avatar_array = Array.new
-        avatar_array[0] = {
-              avatar: user["target_user_main"],
-              default: true
-            }
-        avatar_array[1] = {
-              avatar: user["target_user_secondary1"],
-              default: false
-            }
-        avatar_array[2] = {
-              avatar: user["target_user_secondary2"],
-              default: false
-            }
-        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
-        json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
-        json.actual_distance           current_user.actual_distance(user["target_user"])
-        json.id             user["target_user"]["id"]
-        json.first_name     user["target_user"]["first_name"]
-        json.key            user["target_user"]["key"]
-        json.last_active    user["target_user"]["last_active"]
-        json.last_activity  user["target_user"]["last_activity"]
-        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
-        json.gender         user["target_user"]["gender"]
-        if user["target_user"]["id"].to_i != 0
-          json.birthday       user["target_user"]["birthday"]
-          json.distance       current_user.distance_label(user["target_user"])
-        end
-        json.created_at     user["target_user"]["created_at"]
-        json.updated_at     user["target_user"]["updated_at"]
-        json.avatar_thumbnail user["target_user_thumb"] 
-        json.avatars         avatar_array
-        json.apn_token      user["target_user"].apn_token
-        json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
-        json.email  user["target_user"]["email"]
-        json.instagram_id  user["target_user"]["instagram_id"]
-        json.snapchat_id  user["target_user"]["snapchat_id"]
-        json.wechat_id  user["target_user"]["wechat_id"]
-        json.line_id  user["target_user"]["line_id"]
-        json.timestamp  user["timestamp"]
-        json.seconds_left  user["seconds_left"]
-        json.timestamp_read  Time.at(user["timestamp"])
-        json.accepted   user["accepted"].blank? ? nil : user["accepted"]
-        json.declined   user["declined"].blank? ? nil : user["declined"]
-        json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
-        json.intro_message user["intro"].blank? ? nil : user["intro"]
-        json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
+  # def requests_friends_json(return_users)
+  #   users = Jbuilder.encode do |json|
+  #     json.array! return_users.each do |user|
+  #       avatar_array = Array.new
+  #       avatar_array[0] = {
+  #             avatar: user["target_user_main"],
+  #             default: true
+  #           }
+  #       avatar_array[1] = {
+  #             avatar: user["target_user_secondary1"],
+  #             default: false
+  #           }
+  #       avatar_array[2] = {
+  #             avatar: user["target_user_secondary2"],
+  #             default: false
+  #           }
+  #       json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
+  #       json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
+  #       json.actual_distance           current_user.actual_distance(user["target_user"])
+  #       json.id             user["target_user"]["id"]
+  #       json.first_name     user["target_user"]["first_name"]
+  #       json.key            user["target_user"]["key"]
+  #       json.last_active    user["target_user"]["last_active"]
+  #       json.last_activity  user["target_user"]["last_activity"]
+  #       json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
+  #       json.gender         user["target_user"]["gender"]
+  #       if user["target_user"]["id"].to_i != 0
+  #         json.birthday       user["target_user"]["birthday"]
+  #         json.distance       current_user.distance_label(user["target_user"])
+  #       end
+  #       json.created_at     user["target_user"]["created_at"]
+  #       json.updated_at     user["target_user"]["updated_at"]
+  #       json.avatar_thumbnail user["target_user_thumb"] 
+  #       json.avatars         avatar_array
+  #       json.apn_token      user["target_user"].apn_token
+  #       json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
+  #       json.email  user["target_user"]["email"]
+  #       json.instagram_id  user["target_user"]["instagram_id"]
+  #       json.snapchat_id  user["target_user"]["snapchat_id"]
+  #       json.wechat_id  user["target_user"]["wechat_id"]
+  #       json.line_id  user["target_user"]["line_id"]
+  #       json.timestamp  user["timestamp"]
+  #       json.seconds_left  user["seconds_left"]
+  #       json.timestamp_read  Time.at(user["timestamp"])
+  #       json.accepted   user["accepted"].blank? ? nil : user["accepted"]
+  #       json.declined   user["declined"].blank? ? nil : user["declined"]
+  #       json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
+  #       json.intro_message user["intro"].blank? ? nil : user["intro"]
+  #       json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
 
-        json.latitude       user["target_user"].latitude  
-        json.longitude      user["target_user"].longitude 
+  #       json.latitude       user["target_user"].latitude  
+  #       json.longitude      user["target_user"].longitude 
 
-        json.introduction_1 user["target_user"].introduction_1.blank? ? '' : user["target_user"].introduction_1
-        json.notification_type 2
-      end         
-    end
-    return users 
-  end
+  #       json.introduction_1 user["target_user"].introduction_1.blank? ? '' : user["target_user"].introduction_1
+  #       json.notification_type 2
+  #     end         
+  #   end
+  #   return users 
+  # end
 
   def requests_user_whisper_json(return_users, is_friends)
     users = Jbuilder.encode do |json|
@@ -1379,38 +1383,38 @@ class UsersController < ApplicationController
     return users 
   end
 
-  def requests_venue_whisper_json(return_venues)
-    venues = Jbuilder.encode do |json|
-      json.array! return_venues.each do |venue|
-        venue_obj = Venue.find(venue["venue_id"])
-        if !venue_obj.nil?
-          venue_object = venue_obj.venue_object
-        end
-        # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
-        # if venue_avatar 
-        #   json.venue_avatar venue_avatar["avatar"]
-        # end
+  # def requests_venue_whisper_json(return_venues)
+  #   venues = Jbuilder.encode do |json|
+  #     json.array! return_venues.each do |venue|
+  #       venue_obj = Venue.find(venue["venue_id"])
+  #       if !venue_obj.nil?
+  #         venue_object = venue_obj.venue_object
+  #       end
+  #       # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+  #       # if venue_avatar 
+  #       #   json.venue_avatar venue_avatar["avatar"]
+  #       # end
 
-        # json.venue_name venue_obj["name"]
-        # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
-        json.timestamp venue["timestamp"]
-        # json.seconds_left  nil
-        json.timestamp_read Time.at(venue['timestamp'])
-        json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
-        json.declined   venue["declined"].blank? ? 0 : venue["declined"]
-        json.viewed venue["viewed"]
-        json.intro_message venue["intro"].blank? ? '' : venue["intro"]
-        # json.not_viewed_by_sender venue["not_viewed_by_sender"]
-        # json.created_date venue["created_date"]
-        json.whisper_id venue["whisper_id"]
-        json.notification_type  1
-        json.object_type "venue"
-        json.object venue_object
-      end
-    end
+  #       # json.venue_name venue_obj["name"]
+  #       # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+  #       json.timestamp venue["timestamp"]
+  #       # json.seconds_left  nil
+  #       json.timestamp_read Time.at(venue['timestamp'])
+  #       json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
+  #       json.declined   venue["declined"].blank? ? 0 : venue["declined"]
+  #       json.viewed venue["viewed"]
+  #       json.intro_message venue["intro"].blank? ? '' : venue["intro"]
+  #       # json.not_viewed_by_sender venue["not_viewed_by_sender"]
+  #       # json.created_date venue["created_date"]
+  #       json.whisper_id venue["whisper_id"]
+  #       json.notification_type  1
+  #       json.object_type "venue"
+  #       json.object venue_object
+  #     end
+  #   end
 
-    return venues
-  end
+  #   return venues
+  # end
 
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :line_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
