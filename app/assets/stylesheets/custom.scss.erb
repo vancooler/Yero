@@ -2133,9 +2133,16 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 1025px)
 		}
 	}
 	.for-venues {
-	
 		.venues-hero {
 			background: url(<%= asset_path 'venuebg_retina.jpg' %>) no-repeat center;
+			background-size: cover;
+		}
+
+		.what-is .image img {
+		    position: relative;
+		    bottom: 16.5%;
+		    left: 5%;
+		    max-width: 600px;
 		}
 	}
 	.hero-download-link {
@@ -2148,8 +2155,7 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 1025px)
 	}
 	.venue-download-link {
 		img{
-			height: 80%;
-			width: 80%;
+			width: 20%;
 		}
 	}
 
