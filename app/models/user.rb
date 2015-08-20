@@ -188,7 +188,9 @@ class User < ActiveRecord::Base
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
     users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
-
+    if !everyone
+      users = users.where(id: active_users_id)
+    end
 
     # users.delete(self)
     if !gender.nil? || gender != "A"
