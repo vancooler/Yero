@@ -190,6 +190,8 @@ class User < ActiveRecord::Base
     users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
     if !everyone
       users = users.where(id: active_users_id)
+      puts "everyone filter:"
+      puts users.length
     end
 
     # users.delete(self)
@@ -630,6 +632,8 @@ class User < ActiveRecord::Base
       retus = Time.now
       # get all users with filter params
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      puts "RETURN USERS:"
+      puts return_users.length
       if self.current_venue.blank?
         same_venue_user_ids = Array.new
       else
