@@ -825,6 +825,8 @@ class User < ActiveRecord::Base
 
       # count = users.count
       result['users'] = users
+      puts "USERS RESULT:"
+      puts users.count
     else
       # count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
       count = number_of_users
