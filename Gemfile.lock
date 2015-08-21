@@ -221,6 +221,7 @@ GEM
       actionpack (>= 3.0.0)
       activesupport (>= 3.0.0)
     kgio (2.9.3)
+    le (2.6.2)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -401,6 +402,7 @@ DEPENDENCIES
   json-jwt
   jwt
   kaminari
+  le
   memcachier
   migration_data
   mini_magick (~> 3.7.0)

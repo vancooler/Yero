@@ -91,6 +91,9 @@ gem 'rails-perftest'
 gem 'ruby-prof'
 
 
+# log
+gem 'le'
+
 group :development do 
   gem 'rest-client'
 end
