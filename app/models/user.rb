@@ -1050,7 +1050,7 @@ class User < ActiveRecord::Base
     round_array = [2, 3]
     random_round = round_array.sample
     (1..random_round).each do |i|
-      User.delay(run_at: (5*i).minutes.from_now).random_join_fake_users(times_array, 2, 3)
+      User.delay(run_at: (15*i).minutes.from_now).random_join_fake_users(times_array, 2, 3)
     end
     User.random_join_fake_users(times_array, 2, 3)
   end
