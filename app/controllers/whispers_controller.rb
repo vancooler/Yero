@@ -154,15 +154,14 @@ class WhispersController < ApplicationController
               RecentActivity.add_activity(origin_id.to_i, '3', target_id.to_i, nil, "friend-"+origin_id.to_s+"-"+target_id.to_s+"-"+current_time.to_i.to_s)
               RecentActivity.add_activity(target_id.to_i, '3', origin_id.to_i, nil, "friend-"+target_id.to_s+"-"+origin_id.to_s+"-"+current_time.to_i.to_s)
     
-    
               user = User.find(target_id.to_i)
               message = user.first_name + " is now your friend!"
               n.send_push_notification_to_target_user(message)
+              render json: success
             else
               render json: error('There was an error.')
             end
           end
-          render json: success
         end
       elsif params[:declined].to_i == 1
         state = 'declined'
