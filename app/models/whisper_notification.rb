@@ -703,32 +703,36 @@ class WhisperNotification < AWS::Record::HashModel
   # end
 
   def self.find_whisper(whisper_id, state)
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    if !table.schema_loaded?
-      table.load_schema
-    end
-    item = table.items.where(:id).equals(whisper_id.to_s)
-    if item.count == 1
-      item.each do |i|
-        if state == 'accepted'
-          i.attributes.update do |u|
-              hash = i.attributes.to_h
-              u.set 'accepted' => 1
-              u.set 'viewed' => 1
-          end
-          item_info = i.attributes.to_h
-        elsif state == 'declined'
-          puts "updating declined"
-          i.attributes.update do |u|
-              u.set 'declined' => 1
-              u.set 'viewed' => 1
+    if Rails.env == 'production'
+      dynamo_db = AWS::DynamoDB.new
+      table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+      table = dynamo_db.tables[table_name]
+      if !table.schema_loaded?
+        table.load_schema
+      end
+      item = table.items.where(:id).equals(whisper_id.to_s)
+      if item.count == 1
+        item.each do |i|
+          if state == 'accepted'
+            i.attributes.update do |u|
+                hash = i.attributes.to_h
+                u.set 'accepted' => 1
+                u.set 'viewed' => 1
+            end
+            item_info = i.attributes.to_h
+          elsif state == 'declined'
+            puts "updating declined"
+            i.attributes.update do |u|
+                u.set 'declined' => 1
+                u.set 'viewed' => 1
+            end
           end
         end
       end
     end
     whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+    puts "WHISPER:"
+    puts whisper.inspect
     if !whisper.nil?
       whisper.viewed = true
       whisper.declined = (state == 'declined')
@@ -788,6 +792,9 @@ class WhisperNotification < AWS::Record::HashModel
       if whispers_sent_today.count <= 0
         if Rails.env == 'production'
           n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+        else
+          n = WhisperNotification.new
+          n.id = 'aaa'
         end
         WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
         if n and notification_type == "2"

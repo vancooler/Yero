@@ -4,37 +4,37 @@ class WhispersController < ApplicationController
   before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
   skip_before_filter  :verify_authenticity_token
 
-  def new
-    @whisper = Whisper.new
-    # @origin_user = User.find_by(apn_token: "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>")
-    @origin_user = User.find_by(apn_token: "<12bc56a79a8859aa12c86fb5712debac3199a4af48e7fc1479bd1289805dfbf3>")
-  end
+  # def new
+  #   @whisper = Whisper.new
+  #   # @origin_user = User.find_by(apn_token: "<443e69367fbbbce9c722fdf392f72af2111bde5626a916007d97382687d4b029>")
+  #   @origin_user = User.find_by(apn_token: "<12bc56a79a8859aa12c86fb5712debac3199a4af48e7fc1479bd1289805dfbf3>")
+  # end
 
-  def create
-    # origin_user = current_user || User.find(params[:origin_id])
-    # target_user = User.find(params[:whisper_target])
-    @whisper = Whisper.new(origin_id: params[:whisper][:origin_id], target_id: params[:whisper][:target_id])
-    if @whisper.save
-      render json: success(@whisper)
-    else
-      render json: error(@whisper.errors)
-    end
-  end
+  # def create
+  #   # origin_user = current_user || User.find(params[:origin_id])
+  #   # target_user = User.find(params[:whisper_target])
+  #   @whisper = Whisper.new(origin_id: params[:whisper][:origin_id], target_id: params[:whisper][:target_id])
+  #   if @whisper.save
+  #     render json: success(@whisper)
+  #   else
+  #     render json: error(@whisper.errors)
+  #   end
+  # end
 
 
-  def create_by_url
-    target_id = params[:target_id]
-    origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
-    venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
-    notification_type = params[:notification_type].to_s
-    message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
-    intro = params[:intro].blank? ? "" : params[:intro].to_s
-    n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
-    n.send_push_notification_to_target_user(message)
+  # def create_by_url
+  #   target_id = params[:target_id]
+  #   origin_id = params[:origin_id].nil? ? 0 : params[:origin_id]
+  #   venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
+  #   notification_type = params[:notification_type].to_s
+  #   message = (params[:message].nil? and notification_type == "2") ? "Chat Request" : params[:message]
+  #   intro = params[:intro].blank? ? "" : params[:intro].to_s
+  #   n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+  #   n.send_push_notification_to_target_user(message)
     
-    # number = WhisperNotification.unviewd_whisper_number(User.last.id)
-    # render json: success(number)
-  end
+  #   # number = WhisperNotification.unviewd_whisper_number(User.last.id)
+  #   # render json: success(number)
+  # end
 
   def api_create
     target_id = params[:target_id]
@@ -127,7 +127,11 @@ class WhispersController < ApplicationController
     if params[:accepted].to_i == 1 or params[:declined].to_i == 1
       if params[:accepted].to_i == 1
         state = 'accepted'
-        WhisperNotification.delay.find_whisper(whisperId, state)
+        if Rails.env == 'production'
+          WhisperNotification.delay.find_whisper(whisperId, state)
+        else
+          WhisperNotification.find_whisper(whisperId, state)
+        end
         item = WhisperNotification.find_by_dynamodb_id(whisperId)
         origin_id = 0
         target_id = 0
@@ -165,7 +169,11 @@ class WhispersController < ApplicationController
         end
       elsif params[:declined].to_i == 1
         state = 'declined'
-        WhisperNotification.delay.find_whisper(whisperId, state)
+        if Rails.env == 'production'
+          WhisperNotification.delay.find_whisper(whisperId, state)
+        else
+          WhisperNotification.find_whisper(whisperId, state)
+        end
         render json: success
       else
         render json: error('There was an error.')
@@ -205,7 +213,10 @@ class WhispersController < ApplicationController
   end
 
   def get_api_token
-    if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+    if Rails.env == 'test' && api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]
+      params[:token] = api_token
+    end
+    if Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
       params[:token] = api_token
     end
   end

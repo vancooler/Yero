@@ -256,19 +256,19 @@ describe UsersController do
 	    	expect(JSON.parse(response.body)['success']).to eql true
 	      	expect(JSON.parse(response.body)['users'].count).to eql 1
 
-	     #  	ua.is_active = false
-	     #  	ua.save
-	     #  	post :index, :max_distance => 2
-	    	# expect(response.status).to eql 200
-	     #  	expect(JSON.parse(response.body)['message']).to eql "No photos"
-	    	# expect(JSON.parse(response.body)['success']).to eql false
+	      	ua.is_active = false
+	      	ua.save!
+	      	post :index, :max_distance => 2
+	    	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['message']).to eql "No photos"
+	    	expect(JSON.parse(response.body)['success']).to eql false
 
-	    	venue_network.destroy
-	    	Venue.destroy_all
-	    	ActiveInVenue.destroy_all
-	      	gate.destroy
-	      	UserAvatar.destroy_all
-	    	User.destroy_all
+	    	venue_network.delete
+	    	Venue.delete_all
+	    	ActiveInVenue.delete_all
+	      	gate.delete
+	      	UserAvatar.delete_all
+	    	User.delete_all
 	    end
 
 

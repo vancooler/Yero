@@ -90,11 +90,6 @@ gem 'socialization'
 gem 'rails-perftest'
 gem 'ruby-prof'
 
-
-
-gem 'rails-perftest'
-gem 'ruby-prof'
-
 group :development do 
   gem 'rest-client'
 end
