@@ -2136,13 +2136,22 @@ only screen and (                min-resolution: 2dppx)  and (min-width: 1025px)
 		.venues-hero {
 			background: url(<%= asset_path 'venuebg_retina.jpg' %>) no-repeat center;
 			background-size: cover;
+			min-height: 555px;
+			.row{
+				padding-bottom: 10px;
+				#get-in-touch{
+					margin-top: 40px;
+				}	
+			}
 		}
 
 		.what-is .image img {
 		    position: relative;
 		    bottom: 16.5%;
 		    left: 5%;
-		    max-width: 600px;
+		    max-width: 400px;
+		    height: 116.5% !important;
+		    width: 116.5% !important;
 		}
 	}
 	.hero-download-link {
