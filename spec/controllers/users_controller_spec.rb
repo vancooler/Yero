@@ -93,6 +93,25 @@ describe UsersController do
 			expect(response.status).to eql 200
 			expect(JSON.parse(response.body)['success']).to eql true
 
+			password_reset_token = User.find_by_email('test3@yero.co').password_reset_token
+			post :password_reset, :password_reset_token => '1', :user => {:password_reset_token => password_reset_token, :email => '', :password => '', :password_confirmation => ''}
+			expect(response.status).to eql 200
+			expect(assigns(:error)).to eql ['Email given does not match email from password recovery.', 'Email cannot be blank.', 'Password cannot be empty.', 'Password confirmation cannot be empty.', 'Your new password must be at least 6 characters.']
+
+			post :password_reset, :password_reset_token => '1', :user => {:password_reset_token => password_reset_token, :email => 'fgdfasdf', :password => '123456', :password_confirmation => '123457'}
+			expect(response.status).to eql 200
+			expect(assigns(:error)).to eql ['Email given does not match email from password recovery.', 'Your new passwords do not match.', 'Please enter a valid email address.']
+
+			post :password_reset, :password_reset_token => '1', :user => {:password_reset_token => password_reset_token, :email => 'test3@yero.co', :password => '11111111', :password_confirmation => '11111111'}
+			expect(response.status).to eql 200
+	      	expect(flash[:success]).to be_present
+			expect(User.find_by_email('test3@yero.co').password_reset_token).to eql ''
+			
+			post :login, :email => "test3@yero.co", :password => "11111111"
+		    expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['data']['email']).to eql 'test3@yero.co'
+
 	      	User.destroy_all
       
 		end
@@ -215,6 +234,27 @@ describe UsersController do
 	      	expect(JSON.parse(response.body)['users'].count).to eql 1
 	      	expect(JSON.parse(response.body)['users'][0]['same_venue_badge']).to eql false	      	
 	      	expect(JSON.parse(response.body)['users'][0]['different_venue_badge']).to eql true
+
+	      	post :block, :user_id => 3
+	      	expect(response.status).to eql 200
+	    	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['data']).to eql [3]
+
+	      	post :block, :user_id => 30
+	      	expect(response.status).to eql 200
+	    	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "Sorry, this user doesn't exist"
+
+	      	post :block
+	      	expect(response.status).to eql 200
+	    	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "Sorry, user_id required"
+
+	      	post :index
+	    	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['message']).to eql nil
+	    	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['users'].count).to eql 1
 
 	     #  	ua.is_active = false
 	     #  	ua.save
@@ -444,6 +484,86 @@ describe UsersController do
 	    	User.delete_all
 		end	    
 
+		it "set global variable" do
+			get :set_global_variable, :variable => '', :value => 'd'
+			expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql 'Invalid params'
+			get :set_global_variable, :variable => 'test', :value => '1'
+			expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(GlobalVariable.find_by_name('test').value).to eql '1'
+
+	      	get :set_global_variable, :variable => 'test', :value => '2'
+			expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(GlobalVariable.find_by_name('test').value).to eql '2'
+
+	      	GlobalVariable.delete_all
+		end
+
+		it "send reset email" do
+			birthday = (Time.now - 21.years)
+			user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+		    uaa = UserAvatar.create!(id: 10, user: user_2, is_active: true, order: 1)
+		    uaaa = UserAvatar.create!(id: 11, user: user_2, is_active: true, order: 2)
+		    
+		    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
+		    
+		    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
+
+		    post :login, {email: 'test2@yero.co', password: '123456'}
+		    expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['data']['id']).to eql 2
+
+	      	token = JSON.parse(response.body)['data']['token']
+	      	request.env["X-API-TOKEN"] = token
+
+	      	post :generate_reset_email_verify, :new_email => ""
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql 'New email cannot be blank'
+
+	      	post :generate_reset_email_verify, :new_email => "test3@yero.co"
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql 'There is already an account with this email address.'
+
+	      	post :generate_reset_email_verify, :new_email => "test30@yero.co"
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['data']).to eql true
+
+
+	      	email_reset_token = User.find(2).email_reset_token
+
+	      	post :email_reset, :email_reset_token => ''
+		    expect(response.status).to eql 200
+	      	expect(assigns(:message)).to eql 'Invalid email reset token'
+
+			post :email_reset, :email_reset_token => email_reset_token+'sadf'
+		    expect(response.status).to eql 200
+	      	expect(assigns(:message)).to eql 'Invalid email reset token'
+
+		    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test30@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		    post :email_reset, :email_reset_token => email_reset_token
+		    expect(response.status).to eql 200
+	      	expect(assigns(:message)).to eql 'There is already an account with this email address.'
+
+	      	user_5.delete
+	      	post :email_reset, :email_reset_token => email_reset_token
+	      	expect(response.status).to eql 200
+	      	expect(assigns(:message)).to eql 'Email verified successfully'
+	      	expect(User.find(2).email).to eql "test30@yero.co"
+
+
+	      	UserAvatar.delete_all
+	      	User.delete_all
+		end
 	end
 
 
