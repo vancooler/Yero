@@ -22,6 +22,9 @@ class LocationsController < ApplicationController
       puts user.latitude
       puts user.longitude
 
+      if params[:city].present?
+        user.current_city = params[:city]
+      end
       if user.save #and UserLocation.find_if_user_exist(current_user.id, user.latitude, user.longitude, params[:timezone])
         render json: success
       # elsif location_history.save && user.save

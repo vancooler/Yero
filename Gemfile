@@ -87,6 +87,9 @@ gem 'country_select', github: 'stefanpenner/country_select'
 
 # For like feature
 gem 'socialization'
+gem 'rails-perftest'
+gem 'ruby-prof'
+
 
 
 gem 'rails-perftest'
@@ -107,6 +110,7 @@ group :development, :test do
 end
 
 group :test do
+
   gem 'selenium-webdriver', '2.35.1'
   gem 'capybara', git: 'https://github.com/jnicklas/capybara.git'
   gem 'database_cleaner', github: 'bmabey/database_cleaner'

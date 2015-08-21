@@ -52,10 +52,13 @@ Rails.application.routes.draw do
     post 'admin/disable-single-user/:id', to: 'admin/user_screenings#disable_single_user', as: :admin_disable_user_account
     post 'admin/enable-single-user/:id', to: 'admin/user_screenings#enable_single_user', as: :admin_enable_user_account
     post 'venues-csv-import', to: 'venues#import', :as => "venue_import_csv"
+    post 'users-csv-import', to: 'users#import', :as => "user_import_csv"
     put 'admin/remove-snapchat-id/:id', to: 'admin/user_screenings#remove_snapchat', as: :admin_remove_snapchat_id
     put 'admin/remove-wechat-id/:id', to: 'admin/user_screenings#remove_wechat', as: :admin_remove_wechat_id
     put 'admin/remove-line-id/:id', to: 'admin/user_screenings#remove_line', as: :admin_remove_line_id
     post 'admin/user-join/:id', to: 'admin/users#join_network', as: :admin_user_join
+    post 'admin/user-leave/:id', to: 'admin/users#leave_network', as: :admin_user_leave
+    post 'admin/user-send-whisper/:id', to: 'admin/users#send_whisper', as: :admin_user_send_whisper
     # Venue API
     post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
     post 'api/nightly/update_regular',   to: 'nightlies#update_regular', as: :update_regular_nightly
@@ -138,9 +141,7 @@ Rails.application.routes.draw do
   post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
 
   post 'api/v1/last_activity_for',          to: 'activities#show'
-  get 'api/v1/users', to: 'users#index'
-  put 'api/v1/users/join', to: 'users#join'
-
+  post 'api/v1/users', to: 'users#index'
   post 'api/v1/requests', to: 'users#requests'
   post 'api/v1/whispers', to: 'users#requests_new'
   post 'api/v1/report', to: 'users#report'
@@ -152,7 +153,7 @@ Rails.application.routes.draw do
   get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
   get  'api/v1/set-variable', to: 'users#set_global_variable'
   post 'api/v1/whisper/create', to: 'whispers#api_create'
-  post 'api/v1/whisper/read', to: 'whispers#api_read'
+  # post 'api/v1/whisper/read', to: 'whispers#api_read'
   post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
   post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
   post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
@@ -160,6 +161,7 @@ Rails.application.routes.draw do
   post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
   post 'api/v1/notification/delete', to: 'whispers#api_delete'
   post 'api/v1/notification/decline_all_chat', to: 'whispers#api_decline_all_chat'
+  post 'api/v1/users/block-user', to: 'users#block'
 
   get 'api/v1/activities', to: 'whispers#chat_request_history'
   # Venue/Beacon API

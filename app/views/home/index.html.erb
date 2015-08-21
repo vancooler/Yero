@@ -16,8 +16,13 @@
 				Connect with people in the same club, college,
 				festival or just around your city.
 			</p>
-			<a href="/beta-signup" class="hero-download-link">
-				<%= image_tag "app-store.svg"%>
+			<% if ENV['DYNAMODB_PREFIX'].nil? or ENV['DYNAMODB_PREFIX'] == 'Production'%>
+				<div class="show-for-medium-up">
+					<%= render "linktexting"%>
+				</div>
+			<%end%>
+			<a href="https://itunes.apple.com/app/id972272976" class="hero-download-link" target="_blank">
+				<%= image_tag "AppleDownloadBadge.png"%>
 			</a>
 			<a class="android-user" href="/android">Android User?</a>
 		</div>
@@ -148,8 +153,8 @@
 <div class="download text-center padding">
 	<div class="row">
 		<div class="medium-4 medium-centered columns">
-			<a href="/beta-signup" class="hero-download-link">
-				<%= image_tag "app-store.svg" %>
+			<a href="https://itunes.apple.com/app/id972272976" class="hero-download-link" target="_blank">
+				<%= image_tag "AppleDownloadBadge.png" %>
 			</a>
 			<a class="android-user" href="/android" style="color:black">Android User?</a>
 		</div>

@@ -1,7 +1,25 @@
 class UsersController < ApplicationController
-  prepend_before_filter :get_api_token, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
-  before_action :authenticate_api, except: [:email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  prepend_before_filter :get_api_token, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_api, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+  before_action :authenticate_admin_user!, only: [:import]
   skip_before_filter  :verify_authenticity_token
+
+
+  def import
+    myfile = params[:csv_file]
+    require 'csv'    
+
+    if myfile.blank? or myfile.content_type != 'text/csv'
+      redirect_to :back, :notice => "Invalid file!" 
+    else
+      if User.import(myfile)
+        redirect_to admin_users_url, :notice => "Users Imported!" 
+      else
+        redirect_to :back, :notice => "Invalid csv structure!"
+      end
+    end
+    
+  end
 
   def show
     puts "THE ID"
@@ -34,45 +52,18 @@ class UsersController < ApplicationController
     render json: success(user)
   end
 
-
-  def join
-    disabled = current_user.user_avatars.where(:is_active => true).blank?
-    if disabled
-      result = {
-        no_avatar: true,
-        percentage: 0
-      }
-    else
-      gate_number = 4
-      # if set in db, use the db value
-      if GlobalVariable.exists? name: "min_ppl_size"
-        size = GlobalVariable.find_by_name("min_ppl_size")
-        if !size.nil? and !size.value.nil? and size.value.to_i > 0
-          gate_number = size.value.to_i
-        end
-      end
-      user.join_network
-      number_of_users = current_user.fellow_participants(nil, 0, 100, nil, 0, 60, true).length + 1
-      if number_of_users < gate_number
-        percentage = (number_of_users * 100 / gate_number).to_i
-      else
-        current_user.enough_user_notification_sent_tonight = true
-        current_user.save
-        percentage = 100
-      end
-      result = {
-        no_avatar: false,
-        percentage: percentage
-      }
-    end
-    render json: success(result)
-  end
-
-  
   # API
   def index
     disabled = current_user.user_avatars.where(:is_active => true).blank?
 
+    gate_number = 4
+    # if set in db, use the db value
+    if GlobalVariable.exists? name: "min_ppl_size"
+      size = GlobalVariable.find_by_name("min_ppl_size")
+      if !size.nil? and !size.value.nil? and size.value.to_i > 0
+        gate_number = size.value.to_i
+      end
+    end
 
     if disabled 
       render json: error("No photos")
@@ -87,20 +78,40 @@ class UsersController < ApplicationController
       max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
       venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
       puts "EVERYONE: " + params[:everyone].to_s
-      everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].blank?
+      everyone = true
+      everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].nil?
+      puts "EVERYONE2: " + everyone.to_s
       page_number = nil
       users_per_page = nil
       page_number = params[:page].to_i + 1 if !params[:page].blank?
       users_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      result = current_user.people_list(0, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+      result = current_user.people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
       
-    
-      if result['users'].nil?
-        render json: success(result) #Return users
-      else
-        render json: success(result['users'], "users")
-      end 
+      # if disabled and !default
+      #   if result['users'].nil?
+      #     final_result = {
+      #       avatar: avatar_result,
+      #       percentage: result['percentage']
+      #     }
+      #   else
+      #     user.enough_user_notification_sent_tonight = true
+      #     user.save
+      #     final_result = {
+      #       avatar: avatar_result,
+      #       users: result['users']
+      #     }
+      #   end   
+      #   render json: success(final_result) #Return users
+      # else
+        if result['users'].nil?
+          render json: success(result) #Return users
+        else
+          user.enough_user_notification_sent_tonight = true
+          user.save
+          render json: success(result['users'], "users")
+        end 
+      # end   
     end
   end
 
@@ -124,125 +135,125 @@ class UsersController < ApplicationController
     end
   end
 
-  def whisper_sent
-    if params[:timestamp].nil?
-      timestamp = Time.now.to_i
-    else
-      timestamp = params[:timestamp].to_i
-    end
-    state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id], timestamp)
-    p 'state'
-    p state
-    if state == true
-      render json: success(true)
-    else
-      render json: success(false)
-    end
-  end 
+  # def whisper_sent
+  #   if params[:timestamp].nil?
+  #     timestamp = Time.now.to_i
+  #   else
+  #     timestamp = params[:timestamp].to_i
+  #   end
+  #   state = WhisperNotification.whisper_sent(params[:current_user_id], params[:target_user_id], timestamp)
+  #   p 'state'
+  #   p state
+  #   if state == true
+  #     render json: success(true)
+  #   else
+  #     render json: success(false)
+  #   end
+  # end 
 
 
-  def requests
+  # def requests
 
-    # TODO: check venue/user exist
-    time_0 = Time.now
-    return_users = current_user.whisper_friends
-    time_1 = Time.now
-    runtime = time_1 - time_0
-    puts "User time"
-    puts runtime.inspect
-    return_venues = current_user.whisper_venue
-    time_2 = Time.now
-    runtime = time_2 - time_1
-    puts "Venue time"
-    puts runtime.inspect
-    # yero_notify = WhisperNotification.yero_notification(current_user.id)
+  #   # TODO: check venue/user exist
+  #   time_0 = Time.now
+  #   return_users = current_user.whisper_friends
+  #   time_1 = Time.now
+  #   runtime = time_1 - time_0
+  #   puts "User time"
+  #   puts runtime.inspect
+  #   return_venues = current_user.whisper_venue
+  #   time_2 = Time.now
+  #   runtime = time_2 - time_1
+  #   puts "Venue time"
+  #   puts runtime.inspect
+  #   # yero_notify = WhisperNotification.yero_notification(current_user.id)
 
-    users = requests_friends_json(return_users)
+  #   users = requests_friends_json(return_users)
 
-    venues_array = Jbuilder.encode do |json|
-      #Loop through the return_venues ids and do a find to get the object
-      # Then do the json dance to include venue id, link to venue_avatars to get the picture
-      # And make a dynamic name with the welcome message
-      json.array! return_venues.each do |venue|
-        venue_obj = Venue.find(venue["venue_id"])
-        venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
-        if venue_avatar 
-          json.venue_avatar venue_avatar["avatar"]
-        end
+  #   venues_array = Jbuilder.encode do |json|
+  #     #Loop through the return_venues ids and do a find to get the object
+  #     # Then do the json dance to include venue id, link to venue_avatars to get the picture
+  #     # And make a dynamic name with the welcome message
+  #     json.array! return_venues.each do |venue|
+  #       venue_obj = Venue.find(venue["venue_id"])
+  #       venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+  #       if venue_avatar 
+  #         json.venue_avatar venue_avatar["avatar"]
+  #       end
 
-        json.venue_name venue_obj["name"]
-        json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
-        json.timestamp venue["timestamp"]
-        json.timestamp_read Time.at(venue['timestamp'])
-        json.accepted venue["accepted"]
-        json.viewed venue["viewed"]
-        json.not_viewed_by_sender venue["not_viewed_by_sender"]
-        json.created_date venue["created_date"]
-        json.whisper_id venue["whisper_id"]
-        json.notification_type  1
-      end
-    end
+  #       json.venue_name venue_obj["name"]
+  #       json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+  #       json.timestamp venue["timestamp"]
+  #       json.timestamp_read Time.at(venue['timestamp'])
+  #       json.accepted venue["accepted"]
+  #       json.viewed venue["viewed"]
+  #       json.not_viewed_by_sender venue["not_viewed_by_sender"]
+  #       json.created_date venue["created_date"]
+  #       json.whisper_id venue["whisper_id"]
+  #       json.notification_type  1
+  #     end
+  #   end
 
-    users = JSON.parse(users).delete_if(&:blank?)
-    venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
-    # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
+  #   users = JSON.parse(users).delete_if(&:blank?)
+  #   venues_array  = JSON.parse(venues_array).delete_if(&:blank?)
+  #   # yero_message = JSON.parse(yero_message).delete_if(&:blank?)
 
-    same_venue_users = []
-    different_venue_users = [] 
-    no_badge_users = []
-    venues = []
+  #   same_venue_users = []
+  #   different_venue_users = [] 
+  #   no_badge_users = []
+  #   venues = []
 
-    unviewed_badge = 0
-    unviewed_whispers = []
-    users.each do |u|
-      if u['different_venue_badge'].to_s == "true"
-        different_venue_users << u
-      elsif u['same_venue_badge'].to_s == "true"
-        same_venue_users << u
-      else
-        no_badge_users << u
-      end
-      if u["viewed"].to_i == 0
-        p 'entered into users'
-        unviewed_badge = unviewed_badge + 1
-        unviewed_whispers << u
-      end
-      # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
-      # end
-    end
+  #   unviewed_badge = 0
+  #   unviewed_whispers = []
+  #   users.each do |u|
+  #     if u['different_venue_badge'].to_s == "true"
+  #       different_venue_users << u
+  #     elsif u['same_venue_badge'].to_s == "true"
+  #       same_venue_users << u
+  #     else
+  #       no_badge_users << u
+  #     end
+  #     if u["viewed"].to_i == 0
+  #       p 'entered into users'
+  #       unviewed_badge = unviewed_badge + 1
+  #       unviewed_whispers << u
+  #     end
+  #     # if (u["accepted"].to_i == 0 and u["declined"].to_i == 0) 
+  #     # end
+  #   end
 
-    venues_array.each do |v|
-      venues << v
-      unviewed_whispers << v
-      if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
-        p 'entered into venues'
-        unviewed_badge = unviewed_badge + 1
-      end
-    end
+  #   venues_array.each do |v|
+  #     venues << v
+  #     unviewed_whispers << v
+  #     if v["not_viewed_by_sender"].nil? or v["not_viewed_by_sender"].to_i != 0
+  #       p 'entered into venues'
+  #       unviewed_badge = unviewed_badge + 1
+  #     end
+  #   end
 
-    # result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
-    return_data = Array.new
-    unviewed_whispers.each do |r|
-      return_data << r
-    end 
+  #   # result_array = same_venue_users + different_venue_users + no_badge_users + venues.reverse
+  #   return_data = Array.new
+  #   unviewed_whispers.each do |r|
+  #     return_data << r
+  #   end 
     
-    whispers_array = Array.new
-    users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
-    users.each do |whisp|
-      whispers_array << whisp["whisper_id"]
-    end
+  #   whispers_array = Array.new
+  #   users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
+  #   users.each do |whisp|
+  #     whispers_array << whisp["whisper_id"]
+  #   end
 
-    time_3 = Time.now
-    if !whispers_array.nil? and whispers_array.count > 0
-      current_user.delay.viewed_by_sender(whispers_array)
-    end
+  #   time_3 = Time.now
+  #   if !whispers_array.nil? and whispers_array.count > 0
+  #     current_user.delay.viewed_by_sender(whispers_array)
+  #   end
 
-    time_4 = Time.now
-    runtime = time_4 - time_3
-    puts "Update time"
-    puts runtime.inspect
-    render json: success(users, "data")
-  end
+  #   time_4 = Time.now
+  #   runtime = time_4 - time_3
+  #   puts "Update time"
+  #   puts runtime.inspect
+  #   render json: success(users, "data")
+  # end
 
   # New API for whispers requests
   def requests_new
@@ -322,7 +333,9 @@ class UsersController < ApplicationController
           # update local tmp db
           WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
           # update dynamodb
-          current_user.delay.viewed_by_sender(whispers_array)
+          if Rails.env == 'production'
+            current_user.delay.viewed_by_sender(whispers_array)
+          end
         end
       end
     end
@@ -332,7 +345,9 @@ class UsersController < ApplicationController
       # update local tmp db
       FriendByWhisper.where(:origin_user_id => current_user.id).update_all(:viewed => true)
       # update dynamodb
-      WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+      if Rails.env == 'production'
+        WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
+      end
     end
 
     response_data = {
@@ -355,7 +370,7 @@ class UsersController < ApplicationController
     if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
       record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id_and_report_type_id(reporting_user.id, reported_user.id, report_type.id)
       # no report record found
-      if record.blank?
+      if true or record.blank?
         rep = ReportUserHistory.new
         rep.reporting_user_id = reporting_user.id
         rep.reported_user_id = reported_user.id
@@ -401,25 +416,25 @@ class UsersController < ApplicationController
     
   end
 
-  def myfriends
-    p 'user_id'
-    p current_user.id
-    # friends = UserFriends.return_friends(current_user.id)
-    friends = WhisperNotification.myfriends(current_user.id)
-    puts "friends123: "
-    puts friends.inspect
-    # WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
-    if !friends.blank?
-      users = requests_friends_json(friends)
-      users = JSON.parse(users).delete_if(&:blank?)
-      users = users.sort_by { |hsh| hsh["timestamp"] }
-      puts "USER ORDER:"
-      puts users.inspect
-      render json: success(users.reverse, "data")
-    else
-      render json: success(Array.new, "data")
-    end
-  end
+  # def myfriends
+  #   p 'user_id'
+  #   p current_user.id
+  #   # friends = UserFriends.return_friends(current_user.id)
+  #   friends = WhisperNotification.myfriends(current_user.id)
+  #   puts "friends123: "
+  #   puts friends.inspect
+  #   # WhisperNotification.accept_friend_viewed_by_sender(current_user.id)
+  #   if !friends.blank?
+  #     users = requests_friends_json(friends)
+  #     users = JSON.parse(users).delete_if(&:blank?)
+  #     users = users.sort_by { |hsh| hsh["timestamp"] }
+  #     puts "USER ORDER:"
+  #     puts users.inspect
+  #     render json: success(users.reverse, "data")
+  #   else
+  #     render json: success(Array.new, "data")
+  #   end
+  # end
 
   # new API for friends list
   def myfriends_new
@@ -587,141 +602,141 @@ class UsersController < ApplicationController
     end
   end
 
-  def sign_up
-    # Rails.logger.info "PARAMETERS: "
-    # Rails.logger.debug sign_up_params.inspect
-    # Rails.logger.debug params.inspect
-    # tmp_params = sign_up_params
-    # tmp_params.delete('avatar_id')
+  # def sign_up
+  #   # Rails.logger.info "PARAMETERS: "
+  #   # Rails.logger.debug sign_up_params.inspect
+  #   # Rails.logger.debug params.inspect
+  #   # tmp_params = sign_up_params
+  #   # tmp_params.delete('avatar_id')
     
-    user_registration = UserRegistration.new(sign_up_params)
+  #   user_registration = UserRegistration.new(sign_up_params)
     
-    if params[:email].present? 
-      if params[:email].match(/\s/).blank?
-        user_registration.user.email = params[:email]
-      else
-        user_registration.user.email = params[:email].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:email].present? 
+  #     if params[:email].match(/\s/).blank?
+  #       user_registration.user.email = params[:email]
+  #     else
+  #       user_registration.user.email = params[:email].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:gender].present? 
-      if params[:gender].match(/\s/).blank?
-        user_registration.user.gender = params[:gender]
-      else
-        user_registration.user.gender = params[:gender].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:gender].present? 
+  #     if params[:gender].match(/\s/).blank?
+  #       user_registration.user.gender = params[:gender]
+  #     else
+  #       user_registration.user.gender = params[:gender].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:first_name].present? 
-      if params[:first_name].match(/\s/).blank?
-        first_name = params[:first_name]
-        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+  #   if params[:first_name].present? 
+  #     if params[:first_name].match(/\s/).blank?
+  #       first_name = params[:first_name]
+  #       user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
 
-      else
-        first_name = params[:first_name].gsub!(/\s+/, "") 
-        user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+  #     else
+  #       first_name = params[:first_name].gsub!(/\s+/, "") 
+  #       user_registration.user.first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
 
-      end
-    end
+  #     end
+  #   end
 
-    if params[:instagram_id].present? 
-      if params[:instagram_id].match(/\s/).blank?
-        user_registration.user.instagram_id = params[:instagram_id]
-      else
-        user_registration.user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:instagram_id].present? 
+  #     if params[:instagram_id].match(/\s/).blank?
+  #       user_registration.user.instagram_id = params[:instagram_id]
+  #     else
+  #       user_registration.user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:snapchat_id].present? 
-      if params[:snapchat_id].match(/\s/).blank?
-        user_registration.user.snapchat_id = params[:snapchat_id]
-      else
-        user_registration.user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
-      end
-    end
+  #   if params[:snapchat_id].present? 
+  #     if params[:snapchat_id].match(/\s/).blank?
+  #       user_registration.user.snapchat_id = params[:snapchat_id]
+  #     else
+  #       user_registration.user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
 
-    if params[:wechat_id].present? 
-      if params[:wechat_id].match(/\s/).blank?
-        user_registration.user.wechat_id = params[:wechat_id]
-      else
-        user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
-      end
-    end
-    if params[:line_id].present? 
-      if params[:line_id].match(/\s/).blank?
-        user_registration.user.line_id = params[:line_id]
-      else
-        user_registration.user.line_id = params[:line_id].gsub!(/\s+/, "") 
-      end
-    end
-    user_registration.user.password = params[:password] if params[:password].present?
-    user_registration.user.birthday = params[:birthday] if params[:birthday].present?                       
-    user_registration.user.nonce = params[:nonce] if params[:nonce].present?
-    user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
+  #   if params[:wechat_id].present? 
+  #     if params[:wechat_id].match(/\s/).blank?
+  #       user_registration.user.wechat_id = params[:wechat_id]
+  #     else
+  #       user_registration.user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
+  #   if params[:line_id].present? 
+  #     if params[:line_id].match(/\s/).blank?
+  #       user_registration.user.line_id = params[:line_id]
+  #     else
+  #       user_registration.user.line_id = params[:line_id].gsub!(/\s+/, "") 
+  #     end
+  #   end
+  #   user_registration.user.password = params[:password] if params[:password].present?
+  #   user_registration.user.birthday = params[:birthday] if params[:birthday].present?                       
+  #   user_registration.user.nonce = params[:nonce] if params[:nonce].present?
+  #   user_registration.user.exclusive = params[:exclusive] if params[:exclusive].present?
 
-    if !(User.exists? email: params[:email])
-      if user_registration.create
-        user = user_registration.user
-        user.key_expiration = Time.now + 3.hours
-        user.account_status = 1
-        user.save
-        # save avatar order
-        if !user.nil? and !user.default_avatar.nil?
-          avatar = user.default_avatar
-          avatar.order = 0
-          avatar.save!
-        end
+  #   if !(User.exists? email: params[:email])
+  #     if user_registration.create
+  #       user = user_registration.user
+  #       user.key_expiration = Time.now + 3.hours
+  #       user.account_status = 1
+  #       user.save
+  #       # save avatar order
+  #       if !user.nil? and !user.default_avatar.nil?
+  #         avatar = user.default_avatar
+  #         avatar.order = 0
+  #         avatar.save!
+  #       end
 
-        # #signup with the avatar id
-        # avatar_id = sign_up_params[:avatar_id]
-        # response = user.to_json(true)
-        # response["avatars"] = Array.new
-        # if avatar_id.to_i > 0
-        #   avatar = UserAvatar.find(avatar_id.to_i)
-        #   if !avatar.nil?
-        #     avatar.user_id = user.id
-        #     avatar.save
-        #     user_avatar = Hash.new
-        #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
-        #     user_avatar['avatar'] = avatar.avatar.url
-        #     response["avatars"] = [user_avatar]
-        #   end
-        # end
+  #       # #signup with the avatar id
+  #       # avatar_id = sign_up_params[:avatar_id]
+  #       # response = user.to_json(true)
+  #       # response["avatars"] = Array.new
+  #       # if avatar_id.to_i > 0
+  #       #   avatar = UserAvatar.find(avatar_id.to_i)
+  #       #   if !avatar.nil?
+  #       #     avatar.user_id = user.id
+  #       #     avatar.save
+  #       #     user_avatar = Hash.new
+  #       #     user_avatar['thumbnail'] = avatar.avatar.thumb.url
+  #       #     user_avatar['avatar'] = avatar.avatar.url
+  #       #     response["avatars"] = [user_avatar]
+  #       #   end
+  #       # end
 
-        # avatar = sign_up_params[:avatar]
-        # if avatar
-        #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
-        # else
-        # end
+  #       # avatar = sign_up_params[:avatar]
+  #       # if avatar
+  #       #   user_avatar = UserAvatar.create(user_id: user_registration.id, avatar: avatar, default_boolean: true )
+  #       # else
+  #       # end
         
-        # The way in one step
-        response = user.to_json(true)
-        user_info = user
+  #       # The way in one step
+  #       response = user.to_json(true)
+  #       user_info = user
 
-        # if !response["avatars"].empty?
-        #   thumb = response["avatars"].first['avatar']
-        #   if thumb
-        #     response["avatars"].first['thumbnail'] = thumb
-        #     response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
-        #   end
-        # end
-        response['token'] = user.generate_token
-        # render json: user_registration.to_json.inspect
-        # render json: user_avatar.to_json.inspect
+  #       # if !response["avatars"].empty?
+  #       #   thumb = response["avatars"].first['avatar']
+  #       #   if thumb
+  #       #     response["avatars"].first['thumbnail'] = thumb
+  #       #     response["avatars"].first['avatar'] = thumb.gsub! 'thumb_', ''
+  #       #   end
+  #       # end
+  #       response['token'] = user.generate_token
+  #       # render json: user_registration.to_json.inspect
+  #       # render json: user_avatar.to_json.inspect
         
-        intro = "Welcome to Yero"
-        # TODO: future feature
-        # n = WhisperNotification.create_in_aws(user_info.id, 0, 1, 2, intro)
+  #       intro = "Welcome to Yero"
+  #       # TODO: future feature
+  #       # n = WhisperNotification.create_in_aws(user_info.id, 0, 1, 2, intro)
         
-        render json: success(response)
-      else
-        puts user_registration.user.errors.messages
-        render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
-      end
-    else
-        render json: error("This email has already been taken.")
-    end
-  end
+  #       render json: success(response)
+  #     else
+  #       puts user_registration.user.errors.messages
+  #       render json: error(JSON.parse(user_registration.user.errors.messages.to_json))
+  #     end
+  #   else
+  #       render json: error("This email has already been taken.")
+  #   end
+  # end
 
   # API to login a user
   def login
@@ -748,7 +763,7 @@ class UsersController < ApplicationController
           user_info['token'] = user.generate_token
           render json: success(user_info)
         else
-          render json: error("Email/Password does not match")
+          render json: error("Your email or password is incorrect")
         end  
       else
         render json: error("Email address not found")
@@ -800,6 +815,14 @@ class UsersController < ApplicationController
         user.instagram_id = params[:instagram_id]
       else
         user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
+      end
+    end
+
+    if !params[:instagram_token].nil? 
+      if params[:instagram_token].match(/\s/).blank?
+        user.instagram_token = params[:instagram_token]
+      else
+        user.instagram_token = params[:instagram_token].gsub!(/\s+/, "") 
       end
     end
 
@@ -1208,6 +1231,28 @@ class UsersController < ApplicationController
     end
   end
 
+
+  # block user
+  def block
+    # user = current_user
+    if !params[:user_id].nil?
+      user_id = params[:user_id].to_i
+      if User.exists? id: user_id
+        if !BlockUser.check_block(current_user.id, user_id)
+          BlockUser.create!(origin_user_id: current_user.id, target_user_id: user_id)
+        else
+
+        end
+        black_list = BlockUser.blocked_user_ids(current_user.id)
+        render json: success(black_list)
+      else
+        render json: error("Sorry, this user doesn't exist")
+      end
+    else
+      render json: error("Sorry, user_id required")
+    end
+  end
+
   # Like / Unlike feature
   def like
     # user = current_user
@@ -1248,65 +1293,65 @@ class UsersController < ApplicationController
 
   private
 
-  def requests_friends_json(return_users)
-    users = Jbuilder.encode do |json|
-      json.array! return_users.each do |user|
-        avatar_array = Array.new
-        avatar_array[0] = {
-              avatar: user["target_user_main"],
-              default: true
-            }
-        avatar_array[1] = {
-              avatar: user["target_user_secondary1"],
-              default: false
-            }
-        avatar_array[2] = {
-              avatar: user["target_user_secondary2"],
-              default: false
-            }
-        json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
-        json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
-        json.actual_distance           current_user.actual_distance(user["target_user"])
-        json.id             user["target_user"]["id"]
-        json.first_name     user["target_user"]["first_name"]
-        json.key            user["target_user"]["key"]
-        json.last_active    user["target_user"]["last_active"]
-        json.last_activity  user["target_user"]["last_activity"]
-        json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
-        json.gender         user["target_user"]["gender"]
-        if user["target_user"]["id"].to_i != 0
-          json.birthday       user["target_user"]["birthday"]
-          json.distance       current_user.distance_label(user["target_user"])
-        end
-        json.created_at     user["target_user"]["created_at"]
-        json.updated_at     user["target_user"]["updated_at"]
-        json.avatar_thumbnail user["target_user_thumb"] 
-        json.avatars         avatar_array
-        json.apn_token      user["target_user"].apn_token
-        json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
-        json.email  user["target_user"]["email"]
-        json.instagram_id  user["target_user"]["instagram_id"]
-        json.snapchat_id  user["target_user"]["snapchat_id"]
-        json.wechat_id  user["target_user"]["wechat_id"]
-        json.line_id  user["target_user"]["line_id"]
-        json.timestamp  user["timestamp"]
-        json.seconds_left  user["seconds_left"]
-        json.timestamp_read  Time.at(user["timestamp"])
-        json.accepted   user["accepted"].blank? ? nil : user["accepted"]
-        json.declined   user["declined"].blank? ? nil : user["declined"]
-        json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
-        json.intro_message user["intro"].blank? ? nil : user["intro"]
-        json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
+  # def requests_friends_json(return_users)
+  #   users = Jbuilder.encode do |json|
+  #     json.array! return_users.each do |user|
+  #       avatar_array = Array.new
+  #       avatar_array[0] = {
+  #             avatar: user["target_user_main"],
+  #             default: true
+  #           }
+  #       avatar_array[1] = {
+  #             avatar: user["target_user_secondary1"],
+  #             default: false
+  #           }
+  #       avatar_array[2] = {
+  #             avatar: user["target_user_secondary2"],
+  #             default: false
+  #           }
+  #       json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
+  #       json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
+  #       json.actual_distance           current_user.actual_distance(user["target_user"])
+  #       json.id             user["target_user"]["id"]
+  #       json.first_name     user["target_user"]["first_name"]
+  #       json.key            user["target_user"]["key"]
+  #       json.last_active    user["target_user"]["last_active"]
+  #       json.last_activity  user["target_user"]["last_activity"]
+  #       json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
+  #       json.gender         user["target_user"]["gender"]
+  #       if user["target_user"]["id"].to_i != 0
+  #         json.birthday       user["target_user"]["birthday"]
+  #         json.distance       current_user.distance_label(user["target_user"])
+  #       end
+  #       json.created_at     user["target_user"]["created_at"]
+  #       json.updated_at     user["target_user"]["updated_at"]
+  #       json.avatar_thumbnail user["target_user_thumb"] 
+  #       json.avatars         avatar_array
+  #       json.apn_token      user["target_user"].apn_token
+  #       json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
+  #       json.email  user["target_user"]["email"]
+  #       json.instagram_id  user["target_user"]["instagram_id"]
+  #       json.snapchat_id  user["target_user"]["snapchat_id"]
+  #       json.wechat_id  user["target_user"]["wechat_id"]
+  #       json.line_id  user["target_user"]["line_id"]
+  #       json.timestamp  user["timestamp"]
+  #       json.seconds_left  user["seconds_left"]
+  #       json.timestamp_read  Time.at(user["timestamp"])
+  #       json.accepted   user["accepted"].blank? ? nil : user["accepted"]
+  #       json.declined   user["declined"].blank? ? nil : user["declined"]
+  #       json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
+  #       json.intro_message user["intro"].blank? ? nil : user["intro"]
+  #       json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
 
-        json.latitude       user["target_user"].latitude  
-        json.longitude      user["target_user"].longitude 
+  #       json.latitude       user["target_user"].latitude  
+  #       json.longitude      user["target_user"].longitude 
 
-        json.introduction_1 user["target_user"].introduction_1.blank? ? '' : user["target_user"].introduction_1
-        json.notification_type 2
-      end         
-    end
-    return users 
-  end
+  #       json.introduction_1 user["target_user"].introduction_1.blank? ? '' : user["target_user"].introduction_1
+  #       json.notification_type 2
+  #     end         
+  #   end
+  #   return users 
+  # end
 
   def requests_user_whisper_json(return_users, is_friends)
     users = Jbuilder.encode do |json|
@@ -1339,38 +1384,38 @@ class UsersController < ApplicationController
     return users 
   end
 
-  def requests_venue_whisper_json(return_venues)
-    venues = Jbuilder.encode do |json|
-      json.array! return_venues.each do |venue|
-        venue_obj = Venue.find(venue["venue_id"])
-        if !venue_obj.nil?
-          venue_object = venue_obj.venue_object
-        end
-        # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
-        # if venue_avatar 
-        #   json.venue_avatar venue_avatar["avatar"]
-        # end
+  # def requests_venue_whisper_json(return_venues)
+  #   venues = Jbuilder.encode do |json|
+  #     json.array! return_venues.each do |venue|
+  #       venue_obj = Venue.find(venue["venue_id"])
+  #       if !venue_obj.nil?
+  #         venue_object = venue_obj.venue_object
+  #       end
+  #       # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
+  #       # if venue_avatar 
+  #       #   json.venue_avatar venue_avatar["avatar"]
+  #       # end
 
-        # json.venue_name venue_obj["name"]
-        # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
-        json.timestamp venue["timestamp"]
-        # json.seconds_left  nil
-        json.timestamp_read Time.at(venue['timestamp'])
-        json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
-        json.declined   venue["declined"].blank? ? 0 : venue["declined"]
-        json.viewed venue["viewed"]
-        json.intro_message venue["intro"].blank? ? '' : venue["intro"]
-        # json.not_viewed_by_sender venue["not_viewed_by_sender"]
-        # json.created_date venue["created_date"]
-        json.whisper_id venue["whisper_id"]
-        json.notification_type  1
-        json.object_type "venue"
-        json.object venue_object
-      end
-    end
+  #       # json.venue_name venue_obj["name"]
+  #       # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
+  #       json.timestamp venue["timestamp"]
+  #       # json.seconds_left  nil
+  #       json.timestamp_read Time.at(venue['timestamp'])
+  #       json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
+  #       json.declined   venue["declined"].blank? ? 0 : venue["declined"]
+  #       json.viewed venue["viewed"]
+  #       json.intro_message venue["intro"].blank? ? '' : venue["intro"]
+  #       # json.not_viewed_by_sender venue["not_viewed_by_sender"]
+  #       # json.created_date venue["created_date"]
+  #       json.whisper_id venue["whisper_id"]
+  #       json.notification_type  1
+  #       json.object_type "venue"
+  #       json.object venue_object
+  #     end
+  #   end
 
-    return venues
-  end
+  #   return venues
+  # end
 
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :line_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
@@ -1382,6 +1427,9 @@ class UsersController < ApplicationController
   end
 
   def get_api_token
+    if api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]
+      params[:token] = api_token
+    end
     if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
       params[:token] = api_token
     end

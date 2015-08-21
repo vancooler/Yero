@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
 
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
-    if Rails.env == 'development'
+    if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
     else
       secret = ENV['SECRET_KEY_BASE']
@@ -86,7 +86,7 @@ class ApplicationController < ActionController::Base
   end
 
   def current_user
-    if Rails.env == 'development'
+    if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
     else
       secret = ENV['SECRET_KEY_BASE']
@@ -166,9 +166,11 @@ class ApplicationController < ActionController::Base
   def add_www_subdomain
     # puts "request"
     # puts request.path
-    unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com'
-      redirect_to("#{request.protocol}www.#{request.host_with_port}#{request.path}",
-                  :status => 301)
+    if Rails.env != "test"
+      unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com'
+        redirect_to("#{request.protocol}www.#{request.host_with_port}#{request.path}",
+                    :status => 301)
+      end
     end
   end
 

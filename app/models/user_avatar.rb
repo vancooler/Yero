@@ -37,6 +37,23 @@ class UserAvatar < ActiveRecord::Base
     end
   end
 
+  def self.move_url
+    avatars = UserAvatar.where("origin_url is ?", nil)
+    avatars.each do |a|
+      a.origin_url = a.avatar.url 
+      a.thumb_url = a.avatar.thumb.url
+      a.save
+    end
+  end
+
+  def self.save_and_copy_url(avatar)
+    if avatar.save
+      avatar.origin_url = avatar.avatar.url
+      avatar.thumb_url = avatar.avatar.thumb.url
+      avatar.save
+    end
+  end
+
   private
 
     def set_order_zero_if_only_one_avatar_present

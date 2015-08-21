@@ -34,7 +34,7 @@ ActiveAdmin.register ReportUserHistory do
   show do |history|
     attributes_table_for history do
       row :reported_user
-      row :report_type
+      # row :report_type
       row("Reported Count") { |history| history.frequency}
       row :updated_at
       row :notified_at
@@ -43,8 +43,14 @@ ActiveAdmin.register ReportUserHistory do
         column "Reporting User" do |a|
           link_to a.reporting_user.name, [ :admin, a.reporting_user ]
         end
+        column "Report Type" do |a|
+          a.report_type.name
+        end
         column "Reported at" do |a|
           a.updated_at
+        end
+        column "Reason" do |a|
+          a.reason
         end
       end
     end

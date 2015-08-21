@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
   before_save   :update_activity
 
   validates :email, :birthday, :first_name, :gender, presence: true
+  validates :email, :email => true
 
   scope :sort_by_last_active, -> { 
     where.not(last_active: nil).
@@ -99,19 +100,19 @@ class User < ActiveRecord::Base
   # Check whether a user is in the same beacon as the current user
   #
   ##########################################################################
-  def same_beacon_as?(user_id)
-    if fellow_participant = User.find(user_id)
+  # def same_beacon_as?(user_id)
+  #   if fellow_participant = User.find(user_id)
       
-      fellow_participant_beacon = fellow_participant.current_beacon
-      self_beacon = self.current_beacon
+  #     fellow_participant_beacon = fellow_participant.current_beacon
+  #     self_beacon = self.current_beacon
 
-      return false if fellow_participant_beacon.nil? || self_beacon.nil?
+  #     return false if fellow_participant_beacon.nil? || self_beacon.nil?
 
-      self.current_beacon.id == fellow_participant.current_beacon.id
-    else
-      false
-    end
-  end
+  #     self.current_beacon.id == fellow_participant.current_beacon.id
+  #   else
+  #     false
+  #   end
+  # end
 
   def secondary_avatars
     user_avatars.where.not(order: 0)
@@ -161,7 +162,7 @@ class User < ActiveRecord::Base
       aivs = ActiveInVenueNetwork.where("user_id != ?", self.id)
     else # else we will just search the people in the venue
       aivs = ActiveInVenue.where("user_id != ?", self.id) # Give me all the users that are out that are not me.
-      aivn = ActiveInVenueNetwork.where("user_id != ?", self.id)
+      # aivn = ActiveInVenueNetwork.where("user_id != ?", self.id)
       if !venue_id.nil? #If a parameter was passed in for venue_id
         aivs = aivs.where(:venue_id => venue_id) #Search for all people active in that particular venue
       end
@@ -170,21 +171,29 @@ class User < ActiveRecord::Base
     aivs.each do |aiv| 
       active_users_id << aiv.user_id #Toss into the array the user_id's of the people that are out or in a particular venue.
     end
-    if aivn # If there are people acitve in venue network
-      aivn.each do |aivn| # Loop
-        if active_users_id.include? aivn.user_id
-        else
-          active_users_id << aivn.user_id # Throw each one into the array
-        end
-      end
-    end
+    # if aivn # If there are people acitve in venue network
+    #   aivn.each do |aivn| # Loop
+    #     if active_users_id.include? aivn.user_id
+    #     else
+    #       active_users_id << aivn.user_id # Throw each one into the array
+    #     end
+    #   end
+    # end
 
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
     max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
     # only return users with avatar near current user 
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
-    users = User.includes(:user_avatars).where.not(id: self.id).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    black_list = BlockUser.blocked_user_ids(self.id)
+    black_list << self.id
+    users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    if !everyone
+      users = users.where(id: active_users_id)
+      puts "everyone filter:"
+      puts users.length
+    end
+
     # users.delete(self)
     if !gender.nil? || gender != "A"
       if gender == "M" or gender == "F"
@@ -202,38 +211,38 @@ class User < ActiveRecord::Base
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
   end
 
-  def whisper_friends
-    active_users_id = WhisperNotification.find_friends(self.id)
-  end
+  # def whisper_friends
+  #   active_users_id = WhisperNotification.find_friends(self.id)
+  # end
 
-  def whisper_venue
-    venue = WhisperNotification.system_notification(self.id)
-    return venue
-  end
+  # def whisper_venue
+  #   venue = WhisperNotification.system_notification(self.id)
+  #   return venue
+  # end
 
-  def fellow_participants_sorted #by distance then by activity
-    results = self.fellow_participants
-    results_with_location = results.where.not(latitude:nil, longitude:nil)
-    results_with_no_location = results - results_with_location
-    results = results.near(self, 50, unit: :km).sort_by_last_active
-    results_with_no_location = results_with_no_location.
-    sorted_results = results_with_location + results_with_no_location
-  end
+  # def fellow_participants_sorted #by distance then by activity
+  #   results = self.fellow_participants
+  #   results_with_location = results.where.not(latitude:nil, longitude:nil)
+  #   results_with_no_location = results - results_with_location
+  #   results = results.near(self, 50, unit: :km).sort_by_last_active
+  #   results_with_no_location = results_with_no_location.
+  #   sorted_results = results_with_location + results_with_no_location
+  # end
 
   ##########################################################################
   #
   # Sort the users in same beacon in random order
   #
   ##########################################################################
-  def same_beacon_users(users)
-    users.each do |u|
-      if !self.same_beacon_as?(u.id)
-        users.reject{|user| user.id == u.id}
-      end
-    end
-    users = users.shuffle
-    return users
-  end
+  # def same_beacon_users(users)
+  #   users.each do |u|
+  #     if !self.same_beacon_as?(u.id)
+  #       users.reject{|user| user.id == u.id}
+  #     end
+  #   end
+  #   users = users.shuffle
+  #   return users
+  # end
 
   ##########################################################################
   #
@@ -303,11 +312,11 @@ class User < ActiveRecord::Base
     self.activities.last
   end
 
-  def venue_network
-    if self.participant
-      self.participant.room.venue.venue_network
-    end
-  end
+  # def venue_network
+  #   if self.participant
+  #     self.participant.room.venue.venue_network
+  #   end
+  # end
 
   def default_avatar
     self.user_avatars.where(order: 0).first
@@ -332,12 +341,15 @@ class User < ActiveRecord::Base
       json.email email
       json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
       json.instagram_id (instagram_id.blank? ? '' : instagram_id)
+      json.instagram_token (instagram_token.blank? ? '' : instagram_token)
       json.wechat_id (wechat_id.blank? ? '' : wechat_id)
       json.line_id (line_id.blank? ? '' : line_id)
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
       json.discovery discovery
       json.exclusive exclusive
       json.joined_today is_connected
+      json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
+      json.current_city current_city.blank? ? '' : current_city
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
@@ -346,8 +358,8 @@ class User < ActiveRecord::Base
         else
           json.array! avatars do |a|
 
-            json.avatar a.avatar.url
-            json.thumbnail a.avatar.thumb.url
+            json.avatar a.origin_url
+            json.thumbnail a.thumb_url
             json.default (!a.order.nil? and a.order == 0)
             json.is_active a.is_active
             json.avatar_id a.id
@@ -387,113 +399,143 @@ class User < ActiveRecord::Base
     self.last_activity = Time.now
   end
 
-  def send_network_open_notification
-    WhisperNotification.send_nightopen_notification(self.id) 
-  end
+  # def send_network_open_notification
+  #   WhisperNotification.send_nightopen_notification(self.id) 
+  # end
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
-  def self.network_open
+  # def self.network_open
+  #   time1 = Time.now
+
+  #   times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
+  #   times_array = Array.new # Make a new array to hold the times that are at 5:00pm
+  #   times_result.each do |timezone| # Check each timezone
+  #     Time.zone = timezone["timezone"] # Assign timezone
+  #     int_time = Time.zone.now.strftime("%H%M").to_i
+  #     if int_time >= 1700 and int_time < 1710 # If time is 17:00 ~ 17:09
+  #       open_network_tz = Time.zone.name.to_s #format it
+  #       times_array << open_network_tz #Throw into array
+  #     end
+  #   end
+
+  #   time2 = Time.now
+  #   dbtime = time2 - time1
+  #   puts "runtime2: "
+  #   puts dbtime.inspect
+
+  #   # if !times_array.empty?
+  #   #   user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
+  #   # end
+
+  #   if !times_array.empty?    
+  #     user_ids = User.where(:timezone_name => times_array).map(&:id)
+  #     # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
+  #   end
+
+
+  #   time3 = Time.now
+  #   dbtime = time3 - time2
+  #   puts "runtime3: "
+  #   puts dbtime.inspect
+    
+  #   if !user_ids.nil? and user_ids.length > 0
+  #     users = User.where(id: user_ids)
+  #   end
+
+
+  #   if !users.nil? and users.length > 0
+  #     people_array = Array.new 
+  #     users.each do |tmp_user|
+  #       user_hash = Hash.new
+  #       user_hash['id'] = tmp_user.id
+  #       user_hash['token'] = tmp_user.apn_token
+  #       user_hash['updated_at'] = tmp_user.updated_at
+  #       people_array << user_hash
+  #     end
+  #   end
+
+  #   time4 = Time.now
+  #   dbtime = time4 - time3
+  #   puts "runtime4s: "
+  #   puts dbtime.inspect
+
+  #   # remove duplicated apn_tokens
+  #   if !people_array.nil? and people_array.length > 0
+  #     people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
+
+  #     people_array.each_slice(25) do |people_group|
+  #       batch = AWS::DynamoDB::BatchWrite.new
+  #       notification_array = Array.new
+  #       people_group.each do |person|
+  #         if !person.blank?
+  #           request = Hash.new()
+  #           request["target_id"] = person['id'].to_s
+  #           request["timestamp"] = Time.now.to_i
+  #           request["origin_id"] = '0'
+  #           request["created_date"] = Date.today.to_s
+  #           request["venue_id"] = '0'
+  #           request["notification_type"] = '0'
+  #           request["intro"] = "Yero is now online. Connect to your city's network."
+  #           request["viewed"] = 0
+  #           request["not_viewed_by_sender"] = 1
+  #           request["accepted"] = 0
+  #           notification_array << request
+
+  #           user = User.find(person['id'].to_i)
+  #           if UserNotificationPreference.no_preference_record_found(user, "Network online")
+  #             user.delay.send_network_open_notification
+  #           end
+  #         end
+  #       end
+  #       if notification_array.count > 0
+  #         table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+  #         batch.put(table_name, notification_array)
+  #         batch.process!
+  #       end
+  #     end
+  #   end
+  #   time5 = Time.now
+  #   dbtime = time5 - time4
+  #   puts "runtime5: "
+  #   puts dbtime.inspect
+
+  #   puts "runtimeALL: "
+  #   puts (time5 - time1).inspect
+  # end
+
+  def self.handle_close(times_array)
     time1 = Time.now
-
-    times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
-    times_array = Array.new # Make a new array to hold the times that are at 5:00pm
-    times_result.each do |timezone| # Check each timezone
-      Time.zone = timezone["timezone"] # Assign timezone
-      int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 1700 and int_time < 1710 # If time is 17:00 ~ 17:09
-        open_network_tz = Time.zone.name.to_s #format it
-        times_array << open_network_tz #Throw into array
-      end
-    end
-
-    time2 = Time.now
-    dbtime = time2 - time1
-    puts "runtime2: "
-    puts dbtime.inspect
-
-    # if !times_array.empty?
-    #   user_ids = UserLocation.find_by_dynamodb_timezone(times_array, false) #Find users of that timezone
-    # end
-
+    # disconnect all users
+    people_array = Array.new 
     if !times_array.empty?    
-      user_ids = User.where(:timezone_name => times_array).map(&:id)
+      people_array = User.where(:timezone_name => times_array).map(&:id)
       # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
-
-
-    time3 = Time.now
-    dbtime = time3 - time2
-    puts "runtime3: "
-    puts dbtime.inspect
-    
-    if !user_ids.nil? and user_ids.length > 0
-      users = User.where(id: user_ids)
-    end
-
-
-    if !users.nil? and users.length > 0
-      people_array = Array.new 
-      users.each do |tmp_user|
-        user_hash = Hash.new
-        user_hash['id'] = tmp_user.id
-        user_hash['token'] = tmp_user.apn_token
-        user_hash['updated_at'] = tmp_user.updated_at
-        people_array << user_hash
+    if !people_array.empty? 
+      User.leave_activity(people_array)
+      User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
+      # WhisperNotification.expire(people_array, '2')
+      # expire all whispers with type 2 of these users
+      whispers_today = WhisperToday.where(target_user_id: people_array)
+      if whispers_today.count == 1
+        whispers_today.first.destroy
+      elsif whispers_today.count > 1
+        whispers_today.destroy_all
       end
     end
-
-    time4 = Time.now
-    dbtime = time4 - time3
-    puts "runtime4s: "
-    puts dbtime.inspect
-
-    # remove duplicated apn_tokens
-    if !people_array.nil? and people_array.length > 0
-      people_array = people_array.group_by { |x| x['token'] }.map {|x,y|y.max_by {|x|x['updated_at']}}
-
-      people_array.each_slice(25) do |people_group|
-        batch = AWS::DynamoDB::BatchWrite.new
-        notification_array = Array.new
-        people_group.each do |person|
-          if !person.blank?
-            request = Hash.new()
-            request["target_id"] = person['id'].to_s
-            request["timestamp"] = Time.now.to_i
-            request["origin_id"] = '0'
-            request["created_date"] = Date.today.to_s
-            request["venue_id"] = '0'
-            request["notification_type"] = '0'
-            request["intro"] = "Yero is now online. Connect to your city's network."
-            request["viewed"] = 0
-            request["not_viewed_by_sender"] = 1
-            request["accepted"] = 0
-            notification_array << request
-
-            user = User.find(person['id'].to_i)
-            if UserNotificationPreference.no_preference_record_found(user, "Network online")
-              user.delay.send_network_open_notification
-            end
-          end
-        end
-        if notification_array.count > 0
-          table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-          batch.put(table_name, notification_array)
-          batch.process!
-        end
-      end
+    # cleanup active_in_venue_network & active_in_venue & enter_today
+    venue_networks = VenueNetwork.where(:timezone => times_array)
+    venue_networks.each do |vn|
+      ActiveInVenueNetwork.five_am_cleanup(vn)
     end
-    time5 = Time.now
-    dbtime = time5 - time4
-    puts "runtime5: "
-    puts dbtime.inspect
-
-    puts "runtimeALL: "
-    puts (time5 - time1).inspect
+    time2 = Time.now
+    puts "CLOSE runtimeALL: "
+    puts (time2 - time1).inspect
+    return true
   end
 
   # This code for usage with a CRON job. Currently done using Heroku Scheduler
   def self.network_close
-    time1 = Time.now
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
     times_result.each do |timezone| # Check each timezone
@@ -504,38 +546,8 @@ class User < ActiveRecord::Base
         times_array << open_network_tz #Throw into array
       end
     end
-    puts "CLOSE Timezones:"
-    puts times_array.inspect
-    # disconnect all users
-    people_array = Array.new 
-    if !times_array.empty?    
-      people_array = User.where(:timezone_name => times_array).map(&:id)
-      # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
-    end
-    puts "CLOSE People:"
-    puts people_array.inspect
-    if !people_array.empty? 
-      User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
-      # WhisperNotification.expire(people_array, '2')
-      User.leave_activity(people_array)
-      # expire all whispers with type 2 of these users
-      whispers_today = WhisperToday.where(target_user_id: people_array)
-      if whispers_today.count == 1
-        whispers_today.first.delete
-      elsif whispers_today.count > 1
-        whispers_today.destroy_all
-      end
-    end
-    # cleanup active_in_venue_network & active_in_venue & enter_today
-    venue_networks = VenueNetwork.where(:timezone => times_array)
-    venue_networks.each do |vn|
-      ActiveInVenueNetwork.five_am_cleanup(vn)
-    end
-    puts "CLOSE Networks:"
-    puts venue_networks.inspect
-    time2 = Time.now
-    puts "CLOSE runtimeALL: "
-    puts (time2 - time1).inspect
+    User.handle_close(times_array)
+    
   end
 
   def friends_by_like
@@ -547,51 +559,51 @@ class User < ActiveRecord::Base
   end
 
   # find friends built by accepting whisper
-  def friends_by_whisper    
-    dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name] # Choose the table
-    if !table.schema_loaded?
-      table.load_schema 
-    end
+  # def friends_by_whisper    
+  #   dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
+  #   table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+  #   table = dynamo_db.tables[table_name] # Choose the table
+  #   if !table.schema_loaded?
+  #     table.load_schema 
+  #   end
 
-    friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
-    friends_whispered = table.items.where(:target_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:origin_id)
+  #   friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
+  #   friends_whispered = table.items.where(:target_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:origin_id)
 
-    first_friends_id_array = Array.new
-    second_friends_id_array = Array.new
+  #   first_friends_id_array = Array.new
+  #   second_friends_id_array = Array.new
 
-    if friends_accepted and friends_accepted.count > 0
-      friends_accepted.each do |friend|
-        attributes = friend.attributes
-        friend_id = attributes['target_id'].to_i
-        if first_friends_id_array.include? friend_id
-           # 'in the array'
-        else
-          first_friends_id_array << friend_id
-        end 
-      end
-    end
+  #   if friends_accepted and friends_accepted.count > 0
+  #     friends_accepted.each do |friend|
+  #       attributes = friend.attributes
+  #       friend_id = attributes['target_id'].to_i
+  #       if first_friends_id_array.include? friend_id
+  #          # 'in the array'
+  #       else
+  #         first_friends_id_array << friend_id
+  #       end 
+  #     end
+  #   end
 
-    if friends_whispered and friends_whispered.count > 0
-      friends_whispered.each do |friend|      
-        attributes = friend.attributes
-        friend_id = attributes['origin_id'].to_i
-        if second_friends_id_array.include? friend_id
-           # 'in the array'
-        else
-          second_friends_id_array << friend_id 
-        end 
-      end
-    end
+  #   if friends_whispered and friends_whispered.count > 0
+  #     friends_whispered.each do |friend|      
+  #       attributes = friend.attributes
+  #       friend_id = attributes['origin_id'].to_i
+  #       if second_friends_id_array.include? friend_id
+  #          # 'in the array'
+  #       else
+  #         second_friends_id_array << friend_id 
+  #       end 
+  #     end
+  #   end
 
-    users = Array.new
-    users = first_friends_id_array | second_friends_id_array
-    return_users = Array.new
-    return_users = User.where(:id => users)
-    return return_users
+  #   users = Array.new
+  #   users = first_friends_id_array | second_friends_id_array
+  #   return_users = Array.new
+  #   return_users = User.where(:id => users)
+  #   return return_users
 
-  end
+  # end
 
   def people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
@@ -600,7 +612,9 @@ class User < ActiveRecord::Base
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
     pre_time_1 = Time.now
-    if true 
+    all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+    number_of_users = all_users.length + 1
+    if number_of_users >= gate_number  
       s_time = Time.now
       # collect all whispers sent 
       # TODO: use model to do it
@@ -618,6 +632,9 @@ class User < ActiveRecord::Base
       retus = Time.now
       # get all users with filter params
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      puts "RETURN USERS:"
+      puts everyone.to_s
+      puts return_users.length
       if self.current_venue.blank?
         same_venue_user_ids = Array.new
       else
@@ -671,8 +688,8 @@ class User < ActiveRecord::Base
             if other_avatars.count > 0
               other_avatars.each do |oa|
                 new_item = {
-                  avatar: !oa.avatar.nil? ? oa.avatar.url : '',
-                  thumbnail: !oa.avatar.nil? ? oa.avatar.thumb.url : '',
+                  avatar: !oa.avatar.nil? ? oa.origin_url : '',
+                  thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
                   avatar_id: oa.id,
                   default: oa.order.nil? ? true : (oa.order==0),
                   is_active: true,
@@ -727,7 +744,7 @@ class User < ActiveRecord::Base
             json.id             user.id
             json.first_name     user.first_name
             # json.key            user.key
-            json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
+            # json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
             json.gender         user.gender
             # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
@@ -813,7 +830,13 @@ class User < ActiveRecord::Base
 
       # count = users.count
       result['users'] = users
-    
+      puts "USERS RESULT:"
+      puts users.count
+    else
+      # count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      count = number_of_users
+      users = Array.new
+      result['percentage'] = (count * 100 / gate_number).to_i
     end
     # puts "USERS RESULT:"
     # puts result.inspect
@@ -883,7 +906,7 @@ class User < ActiveRecord::Base
       first_name:     self.first_name,
       last_active:    self.last_active,
       last_activity:  self.last_activity,
-      since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
+      # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
       birthday:       (self.id != 0 ? self.birthday : ''),
       # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
@@ -915,8 +938,8 @@ class User < ActiveRecord::Base
         else
           json.array! avatars do |a|
 
-            json.avatar a.avatar.url
-            json.thumbnail a.avatar.thumb.url
+            json.avatar a.origin_url
+            json.thumbnail a.thumb_url
             json.default (!a.order.nil? and a.order == 0)
             json.is_active a.is_active
             json.avatar_id a.id
@@ -933,7 +956,7 @@ class User < ActiveRecord::Base
 
   def generate_token
     user = {:id => self.id, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
-    if Rails.env == 'development'
+    if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
     else
       secret = ENV['SECRET_KEY_BASE']
@@ -959,38 +982,19 @@ class User < ActiveRecord::Base
   end
 
   def self.leave_activity(people_array)
-    dynamo_db = AWS::DynamoDB.new
-    table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    table = dynamo_db.tables[table_name]
-    if !table.schema_loaded?
-      table.load_schema
-    end
+    # dynamo_db = AWS::DynamoDB.new
+    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
+    # table = dynamo_db.tables[table_name]
+    # if !table.schema_loaded?
+    #   table.load_schema
+    # end
     current_timestamp = Time.now.to_i
     people_array.each do |user|
-      RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      check_user = User.find_by_id(user.to_i)
+      if check_user and check_user.is_connected
+        RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
+      end
     end
-    # people_array.each_slice(25) do |whisper_group|
-    #   batch = AWS::DynamoDB::BatchWrite.new
-    #   current_timestamp = Time.now.to_i
-    #   notification_array = Array.new
-    #   whisper_group.each do |w|
-    #     if !w.blank?
-    #       request = Hash.new()
-    #       request["target_id"] = w.to_s
-    #       request["timestamp"] = current_timestamp
-    #       request["accepted"] = 0
-    #       request["declined"] = 0
-    #       request["id"] = "offline-"+w.to_s+"-"+current_timestamp.to_s
-    #       request["notification_type"] = '201'
-    #       request["viewed"] = 0
-    #       notification_array << request 
-    #     end
-    #   end
-    #   if notification_array.count > 0
-    #     batch.put(table_name, notification_array)
-    #     batch.process!
-    #   end
-    # end
   end
 
   def avatar_reorder(avatar_ids)
@@ -1012,5 +1016,153 @@ class User < ActiveRecord::Base
     users.each do |user|
       user.join_network
     end
+  end
+
+
+  def self.random_join_fake_users(timezone, number_of_male, number_of_female)
+    female_fake_users = User.where(timezone_name: timezone).where(is_connected: false).where(fake_user: true).where(gender: 'F').sample(number_of_female)
+    male_fake_users = User.where(timezone_name: timezone).where(is_connected: false).where(fake_user: true).where(gender: 'M').sample(number_of_male)
+
+    if !female_fake_users.blank?
+      female_fake_users.each do |user|
+        user.join_network
+      end
+    end
+    if !male_fake_users.blank?
+      male_fake_users.each do |user|
+        user.join_network
+      end
+    end
+  end
+
+  def self.fake_users_join
+    times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
+    times_array = Array.new # Make a new array to hold the times that are at 5:00pm
+    times_result.each do |timezone| # Check each timezone
+      Time.zone = timezone["timezone"] # Assign timezone
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 1700 and int_time < 1719 # If time is 17:00 ~ 17:19
+        open_network_tz = Time.zone.name.to_s #format it
+        times_array << open_network_tz #Throw into array
+      end
+    end
+
+    round_array = [2, 3]
+    random_round = round_array.sample
+    (1..random_round).each do |i|
+      User.delay(run_at: (15*i).minutes.from_now).random_join_fake_users(times_array, 2, 3)
+    end
+    User.random_join_fake_users(times_array, 2, 3)
+  end
+
+  def self.import(file)
+    CSV.foreach(file.path, headers: true) do |row|
+      user_obj = row.to_hash
+      puts user_obj
+      email = user_obj['Email'].nil? ? '' : user_obj['Email']
+      check_user = User.find_by_email(email)
+      if check_user.nil?
+        first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
+        password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
+        key = loop do
+          random_token = SecureRandom.urlsafe_base64(nil, false)
+          break random_token unless User.exists?(key: random_token)
+        end
+        snapchat_id = rand(36**5).to_s(36)
+        birthday = user_obj['Birthday']
+        gender = user_obj['Gender']
+        introduction_1 = user_obj['Bio']
+        timezone_name = "America/Vancouver"
+        current_city = "Vancovuer"
+        latitude = user_obj['Latitude'].to_f
+        longitude = user_obj['Longtitude'].to_f
+        is_connected = false
+        exclusive = false
+        fake_user = true
+
+        # create user
+        user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true)
+
+        if !user.nil?
+          user.birthday = user.birthday + 1900.years
+          user.save
+          # create photos
+          id_array = ['1', '2', '3', '4', '5', '6']
+          id_array.each do |avatar_id|
+            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name+avatar_id+'.jpg'
+            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name.downcase+avatar_id+'.jpg'
+            res = Net::HTTP.get_response(URI.parse(origin_img_url))
+            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+            if res.code == '200'
+              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+              
+              avatar = UserAvatar.new(user: user)
+              next_order = current_order.nil? ? 0 : current_order+1
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = origin_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            elsif downcase_res.code == '200'
+              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+              
+              avatar = UserAvatar.new(user: user)
+              next_order = current_order.nil? ? 0 : current_order+1
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = downcase_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            end
+          end
+        end
+      else
+        # create photos
+        latitude = user_obj['Latitude'].to_f
+        longitude = user_obj['Longtitude'].to_f
+        check_user.update(:latitude => latitude, :longitude => longitude)
+        id_array = ['1', '2', '3', '4', '5', '6']
+        id_array.each do |avatar_id|
+          current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
+          
+          avatar = UserAvatar.new(user: check_user)
+          next_order = current_order.nil? ? 0 : current_order+1
+          if next_order < avatar_id.to_i
+            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name+avatar_id+'.jpg'
+            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name.downcase+avatar_id+'.jpg'
+            res = Net::HTTP.get_response(URI.parse(origin_img_url))
+            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+
+            if res.code == '200'
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = origin_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            elsif downcase_res.code == '200'
+              avatar.order = next_order
+
+              avatar.remote_avatar_url = downcase_img_url
+              if avatar.save
+                avatar.origin_url = avatar.avatar.url
+                avatar.thumb_url = avatar.avatar.thumb.url
+                avatar.save
+              end
+            end
+          end
+        end
+
+      end
+    end
+    return true
   end
 end

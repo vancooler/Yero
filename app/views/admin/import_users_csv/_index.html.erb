@@ -1,0 +1,8 @@
+<% content_for :title, "Yero" %>
+<%=notice%>
+<%=form_tag '/users-csv-import', multipart: true do%>
+<h3>Please choose a csv file to import: </h3>
+<%=file_field_tag :csv_file, accept: 'text/csv', required: true%><br>
+<br>
+<%=submit_tag "Import"%>
+<%end%>

@@ -10,7 +10,8 @@
 // Read Sprockets README (https://github.com/sstephenson/sprockets#sprockets-directives) for details
 // about supported directives.
 //
-//= require jquery
+
+//= require css_browser_selector
 //= require jquery_ujs
 //= require jquery.ui.autocomplete
 //= require foundation

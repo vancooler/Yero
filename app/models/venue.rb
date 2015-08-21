@@ -43,12 +43,38 @@ class Venue < ActiveRecord::Base
     end
   end
 
-  def self.near_venues(latitude, longitude, distance)
-    if latitude.nil? or longitude.nil?
-      return Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
-    else
-      return Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+  def self.near_venues(latitude, longitude, distance, without_featured_venues)
+    types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
+    types_array_string = Array.new
+    types_array.each do |a|
+      types_array_string << a.to_s
     end
+    if latitude.nil? or longitude.nil?
+      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    else
+      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    if !without_featured_venues
+      # campus = VenueType.find_by_name("Campus")
+
+      # if !campus.nil?
+      #   venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
+      # end
+
+      # reorder it based on featured and featured order
+      featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
+      if !featured_venues.empty?
+        other_venues = venues - featured_venues
+        featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
+        venues = featured_venues + other_venues
+      end
+    end
+    return venues
   end
 
   def default_avatar
