@@ -168,9 +168,10 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     selectable_column
   	column :id
     column "Image", :avatar do |avatar|
-      link_to avatar.origin_url, :target => "_blank" do 
+      link = link_to avatar.origin_url, :target => "_blank" do 
         image_tag avatar.thumb_url, {:style => "height:100px;width:100px;"}
       end
+      link + ((avatar.is_active.nil? or avatar.order.nil?) ? '' : (avatar.is_active == false or avatar.order.to_i != 0 ? raw('') : raw('<span class="status_tag yes">P</span>')))
     end
     column "User (ID)", :user
     column "Gender", :user do |ua|

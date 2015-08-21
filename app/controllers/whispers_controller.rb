@@ -132,16 +132,17 @@ class WhispersController < ApplicationController
         else
           WhisperNotification.find_whisper(whisperId, state)
         end
-        item = WhisperNotification.find_by_dynamodb_id(whisperId)
+        # item = WhisperNotification.find_by_dynamodb_id(whisperId)
+        item = whisper = WhisperToday.find_by_dynamo_id(whisperId)
         origin_id = 0
         target_id = 0
         if item.nil?
           
         else 
-          attributes = item.attributes.to_h
-          origin_id = attributes['origin_id'].to_i
-          target_id = attributes['target_id'].to_i
-          venue_id = attributes['venue_id'].to_i
+          # attributes = item.attributes.to_h
+          origin_id = item.origin_user_id.to_i
+          target_id = item.target_user_id.to_i
+          venue_id = item.venue_id.nil? ? 0 : item.venue_id.to_i
         end
         if origin_id.to_i <= 0 
           render json: success
@@ -151,7 +152,11 @@ class WhispersController < ApplicationController
           elsif BlockUser.check_block(origin_id, target_id)
             render json: error('User blocked.')
           else
-            n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
+            if Rails.env == 'production'
+              n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
+            else
+              n = WhisperNotification.new 
+            end
             if !n.nil?
               current_time = Time.now
               FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id, :friend_time => current_time, :viewed => false)
@@ -159,8 +164,10 @@ class WhispersController < ApplicationController
               RecentActivity.add_activity(target_id.to_i, '3', origin_id.to_i, nil, "friend-"+target_id.to_s+"-"+origin_id.to_s+"-"+current_time.to_i.to_s)
     
               user = User.find(target_id.to_i)
-              message = user.first_name + " is now your friend!"
-              n.send_push_notification_to_target_user(message)
+              if Rails.env == 'production'
+                message = user.first_name + " is now your friend!"
+                n.send_push_notification_to_target_user(message)
+              end
               render json: success
             else
               render json: error('There was an error.')
