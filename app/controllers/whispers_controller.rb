@@ -124,7 +124,8 @@ class WhispersController < ApplicationController
   def whisper_request_state
     whisperId = params[:whisper_id]
 
-    if params[:accepted].to_i == 1 or params[:declined].to_i == 1
+    item = WhisperToday.find_by_dynamo_id(whisperId)
+    if item and item.target_user_id.to_i == current_user.id
       if params[:accepted].to_i == 1
         state = 'accepted'
         if Rails.env == 'production'
@@ -133,7 +134,6 @@ class WhispersController < ApplicationController
           WhisperNotification.find_whisper(whisperId, state)
         end
         # item = WhisperNotification.find_by_dynamodb_id(whisperId)
-        item = whisper = WhisperToday.find_by_dynamo_id(whisperId)
         origin_id = 0
         target_id = 0
         if item.nil?
@@ -186,7 +186,7 @@ class WhispersController < ApplicationController
         render json: error('There was an error.')
       end
     else
-      render json: error('There was an error.')
+      render json: error('Permission denied.')
     end
   end
 
@@ -213,7 +213,9 @@ class WhispersController < ApplicationController
     if params[:array].blank?
       render json: error("ID array is empty")
     else
-      WhisperNotification.delay.delete_whispers(params[:array].to_a)
+      if Rails.env == 'production'
+        WhisperNotification.delay.delete_whispers(params[:array].to_a)
+      end
       whispers_delete = WhisperToday.where(dynamo_id: params[:array].to_a).update_all(:declined => true)
       render json: success(whispers_delete)
     end

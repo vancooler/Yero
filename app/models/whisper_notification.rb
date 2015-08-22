@@ -794,7 +794,7 @@ class WhisperNotification < AWS::Record::HashModel
           n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
         else
           n = WhisperNotification.new
-          n.id = 'aaa'
+          n.id = 'aaa'+current_user.id.to_s
         end
         WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
         if n and notification_type == "2"
