@@ -19,7 +19,7 @@ class ActiveInVenue < ActiveRecord::Base
     oldArray = ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id)
     puts oldArray
     if oldArray and oldArray.count > 0
-      if oldArray.count == 1
+      if oldArray.count == 1 and !oldArray.first.nil?
         oldArray.first.destroy
       else
         oldArray.destroy_all
@@ -78,7 +78,11 @@ class ActiveInVenue < ActiveRecord::Base
     #delete venue activity
     v = ActiveInVenue.where("user_id = ?", user_id)
     if v and v.count == 1
-      result = v.first.destroy
+      if !v.first.nil?
+        result = v.first.destroy
+      else
+        result = false
+      end
     else
       result = false
     end
