@@ -202,5 +202,20 @@ describe WhispersController do
 	      	UserAvatar.delete_all
 	      	User.delete_all
 	    end
+
+
+
+	    # 1.3 new feature senarios:
+	    
+
+	    # A->B
+		    # User A: 1 activity
+		    # User B: 1 whisper(reply, friend, can expire), 1 activity
+		# B->A
+			# User A: 1 whisper(reply, NO friend, NO expire), 2 activity
+		    # User B: 1 whisper(CAN reply, friend, NO expire), 2 activity
+
+		#decline ???
+
 	end
 end
