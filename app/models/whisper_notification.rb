@@ -281,6 +281,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['target_user_id'] = user.id
         h['target_user'] = user
         timestamp = FriendByWhisper.find_time(user.id, user_id).to_i
+        h['viewed'] = FriendByWhisper.find_friendship(user.id, user_id).nil? ? true : FriendByWhisper.find_friendship(user.id, user_id).viewed
         h['timestamp'] = timestamp
         h['timestamp_read'] = Time.at(timestamp) # TODO: change format
         friends << h  
@@ -823,7 +824,15 @@ class WhisperNotification < AWS::Record::HashModel
 
 
   def send_push_notification_to_target_user(message)
-    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment"}
+    # deep_link = (self.target_id.to_i == 3) ? 
+    if self.notification_type.to_i == 3
+      deep_link = "yero://friends/" + self.origin_id.to_s
+    else
+
+      deep_link = "yero://whispers/" + self.id
+    end
+
+    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment", }
     push = Parse::Push.new(data, "User_" + self.target_id.to_s)
     push.type = "ios"
     begin  
@@ -837,7 +846,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
 
-  # send network open notification
+  # send network open notification -> NOT used
   def self.send_nightopen_notification(id)
     data = { :alert => "Your city's network is now online.", :type => 100}
     push = Parse::Push.new(data, "User_" + id.to_s)
@@ -857,7 +866,7 @@ class WhisperNotification < AWS::Record::HashModel
   # send enough users notification
   def self.send_enough_users_notification(id)
 
-    data = { :alert => "Enough users have joined your city’s network.", :type => 102}
+    data = { :alert => "Enough users have joined your city’s network.", :type => 102, :deep_link => 'yero://people'}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  

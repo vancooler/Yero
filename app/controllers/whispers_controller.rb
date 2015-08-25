@@ -1,7 +1,7 @@
 class WhispersController < ApplicationController
-  prepend_before_filter :get_api_token, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
+  prepend_before_filter :get_api_token, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat, :show]
 
-  before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat]
+  before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat, :show]
   skip_before_filter  :verify_authenticity_token
 
   # def new
@@ -20,6 +20,51 @@ class WhispersController < ApplicationController
   #     render json: error(@whisper.errors)
   #   end
   # end
+
+  def show
+    whisper_id = params[:id]
+    whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+    if whisper.blank?
+      error_obj = {
+        code: 404,
+        message: "Sorry, cannot find the whisper"
+      }
+      render json: error(error_obj)
+    else
+
+      if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
+        error_obj = {
+          code: 403,
+          message: "Sorry, you don't have access to it"
+        }
+        render json: error(error_obj)
+      elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
+        error_obj = {
+          code: 403,
+          message: "Sorry, you don't have access to it"
+        }
+        render json: error(error_obj)
+      elsif whisper.photo_disabled(current_user.id)
+        error_obj = {
+          code: 403,
+          message: "Sorry, you don't have access to it"
+        }
+        render json: error(error_obj)
+      else
+        whisper_array = WhisperToday.to_json([whisper])
+        if !whisper_array.nil? and !whisper_array.first.nil?
+          whisper_obj = whisper_array.first
+          render json: success(whisper_obj)
+        else
+          error_obj = {
+            code: 404,
+            message: "Sorry, cannot find the whisper"
+          }
+          render json: error(error_obj)
+        end
+      end
+    end
+  end
 
 
   # def create_by_url

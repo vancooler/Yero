@@ -11,6 +11,22 @@ class WhisperToday < ActiveRecord::Base
 		WhisperToday.where(:target_user_id => user_id).where.not(origin_user_id: black_list).where(:viewed => false).count
 	end
 
+	def photo_disabled(current_user_id)
+		if current_user_id == self.origin_user_id
+			user = User.find_by_id(target_user_id)
+		elsif current_user_id == self.target_user_id
+			user = User.find_by_id(origin_user_id)
+		else
+			return true
+		end
+
+		if user.nil?
+			return true
+		else
+			return user.user_avatars.where(is_active: true).blank?
+		end
+	end
+
 	def self.to_json(whispers)
 		result = Jbuilder.encode do |json|
 			json.array! whispers do |a|
@@ -31,7 +47,7 @@ class WhisperToday < ActiveRecord::Base
 				          json.expire_timestamp Time.now.to_i + 3600*12
 				        end
 
-						json.whisper_id a.dynamo_id
+						# json.whisper_id a.dynamo_id
 						json.timestamp 					a.created_at.to_i
 						json.timestamp_read  			a.created_at
 						json.viewed 					a.viewed.blank? ? 0 : (a.viewed ? 1 : 0)

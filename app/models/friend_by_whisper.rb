@@ -23,4 +23,32 @@ class FriendByWhisper < ActiveRecord::Base
 		end
 		return 0
     end
+
+    def self.find_friendship(origin_id, target_id)
+		if FriendByWhisper.find_by_target_user_id_and_origin_user_id(target_id, origin_id) 
+			return FriendByWhisper.find_by_target_user_id_and_origin_user_id(target_id, origin_id)
+		elsif FriendByWhisper.find_by_target_user_id_and_origin_user_id(origin_id, target_id)
+			return FriendByWhisper.find_by_target_user_id_and_origin_user_id(origin_id, target_id)
+		end
+		return nil
+    end
+
+
+    def to_json(friend, current_user)
+    	if !friend.nil?
+          	user_object = friend.user_object(current_user)
+          	response = {
+          		notification_type: 3,
+          		id: friend.id,
+          		timestamp: self.friend_time,
+          		timestamp_read: Time.at(self.friend_time),
+          		viewed: self.viewed,
+          		object_type: "user",
+	        	object: user_object
+          	}
+	        return response
+	    else
+	    	return nil
+        end
+    end
 end
