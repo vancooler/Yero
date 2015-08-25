@@ -29,7 +29,7 @@ class WhispersController < ApplicationController
         code: 404,
         message: "Sorry, cannot find the whisper"
       }
-      render json: error(error_obj)
+      render json: error(error_obj, 'data')
     else
 
       if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
@@ -37,19 +37,19 @@ class WhispersController < ApplicationController
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
         error_obj = {
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       elsif whisper.photo_disabled(current_user.id)
         error_obj = {
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       else
         whisper_array = WhisperToday.to_json([whisper])
         if !whisper_array.nil? and !whisper_array.first.nil?
@@ -60,7 +60,7 @@ class WhispersController < ApplicationController
             code: 404,
             message: "Sorry, cannot find the whisper"
           }
-          render json: error(error_obj)
+          render json: error(error_obj, 'data')
         end
       end
     end

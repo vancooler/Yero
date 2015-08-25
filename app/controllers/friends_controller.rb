@@ -11,26 +11,26 @@ class FriendsController < ApplicationController
         code: 404,
         message: "Sorry, cannot find the friend"
       }
-      render json: error(error_obj)
+      render json: error(error_obj, 'data')
   	else
   	  if !FriendByWhisper.check_friends(current_user.id, friend.id) 
         error_obj = {
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       elsif BlockUser.check_block(current_user.id, friend.id) 
         error_obj = {
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       elsif friend.user_avatars.where(is_active: true).blank?        
       	error_obj = {
           code: 403,
           message: "Sorry, you don't have access to it"
         }
-        render json: error(error_obj)
+        render json: error(error_obj, 'data')
       else
         friend_ship = FriendByWhisper.find_friendship(current_user.id, friend.id)
         if !friend_ship.nil? 
@@ -41,7 +41,7 @@ class FriendsController < ApplicationController
             code: 404,
             message: "Sorry, cannot find the friend"
           }
-          render json: error(error_obj)
+          render json: error(error_obj, 'data')
         end
       end
 

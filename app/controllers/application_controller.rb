@@ -140,10 +140,10 @@ class ApplicationController < ActionController::Base
     # response.as_json
   end
 
-  def error(message)
+  def error(message, data_symbol_name="message")
     {
       success: false,
-      message: message
+      data_symbol_name.to_sym => message
     }
   end
 

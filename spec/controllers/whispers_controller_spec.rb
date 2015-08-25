@@ -165,10 +165,24 @@ describe WhispersController do
 
 
 
-	      	# accept it
 	      	token = user_3.generate_token
 	      	request.env["X-API-TOKEN"] = token
 
+	      	# show a single whisper
+	      	get :show, :id => 'aaa2'
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
+	      	expect(JSON.parse(response.body)['data']['whisper_id']).to eql 'aaa2'
+	      	expect(JSON.parse(response.body)['data']['object']['id']).to eql 2
+
+	      	get :show, :id => 'aaaa2'
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['data']['code']).to eql 404
+	      	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry, cannot find the whisper'
+
+
+	      	# accept it
 	      	post :whisper_request_state, :whisper_id => 'aaa2', :accepted => '0'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql false
@@ -194,12 +208,43 @@ describe WhispersController do
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
 	      	expect(JSON.parse(response.body)['data'].count).to eql 2
+
+
+	      	# NO access
+	      	token = user_4.generate_token
+	      	request.env["X-API-TOKEN"] = token
+	      	get :show, :id => 'aaa2'
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['data']['code']).to eql 403
+	      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+
+	      	# Block
+	      	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
+	      	token = user_3.generate_token
+	      	request.env["X-API-TOKEN"] = token
+	      	get :show, :id => 'aaa2'
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['data']['code']).to eql 403
+	      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+
+	      	BlockUser.delete_all
+	      	# No photo
+	      	UserAvatar.delete_all
+	      	token = user_3.generate_token
+	      	request.env["X-API-TOKEN"] = token
+	      	get :show, :id => 'aaa2'
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['data']['code']).to eql 403
+	      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+
 	      	
 	      	WhisperToday.delete_all
 	      	WhisperSent.delete_all
 	      	FriendByWhisper.delete_all
 	      	RecentActivity.delete_all
-	      	UserAvatar.delete_all
 	      	User.delete_all
 	    end
 
