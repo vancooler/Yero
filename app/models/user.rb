@@ -249,15 +249,15 @@ class User < ActiveRecord::Base
   # Sort the users in same venue in random order
   #
   ##########################################################################
-  def same_venue_users(users)
-    users.each do |u|
-      if !self.same_venue_as?(u.id)
-        users.reject{|user| user.id == u.id}
-      end
-    end
-    users = users.shuffle
-    return users
-  end
+  # def same_venue_users(users)
+  #   users.each do |u|
+  #     if !self.same_venue_as?(u.id)
+  #       users.reject{|user| user.id == u.id}
+  #     end
+  #   end
+  #   users = users.shuffle
+  #   return users
+  # end
 
   ##########################################################################
   #
@@ -1050,113 +1050,117 @@ class User < ActiveRecord::Base
     User.random_join_fake_users(times_array, 2, 3)
   end
 
+
+  def self.import_single_user(user_obj)
+    email = user_obj['Email'].nil? ? '' : user_obj['Email']
+    check_user = User.find_by_email(email)
+    if check_user.nil?
+      first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
+      password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
+      key = loop do
+        random_token = SecureRandom.urlsafe_base64(nil, false)
+        break random_token unless User.exists?(key: random_token)
+      end
+      snapchat_id = rand(36**5).to_s(36)
+      birthday = user_obj['Birthday']
+      gender = user_obj['Gender']
+      introduction_1 = user_obj['Bio']
+      timezone_name = "America/Vancouver"
+      current_city = "Vancovuer"
+      latitude = user_obj['Latitude'].to_f
+      longitude = user_obj['Longtitude'].to_f
+      is_connected = false
+      exclusive = false
+      fake_user = true
+
+      # create user
+      user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true)
+
+      if !user.nil?
+        user.birthday = user.birthday + 1900.years
+        user.save
+        # create photos
+        id_array = ['1', '2', '3', '4', '5', '6']
+        id_array.each do |avatar_id|
+          origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name+avatar_id+'.jpg'
+          downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name.downcase+avatar_id+'.jpg'
+          res = Net::HTTP.get_response(URI.parse(origin_img_url))
+          downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+          if res.code == '200'
+            current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+            
+            avatar = UserAvatar.new(user: user)
+            next_order = current_order.nil? ? 0 : current_order+1
+            avatar.order = next_order
+
+            avatar.remote_avatar_url = origin_img_url
+            if avatar.save
+              avatar.origin_url = avatar.avatar.url
+              avatar.thumb_url = avatar.avatar.thumb.url
+              avatar.save
+            end
+          elsif downcase_res.code == '200'
+            current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+            
+            avatar = UserAvatar.new(user: user)
+            next_order = current_order.nil? ? 0 : current_order+1
+            avatar.order = next_order
+
+            avatar.remote_avatar_url = downcase_img_url
+            if avatar.save
+              avatar.origin_url = avatar.avatar.url
+              avatar.thumb_url = avatar.avatar.thumb.url
+              avatar.save
+            end
+          end
+        end
+      end
+    else
+      # create photos
+      latitude = user_obj['Latitude'].to_f
+      longitude = user_obj['Longtitude'].to_f
+      check_user.update(:latitude => latitude, :longitude => longitude)
+      id_array = ['1', '2', '3', '4', '5', '6']
+      id_array.each do |avatar_id|
+        current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
+        
+        avatar = UserAvatar.new(user: check_user)
+        next_order = current_order.nil? ? 0 : current_order+1
+        if next_order < avatar_id.to_i
+          origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name+avatar_id+'.jpg'
+          downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name.downcase+avatar_id+'.jpg'
+          res = Net::HTTP.get_response(URI.parse(origin_img_url))
+          downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+
+          if res.code == '200'
+            avatar.order = next_order
+
+            avatar.remote_avatar_url = origin_img_url
+            if avatar.save
+              avatar.origin_url = avatar.avatar.url
+              avatar.thumb_url = avatar.avatar.thumb.url
+              avatar.save
+            end
+          elsif downcase_res.code == '200'
+            avatar.order = next_order
+
+            avatar.remote_avatar_url = downcase_img_url
+            if avatar.save
+              avatar.origin_url = avatar.avatar.url
+              avatar.thumb_url = avatar.avatar.thumb.url
+              avatar.save
+            end
+          end
+        end
+      end
+
+    end
+  end
+
   def self.import(file)
     CSV.foreach(file.path, headers: true) do |row|
       user_obj = row.to_hash
-      puts user_obj
-      email = user_obj['Email'].nil? ? '' : user_obj['Email']
-      check_user = User.find_by_email(email)
-      if check_user.nil?
-        first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
-        password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
-        key = loop do
-          random_token = SecureRandom.urlsafe_base64(nil, false)
-          break random_token unless User.exists?(key: random_token)
-        end
-        snapchat_id = rand(36**5).to_s(36)
-        birthday = user_obj['Birthday']
-        gender = user_obj['Gender']
-        introduction_1 = user_obj['Bio']
-        timezone_name = "America/Vancouver"
-        current_city = "Vancovuer"
-        latitude = user_obj['Latitude'].to_f
-        longitude = user_obj['Longtitude'].to_f
-        is_connected = false
-        exclusive = false
-        fake_user = true
-
-        # create user
-        user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true)
-
-        if !user.nil?
-          user.birthday = user.birthday + 1900.years
-          user.save
-          # create photos
-          id_array = ['1', '2', '3', '4', '5', '6']
-          id_array.each do |avatar_id|
-            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name+avatar_id+'.jpg'
-            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+user.first_name.downcase+avatar_id+'.jpg'
-            res = Net::HTTP.get_response(URI.parse(origin_img_url))
-            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
-            if res.code == '200'
-              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
-              
-              avatar = UserAvatar.new(user: user)
-              next_order = current_order.nil? ? 0 : current_order+1
-              avatar.order = next_order
-
-              avatar.remote_avatar_url = origin_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
-            elsif downcase_res.code == '200'
-              current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
-              
-              avatar = UserAvatar.new(user: user)
-              next_order = current_order.nil? ? 0 : current_order+1
-              avatar.order = next_order
-
-              avatar.remote_avatar_url = downcase_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
-            end
-          end
-        end
-      else
-        # create photos
-        latitude = user_obj['Latitude'].to_f
-        longitude = user_obj['Longtitude'].to_f
-        check_user.update(:latitude => latitude, :longitude => longitude)
-        id_array = ['1', '2', '3', '4', '5', '6']
-        id_array.each do |avatar_id|
-          current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
-          
-          avatar = UserAvatar.new(user: check_user)
-          next_order = current_order.nil? ? 0 : current_order+1
-          if next_order < avatar_id.to_i
-            origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name+avatar_id+'.jpg'
-            downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Test+users/'+check_user.first_name.downcase+avatar_id+'.jpg'
-            res = Net::HTTP.get_response(URI.parse(origin_img_url))
-            downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
-
-            if res.code == '200'
-              avatar.order = next_order
-
-              avatar.remote_avatar_url = origin_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
-            elsif downcase_res.code == '200'
-              avatar.order = next_order
-
-              avatar.remote_avatar_url = downcase_img_url
-              if avatar.save
-                avatar.origin_url = avatar.avatar.url
-                avatar.thumb_url = avatar.avatar.thumb.url
-                avatar.save
-              end
-            end
-          end
-        end
-
-      end
+      User.import_single_user(user_obj)
     end
     return true
   end

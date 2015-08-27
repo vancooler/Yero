@@ -9,7 +9,7 @@ class AvatarUploader < CarrierWave::Uploader::Base
   include CarrierWave::ImageOptimizer
 
   # Choose what kind of storage to use for this uploader:
-  storage (Rails.env.development? ? :file : :fog)
+  storage ((Rails.env.development? or Rails.env.test?) ? :file : :fog)
 
   # Override the directory where uploaded files will be stored.
   # This is a sensible default for uploaders that are meant to be mounted:

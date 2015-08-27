@@ -78,28 +78,140 @@ describe User do
 	      end
 
 	      it "ppl" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
 	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
 	      	venue_network = VenueNetwork.create!(id:1, name: "V")
 	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
-	      	active_in_venue = ActiveInVenue.create!(user_id: 1, venue_id:1)
+	      	beacon = Beacon.create!(id:1, key: "Vancouver_TestVenue_test", venue_id: 1)
+	      	
+	      	active_in_venue = ActiveInVenue.create!(user_id: 3, venue_id:1, beacon_id:1)
 	      	active_in_venue_2 = ActiveInVenue.create!(user_id: 2, venue_id:1)
 	      	ua = UserAvatar.create!(user: user_2, default: true, order: 0)
-	      	wt = WhisperSent.create!(target_user_id: 2, origin_user_id: 1, whisper_time: Time.now)
-	        expect(user.same_venue_as?(2)).to eql true
-	        expect(user.different_venue_as?(2)).to eql false
-	        expect(user.fellow_participants(nil, 19, 50, nil, 0, 1000, true).length).to eql 1
-	        expect(user.fellow_participants(nil, 19, 50, nil, 0, 1000, false).length).to eql 1
-	        expect(user.fellow_participants('F', 19, 50, nil, 1, 1000, false).length).to eql 1
-	        expect(user.people_list(1, 'F', 19, 40, nil, 1, 100, true, 0, 48)['users'].count).to eql 1
-	        expect(user.people_list(4, 'F', 19, 40, nil, 1, 100, true, 0, 48)['percentage']).to eql 50
-	        expect(user.same_venue_users([user_2])).to eql [user_2]
-	        active_in_venue.destroy
-	        active_in_venue_2.destroy
+	      	WhisperSent.create_new_record(3, 2)
+	        expect(user_3.current_beacon.venue_id).to eql 1
+	        expect(user_3.same_venue_as?(2)).to eql true
+	        expect(user_3.different_venue_as?(2)).to eql false
+	        expect(user_3.fellow_participants(nil, 19, 50, nil, 0, 1000, true).length).to eql 1
+	        expect(user_3.fellow_participants(nil, 19, 50, nil, 0, 1000, false).length).to eql 1
+	        expect(user_3.fellow_participants('F', 19, 50, nil, 1, 1000, false).length).to eql 1
+	        expect(user_3.people_list(1, 'F', 19, 40, nil, 1, 100, true, 0, 48)['users'].count).to eql 1
+	        expect(user_3.people_list(4, 'F', 19, 40, nil, 1, 100, true, 0, 48)['percentage']).to eql 50
+	        ActiveInVenue.destroy_all
 	        venue.destroy
 	        venue_network.destroy
 	        ua.destroy
-	        user_2.destroy
-	        wt.destroy
+	        User.delete_all
+	        WhisperSent.delete_all
+	      end
+
+	      it "venue badge false 1" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	active_in_venue = ActiveInVenue.create!(user_id: 3, venue_id:1)
+	      	expect(user_3.different_venue_as?(2)).to eql false
+	      	expect(user_3.same_venue_as?(2)).to eql false
+	      	ActiveInVenue.destroy_all
+	        venue.destroy
+	        venue_network.destroy
+	        User.delete_all
+	      end
+
+	      it "venue badge false 1" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	active_in_venue = ActiveInVenue.create!(user_id: 3, venue_id:1)
+	      	ActiveInVenue.destroy_all
+	        venue.destroy
+	        venue_network.destroy
+	        User.delete_all
+	      end
+
+	      it "venue badge false 2" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	active_in_venue = ActiveInVenue.create!(user_id: 3, venue_id:1)
+	      	expect(user_3.different_venue_as?(22)).to eql false
+	      	expect(user_3.same_venue_as?(22)).to eql false
+	      	ActiveInVenue.destroy_all
+	        venue.destroy
+	        venue_network.destroy
+	        User.delete_all
+	      end
+
+	      it "venue badge false 3" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	expect(user_3.different_venue_as?(2)).to eql false
+	      	expect(user_3.same_venue_as?(2)).to eql false
+	      	ActiveInVenue.destroy_all
+	        venue.destroy
+	        venue_network.destroy
+	        User.delete_all
+	      end
+
+	      it "venue badge false 4" do
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	venue_network = VenueNetwork.create!(id:1, name: "V")
+	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+	      	active_in_venue = ActiveInVenue.create!(user_id: 2, venue_id:1)
+	      	expect(user_3.different_venue_as?(2)).to eql false
+	      	expect(user_3.same_venue_as?(2)).to eql false
+	      	ActiveInVenue.destroy_all
+	        venue.destroy
+	        venue_network.destroy
+	        User.delete_all
+	      end
+
+
+	      it "Join network" do
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"2")
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"3")
+	      	user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"4")
+	      	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test5@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"5")
+	      	user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", email: "test6@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"6")
+	      	user_7 = User.create!(id:7, last_active: Time.now, first_name: "SF", email: "test7@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"7")
+	      	user_8 = User.create!(id:8, last_active: Time.now, first_name: "SF", email: "test8@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"8")
+	      	user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"9")
+	      	
+	      	expect(RecentActivity.count).to eql 0
+	      	expect(User.where(is_connected: true).length).to eql 0
+	      	User.last.force_users_join_to_test
+	      	expect(RecentActivity.count).to eql 8
+	      	expect(User.where(is_connected: true).length).to eql 8
+
+
+	      	RecentActivity.delete_all
+	        User.delete_all
+	      end
+
+	      it "Join network" do
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"2", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"3", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"4", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test5@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"5", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", email: "test6@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"6", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_7 = User.create!(id:7, last_active: Time.now, first_name: "SF", email: "test7@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"7", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_8 = User.create!(id:8, last_active: Time.now, first_name: "SF", email: "test8@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"8", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"9", fake_user: true, timezone_name: "America/Vancouver")
+	      	
+	      	expect(RecentActivity.count).to eql 0
+	      	expect(User.where(is_connected: true).length).to eql 0
+	      	User.random_join_fake_users("America/Vancouver", 2, 3)
+	      	expect(RecentActivity.count).to eql 5
+	      	expect(User.where(is_connected: true).length).to eql 5
+
+
+	      	RecentActivity.delete_all
+	        User.delete_all
 	      end
 
 
@@ -173,9 +285,31 @@ describe User do
 	        user_2.destroy
 	      end
 
-	      # it "same_beacon_as?" do
-	      #   expect(user.same_beacon_as?(2)).to eql false
-	      # end
+	      it "venue badge false 4" do
+	      	user_obj = Hash.new 
+	      	user_obj['Email'] = "alenafaz13@live.ca"
+	      	user_obj['Password'] = "upper1lower1"
+	      	user_obj['Name'] = "Alena"
+	      	user_obj['Birthday'] = "22-Dec-92"
+	      	user_obj['Gender'] = "F"
+	      	user_obj['Latitude'] = "49.226248"
+	      	user_obj['Longitude'] = "-123.097936"
+	      	expect(UserAvatar.all.count).to eql 0
+	      	expect(User.all.count).to eql 0
+	      	User.import_single_user(user_obj)
+	      	expect(UserAvatar.all.count).to eql 5
+	      	expect(User.all.count).to eql 1
+	      	
+	      	UserAvatar.delete_all
+	      	expect(UserAvatar.all.count).to eql 0
+	      	expect(User.all.count).to eql 1
+	      	User.import_single_user(user_obj)
+	      	expect(UserAvatar.all.count).to eql 5
+	      	expect(User.all.count).to eql 1
+
+	      	UserAvatar.delete_all
+	        User.delete_all
+	      end
 	    end
 	end
 
