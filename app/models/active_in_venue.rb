@@ -17,7 +17,7 @@ class ActiveInVenue < ActiveRecord::Base
   def self.enter_venue(venue, user, beacon)
     #remove record in any other venue
     oldArray = ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id)
-    puts oldArray
+
     # if oldArray and oldArray.count > 0
     #   if oldArray.count == 1 and !oldArray.first.nil?
     #     oldArray.first.destroy
@@ -25,20 +25,20 @@ class ActiveInVenue < ActiveRecord::Base
     #     oldArray.destroy_all
     #   end
     # end
-    oldArray.delete_all
+    ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id).delete_all
     
     #update venue last_activity
     pArray = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
-    if pArray and pArray.count > 0
+    if !pArray.blank?
       v = pArray.first
       v.beacon = beacon
       result = v.update_activity
     else
       v = ActiveInVenue.new
-      v.venue = venue
-      v.user = user
+      v.venue_id = venue.id
+      v.user_id = user.id
       v.enter_time = Time.now
-      v.beacon = beacon
+      v.beacon_id = beacon.id
       v.last_activity = Time.now
       result = v.save!
     end
@@ -67,40 +67,15 @@ class ActiveInVenue < ActiveRecord::Base
     if !user.nil?
       if user.is_a? User
         user_id = user.id
-      elsif user.is_a? Integer
-        user_id = user
-      else
-        user_id = 0
       end
-    else
-      user_id = 0
     end
 
     #delete venue activity
-    v = ActiveInVenue.where("user_id = ?", user_id)
-    if v and v.count == 1
-      if !v.first.nil?
-        result = v.first.delete
-      else
-        result = false
-      end
-    else
-      result = false
-    end
-    return result
-  end
-
-  def self.clean_up
-    aivs = ActiveInVenue.all
-    aivs.each do |aiv|
-      ActiveInVenue.leave_venue(aiv.venue, aiv.user)
-    end
+    ActiveInVenue.where("user_id = ?", user_id).delete_all
+    return true
   end
 
   def self.five_am_cleanup(venue)
-    aivs = ActiveInVenue.where(:venue_id => venue.id)
-    aivs.each do |aiv|
-      ActiveInVenue.leave_venue(aiv.venue_id, aiv.user_id)
-    end
+    ActiveInVenue.where(:venue_id => venue.id).delete_all
   end
 end

@@ -6,14 +6,20 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
-    beacons = Beacon.where(:key => params[:beacon_key])
+    if params[:beacon_key].kind_of?(Array)
+      beacon_key = params[:beacon_key].to_a
+    else
+      beacon_key = [params[:beacon_key]]
+    end
+    beacons = Beacon.where(key: beacon_key)
+
     if beacons.blank? or beacons.length <= 0
       render json: error("Could not enter.")
       # beacon = BeaconInitialization.new(params[:beacon_key])
       # beacon.create
       # beacon = Beacon.find_by(key: params[:beacon_key])
     else
-      puts params[:beacon_key]
+      beacons = beacon_key.collect {|key| beacons.detect {|x| x.key == key}}
       # beacon.temperatures.create(celsius: params[:temperature].to_i) if params[:temperature].present?
       result = true
       #log the last active time for venue and venue network

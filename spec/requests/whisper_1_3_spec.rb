@@ -3,6 +3,96 @@ require 'spec_helper'
 # # API_TEST_BASE_URL = "http://purpleoctopus-staging.herokuapp.com"
 # API_TEST_BASE_URL = "http://localhost:3000"
 
+describe 'Enter/Leave Venue' do
+  	it "Enter venue" do
+  		birthday = (Time.now - 21.years)
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+
+	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
+      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+      	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
+	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
+      	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
+	    
+      	token = user_2.generate_token
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => ""
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+      	expect(JSON.parse(response.body)['message']).to eql "Could not enter."
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => "Vancouver_1TestVenue_test"
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+      	expect(JSON.parse(response.body)['message']).to eql "Could not enter."
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => "Vancouver_TestVenue_test"
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => "Vancouver_TestVenue2_test"
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue2_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => ["Vancouver_TestVenue2_test", "Vancouver_TestVenue_test"]
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => ["Vancouver_TestVenue2_test", "Vancouver_TestVenue_test"]
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+
+      	post 'api/v1/room/leave', :token => token, :beacon_key => ["Vancouver_TestVenue2_test", "Vancouver_TestVenue_test"]
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/v1/room/leave', :token => token, :beacon_key => ["Vancouver_TestVenue2_test", "Vancouver_TestVenue_test"]
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/v1/room/enter', :token => token, :beacon_key => ["Vancouver_TestVenue2_test", "Vancouver_TestVenue_test"]
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+
+      	ActiveInVenueNetwork.five_am_cleanup(venue_network)
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 0
+
+
+
+      	ActiveInVenue.delete_all
+      	ActiveInVenueNetwork.delete_all
+      	VenueEnteredToday.delete_all
+      	Beacon.delete_all
+      	Venue.delete_all
+      	VenueNetwork.delete_all
+      	UserAvatar.delete_all
+      	User.delete_all
+  	end
+end
+
 describe 'Whisper' do
   	describe 'Version 1.3' do
     

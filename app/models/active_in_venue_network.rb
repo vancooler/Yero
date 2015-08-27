@@ -2,17 +2,11 @@ class ActiveInVenueNetwork < ActiveRecord::Base
   belongs_to :venue_network
   belongs_to :user
 
-  #before_save :update_activity
-
-  # keeps track of the latest activity of a user
-  def update_activity
-    self.last_activity = Time.now
-  end
 
   def self.enter_venue_network(venue_network, user)
 
-    vnArray = ActiveInVenueNetwork.where("venue_network_id = ? and user_id = ?", venue_network.id, user.id)
-    if vnArray and vnArray.count == 0
+    vnArray = ActiveInVenueNetwork.where("user_id = ?", user.id)
+    if !vnArray.nil? and vnArray.count == 0
       #if not there create a new record
       vn = ActiveInVenueNetwork.new
       vn.venue_network = venue_network
@@ -21,9 +15,10 @@ class ActiveInVenueNetwork < ActiveRecord::Base
       vn.last_activity = Time.now
       vn.active_status = 1
       vn.save!
-    elsif vnArray and vnArray.count == 1
+    elsif !vnArray.nil? and vnArray.count == 1
       #if already in some venue network, just update it
       vn = vnArray.first
+      vn.venue_network = venue_network
       vn.active_status = 1
       vn.last_activity = Time.now
       vn.save!  
@@ -32,38 +27,9 @@ class ActiveInVenueNetwork < ActiveRecord::Base
     return vn
   end
 
-  def self.leave_venue_network(venue_network, user)
-    vns = ActiveInVenueNetwork.where("venue_network_id = ? and user_id = ? and active_status = ?", venue_network.id, user.id, 1)
-    if vns and vns.count > 0
-      vns.each do |vn|
-        vn.active_status = 0
-        vn.save!
-      end
-    end
-  end
-
-  def self.everyday_cleanup
-    #vn = ActiveInVenueNetwork.where("last_activity < ? ", Time.now - 0.1.seconds)
-    vn = ActiveInVenueNetwork.all
-    if vn and vn.count > 1
-      result = vn.destroy_all
-    elsif vn and vn.count == 1
-      result = vn.first.destroy
-    else
-      result = false
-    end
-    return result
-  end
 
   def self.five_am_cleanup(venue_network)
-    vn = ActiveInVenueNetwork.where(:venue_network_id => venue_network.id)
-    if vn and vn.count > 1
-      result = vn.destroy_all
-    elsif vn and vn.count == 1
-      result = vn.first.destroy
-    else
-      result = false
-    end
+    ActiveInVenueNetwork.where(:venue_network_id => venue_network.id).delete_all
 
     # cleanup active_in_venue records in this venue_network
     venues = Venue.where(:venue_network_id => venue_network.id)
@@ -71,7 +37,7 @@ class ActiveInVenueNetwork < ActiveRecord::Base
       ActiveInVenue.five_am_cleanup(v)
       VenueEnteredToday.five_am_cleanup(v)
     end
-    return result
+    return true
   end
 
 end
