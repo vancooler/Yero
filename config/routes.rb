@@ -149,7 +149,7 @@ Rails.application.routes.draw do
   post 'api/v1/friends', to: 'users#myfriends_new'
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
-  resources :whispers, only: [:show]
+  get  'api/v1/whispers/:id', to: 'whispers#show'
   get  'api/v1/friends/:id', to: 'friends#show'
   get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
   get  'api/v1/set-variable', to: 'users#set_global_variable'

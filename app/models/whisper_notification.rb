@@ -641,26 +641,25 @@ class WhisperNotification < AWS::Record::HashModel
 
   # Function that gets all the users received whisper from current user
   def self.collect_whispers(current_user)
+    # array = WhisperToday.where.not(paper_owner_id: current_user.id).where(origin_user_id: current_user.id).map(&:target_user_id)
     array = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).map(&:target_user_id)
-    # dynamo_db = AWS::DynamoDB.new
-    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    # table = dynamo_db.tables[table_name]
-    # if !table.schema_loaded?
-    #   table.load_schema
-    # end
-    # timestamp = Time.now.to_i
+
+    return array.uniq
+  end
+
+  def self.collect_whispers_can_reply(current_user)
+    array_a = WhisperToday.where(paper_owner_id: current_user.id).where(origin_user_id: current_user.id).where(accepted: false).where(declined: false).map(&:target_user_id)
+    array_b = WhisperToday.where(paper_owner_id: current_user.id).where(target_user_id: current_user.id).where(accepted: false).where(declined: false).map(&:origin_user_id)
     
-    # items = table.items.where(:origin_id).equals(current_user.id.to_s).where(:notification_type).equals("2").where(:timestamp).gte(timestamp - 12*3600).select(:target_id)
-    
-    # return_array = Array.new
-    # items.each do |p|
-    #   attributes = p.attributes
-    #   target_id = attributes['target_id'].to_i
-    #   return_array << target_id
-    # end
+    return (array_a | array_b)
+  end
+
+  def self.collect_whispers_can_accept_delete(current_user)
+    array = WhisperToday.where(target_user_id: current_user.id).where(accepted: false).where(declined: false).map(&:origin_user_id)
     
     return array.uniq
   end
+
 
   # Function signifies whether the user has sent a whisper to the target user
   # def self.whisper_sent(origin_user_id, target_user_id, timestamp)
@@ -788,48 +787,86 @@ class WhisperNotification < AWS::Record::HashModel
     elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
       return "User blocked"
     else
-      whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
+      # whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
+      pending_whisper = WhisperToday.find_pending_whisper(target_id.to_i, origin_id.to_i)
       # check if whisper sent today
-      if whispers_sent_today.count <= 0
-        if Rails.env == 'production'
-          n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
-        else
-          n = WhisperNotification.new
-          n.id = 'aaa'+current_user.id.to_s
-        end
-        WhisperToday.create!(:dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
-        if n and notification_type == "2"
-          time = Time.now
-          RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
-          RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
-
-          record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
-          if record_found.count <= 0
-            WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+      if pending_whisper.nil?
+        whisper_just_sent = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => target_id.to_i)
+        if whisper_just_sent.blank?
+          if Rails.env == 'production'
+            n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
           else
-            record_found.first.update(:whisper_time => time)
+            n = WhisperNotification.new
+            n.id = 'aaa'+current_user.id.to_s
           end
-        end
-        if Rails.env == 'production'
-          n.send_push_notification_to_target_user(message)
-        end
+          whisper = WhisperToday.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
+          WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+          if n and notification_type == "2"
+            time = Time.now
+            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
+            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
 
-        return "true"
+            record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
+            if record_found.count <= 0
+              WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+            else
+              record_found.first.update(:whisper_time => time)
+            end
+          end
+          if Rails.env == 'production'
+            n.send_push_notification_to_target_user(message, pending_whisper.paper_owner_id)
+          end
+
+          return "true"
+        else
+          return "Cannot send more whispers"
+        end
       else
-        return "Cannot send more today"
+        if pending_whisper.paper_owner_id != current_user.id
+          return "Cannot send more whispers"
+        elsif pending_whisper.paper_owner_id == origin_id.to_i
+          if Rails.env == 'production'
+            n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+          else
+            n = WhisperNotification.new
+            n.id = 'aaa'+current_user.id.to_s
+          end
+          # WhisperToday.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
+          if pending_whisper.target_user_id == origin_id.to_i
+            pending_whisper.paper_owner_id = pending_whisper.origin_user_id
+            pending_whisper.message_b = intro
+            pending_whisper.viewed = false
+          elsif pending_whisper.origin_user_id == origin_id.to_i
+            pending_whisper.paper_owner_id = pending_whisper.target_user_id
+            pending_whisper.message = intro
+            pending_whisper.viewed = false
+          end
+          pending_whisper.save!
+          WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => pending_whisper.id, :message => intro)
+          if n and notification_type == "2"
+            time = Time.now
+            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
+            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
+          end
+          if Rails.env == 'production'
+            n.send_push_notification_to_target_user(message, pending_whisper.paper_owner_id)
+          end
+
+          return "true"
+        end
       end
       
     end
   end
 
 
-  def send_push_notification_to_target_user(message)
+  def send_push_notification_to_target_user(message, paper_owner_id)
     # deep_link = (self.target_id.to_i == 3) ? 
     if self.notification_type.to_i == 3
       deep_link = "yero://friends/" + self.origin_id.to_s
     else
 
-      deep_link = "yero://whispers/" + self.id
+      deep_link = "yero://whispers/" + paper_owner_id.to_s
     end
 
     data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment", }
@@ -901,7 +938,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.unviewd_whisper_number(user_id)
     black_list = BlockUser.blocked_user_ids(user_id.to_i)
-    whisper_items = WhisperToday.where(target_user_id: user_id.to_i).where(viewed: false).where.not(origin_user_id: black_list)
+    whisper_items = WhisperToday.where(paper_owner_id: user_id.to_i).where(viewed: false).where.not(origin_user_id: black_list)
     accept_items = FriendByWhisper.where(viewed: false).where(origin_user_id: user_id.to_i).where.not(target_user_id: black_list)
     whisper_number = 0
     accept_number = 0

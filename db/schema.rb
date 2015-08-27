@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150817170403) do
+ActiveRecord::Schema.define(version: 20150826125729) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -570,10 +570,21 @@ ActiveRecord::Schema.define(version: 20150817170403) do
     t.string "weekday_title"
   end
 
+  create_table "whisper_replies", force: true do |t|
+    t.integer  "speaker_id", null: false
+    t.integer  "whisper_id", null: false
+    t.text     "message"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "whisper_replies", ["whisper_id"], name: "index_whisper_replies_on_whisper_id", using: :btree
+
   create_table "whisper_sents", force: true do |t|
     t.integer  "target_user_id",                                 null: false
     t.integer  "origin_user_id",                                 null: false
     t.datetime "whisper_time",   default: '2014-09-25 23:02:29', null: false
+    t.integer  "paper_owner_id"
   end
 
   create_table "whisper_todays", force: true do |t|
@@ -588,6 +599,8 @@ ActiveRecord::Schema.define(version: 20150817170403) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "dynamo_id"
+    t.integer  "paper_owner_id"
+    t.text     "message_b"
   end
 
   add_index "whisper_todays", ["target_user_id"], name: "index_whisper_todays_on_target_user_id", using: :btree

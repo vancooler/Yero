@@ -307,7 +307,7 @@ describe UsersController do
 	      	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
 	      	friend.delete
-	      	whisper = WhisperToday.create!(target_user_id: 2, origin_user_id: 4, whisper_type: '2', viewed: false)
+	      	whisper = WhisperToday.create!(paper_owner_id: 2, target_user_id: 2, origin_user_id: 4, whisper_type: '2', viewed: false)
 	      	post :requests_new
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
@@ -322,7 +322,7 @@ describe UsersController do
 	      	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 0
 	      	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
-	      	whisper = WhisperToday.create!(target_user_id: 2, origin_user_id: 3, whisper_type: '2', viewed: false)
+	      	whisper = WhisperToday.create!(paper_owner_id: 2, target_user_id: 2, origin_user_id: 3, whisper_type: '2', viewed: false)
 	      	friend = FriendByWhisper.create!(target_user_id: 3, origin_user_id: 2, friend_time: Time.now, viewed: false)
 
 	      	post :requests_new

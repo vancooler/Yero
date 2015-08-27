@@ -23,7 +23,11 @@ class WhispersController < ApplicationController
 
   def show
     whisper_id = params[:id]
-    whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+    if !/\A\d+\z/.match(whisper_id.to_s)
+      whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+    else
+      whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+    end
     if whisper.blank?
       error_obj = {
         code: 404,
@@ -51,7 +55,7 @@ class WhispersController < ApplicationController
         }
         render json: error(error_obj, 'data')
       else
-        whisper_array = WhisperToday.to_json([whisper])
+        whisper_array = WhisperToday.to_json([whisper], current_user)
         if !whisper_array.nil? and !whisper_array.first.nil?
           whisper_obj = whisper_array.first
           render json: success(whisper_obj)
@@ -190,7 +194,7 @@ class WhispersController < ApplicationController
           venue_id = item.venue_id.nil? ? 0 : item.venue_id.to_i
         end
         if origin_id.to_i <= 0 
-          render json: success
+          render json: error('There was an error.')
         else
           if FriendByWhisper.check_friends(origin_id, target_id) 
             render json: error('You are already friends.')
@@ -207,11 +211,14 @@ class WhispersController < ApplicationController
               FriendByWhisper.create!(:target_user_id => target_id, :origin_user_id => origin_id, :friend_time => current_time, :viewed => false)
               RecentActivity.add_activity(origin_id.to_i, '3', target_id.to_i, nil, "friend-"+origin_id.to_s+"-"+target_id.to_s+"-"+current_time.to_i.to_s)
               RecentActivity.add_activity(target_id.to_i, '3', origin_id.to_i, nil, "friend-"+target_id.to_s+"-"+origin_id.to_s+"-"+current_time.to_i.to_s)
-    
+              WhisperReply.where(whisper_id: item.id).delete_all
               user = User.find(target_id.to_i)
               if Rails.env == 'production'
                 message = user.first_name + " is now your friend!"
-                n.send_push_notification_to_target_user(message)
+                n.send_push_notification_to_target_user(message, 0)
+              end
+              if Rails.env == 'production'
+                WhisperReply.delay.archive_history(item)
               end
               render json: success
             else
@@ -225,6 +232,9 @@ class WhispersController < ApplicationController
           WhisperNotification.delay.find_whisper(whisperId, state)
         else
           WhisperNotification.find_whisper(whisperId, state)
+        end
+        if Rails.env == 'production'
+          WhisperReply.delay.archive_history(item)
         end
         render json: success
       else

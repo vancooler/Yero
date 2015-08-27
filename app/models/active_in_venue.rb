@@ -18,13 +18,14 @@ class ActiveInVenue < ActiveRecord::Base
     #remove record in any other venue
     oldArray = ActiveInVenue.where("venue_id != ? and user_id = ?", venue.id, user.id)
     puts oldArray
-    if oldArray and oldArray.count > 0
-      if oldArray.count == 1 and !oldArray.first.nil?
-        oldArray.first.destroy
-      else
-        oldArray.destroy_all
-      end
-    end
+    # if oldArray and oldArray.count > 0
+    #   if oldArray.count == 1 and !oldArray.first.nil?
+    #     oldArray.first.destroy
+    #   else
+    #     oldArray.destroy_all
+    #   end
+    # end
+    oldArray.delete_all
     
     #update venue last_activity
     pArray = ActiveInVenue.where("venue_id = ? and user_id = ?", venue.id, user.id)
@@ -79,7 +80,7 @@ class ActiveInVenue < ActiveRecord::Base
     v = ActiveInVenue.where("user_id = ?", user_id)
     if v and v.count == 1
       if !v.first.nil?
-        result = v.first.destroy
+        result = v.first.delete
       else
         result = false
       end

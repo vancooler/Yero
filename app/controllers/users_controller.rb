@@ -317,12 +317,12 @@ class UsersController < ApplicationController
     badge = WhisperNotification.unviewd_whisper_number(current_user.id)
 
     if unread
-      whispers = WhisperToday.all_whispers(current_user.id)
+      whispers = WhisperToday.whispers_related(current_user.id)
     else
-      whispers = WhisperToday.all_whispers(current_user.id)
+      whispers = WhisperToday.whispers_related(current_user.id)
     end
     if !whispers.blank?
-      whispers = WhisperToday.to_json(whispers)
+      whispers = WhisperToday.to_json(whispers, current_user)
       whispers_array = Array.new
       # users = return_data.sort_by { |hsh| hsh["timestamp"].to_i }.reverse
       whispers.each do |whisp|
@@ -331,7 +331,7 @@ class UsersController < ApplicationController
       if badge[:whisper_number].to_i > badge[:friend_number].to_i
         if !whispers_array.nil? and whispers_array.count > 0
           # update local tmp db
-          WhisperToday.where(:target_user_id => current_user.id).update_all(:viewed => true)
+          WhisperToday.where(:paper_owner_id => current_user.id).update_all(:viewed => true, :updated_at => Time.now)
           # update dynamodb
           if Rails.env == 'production'
             current_user.delay.viewed_by_sender(whispers_array)

@@ -158,7 +158,7 @@ describe User do
 
 	      	expect(RecentActivity.all.count).to eql 2
 	      	expect(WhisperNotification.my_chat_request_history(user_2, 0, 5).count).to eql 2
-	      	expect(WhisperToday.all.count).to eql 0
+	      	expect(WhisperToday.all.count).to eql 1
 	      	expect(ActiveInVenue.all.count).to eql 0
 
 

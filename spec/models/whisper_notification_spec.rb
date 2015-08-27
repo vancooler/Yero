@@ -20,8 +20,8 @@ describe WhisperNotification do
 		      	expect(WhisperSent.count).to eql 0
 		      	expect(RecentActivity.count).to eql 0
 
-		      	WhisperToday.create!(target_user_id: 3, origin_user_id: 2, whisper_type: '2')
-		      	expect(WhisperNotification.send_whisper('3', user_2, 0, '1', 'hello', "Something")).to eql "Cannot send more today"
+		      	WhisperToday.create!(target_user_id: 3, origin_user_id: 2, whisper_type: '2', paper_owner_id: 3)
+		      	expect(WhisperNotification.send_whisper('3', user_2, 0, '1', 'hello', "Something")).to eql "Cannot send more whispers"
 		      	expect(WhisperToday.count).to eql 1
 		      	expect(WhisperSent.count).to eql 0
 		      	expect(RecentActivity.count).to eql 0

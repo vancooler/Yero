@@ -51,6 +51,12 @@ task :fake_users_join => :environment do
   puts "Done."
 end
 
+task :whisper_expire => :environment do
+  puts "Expire whispers without replies older than 12 hours"
+  WhisperToday.expire
+  puts "Done."
+end
+
 
 
 task :sync_gimbal => :environment do

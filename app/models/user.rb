@@ -516,12 +516,8 @@ class User < ActiveRecord::Base
       User.where(id: people_array).update_all(is_connected: false, enough_user_notification_sent_tonight: false) # disconnect users
       # WhisperNotification.expire(people_array, '2')
       # expire all whispers with type 2 of these users
-      whispers_today = WhisperToday.where(target_user_id: people_array)
-      if whispers_today.count == 1
-        whispers_today.first.destroy
-      elsif whispers_today.count > 1
-        whispers_today.destroy_all
-      end
+      # whispers_today = WhisperToday.where(target_user_id: people_array)
+      # whispers_today.delete_all
     end
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
@@ -618,7 +614,9 @@ class User < ActiveRecord::Base
       s_time = Time.now
       # collect all whispers sent 
       # TODO: use model to do it
-      collected_whispers = WhisperNotification.collect_whispers(self)
+      whispers_sent = WhisperNotification.collect_whispers(self)
+      whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
+      whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
       pre_time_2 = Time.now
       # colect all users with "like"
       followees = self.followees(User)
@@ -702,18 +700,49 @@ class User < ActiveRecord::Base
             json.avatars avatar_array
             avatar_time_2 = Time.now
 
-
-
-            sent = false
-            collected_whispers.each do |cwid|
-              if cwid.to_i == user.id.to_i
-                json.whisper_sent true
-                sent = true
-              end
+            json.whisper_sent whispers_sent.include? user.id.to_i
+            are_friends = (friends.map(&:id).include? user.id)
+            whisper_sent = (whispers_sent.include? user.id.to_i)
+            can_reply = (whispers_can_reply.include?  user.id.to_i)
+            can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
+            if are_friends
+              json.status 5
+              status = 5
+            elsif can_reply and can_accept_delete 
+              json.status 4
+              status = 4
+            elsif can_accept_delete
+              json.status 3
+              status = 3
+            elsif can_reply
+              json.status 2
+              status = 2
+            elsif whisper_sent
+              json.status 1
+              status = 1
+            else
+              json.status 0
+              status = 0
             end
 
-            if !sent
-              json.whisper_sent false
+            if status > 1 and status < 5
+              whisper_today = WhisperToday.find_pending_whisper(user.id, self.id)
+              if !whisper_today.nil?
+                json.whisper_id whisper_today.dynamo_id
+                replies = WhisperReply.where(whisper_id: whisper_today.id).order("created_at DESC")
+                if replies.count > 0
+                  messages_array = Array.new
+                  replies.each do |r|
+                    new_item = {
+                      speaker_id: r.speaker_id,
+                      timestamp: r.created_at.to_i,
+                      message: r.message.nil? ? '' : r.message
+                    }
+                    messages_array << new_item
+                  end
+                end
+                json.messages_array messages_array
+              end
             end
 
             if followees.blank?
