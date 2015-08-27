@@ -1311,7 +1311,6 @@ class UsersController < ApplicationController
   #           }
   #       json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
   #       json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
-  #       json.actual_distance           current_user.actual_distance(user["target_user"])
   #       json.id             user["target_user"]["id"]
   #       json.first_name     user["target_user"]["first_name"]
   #       json.key            user["target_user"]["key"]
@@ -1321,7 +1320,6 @@ class UsersController < ApplicationController
   #       json.gender         user["target_user"]["gender"]
   #       if user["target_user"]["id"].to_i != 0
   #         json.birthday       user["target_user"]["birthday"]
-  #         json.distance       current_user.distance_label(user["target_user"])
   #       end
   #       json.created_at     user["target_user"]["created_at"]
   #       json.updated_at     user["target_user"]["updated_at"]

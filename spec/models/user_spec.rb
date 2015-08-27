@@ -93,8 +93,6 @@ describe User do
 	        expect(user.people_list(1, 'F', 19, 40, nil, 1, 100, true, 0, 48)['users'].count).to eql 1
 	        expect(user.people_list(4, 'F', 19, 40, nil, 1, 100, true, 0, 48)['percentage']).to eql 50
 	        expect(user.same_venue_users([user_2])).to eql [user_2]
-	        expect(user.distance_label(user_2)).to eql "Within 10km"
-	        expect(user.actual_distance(user_2)).to eql 7.252281031416336
 	        active_in_venue.destroy
 	        active_in_venue_2.destroy
 	        venue.destroy

@@ -275,38 +275,6 @@ class User < ActiveRecord::Base
     return result_users
   end
 
-  def distance_label(user)
-    if user.latitude.nil? or user .longitude.nil?
-      return "More than 60km"
-    else
-      distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
-      case distance 
-      when 0..2    
-        return "Within 2km" 
-      when 2..5    
-        return "Within 5km" 
-      when 5..10    
-        return "Within 10km" 
-      when 10..20    
-        return "Within 20km" 
-      when 20..40    
-        return "Within 40km" 
-      when 40..61    
-        return "Within 60km" 
-      else
-        return "More than 60km"
-      end
-    end
-  end
-
-  def actual_distance(user)
-    if user.latitude.nil? or user .longitude.nil?
-      return 10000
-    else
-      distance = self.distance_from([user.latitude,user.longitude]) * 1.609344
-      return distance
-    end
-  end
 
   def last_activity
     self.activities.last
@@ -776,7 +744,7 @@ class User < ActiveRecord::Base
             # json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
             json.gender         user.gender
-            # json.distance       self.distance_label(user) # Returns a label such as "Within 2 km"
+
             json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
             json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
@@ -930,7 +898,6 @@ class User < ActiveRecord::Base
     user_object = {
       # same_venue_badge:          current_user.same_venue_as?(self.id),
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
-      # actual_distance:           current_user.actual_distance(self),
       id:             self.id,
       first_name:     self.first_name,
       last_active:    self.last_active,
@@ -938,7 +905,6 @@ class User < ActiveRecord::Base
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
       birthday:       (self.id != 0 ? self.birthday : ''),
-      # distance:       (self.id != 0 ? current_user.distance_label(self) : ''),
       created_at:     self.created_at,
       updated_at:     self.updated_at,
       avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
