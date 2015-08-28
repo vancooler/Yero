@@ -82,7 +82,7 @@ ActiveAdmin.register User do
     
   	# actions
     column "Actions", :actions do |user|
-      link_to("Join network", admin_user_join_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this join?"}) + link_to("Leave network", admin_user_leave_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this leave?"}) + link_to("Send whisper", admin_user_send_whisper_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this whisper?"})
+      link_to("Join network", admin_user_join_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this join?"}) + link_to("Leave network", admin_user_leave_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this leave?"})
 
     end
   end
