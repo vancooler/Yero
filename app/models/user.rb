@@ -1047,12 +1047,12 @@ class User < ActiveRecord::Base
       end
     end
 
-    round_array = [2, 3]
+    round_array = [4, 5]
     random_round = round_array.sample
     (1..random_round).each do |i|
-      User.delay(run_at: (15*i).minutes.from_now).random_join_fake_users(times_array, 2, 3)
+      User.delay(run_at: (30*i).minutes.from_now).random_join_fake_users(times_array, 1, 4)
     end
-    User.random_join_fake_users(times_array, 2, 3)
+    User.random_join_fake_users(times_array, 1, 4)
   end
 
   def self.import(file)
