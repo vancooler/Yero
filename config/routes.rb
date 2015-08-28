@@ -14,8 +14,8 @@ Rails.application.routes.draw do
   devise_for :web_users, path: '', path_names: { sign_in: 'venues/login', sign_out: 'signout', sign_up: 'signup', edit: 'settings' }
   
   #temporary routes for YJ to test out notification functionality
-  get 'temp_beacon/enter_random_users', as: 'enter_users'
-  get 'temp_beacon/exit_active_users', as: 'exit_active_users'
+  # get 'temp_beacon/enter_random_users', as: 'enter_users'
+  # get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
   devise_scope :web_users do
     delete "signout", :to => "devise/sessions#destroy"
@@ -94,81 +94,109 @@ Rails.application.routes.draw do
   match 'users/password_reset/:password_reset_token',          to: 'users#password_reset', as: "password_reset", via: [:get, :post]
   match 'users/email_reset/:email_reset_token',          to: 'users#email_reset', as: "email_reset", via: [:get]
   match 'welcome',          to: 'home#welcome_reference', as: "share_reference", via: [:get]
-  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify', as: :generate_reset_email_verify
   
-  # scope constraints: { protocol: 'https' } do
-    post 'api/v1/users/signup',                 to: 'users#sign_up'
-    post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
-    post 'api/v1/users/login',                  to: 'users#login'
-  # end
 
-  delete 'api/v1/users/logout',                  to: 'users#logout'
+####################################################################################################
+# 
+# API V1
+# 
+# 
+  # Auth APIs
   post 'api/v1/users/check-email',                  to: 'users#check_email'
-  post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
+  post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
+  post 'api/v1/users/login',                  to: 'users#login'
+  delete 'api/v1/users/logout',                  to: 'users#logout'
+
+  # users APIs
+  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify', as: :generate_reset_email_verify
   post 'api/v1/users/update',                 to: 'users#update_settings'
-  post 'api/v1/users/deactivate',             to: 'users#deactivate'
   post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
   post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
   post 'api/v1/users/notification-preference', to: 'users#update_notification_preferences'
-
-  post 'api/v1/users/connect',                to: 'users#connect'
   post 'api/v1/users/like-or-unlike',                to: 'users#like'
-  post 'api/v1/users/update-apn',             to: 'users#update_apn'
-  post 'api/v1/users/network_open',           to: 'users#network_open'
-  get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
-  get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list
-  post 'api/v1/venues/prospect',              to: 'venues#prospect'
   get  'api/v1/profile',                      to: 'users#get_profile'
-  get  'api/v1/lottery/show',                 to: 'users#get_lotto'
-  post 'api/v1/users/poke',                   to: 'users#poke'
-  get  'api/v1/users/get_pokes',              to: 'users#get_pokes'
-  get  'api/v1/users/favourite_venues',       to: 'users#favourite_venues'
-  post 'api/v1/users/add_favourite_venue',    to: 'users#add_favourite_venue'
-  post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
-  get 'api/v1/venues/venue_location', to: 'venues#venue_location'
-  get  'api/v1/venues/people', to: 'venues#people'
-  get  'api/v1/venues/active_users', to: 'venues#active_users'
-
-  post 'api/v1/avatar/create',             to: 'user_avatars#create'
-  post 'api/v1/avatar/create_for_signup',  to: 'user_avatars#create_avatar'
-  delete 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
-  post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
-  put 'api/v1/avatar/swap',        to: 'user_avatars#swap_photos'
-  put 'api/v1/avatar/update',        to: 'user_avatars#update'
-
-  put 'api/v1/user/update_profile',       to: 'users#update_profile'
+  put  'api/v1/user/update_profile',       to: 'users#update_profile'
   post 'api/v1/user/show',                 to: 'users#show'
-  post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
-
-  post 'api/v1/last_activity_for',          to: 'activities#show'
   post 'api/v1/users', to: 'users#index'
-  post 'api/v1/requests', to: 'users#requests'
-  post 'api/v1/whispers', to: 'users#requests_new'
   post 'api/v1/report', to: 'users#report'
-  post 'api/v1/myfriends', to: 'users#myfriends'
-  post 'api/v1/friends', to: 'users#myfriends_new'
+  post 'api/v1/users/block-user', to: 'users#block'
   post 'api/v1/user/locations/new', to: 'locations#create'
   post 'api/v1/user/locations/show', to: 'locations#show'
-  get  'api/v1/whispers/:id', to: 'whispers#show'
-  get  'api/v1/friends/:id', to: 'friends#show'
-  get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
-  get  'api/v1/set-variable', to: 'users#set_global_variable'
-  post 'api/v1/whisper/create', to: 'whispers#api_create'
-  # post 'api/v1/whisper/read', to: 'whispers#api_read'
-  post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
-  post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
-  post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
-  post 'api/v1/notification/get_info', to: 'whispers#get_info'
-  post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
-  post 'api/v1/notification/delete', to: 'whispers#api_delete'
-  post 'api/v1/notification/decline_all_chat', to: 'whispers#api_decline_all_chat'
-  post 'api/v1/users/block-user', to: 'users#block'
 
-  get 'api/v1/activities', to: 'whispers#chat_request_history'
-  # Venue/Beacon API
+  # avatar APIs
+  post 'api/v1/avatar/create',             to: 'user_avatars#create'
+  delete 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
+  put  'api/v1/avatar/update',        to: 'user_avatars#update'
+
+  # whisper APIs
+  post 'api/v1/whispers', to: 'users#requests_new'
+  get  'api/v1/whispers/:id', to: 'whispers#show'
+  post 'api/v1/whisper/create', to: 'whispers#api_create'
+  post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
+  post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
+
+  # friend APIs
+  post 'api/v1/friends', to: 'users#myfriends_new'
+  get  'api/v1/friends/:id', to: 'friends#show'
+  
+  # Activity APIs
+  get  'api/v1/activities', to: 'whispers#chat_request_history'
+
+  # Enter Venue APIs
   post 'api/v1/room/enter',   to: 'rooms#user_enter'
   post 'api/v1/room/leave',   to: 'rooms#user_leave'
+
+  # venue APIs
+  get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list
+
+  # Other APIs for development
+  get  'api/v1/set-variable', to: 'users#set_global_variable'
+
+# 
+# 
+# 
+# 
+####################################################################################################
+
+
+
+
+
+
+
+  # post 'api/v1/users/signup',                 to: 'users#sign_up'
+  # post 'api/v1/users/accept_contract',        to: 'users#accept_contract'
+  # post 'api/v1/users/deactivate',             to: 'users#deactivate'
+  # post 'api/v1/users/connect',                to: 'users#connect'
+  # post 'api/v1/users/update-apn',             to: 'users#update_apn'
+  # post 'api/v1/users/network_open',           to: 'users#network_open'
+  
+  # get  'api/v1/nightly/get/:id',              to: 'nightlies#get', as: :get_nightly
+  # post 'api/v1/venues/prospect',              to: 'venues#prospect'
+  # get  'api/v1/lottery/show',                 to: 'users#get_lotto'
+  # post 'api/v1/users/poke',                   to: 'users#poke'
+  # get  'api/v1/users/get_pokes',              to: 'users#get_pokes'
+  # get  'api/v1/users/favourite_venues',       to: 'users#favourite_venues'
+  # post 'api/v1/users/add_favourite_venue',    to: 'users#add_favourite_venue'
+  # post 'api/v1/users/remove_favourite_venue', to: 'users#remove_favourite_venue'
+  # get 'api/v1/venues/venue_location', to: 'venues#venue_location'
+  # get  'api/v1/venues/people', to: 'venues#people'
+  # get  'api/v1/venues/active_users', to: 'venues#active_users'
+  # post 'api/v1/avatar/create_for_signup',  to: 'user_avatars#create_avatar'
+  # post 'api/v1/user/whisper_sent',         to: 'users#whisper_sent'
+  # post 'api/v1/avatar/set_default',        to: 'user_avatars#set_default'
+  # put 'api/v1/avatar/swap',        to: 'user_avatars#swap_photos'
+  # post 'api/v1/last_activity_for',          to: 'activities#show'
+  # post 'api/v1/requests', to: 'users#requests'
+  # post 'api/v1/myfriends', to: 'users#myfriends'
+  # get  'api/v1/whisper/create_by_url', to: 'whispers#create_by_url'
+  # post 'api/v1/whisper/read', to: 'whispers#api_read'
+  # post 'api/v1/notification/decline_all_chat', to: 'whispers#api_decline_all_chat'
+  # post 'api/v1/notification/handle_request', to: 'whispers#chat_action'
+  # post 'api/v1/whisper/chat_requests', to: 'whispers#all_my_chat_requests'
+  # post 'api/v1/notification/get_info', to: 'whispers#get_info'
+  # post 'api/v1/notification/delete', to: 'whispers#api_delete'
   # post 'api/v1/users/read_notification_update', to: 'users#read_notification_update'
   # Api Test Routes
   # get 'test/beacons'

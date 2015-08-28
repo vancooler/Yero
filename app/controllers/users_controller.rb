@@ -798,16 +798,17 @@ class UsersController < ApplicationController
     # end
   end
 
-  def deactivate
-    user = current_user
-    if !params[:active]
-      user.update(active: true)
-      render json: success(true)
-    else
-      render json: error(JSON.parse(user.errors.messages.to_json))
-    end
-  end
+  # def deactivate
+  #   user = current_user
+  #   if !params[:active]
+  #     user.update(active: true)
+  #     render json: success(true)
+  #   else
+  #     render json: error(JSON.parse(user.errors.messages.to_json))
+  #   end
+  # end
 
+  # Update chatting ids
   def update_chat_accounts
     user = current_user
 
@@ -891,6 +892,7 @@ class UsersController < ApplicationController
   #   render "password_reset"
   # end
 
+  # Reset password page and action
   def password_reset
     if !params[:user].blank? and !params[:user][:password_reset_token].blank?
       @user = User.find_by_password_reset_token(params[:user][:password_reset_token])
@@ -1042,28 +1044,28 @@ class UsersController < ApplicationController
     end
   end
 
-  def update_image
-    user = current_user
-    avatar = user.user_avatars.find(params[:avatar_id])
+  # def update_image
+  #   user = current_user
+  #   avatar = user.user_avatars.find(params[:avatar_id])
 
-    if avatar && avatar.update_image(params[:avatar])
-      render json: success(user.to_json(true))
-    else
-      render json: error("Invalid image")
-    end
-  end
+  #   if avatar && avatar.update_image(params[:avatar])
+  #     render json: success(user.to_json(true))
+  #   else
+  #     render json: error("Invalid image")
+  #   end
+  # end
 
-  def update_apn
-    user = current_user
-    user.apn_token = params[:token]
-    if user.save
-      render json: success() #
-    else
-      render json: error()
-    end
-  end
+  # def update_apn
+  #   user = current_user
+  #   user.apn_token = params[:token]
+  #   if user.save
+  #     render json: success() #
+  #   else
+  #     render json: error()
+  #   end
+  # end
 
-
+  # Notification settings
   def update_notification_preferences
     network_online = (!params['network_online'].nil? ? (params['network_online'].to_s == '0' or params['network_online'].to_s == 'false') : nil)
     enter_venue_network = (!params['enter_venue_network'].nil? ? (params['enter_venue_network'].to_s == '0' or params['enter_venue_network'].to_s == 'false') : nil)
@@ -1075,162 +1077,163 @@ class UsersController < ApplicationController
   end
 
   # When user clicked "Connect" button, update field is_connect to true
-  def connect
-    user = current_user
-    user.is_connected = true
+  # def connect
+  #   user = current_user
+  #   user.is_connected = true
     
-    if user.save
-      render json: success() #
-    else
-      render json: error()
-    end
-  end
+  #   if user.save
+  #     render json: success() #
+  #   else
+  #     render json: error()
+  #   end
+  # end
 
+  # return current user object
   def get_profile
     user = current_user
     render json: success(user.to_json(true))
   end
 
-  def get_lotto
-    winnings = current_user.winners.all
+  # def get_lotto
+  #   winnings = current_user.winners.all
 
-    data = Jbuilder.encode do |json|
-      json.winnings winnings, :message, :created_at, :winner_id, :claimed
-    end
+  #   data = Jbuilder.encode do |json|
+  #     json.winnings winnings, :message, :created_at, :winner_id, :claimed
+  #   end
 
-    render json: success(JSON.parse(data))
-  end
+  #   render json: success(JSON.parse(data))
+  # end
 
-  def poke
-    pokee = User.find(params[:user_id])
+  # def poke
+  #   pokee = User.find(params[:user_id])
 
-    if pokee
-      p = Poke.where(pokee: pokee, poker: current_user).first
+  #   if pokee
+  #     p = Poke.where(pokee: pokee, poker: current_user).first
 
-      unless p
-        p = Poke.new
-        p.poker = current_user
-        p.pokee = pokee
-        p.save
-      end
+  #     unless p
+  #       p = Poke.new
+  #       p.poker = current_user
+  #       p.pokee = pokee
+  #       p.save
+  #     end
 
-      render json: success(nil)
-    else
-      render json: error("User does no exist")
-    end
-  end
+  #     render json: success(nil)
+  #   else
+  #     render json: error("User does no exist")
+  #   end
+  # end
 
-  def add_favourite_venue
-    user = current_user
-    venue = Venue.find(params[:venue_id])
-    if user && venue && !user.favourite_venues.where(venue: venue).first
-      fav = FavouriteVenue.new
-      fav.user = user
-      fav.venue = venue
-      fav.save
+  # def add_favourite_venue
+  #   user = current_user
+  #   venue = Venue.find(params[:venue_id])
+  #   if user && venue && !user.favourite_venues.where(venue: venue).first
+  #     fav = FavouriteVenue.new
+  #     fav.user = user
+  #     fav.venue = venue
+  #     fav.save
 
-      render json: success(nil)
-    else
-      render json: error("Error, user/venue does exist or venue is already a favourite of the user")
-    end
-  end
+  #     render json: success(nil)
+  #   else
+  #     render json: error("Error, user/venue does exist or venue is already a favourite of the user")
+  #   end
+  # end
 
-  def remove_favourite_venue
-    user = current_user
-    venue = Venue.find(params[:venue_id])
+  # def remove_favourite_venue
+  #   user = current_user
+  #   venue = Venue.find(params[:venue_id])
 
-    if user && venue
-      fav = user.favourite_venues.where(venue: venue).first
-      if fav
-        fav.destroy
+  #   if user && venue
+  #     fav = user.favourite_venues.where(venue: venue).first
+  #     if fav
+  #       fav.destroy
 
-        render json: success(nil)
-      end
-    else
-      render json: error("Error, user/venue does not exist or venue is not a favourite of the user")
-    end
-  end
+  #       render json: success(nil)
+  #     end
+  #   else
+  #     render json: error("Error, user/venue does not exist or venue is not a favourite of the user")
+  #   end
+  # end
 
-  # A list of the user's favourite venues
-  # TODO refactor out the JSON data builder to venue.rb
-  def favourite_venues
-    user = current_user
+  # # A list of the user's favourite venues
+  # # TODO refactor out the JSON data builder to venue.rb
+  # def favourite_venues
+  #   user = current_user
 
-    favourites = user.favourite_venues
+  #   favourites = user.favourite_venues
 
-    data = Jbuilder.encode do |json|
-      images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
+  #   data = Jbuilder.encode do |json|
+  #     images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
 
-      json.array! favourites do |f|
+  #     json.array! favourites do |f|
 
-        v = f.venue
+  #       v = f.venue
 
-        json.id v.id
-        json.name v.name
-        json.address v.address_line_one
-        json.city v.city
-        json.state v.state
-        json.longitude v.longitude
-        json.latitude v.latitude
-        json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
-        json.images do
-          json.array! images
-        end
+  #       json.id v.id
+  #       json.name v.name
+  #       json.address v.address_line_one
+  #       json.city v.city
+  #       json.state v.state
+  #       json.longitude v.longitude
+  #       json.latitude v.latitude
+  #       json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
+  #       json.images do
+  #         json.array! images
+  #       end
 
-        json.nightly do
-          nightly = Nightly.today_or_create(v)
-          json.boy_count nightly.boy_count
-          json.girl_count nightly.girl_count
-          json.guest_wait_time nightly.guest_wait_time
-          json.regular_wait_time nightly.regular_wait_time
-        end
-      end
-    end
+  #       json.nightly do
+  #         nightly = Nightly.today_or_create(v)
+  #         json.boy_count nightly.boy_count
+  #         json.girl_count nightly.girl_count
+  #         json.guest_wait_time nightly.guest_wait_time
+  #         json.regular_wait_time nightly.regular_wait_time
+  #       end
+  #     end
+  #   end
 
-    render json: {
-      list: JSON.parse(data)
-    }
-  end
+  #   render json: {
+  #     list: JSON.parse(data)
+  #   }
+  # end
 
-  # Get all the chat requests sent to the user
-  # TODO refactor out the JSON builder into poke.rb
-  def get_pokes
-    user = current_user
+  # # Get all the chat requests sent to the user
+  # # TODO refactor out the JSON builder into poke.rb
+  # def get_pokes
+  #   user = current_user
 
-    pokes = Poke.where(pokee: user).all
+  #   pokes = Poke.where(pokee: user).all
 
-    data = Jbuilder.encode do |json|
-      json.array! pokes do |p|
+  #   data = Jbuilder.encode do |json|
+  #     json.array! pokes do |p|
 
-        json.id = p.id
+  #       json.id = p.id
 
-        json.poker do
-          poker = p.poker
+  #       json.poker do
+  #         poker = p.poker
 
-          json.id poker.id
-          json.first_name poker.first_name
-          json.avatar poker.default_avatar.avatar.thumb.url
-        end
+  #         json.id poker.id
+  #         json.first_name poker.first_name
+  #         json.avatar poker.default_avatar.avatar.thumb.url
+  #       end
 
-        json.timestamp p.poked_at
-      end
-    end
+  #       json.timestamp p.poked_at
+  #     end
+  #   end
 
-    render json: {
-      list: JSON.parse(data)
-    }
-  end
+  #   render json: {
+  #     list: JSON.parse(data)
+  #   }
+  # end
 
-  # Accept contract makes sure the user accepts the rules of yero
-  def accept_contract
-    user = current_user
-    if params[:accept_contract] == true
-      user.update(accept_contract: true)
-      render json: success(true)
-    else
-      render json: success(false)
-    end
-  end
+  # # Accept contract makes sure the user accepts the rules of yero
+  # def accept_contract
+  #   user = current_user
+  #   if params[:accept_contract] == true
+  #     user.update(accept_contract: true)
+  #     render json: success(true)
+  #   else
+  #     render json: success(false)
+  #   end
+  # end
 
 
   # block user

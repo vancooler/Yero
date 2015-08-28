@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="utf-8">
+
+<title>API Endpoints - Rails Application Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+
+    
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>API Endpoints V1</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-api_v1_activities">GET api/v1/activities</a></li>
+    <li ><a href="#method-i-api_v1_avatar_create">POST api/v1/avatar/create</a></li>
+    <li ><a href="#method-i-api_v1_avatar_destroy">DELETE api/v1/avatar/destroy</a></li>
+    <li ><a href="#method-i-api_v1_avatar_update">PUT api/v1/avatar/update</a></li>
+    <li ><a href="#method-i-api_v1_friend_id">GET api/v1/friend/:id</a></li>
+    <li ><a href="#method-i-api_v1_friends">POST api/v1/friends</a></li>
+    <li ><a href="#method-i-api_v1_report">POST api/v1/report</a></li>
+    <li ><a href="#method-i-api_v1_room_enter">POST api/v1/room/enter</a></li>
+    <li ><a href="#method-i-api_v1_room_leave">POST api/v1/room/leave</a></li>
+    <li ><a href="#method-i-api_v1_user_update_profile">PUT api/v1/user/update_profile</a></li>
+    <li ><a href="#method-i-api_v1_user_locations_new">POST api/v1/user/locations/new</a></li>
+    <li ><a href="#method-i-api_v1_user_locations_show">POST api/v1/user/locations/show</a></li>
+    <li ><a href="#method-i-api_v1_users">POST api/v1/users</a></li>
+    <li ><a href="#method-i-api_v1_users_block_user">POST api/v1/users/block-user</a></li>
+    <li ><a href="#method-i-api_v1_users_check_email">POST api/v1/users/check-email</a></li>
+    <li ><a href="#method-i-api_v1_users_forgot_password">POST api/v1/users/forgot_password</a></li>
+    <li ><a href="#method-i-api_v1_users_generate_reset_email_verify">POST api/v1/users/generate_reset_email_verify</a></li>
+    <li ><a href="#method-i-api_v1_users_like_or_unlike">POST api/v1/users/like-or-unlike</a></li>
+    <li ><a href="#method-i-api_v1_users_login">POST api/v1/users/login</a></li>
+    <li ><a href="#method-i-api_v1_users_logout">DELETE api/v1/users/logout</a></li>
+    <li ><a href="#method-i-api_v1_users_notification_preference">POST api/v1/users/notification-preference</a></li>
+    <li ><a href="#method-i-api_v1_users_profile">GET api/v1/users/profile</a></li>
+    <li ><a href="#method-i-api_v1_users_remove_chat_accounts">POST api/v1/users/remove_chat_accounts</a></li>
+    <li ><a href="#method-i-api_v1_users_signup_no_avatar">POST api/v1/users/signup_no_avatar</a></li>
+    <li ><a href="#method-i-api_v1_users_update">POST api/v1/users/update</a></li>
+    <li ><a href="#method-i-api_v1_users_update_chat_accounts">POST api/v1/users/update_chat_accounts</a></li>
+    <li ><a href="#method-i-api_v1_venues_list">GET api/v1/venues/list</a></li>
+    <li ><a href="#method-i-api_v1_whisper_create">POST api/v1/whisper/create</a></li>
+    <li ><a href="#method-i-api_v1_whisper_decline_whisper_requests">POST api/v1/whisper/decline_whisper_requests</a></li>
+    <li ><a href="#method-i-api_v1_whisper_whisper_request_state">POST api/v1/whisper/whisper_request_state</a></li>
+    <li ><a href="#method-i-api_v1_whispers">POST api/v1/whispers</a></li>
+    <li ><a href="#method-i-api_v1_whispers_id">GET api/v1/whispers/:id</a></li>
+    
+
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-UsersController">
+  <h1 id="api_endpoints" class="class">
+    API Endpoints
+  </h1>  
+  <section id="5Buntitled-5D" class="documentation-section">
+ 
+     <section id="public-instance-5Buntitled-5D-method-details-v1" class="method-section">
+      <header>
+         <h3>Version 1</h3>
+      </header>
+
+
+      <div id="method-i-api_v1_activities" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/activities [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./WhispersController.html#method-i-chat_request_history">Whispers#chat_request_history</a>
+
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">activity_id: </span><span class="ruby-string">1</span>
+      <span class="ruby-identifier">activity_type: </span><span class="ruby-string">"Sent Whisper"</span>
+      <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+      <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_avatar_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/avatar/create [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UserAvatarsController.html#method-i-create">UserAvatars#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">optional for update an exist photo</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_avatar_destroy" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/avatar/destroy [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UserAvatarsController.html#method-i-destroy">UserAvatars#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_avatar_update" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/avatar/update [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UserAvatarsController.html#method-i-update">UserAvatars#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_friend_id" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/friend/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./FriendsController.html#method-i-show">Friends#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">notification_type: </span><span class="ruby-string">3</span>
+    <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">1453827423</span>
+    <span class="ruby-identifier">viewed: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+    <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_friends" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/friends [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-myfriends_new">Users#myfriends_new</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-constant">StandardFriendObject</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/report [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-report">Users#report</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">type_id: </span><span class="ruby-string">required report type id</span>
+  <span class="ruby-identifier">reason: </span><span class="ruby-string">optional text</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE/FALSE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_room_enter" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/room_enter [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./RoomController.html#method-i-room_enter">Room#room_enter</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">beacon_key: </span><span class="ruby-string">required string or array of strings</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">"Success"/"Could not enter."</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_room_leave" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/room/leave [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./RoomsController.html#method-i-user_leave">Rooms#user_leave</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_update_profile" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/user/update_profile [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-update_profile">Users#update_profile</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">required bio text</span>
+  <span class="ruby-identifier">avatars: </span><span class="ruby-string">required array of photo ids</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_user_locations_new" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/user/locations/new [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./LocationsController.html#method-i-create">Locations#create</a>
+          <a href="./UsersController.html#method-i-update_profile">Users#update_profile</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">latitude: </span><span class="ruby-string">required float</span>
+  <span class="ruby-identifier">longitude: </span><span class="ruby-string">required float</span>
+  <span class="ruby-identifier">timezone: </span><span class="ruby-string">required string</span>
+
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_user_locations_show" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/user/locations/show [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./LocationsController.html#method-i-show">Locations#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">latitude: </span><span class="ruby-string">49.345643</span>
+    <span class="ruby-identifier">longitude: </span><span class="ruby-string">-122.986327</span>  
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-index">Users#index</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_block_user" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/block-user [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-block">Users#block</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_check_email" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/check-email [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-check_email">Users#check_email</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_forgot_password" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/forgot_password [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-forgot_password">Users#forgot_password</a>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_v1_users_generate_reset_email_verify" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/generate_reset_email_verify [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-generate_reset_email_verify">Users#generate_reset_email_verify</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_like_or_unlike" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/like-or-unlike [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-like">Users#like</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_login" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/login [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-login">Users#login</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_logout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/logout [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-logout">Users#logout</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_notification_preference" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/notification-preference [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-update_notification_preferences">Users#update_notification_preferences</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_profile" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/profile [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-get_profile">Users#get_profile</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_remove_chat_accounts" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/remove_chat_accounts [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-remove_chat_accounts">Users#remove_chat_accounts</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_signup_no_avatar" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/signup_no_avatar [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-sign_up_without_avatar">Users#sign_up_without_avatar</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_update" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/update [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-update_profile">Users#update_profile</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_users_update_chat_accounts" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/users/update_chat_accounts [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-update_chat_accounts">Users#update_chat_accounts</a>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_v1_venues_list" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/venues/list [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./VenuesController.html#method-i-list">Venues#list</a>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_v1_whispers_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whisper/create [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./WhispersController.html#method-i-api_create">Whispers#api_create</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_whispers_decline_whisper_requests" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whisper/decline_whisper_requests [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./WhispersController.html#method-i-decline_whisper_requests">Whispers#decline_whisper_requests</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_whisper_whisper_request_state" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whisper/whisper_request_state [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./WhispersController.html#method-i-whisper_request_state">Whispers#whisper_request_state</a>
+        </div>
+      </div>
+
+      <div id="method-i-api_v1_whispers" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whispers [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-requests_new">Users#requests_new</a>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_v1_whispers_id" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whispers/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./WhispersController.html#method-i-show">Whispers#show</a>
+        </div>
+      </div>
+    
+      
+
+
+    
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="http://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="http://docs.seattlerb.org/rdoc/">RDoc</a> 4.2.0.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

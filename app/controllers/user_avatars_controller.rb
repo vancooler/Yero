@@ -5,26 +5,26 @@ class UserAvatarsController < ApplicationController
 
 
   # work as swap avatars, not used yet
-  def swap_photos
-    avatar_one = UserAvatar.find_by(user: current_user, id: params[:avatar_id_one])
-    avatar_two = UserAvatar.find_by(user: current_user, id: params[:avatar_id_two])
-    tmp_order = avatar_one.order.to_s
-    avatar_one.order = avatar_two.order
-    avatar_two.order = tmp_order.to_i
+  # def swap_photos
+  #   avatar_one = UserAvatar.find_by(user: current_user, id: params[:avatar_id_one])
+  #   avatar_two = UserAvatar.find_by(user: current_user, id: params[:avatar_id_two])
+  #   tmp_order = avatar_one.order.to_s
+  #   avatar_one.order = avatar_two.order
+  #   avatar_two.order = tmp_order.to_i
 
-    if avatar_one.save 
-      if avatar_two.save
-        user_info = current_user.to_json(true)
-        render json: success(user_info)
-      else
-        render json: error(avatar_two.errors)
-      end
-    else
-      render json: error(avatar_one.errors)
-    end
-  end
+  #   if avatar_one.save 
+  #     if avatar_two.save
+  #       user_info = current_user.to_json(true)
+  #       render json: success(user_info)
+  #     else
+  #       render json: error(avatar_two.errors)
+  #     end
+  #   else
+  #     render json: error(avatar_one.errors)
+  #   end
+  # end
 
-
+  # create new photo
   def create
     current_order = UserAvatar.where(:user_id => current_user.id).where(:is_active => true).maximum(:order)
     if !params[:avatar_id].nil?
@@ -55,6 +55,7 @@ class UserAvatarsController < ApplicationController
     end
   end
 
+  # update a photo
   def update
     if !params[:avatar_id].nil? and !params[:avatar].nil?
       avatar_id = params[:avatar_id] 
@@ -80,7 +81,7 @@ class UserAvatarsController < ApplicationController
     end
   end
 
-
+  # delete a photo
   def destroy
     avatar = UserAvatar.find_by(user: current_user, id: params[:avatar_id])
     active_avatars_number = current_user.user_avatars.where(:is_active => true).size
