@@ -53,6 +53,7 @@ Rails.application.routes.draw do
     post 'admin/enable-single-user/:id', to: 'admin/user_screenings#enable_single_user', as: :admin_enable_user_account
     post 'venues-csv-import', to: 'venues#import', :as => "venue_import_csv"
     post 'users-csv-import', to: 'users#import', :as => "user_import_csv"
+    post 'send-test-whisper', to: 'whispers#send_test_whisper', :as => "send_test_whisper"
     put 'admin/remove-snapchat-id/:id', to: 'admin/user_screenings#remove_snapchat', as: :admin_remove_snapchat_id
     put 'admin/remove-wechat-id/:id', to: 'admin/user_screenings#remove_wechat', as: :admin_remove_wechat_id
     put 'admin/remove-line-id/:id', to: 'admin/user_screenings#remove_line', as: :admin_remove_line_id

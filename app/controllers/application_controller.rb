@@ -56,6 +56,9 @@ class ApplicationController < ActionController::Base
             user = User.find_by_id(user_id.to_i)
             if user.nil?
               render json: error("You must authenticate with a valid token")
+            else
+              user.last_active = Time.now
+              user.save!
             end
           end
         end

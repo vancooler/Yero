@@ -33,11 +33,16 @@ class User < ActiveRecord::Base
   }
   has_secure_password
 
+  # user's profile photo
   def main_avatar
     user_avatars.find_by(order: 0)
   end
 
-  # Checks if you are in the same venue as the other person
+  # Boolean: Checks if you are in the same venue as the other person
+  # 
+  #     @params:
+  # 
+  #         - user_id -> the other person's user id
   def same_venue_as?(user_id)
     if self.current_venue.nil?
       return false
@@ -57,6 +62,10 @@ class User < ActiveRecord::Base
   end
 
   # Checks if you are in a different venue as the other person
+  # 
+  #     @params:
+  # 
+  #         - user_id -> the other person's user id
   def different_venue_as?(user_id)
     
     fellow_participant = User.find_by_id(user_id)
@@ -72,47 +81,14 @@ class User < ActiveRecord::Base
       false
     end
 
-
-    # if User.exists? id: user_id 
-    #   fellow_participant = User.find(user_id)
-      
-    #   fellow_participant_venue = fellow_participant.current_venue
-    #   self_venue = self.current_venue
-
-    #   if fellow_participant_venue.nil? or fellow_participant_venue.venue_type.nil? or fellow_participant_venue.venue_type.name.nil? or fellow_participant_venue.venue_type.name.include? "Campus" 
-    #       # fellow not in venue or in campus
-    #       return false
-    #   elsif !fellow_participant_venue.nil? and !self_venue.nil? and !self_venue.venue_type.nil? and !self_venue.venue_type.name.nil? and !(self_venue.venue_type.name.include? "Campus") and self_venue.id == fellow_participant_venue.id
-    #       # in a same non-campus venue as fellow
-    #       return false
-    #   else
-    #       # other situation
-    #       return true
-    #   end
-    # else
-    #   false
-    # end
   end
 
 
   ##########################################################################
   #
-  # Check whether a user is in the same beacon as the current user
+  # return photos that are not profile photo
   #
   ##########################################################################
-  # def same_beacon_as?(user_id)
-  #   if fellow_participant = User.find(user_id)
-      
-  #     fellow_participant_beacon = fellow_participant.current_beacon
-  #     self_beacon = self.current_beacon
-
-  #     return false if fellow_participant_beacon.nil? || self_beacon.nil?
-
-  #     self.current_beacon.id == fellow_participant.current_beacon.id
-  #   else
-  #     false
-  #   end
-  # end
 
   def secondary_avatars
     user_avatars.where.not(order: 0)
@@ -150,10 +126,24 @@ class User < ActiveRecord::Base
       return self.active_in_venue_network.venue_network
     end
   end
+
+  # Boolean check if the user is in any venue now
   def has_activity_today?
-    #self.activities.on_current_day.count > 0
     !self.active_in_venue.nil?
   end
+
+  # Main method to filter users
+  # 
+  #     @params:
+  # 
+  #         - gender ("M", "F", or "A", default: "A")
+  #         - min_age (integer for minimum age, default: ignore this filter)
+  #         - max_age (integer for maximum age, default: ignore this filter)
+  #         - min_distance (integer for minimum distance, default: 0)
+  #         - max_distance (integer for maximum distance, default: 60)
+  #         - everyone (true or false, default: true)
+  #         - venue_id (not used anymore, might be used in the future)
+
   def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     current_venue = self.current_venue
     current_venue_network = self.current_venue_network
@@ -181,7 +171,7 @@ class User < ActiveRecord::Base
     # end
 
     # users = User.where(id: active_users_id) #Find all the users with the id's in the array.
-    max_distance = max_distance.blank? ? 20 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
+    max_distance = max_distance.blank? ? 60 : max_distance+1 # Do max_distance+1 to include distance ranges (i.e. 9-10km, people 10km are included)
     # only return users with avatar near current user 
     # users = User.includes(:user_avatars).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { default: true}).near(self, max_distance, :units => :km)
     # filter for is_connected 
@@ -211,58 +201,17 @@ class User < ActiveRecord::Base
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
   end
 
-  # def whisper_friends
-  #   active_users_id = WhisperNotification.find_friends(self.id)
-  # end
 
-  # def whisper_venue
-  #   venue = WhisperNotification.system_notification(self.id)
-  #   return venue
-  # end
-
-  # def fellow_participants_sorted #by distance then by activity
-  #   results = self.fellow_participants
-  #   results_with_location = results.where.not(latitude:nil, longitude:nil)
-  #   results_with_no_location = results - results_with_location
-  #   results = results.near(self, 50, unit: :km).sort_by_last_active
-  #   results_with_no_location = results_with_no_location.
-  #   sorted_results = results_with_location + results_with_no_location
-  # end
 
   ##########################################################################
   #
-  # Sort the users in same beacon in random order
-  #
-  ##########################################################################
-  # def same_beacon_users(users)
-  #   users.each do |u|
-  #     if !self.same_beacon_as?(u.id)
-  #       users.reject{|user| user.id == u.id}
-  #     end
-  #   end
-  #   users = users.shuffle
-  #   return users
-  # end
-
-  ##########################################################################
-  #
-  # Sort the users in same venue in random order
-  #
-  ##########################################################################
-  # def same_venue_users(users)
-  #   users.each do |u|
-  #     if !self.same_venue_as?(u.id)
-  #       users.reject{|user| user.id == u.id}
-  #     end
-  #   end
-  #   users = users.shuffle
-  #   return users
-  # end
-
-  ##########################################################################
-  #
-  # Sort the users list by same beacon, same venue, distance and random
-  #
+  # Filter users by distance and sort them by distance
+  # 
+  #     @params:
+  # 
+  #         - users (array of users)
+  #         - min_distance (integer for minimum distance, default: 0)
+  #         - max_distance (integer for maximum distance, default: 60)
   ##########################################################################
   def user_sort(users, min_distance, max_distance)
     
@@ -275,31 +224,29 @@ class User < ActiveRecord::Base
     return result_users
   end
 
-
+  # TODO: check if used anywhere, replaced by last_active
   def last_activity
     self.activities.last
   end
 
-  # def venue_network
-  #   if self.participant
-  #     self.participant.room.venue.venue_network
-  #   end
-  # end
-
+  # user's profile photo
   def default_avatar
     self.user_avatars.where(order: 0).first
   end
 
+  # user's age
   def age
     dob = self.birthday
     now = Time.now.utc.to_date
     now.year - dob.year - ((now.month > dob.month || (now.month == dob.month && now.day >= dob.day)) ? 0 : 1)
   end
 
+  # first_name (id) -> convenient for admins reading
   def name
     first_name + ' (' + id.to_s + ')'
   end
 
+  # CORE function of serializing user to json structure
   def to_json(with_key)
     data = Jbuilder.encode do |json|
       json.id id
@@ -362,7 +309,9 @@ class User < ActiveRecord::Base
     response
   end
 
-  # keeps track of the latest activity of a user
+  # keeps track of the latest activity of a user 
+  # 
+  # TODO: Check if used anywhere replaced by last_active
   def update_activity
     self.last_activity = Time.now
   end
@@ -471,6 +420,7 @@ class User < ActiveRecord::Base
   #   puts (time5 - time1).inspect
   # end
 
+  # cron job method scheduled at 5am in user's local time to reset everything as a new day
   def self.handle_close(times_array)
     time1 = Time.now
     # disconnect all users
@@ -498,7 +448,7 @@ class User < ActiveRecord::Base
     return true
   end
 
-  # This code for usage with a CRON job. Currently done using Heroku Scheduler
+  # This code for usage with a CRON job to force network close. Currently done using Heroku Scheduler
   def self.network_close
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
@@ -514,6 +464,7 @@ class User < ActiveRecord::Base
     
   end
 
+  # Not used in current version
   def friends_by_like
     followees = self.followees(User)
     followers = self.followers(User)
@@ -522,52 +473,21 @@ class User < ActiveRecord::Base
     return mutual_follow
   end
 
-  # find friends built by accepting whisper
-  # def friends_by_whisper    
-  #   dynamo_db = AWS::DynamoDB.new # Make an AWS DynamoDB object
-  #   table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-  #   table = dynamo_db.tables[table_name] # Choose the table
-  #   if !table.schema_loaded?
-  #     table.load_schema 
-  #   end
 
-  #   friends_accepted = table.items.where(:origin_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:target_id)
-  #   friends_whispered = table.items.where(:target_id).equals(self.id.to_s).where(:notification_type).equals("3").select(:origin_id)
-
-  #   first_friends_id_array = Array.new
-  #   second_friends_id_array = Array.new
-
-  #   if friends_accepted and friends_accepted.count > 0
-  #     friends_accepted.each do |friend|
-  #       attributes = friend.attributes
-  #       friend_id = attributes['target_id'].to_i
-  #       if first_friends_id_array.include? friend_id
-  #          # 'in the array'
-  #       else
-  #         first_friends_id_array << friend_id
-  #       end 
-  #     end
-  #   end
-
-  #   if friends_whispered and friends_whispered.count > 0
-  #     friends_whispered.each do |friend|      
-  #       attributes = friend.attributes
-  #       friend_id = attributes['origin_id'].to_i
-  #       if second_friends_id_array.include? friend_id
-  #          # 'in the array'
-  #       else
-  #         second_friends_id_array << friend_id 
-  #       end 
-  #     end
-  #   end
-
-  #   users = Array.new
-  #   users = first_friends_id_array | second_friends_id_array
-  #   return_users = Array.new
-  #   return_users = User.where(:id => users)
-  #   return return_users
-
-  # end
+  # CORE function to gather ppl, all parameters from controller
+  # 
+  #     @params:
+  # 
+  #         - gate_number (integer, minimum number of users people can see before filter)
+  #         - gender ("M", "F", or "A", default: "A")
+  #         - min_age (integer for minimum age, default: ignore this filter)
+  #         - max_age (integer for maximum age, default: ignore this filter)
+  #         - min_distance (integer for minimum distance, default: 0)
+  #         - max_distance (integer for maximum distance, default: 60)
+  #         - everyone (true or false, default: true)
+  #         - venue_id (not used anymore, might be used in the future)
+  #         - page_number (integer for pagination)
+  #         - users_per_page (integer for pagination)
 
   def people_list(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
     diff_1 = 0
@@ -840,6 +760,8 @@ class User < ActiveRecord::Base
     return result
   end
 
+
+  # mark array of whispers as viewed in dynamodb
   def viewed_by_sender(whispers)
     
     result = true
@@ -885,16 +807,9 @@ class User < ActiveRecord::Base
   end
 
 
+  # Serialize user to JSON in current_user's eyes
   def user_object(current_user)
-    # target_user = User.find_by_id(user["target_user"]["id"].to_i)
-    # user_info = self.to_json(false)
-    # user_info['avatars'] = user_info['avatars'].sort_by { |hsh| hsh["order"] }
-    # user_info["avatars"].each do |a|
-    #   thumb = a['avatar']
-    #   a['avatar'] = thumb.gsub! 'thumb_', ''
-    # end
-
-
+    
     user_object = {
       # same_venue_badge:          current_user.same_venue_as?(self.id),
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
@@ -921,10 +836,9 @@ class User < ActiveRecord::Base
     return user_object
   end
 
+  # Serialize user's avatars in JSON
   def user_avatar_object
-    # user_info = user.to_json(false)
-    # return user_info["avatars"]
-
+    
     data = Jbuilder.encode do |json|
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
@@ -948,7 +862,7 @@ class User < ActiveRecord::Base
     return data["avatars"]
   end
 
-
+  # Generate auth token
   def generate_token
     user = {:id => self.id, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
     if Rails.env == 'development' or Rails.env == 'test'
@@ -961,28 +875,28 @@ class User < ActiveRecord::Base
     return token
   end
 
-
+  # Join network with click the button
   def join_network
     if self.is_connected == false
       self.is_connected = true
       self.save
-      # w = WhisperNotification.create_in_aws(self.id, nil, nil, "200", '')
       RecentActivity.add_activity(self.id, '200', nil, nil, "online-"+self.id.to_s+"-"+Time.now.to_i.to_s)
     end
   end
 
+  # Leave the network
   def leave_network
     self.is_connected = false
     self.save
   end
 
+  # Create leave network activity for users in array
+  # 
+  #     @params:
+  # 
+  #         - people_array (array of user ids)
   def self.leave_activity(people_array)
-    # dynamo_db = AWS::DynamoDB.new
-    # table_name = WhisperNotification.table_prefix + 'WhisperNotification'
-    # table = dynamo_db.tables[table_name]
-    # if !table.schema_loaded?
-    #   table.load_schema
-    # end
+    
     current_timestamp = Time.now.to_i
     people_array.each do |user|
       check_user = User.find_by_id(user.to_i)
@@ -992,6 +906,11 @@ class User < ActiveRecord::Base
     end
   end
 
+  # reorder user's photos based on the order of photo ids in the array given by controller
+  # 
+  #     @params:
+  # 
+  #         - avatar_ids (array of photo ids)
   def avatar_reorder(avatar_ids)
     order = 0
     avatar_ids.each do |ua_id|
@@ -1006,6 +925,7 @@ class User < ActiveRecord::Base
     return true
   end
 
+  # Test method to forch last 100 users join the network
   def force_users_join_to_test
     users = User.order("id DESC").limit(100) 
     users.each do |user|
@@ -1013,6 +933,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Forch some test users join the network
+  # 
+  #     @params:
+  # 
+  #         - timezone (string user's timezone)
+  #         - number_of_male (integer)
+  #         - number_of_female (integer)
 
   def self.random_join_fake_users(timezone, number_of_male, number_of_female)
     female_fake_users = User.where(timezone_name: timezone).where(is_connected: false).where(fake_user: true).where(gender: 'F').sample(number_of_female)
@@ -1030,6 +957,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Join test users
   def self.fake_users_join
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
     times_array = Array.new # Make a new array to hold the times that are at 5:00pm
@@ -1050,7 +978,7 @@ class User < ActiveRecord::Base
     User.random_join_fake_users(times_array, 2, 3)
   end
 
-
+  # Inport a single user with hash structure
   def self.import_single_user(user_obj)
     email = user_obj['Email'].nil? ? '' : user_obj['Email']
     check_user = User.find_by_email(email)
@@ -1157,6 +1085,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # Inport users in csv file
   def self.import(file)
     CSV.foreach(file.path, headers: true) do |row|
       user_obj = row.to_hash

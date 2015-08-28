@@ -144,6 +144,8 @@ class WhisperNotification < AWS::Record::HashModel
   #   end
   # end
 
+
+  # Find a record in dynamoDB with dynamodb's uuid
   def self.find_by_dynamodb_id(id)
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
@@ -409,6 +411,8 @@ class WhisperNotification < AWS::Record::HashModel
   #   end
   # end
 
+
+  # Activity history
   def self.my_chat_request_history(user, page_number, activities_per_page)
     # t0 = Time.now
     # dynamo_db = AWS::DynamoDB.new
@@ -702,6 +706,8 @@ class WhisperNotification < AWS::Record::HashModel
   #   # end
   # end
 
+
+  # Handle a whisper accept/decline
   def self.find_whisper(whisper_id, state)
     if Rails.env == 'production'
       dynamo_db = AWS::DynamoDB.new

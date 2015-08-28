@@ -8,6 +8,12 @@ ActiveAdmin.register User do
 
   action_item :only => :index, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do 
     link_to('CSV IMPORT', admin_import_users_csv_url)
+
+  end
+
+  action_item :only => :index, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 and ENV['DYNAMODB_PREFIX'] != 'Production'} do 
+    link_to('Test Whisper', admin_send_whisper_url)
+
   end
 
   controller do

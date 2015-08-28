@@ -758,6 +758,7 @@ class UsersController < ApplicationController
             end
           end
           user.key_expiration = Time.now + 3.hours
+          user.last_active = Time.now
           user.save!
           user_info = user.to_json(true)
           user_info['token'] = user.generate_token
