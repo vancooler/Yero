@@ -3,7 +3,7 @@ class WhispersController < ApplicationController
 
   before_action :authenticate_api, only: [:api_create, :chat_request_history, :whisper_request_state, :api_decline_all_chat, :show]
   skip_before_filter  :verify_authenticity_token
-
+  before_action :authenticate_admin_user!, only: [:send_test_whisper]
 
   def show
     whisper_id = params[:id]
@@ -64,19 +64,20 @@ class WhispersController < ApplicationController
     origin_user = User.find_by_id(origin_id.to_i)
     target_user = User.find_by_id(target_id.to_i)
     if target_user.nil?
-      redirect_to :back, :notice => "Cannot find target user!" 
+      @message = "Cannot find target user!" 
     elsif origin_user.nil? 
-      redirect_to :back, :notice => "Cannot find origin user!"
+      @message = "Cannot find origin user!"
     else
       message = origin_user.first_name + " just sent you a whisper"   
       result = WhisperNotification.send_whisper(target_id, origin_user, venue_id, notification_type, intro, message)
 
       if result == "true"
-        redirect_to :back, :notice => "Whisper sent!"
+        @message = "Whisper sent!"
       else
-        redirect_to :back, :notice => result
+        @message = result
       end
     end
+    redirect_to :back, :notice => @message
   end
 
 
