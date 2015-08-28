@@ -40,8 +40,8 @@ class FriendByWhisper < ActiveRecord::Base
           	response = {
           		notification_type: 3,
           		id: friend.id,
-          		timestamp: self.friend_time,
-          		timestamp_read: Time.at(self.friend_time),
+          		timestamp: self.friend_time.to_i,
+          		timestamp_read: Time.at(self.friend_time.to_i),
           		viewed: self.viewed,
           		object_type: "user",
 	        	object: user_object
