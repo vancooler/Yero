@@ -66,7 +66,7 @@
     <li ><a href="#method-i-api_v1_avatar_create">POST api/v1/avatar/create</a></li>
     <li ><a href="#method-i-api_v1_avatar_destroy">DELETE api/v1/avatar/destroy</a></li>
     <li ><a href="#method-i-api_v1_avatar_update">PUT api/v1/avatar/update</a></li>
-    <li ><a href="#method-i-api_v1_friend_id">GET api/v1/friend/:id</a></li>
+    <li ><a href="#method-i-api_v1_friends_id">GET api/v1/friends/:id</a></li>
     <li ><a href="#method-i-api_v1_friends">POST api/v1/friends</a></li>
     <li ><a href="#method-i-api_v1_report">POST api/v1/report</a></li>
     <li ><a href="#method-i-api_v1_room_enter">POST api/v1/room/enter</a></li>
@@ -92,8 +92,8 @@
     <li ><a href="#method-i-api_v1_whisper_create">POST api/v1/whisper/create</a></li>
     <li ><a href="#method-i-api_v1_whisper_decline_whisper_requests">POST api/v1/whisper/decline_whisper_requests</a></li>
     <li ><a href="#method-i-api_v1_whisper_whisper_request_state">POST api/v1/whisper/whisper_request_state</a></li>
-    <li ><a href="#method-i-api_v1_whispers">POST api/v1/whispers</a></li>
     <li ><a href="#method-i-api_v1_whispers_id">GET api/v1/whispers/:id</a></li>
+    <li ><a href="#method-i-api_v1_whispers">POST api/v1/whispers</a></li>
     
 
   </ul>
@@ -154,7 +154,7 @@
   <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
   <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">optional for update an exist photo</span>
 <span class="ruby-keyword">Response:</span>
-  <span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
 
             </pre>
           </div>
@@ -174,7 +174,7 @@
   <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
   <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
 <span class="ruby-keyword">Response:</span>
-  <span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
 
             </pre>
           </div>
@@ -194,16 +194,16 @@
   <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
   <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
 <span class="ruby-keyword">Response:</span>
-  <span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
 
             </pre>
           </div>
         </div>
       </div>
 
-      <div id="method-i-api_v1_friend_id" class="method-detail ">
+      <div id="method-i-api_v1_friends_id" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/v1/friend/:id [GET]</span>
+          <span class="method-name">api/v1/friends/:id [GET]</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
@@ -320,7 +320,7 @@
   <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">required bio text</span>
   <span class="ruby-identifier">avatars: </span><span class="ruby-string">required array of photo ids</span>
 <span class="ruby-keyword">Response:</span>
-  <span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
 
             </pre>
           </div>
@@ -378,6 +378,68 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-index">Users#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">gender: </span><span class="ruby-string">optional: "M"/"F"/"A"</span>
+  <span class="ruby-identifier">min_age: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">max_age: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">min_distance </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">max_distance: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">everyone: </span><span class="ruby-string">optional: "true"/"false"</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional for pagination</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional for pagination</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">Senario 1: (Below gate number)</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">percentage: </span><span class="ruby-string">50</span>  
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">Senario 2: (Above gate number)</span>
+    <span class="ruby-identifier">users: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">avatars: </span>
+        <span class="ruby-string">[</span>
+          <span class="ruby-string">{</span>  
+            <span class="ruby-identifier">avatar: </span><span class="ruby-string">"http://..."</span>
+            <span class="ruby-identifier">thumbnail: </span><span class="ruby-string">"http://..."</span>
+            <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">1</span>
+            <span class="ruby-identifier">default: </span><span class="ruby-constant">TRUE</span>
+            <span class="ruby-identifier">is_active: </span><span class="ruby-constant">TRUE</span>
+            <span class="ruby-identifier">order: </span><span class="ruby-string">0</span>
+          <span class="ruby-string">}</span>  
+        <span class="ruby-string">]</span>
+        <span class="ruby-identifier">whisper_sent: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">status: </span><span class="ruby-string">5</span>
+        <span class="ruby-identifier">messages_array: </span>
+        <span class="ruby-string">[</span>
+          <span class="ruby-string">{</span>  
+            <span class="ruby-identifier">speaker_id: </span><span class="ruby-string">3</span>
+            <span class="ruby-identifier">timestamp: </span><span class="ruby-string">143243489</span>
+            <span class="ruby-identifier">message: </span><span class="ruby-string">"asfdasf sdfsd sdf"</span>
+          <span class="ruby-string">}</span>  
+        <span class="ruby-string">]</span>
+        <span class="ruby-identifier">friend: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">same_venue_badge: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">different_venue_badge: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">venue_type: </span><span class="ruby-string">"Club"</span>
+        <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
+        <span class="ruby-identifier">first_name: </span><span class="ruby-string">"Sam"</span>
+        <span class="ruby-identifier">birthday: </span><span class="ruby-string">"June 3, 1990"</span>
+        <span class="ruby-identifier">gender: </span><span class="ruby-string">"F"</span>
+        <span class="ruby-identifier">line_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">"snap"</span>
+        <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">"Hi"</span>
+        <span class="ruby-identifier">latitude: </span><span class="ruby-string">49.543532</span>
+        <span class="ruby-identifier">longitude: </span><span class="ruby-string">-123.012434</span>
+        <span class="ruby-identifier">exclusive: </span><span class="ruby-constant">FALSE</span>
+      <span class="ruby-string">}</span>  
+    <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -388,6 +450,17 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-block">Users#block</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">2, 4, 5</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -398,6 +471,15 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-check_email">Users#check_email</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -408,6 +490,15 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-forgot_password">Users#forgot_password</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -419,6 +510,15 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-generate_reset_email_verify">Users#generate_reset_email_verify</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">new_email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -429,6 +529,17 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-like">Users#like</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-constant">StandardFriendObject</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -439,6 +550,16 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-login">Users#login</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">password: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -449,6 +570,16 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-logout">Users#logout</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -459,6 +590,17 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-update_notification_preferences">Users#update_notification_preferences</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">network_online: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">enter_venue_network: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">leave_venue_network: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -469,6 +611,15 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-get_profile">Users#get_profile</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -479,6 +630,18 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-remove_chat_accounts">Users#remove_chat_accounts</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">line_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -489,6 +652,24 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-sign_up_without_avatar">Users#sign_up_without_avatar</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">password: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">birthday: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">gender: </span><span class="ruby-string">required string "M"/"F"</span>
+  <span class="ruby-identifier">first_name: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">exclusive: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">line_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -498,7 +679,18 @@
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
-          <a href="./UsersController.html#method-i-update_profile">Users#update_profile</a>
+          <a href="./UsersController.html#method-i-update_settings">Users#update_settings</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">exclusive: </span><span class="ruby-string">required true/false</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+      <span class="ruby-identifier">exclusive:</span><span class="ruby-constant">TRUE</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -509,6 +701,19 @@
         </div>
         <div class="method-description">
           <a href="./UsersController.html#method-i-update_chat_accounts">Users#update_chat_accounts</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">line_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">instagram_token: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -520,6 +725,22 @@
         </div>
         <div class="method-description">
           <a href="./VenuesController.html#method-i-list">Venues#list</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">distance: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">latitude: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">longitude: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">without_featured_venues: </span><span class="ruby-string">optional true/false</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-constant">StandardVenueObject</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -531,6 +752,18 @@
         </div>
         <div class="method-description">
           <a href="./WhispersController.html#method-i-api_create">Whispers#api_create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">venue_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">notification_type: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">intro: </span><span class="ruby-string">required text</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -541,6 +774,15 @@
         </div>
         <div class="method-description">
           <a href="./WhispersController.html#method-i-decline_whisper_requests">Whispers#decline_whisper_requests</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">array: </span><span class="ruby-string">required whisper id array</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
@@ -551,18 +793,20 @@
         </div>
         <div class="method-description">
           <a href="./WhispersController.html#method-i-whisper_request_state">Whispers#whisper_request_state</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">whisper_id: </span><span class="ruby-string">required whisper id</span>
+  <span class="ruby-identifier">accepted: </span><span class="ruby-string">1/0</span>
+  <span class="ruby-identifier">declined: </span><span class="ruby-string">1/0</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
         </div>
       </div>
 
-      <div id="method-i-api_v1_whispers" class="method-detail ">
-        <div class="method-heading">
-          <span class="method-name">api/v1/whispers [POST]</span>
-          <span class="method-click-advice">click to toggle details</span>
-        </div>
-        <div class="method-description">
-          <a href="./UsersController.html#method-i-requests_new">Users#requests_new</a>
-        </div>
-      </div>
 
 
       <div id="method-i-api_v1_whispers_id" class="method-detail ">
@@ -572,10 +816,70 @@
         </div>
         <div class="method-description">
           <a href="./WhispersController.html#method-i-show">Whispers#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required whisper id or related user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">initial_whisper: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">expire_timestamp: </span><span class="ruby-string">145455947</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
+    <span class="ruby-identifier">timestamp_read: </span><span class="ruby-string">"June 2, 2015 14:45:23 -7000"</span>
+    <span class="ruby-identifier">viewed: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">accepted: </span><span class="ruby-constant">FALSE</span>
+    <span class="ruby-identifier">declined: </span><span class="ruby-constant">FALSE</span>
+    <span class="ruby-identifier">whisper_id: </span><span class="ruby-string">"SsDF-34SFSF-SDFS3-SF"</span>
+    <span class="ruby-identifier">notification_type: </span><span class="ruby-string">2</span>
+    <span class="ruby-identifier">intro_message: </span><span class="ruby-string">"Hello"</span>
+    <span class="ruby-identifier">status: </span><span class="ruby-string">4</span>
+    <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+    <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-identifier">messages_array: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">{</span>  
+        <span class="ruby-identifier">speaker_id: </span><span class="ruby-string">3</span>
+        <span class="ruby-identifier">timestamp: </span><span class="ruby-string">143243489</span>
+        <span class="ruby-identifier">message: </span><span class="ruby-string">"asfdasf sdfsd sdf"</span>
+      <span class="ruby-string">}</span>  
+    <span class="ruby-string">]</span>
+
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
         </div>
       </div>
     
       
+      <div id="method-i-api_v1_whispers" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/v1/whispers [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./UsersController.html#method-i-requests_new">Users#requests_new</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">whispers: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-constant">StandardWhisperObject</span>
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">badge_number: </span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">whisper_number: </span><span class="ruby-string">3</span>
+      <span class="ruby-identifier">friend_number: </span><span class="ruby-string">1</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
 
 
     
