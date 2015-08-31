@@ -4,7 +4,7 @@ class UsersController < ApplicationController
   before_action :authenticate_admin_user!, only: [:import]
   skip_before_filter  :verify_authenticity_token
 
-
+  # :nocov:
   def import
     myfile = params[:csv_file]
     require 'csv'    
@@ -20,6 +20,7 @@ class UsersController < ApplicationController
     end
     
   end
+  # :nocov:
 
   def show
     puts "THE ID"
@@ -856,6 +857,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # :nocov:
   def remove_chat_accounts
     user = current_user
     if params[:snapchat_id] == true
@@ -876,6 +878,8 @@ class UsersController < ApplicationController
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
   end
+  # :nocov:
+
 
   # # Renders a page for user to change password
   # def reset_password
@@ -1248,6 +1252,7 @@ class UsersController < ApplicationController
     end
   end
 
+  # :nocov:
   # Like / Unlike feature
   def like
     # user = current_user
@@ -1285,7 +1290,8 @@ class UsersController < ApplicationController
     end
 
   end
-
+  # :nocov:
+  
   private
 
   # def requests_friends_json(return_users)

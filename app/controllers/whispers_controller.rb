@@ -54,7 +54,7 @@ class WhispersController < ApplicationController
     end
   end
 
-
+  # :nocov:
   def send_test_whisper
     target_id = params[:target_user_id]
     origin_id = params[:origin_user_id]
@@ -79,7 +79,7 @@ class WhispersController < ApplicationController
     end
     redirect_to :back, :notice => @message
   end
-
+  # :nocov:
 
   # Create a whisper
   def api_create
@@ -173,8 +173,8 @@ class WhispersController < ApplicationController
     whisperId = params[:whisper_id]
 
     item = WhisperToday.find_by_dynamo_id(whisperId)
-    if item and item.target_user_id.to_i == current_user.id
-      if params[:accepted].to_i == 1
+    if item 
+      if params[:accepted].to_i == 1 and item.target_user_id.to_i == current_user.id
         state = 'accepted'
         if Rails.env == 'production'
           WhisperNotification.delay.find_whisper(whisperId, state)
@@ -218,6 +218,9 @@ class WhispersController < ApplicationController
               end
               if Rails.env == 'production'
                 WhisperReply.delay.archive_history(item)
+              else
+                WhisperReply.where(whisper_id: item.id).delete_all
+                item.delete
               end
               render json: success
             else
@@ -234,13 +237,16 @@ class WhispersController < ApplicationController
         end
         if Rails.env == 'production'
           WhisperReply.delay.archive_history(item)
+        else
+          WhisperReply.where(whisper_id: item.id).delete_all
+          item.delete
         end
         render json: success
       else
         render json: error('There was an error.')
       end
     else
-      render json: error('Permission denied.')
+      render json: error('Cannot find the whisper.')
     end
   end
 
@@ -271,6 +277,10 @@ class WhispersController < ApplicationController
     else
       if Rails.env == 'production'
         WhisperNotification.delay.delete_whispers(params[:array].to_a)
+      else
+        whisper_id_array = WhisperToday.where(dynamo_id: params[:array].to_a).map(&:id)
+        WhisperReply.where(whisper_id: whisper_id_array).delete_all
+        WhisperToday.where(dynamo_id: params[:array].to_a).delete_all
       end
       whispers_delete = WhisperToday.where(dynamo_id: params[:array].to_a).update_all(:declined => true)
       render json: success(whispers_delete)

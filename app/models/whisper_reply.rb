@@ -1,9 +1,8 @@
 class WhisperReply < ActiveRecord::Base
   belongs_to :whisper, class_name: "WhisperToday"
 
-
+  # :nocov:
   def self.archive_history(whisper)
-  	# TODO
   	replies = whisper.whisper_replies.order("created_at DESC")
 
   	if replies.blank?
@@ -38,5 +37,8 @@ class WhisperReply < ActiveRecord::Base
 	    end
 	    
 	end
+	whisper.whisper_replies.delete_all
+	whisper.delete
   end
+  # :nocov:
 end

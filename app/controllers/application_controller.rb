@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   after_action :allow_optimizely_editor
   before_filter :add_www_subdomain
 
-
+  # :nocov:
   def after_sign_in_path_for(resource)
     if resource.is_a?(Venue)
       venue_root_path
@@ -18,7 +18,9 @@ class ApplicationController < ActionController::Base
       super
     end
   end
+  # :nocov:
 
+  # :nocov:
   def after_sign_out_path_for(resource)
     # TODO add redirect when users logout
     # puts "AAAAAA"
@@ -31,6 +33,7 @@ class ApplicationController < ActionController::Base
     # end
     new_web_user_session_path
   end
+  # :nocov:
 
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
@@ -150,6 +153,7 @@ class ApplicationController < ActionController::Base
     }
   end
 
+  # :nocov:
   def mobile_device?
     if session[:mobile_param]
     session[:mobile_param] == "1"
@@ -158,7 +162,8 @@ class ApplicationController < ActionController::Base
     end
   end
   helper_method :mobile_device?
-
+  # :nocov:
+  
   private
 
   def allow_optimizely_editor

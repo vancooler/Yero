@@ -67,8 +67,7 @@ describe WhispersController do
 	      	post :whisper_request_state, :whisper_id => 'aaa2', :declined => '1'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
-	      	expect(WhisperToday.count).to eql 1
-	      	expect(WhisperToday.first.declined).to eql true
+	      	expect(WhisperToday.count).to eql 0
 	      	expect(WhisperSent.count).to eql 1
 	      	expect(RecentActivity.count).to eql 2
 
@@ -127,9 +126,7 @@ describe WhispersController do
 	      	post :decline_whisper_requests, :array => ['aaa2', 'aaa4']
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
-	      	expect(WhisperToday.count).to eql 2
-	      	expect(WhisperToday.first.declined).to eql true
-	      	expect(WhisperToday.second.declined).to eql true
+	      	expect(WhisperToday.count).to eql 0
 	      	expect(WhisperSent.count).to eql 2
 	      	expect(RecentActivity.count).to eql 4
 
@@ -191,14 +188,13 @@ describe WhispersController do
 	      	post :whisper_request_state, :whisper_id => 'aaa', :accepted => '1'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql false
-	      	expect(JSON.parse(response.body)['message']).to eql 'Permission denied.'
+	      	expect(JSON.parse(response.body)['message']).to eql 'Cannot find the whisper.'
 
 	      	
 	      	post :whisper_request_state, :whisper_id => 'aaa2', :accepted => '1'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
-	      	expect(WhisperToday.count).to eql 1
-	      	expect(WhisperToday.first.accepted).to eql true
+	      	expect(WhisperToday.count).to eql 0
 	      	expect(WhisperSent.count).to eql 1
 	      	expect(RecentActivity.count).to eql 4
 	      	expect(FriendByWhisper.count).to eql 1
@@ -209,6 +205,15 @@ describe WhispersController do
 	      	expect(JSON.parse(response.body)['success']).to eql true
 	      	expect(JSON.parse(response.body)['data'].count).to eql 2
 
+	      	token = user_2.generate_token
+	      	request.env["X-API-TOKEN"] = token
+	      	wt = WhisperSent.last
+	      	wt.whisper_time = Time.now - 3.days
+	      	wt.save
+	      	
+	      	post :api_create, :notification_type => '2', :target_id => '3', :intro => "Hi!"
+	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql true
 
 	      	# NO access
 	      	token = user_4.generate_token
@@ -379,14 +384,13 @@ describe WhispersController do
 	      	post :whisper_request_state, :whisper_id => 'aaa', :accepted => '1'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql false
-	      	expect(JSON.parse(response.body)['message']).to eql 'Permission denied.'
+	      	expect(JSON.parse(response.body)['message']).to eql 'Cannot find the whisper.'
 
 	      	
 	      	post :whisper_request_state, :whisper_id => 'aaa2', :accepted => '1'
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
-	      	expect(WhisperToday.count).to eql 1
-	      	expect(WhisperToday.first.accepted).to eql true
+	      	expect(WhisperToday.count).to eql 0
 	      	expect(WhisperSent.count).to eql 1
 	      	expect(WhisperSent.first.whisper_time).to eql whisper_time
 	      	expect(WhisperReply.count).to eql 0	      	

@@ -3,6 +3,13 @@ require 'simplecov'
 SimpleCov.start 'rails' do
   add_filter "/spec"
   add_filter "/vendor"  
+  add_filter do |source_file|
+    source_file.lines.count < 10
+  end
+  add_filter "/app/admin"
+  add_filter "/app/mailers"
+  add_filter "/app/validators"
+  add_filter "/app/uploaders"
 end if ENV["COVERAGE"]
 
 ENV["RAILS_ENV"] ||= 'test'

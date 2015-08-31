@@ -451,6 +451,7 @@ class User < ActiveRecord::Base
     return true
   end
 
+  # :nocov:
   # This code for usage with a CRON job to force network close. Currently done using Heroku Scheduler
   def self.network_close
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
@@ -466,6 +467,7 @@ class User < ActiveRecord::Base
     User.handle_close(times_array)
     
   end
+  # :nocov:
 
   # Not used in current version
   def friends_by_like
@@ -742,7 +744,7 @@ class User < ActiveRecord::Base
     return result
   end
 
-
+  # :nocov:
   # mark array of whispers as viewed in dynamodb
   def viewed_by_sender(whispers)
     
@@ -787,7 +789,7 @@ class User < ActiveRecord::Base
 
     return result
   end
-
+  # :nocov:
 
   # Serialize user to JSON in current_user's eyes
   def user_object(current_user)
@@ -939,6 +941,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # :nocov:
   # Join test users
   def self.fake_users_join
     times_result = TimeZonePlace.select(:timezone) #Grab all the timezones in db
@@ -959,6 +962,7 @@ class User < ActiveRecord::Base
     end
     User.random_join_fake_users(times_array, 1, 4)
   end
+  # :nocov:
 
   # Inport a single user with hash structure
   def self.import_single_user(user_obj)
@@ -1067,6 +1071,7 @@ class User < ActiveRecord::Base
     end
   end
 
+  # :nocov:
   # Inport users in csv file
   def self.import(file)
     CSV.foreach(file.path, headers: true) do |row|
@@ -1075,4 +1080,5 @@ class User < ActiveRecord::Base
     end
     return true
   end
+  # :nocov:
 end

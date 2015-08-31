@@ -38,6 +38,7 @@ class WhisperNotification < AWS::Record::HashModel
     return dynamo_db_table_prefix
   end
 
+  # :nocov:
   #create user's Notification log in AWS DynamoDB
   def self.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
 
@@ -63,6 +64,7 @@ class WhisperNotification < AWS::Record::HashModel
 
     return n
   end
+  # :nocov:
 
 
   # expire at 5 am
@@ -145,6 +147,7 @@ class WhisperNotification < AWS::Record::HashModel
   # end
 
 
+  # :nocov:
   # Find a record in dynamoDB with dynamodb's uuid
   def self.find_by_dynamodb_id(id)
     dynamo_db = AWS::DynamoDB.new
@@ -160,6 +163,7 @@ class WhisperNotification < AWS::Record::HashModel
       return nil
     end
   end
+  # :nocov:
 
 
   # def self.system_notification(user_id)
@@ -748,6 +752,7 @@ class WhisperNotification < AWS::Record::HashModel
     return true
   end
 
+  # :nocov:
   # decline whispers in array -> TODO: performance change one by one to batch
   def self.delete_whispers(whisper_array)
     dynamo_db = AWS::DynamoDB.new
@@ -761,10 +766,15 @@ class WhisperNotification < AWS::Record::HashModel
       item.attributes.update do |u|
           u.set 'declined' => 1
       end
+
+      item = WhisperToday.find_by_dynamo_id(id)
+      WhisperReply.delay.archive_history(item)
     end
     return true
   end
+  # :nocov:
 
+  # :nocov:
   def self.accept_friend_viewed_by_sender(id)
     dynamo_db = AWS::DynamoDB.new
     table_name = WhisperNotification.table_prefix + 'WhisperNotification'
@@ -783,6 +793,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
     return true
   end
+  # :nocov:
 
 
   def self.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
@@ -865,7 +876,7 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
-
+  # :nocov:
   def send_push_notification_to_target_user(message, paper_owner_id)
     # deep_link = (self.target_id.to_i == 3) ? 
     if self.notification_type.to_i == 3
@@ -887,8 +898,9 @@ class WhisperNotification < AWS::Record::HashModel
     end 
     return result 
   end
+  # :nocov:
 
-
+  # :nocov:
   # send network open notification -> NOT used
   def self.send_nightopen_notification(id)
     data = { :alert => "Your city's network is now online.", :type => 100}
@@ -905,7 +917,9 @@ class WhisperNotification < AWS::Record::HashModel
 
     
   end
+  # :nocov:
 
+  # :nocov:
   # send enough users notification
   def self.send_enough_users_notification(id)
 
@@ -923,7 +937,9 @@ class WhisperNotification < AWS::Record::HashModel
 
     
   end
+  # :nocov:
 
+  # :nocov:
   # Send notification when the avatar is disabled by admin
   def self.send_avatar_disabled_notification(id, default)
 
@@ -940,6 +956,7 @@ class WhisperNotification < AWS::Record::HashModel
     end 
     return result 
   end
+  # :nocov:
 
 
   def self.unviewd_whisper_number(user_id)

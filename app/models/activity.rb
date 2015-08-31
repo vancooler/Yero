@@ -8,6 +8,7 @@ class Activity < ActiveRecord::Base
   scope :with_beacons, -> { where(trackable_type: "Beacon") }
   scope :for_user, ->(user_id) { where(:user_id => user_id)}
 
+  # :nocov:
   # TODO: scope time once clarified
   def self.at_all_venues_tonight
     activity = []
@@ -49,4 +50,5 @@ class Activity < ActiveRecord::Base
     def cache_activity_time_in_user_model
       self.user.update(last_active: self.created_at)
     end
+  # :nocov:
 end
