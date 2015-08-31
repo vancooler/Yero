@@ -248,6 +248,7 @@ class User < ActiveRecord::Base
 
   # CORE function of serializing user to json structure
   def to_json(with_key)
+    time_1 = Time.now
     data = Jbuilder.encode do |json|
       json.id id
       json.birthday birthday
@@ -272,14 +273,12 @@ class User < ActiveRecord::Base
           Array.new 
         else
           json.array! avatars do |a|
-
             json.avatar a.origin_url
             json.thumbnail a.thumb_url
             json.default (!a.order.nil? and a.order == 0)
             json.is_active a.is_active
             json.avatar_id a.id
             json.order (a.order.nil? ? 100 : a.order)
-
           end
         end
       end
@@ -290,7 +289,6 @@ class User < ActiveRecord::Base
           json.type p.name
           if p.name == "Leave venue network"
             json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
-
           else
             json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? true : false)
           end
@@ -306,6 +304,11 @@ class User < ActiveRecord::Base
     if response['avatars'].blank?
       response['avatars'] = Array.new
     end
+    time_2 = Time.now
+    puts "user.to_json TIME: "
+    runtime = time_2 - time_1  
+    puts runtime.inspect
+
     response
   end
 
@@ -495,7 +498,6 @@ class User < ActiveRecord::Base
     result = Hash.new
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
-    pre_time_1 = Time.now
     all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
     number_of_users = all_users.length + 1
     if number_of_users >= gate_number  
@@ -505,7 +507,7 @@ class User < ActiveRecord::Base
       whispers_sent = WhisperNotification.collect_whispers(self)
       whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
       whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
-      pre_time_2 = Time.now
+
       # colect all users with "like"
       followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends
@@ -513,9 +515,6 @@ class User < ActiveRecord::Base
       whisper_friends = FriendByWhisper.friends(self.id)
       friends = mutual_follow | whisper_friends
 
-      pre_time_3 = Time.now
-
-      retus = Time.now
       # get all users with filter params
       return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       puts "RETURN USERS:"
@@ -540,11 +539,6 @@ class User < ActiveRecord::Base
         different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
       end
 
-        
-
-      reten = Time.now
-      dbtime = reten-retus
-
       # build json format
       users = Jbuilder.encode do |json|
         same_venue_time = 0
@@ -552,7 +546,6 @@ class User < ActiveRecord::Base
         check_badge_time = 0
         avatar_time = 0
         other_time = 0
-        json_s = Time.now
         json.array! return_users do |user|
           if user.id != self.id
             next unless user.user_avatars.present?
@@ -560,7 +553,6 @@ class User < ActiveRecord::Base
             # main_avatar   =  user.user_avatars.where(order:0).where(is_active:true)
             # other_avatars =  user.user_avatars.where.not(order:0).where(is_active:true).order(:order)
             other_avatars = user.user_avatars.where(is_active:true).order(:order)
-            avatar_time_1 = Time.now
             avatar_array = Array.new
 
             # avatar_array[0] = {
@@ -586,7 +578,7 @@ class User < ActiveRecord::Base
             end
 
             json.avatars avatar_array
-            avatar_time_2 = Time.now
+
 
             json.whisper_sent whispers_sent.include? user.id.to_i
             are_friends = (friends.map(&:id).include? user.id)
@@ -646,16 +638,12 @@ class User < ActiveRecord::Base
             end
 
             
-            check_badge_time_1 = Time.now
             # json.same_venue_badge          self.same_venue_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.same_venue_badge          same_venue_user_ids.include? user.id
-            different_venue_time_1 = Time.now
             # json.different_venue_badge     self.different_venue_as?(user.id)
             json.different_venue_badge          different_venue_user_ids.include? user.id
-            different_venue_time_2 = Time.now
             # json.same_beacon               self.same_beacon_as?(user.id) # Returns a boolean of whether you're in the same venue as the other person.
             json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
-            check_badge_time_2 = Time.now
             
 
             json.id             user.id
@@ -675,35 +663,29 @@ class User < ActiveRecord::Base
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
             json.exclusive      user.exclusive
-
-
-            same_venue_time += (different_venue_time_1 - check_badge_time_1)
-            different_venue_time += (different_venue_time_2 - different_venue_time_1)
-            check_badge_time += (check_badge_time_2 - check_badge_time_1)
-            avatar_time += (avatar_time_2 - avatar_time_1)
           end
         end
-        json_e = Time.now
-        j_time = json_e-json_s
-        puts "The dbtime is: "
-        puts dbtime.inspect 
-        pre_time = pre_time_2 - s_time
-        friend_time = pre_time_3 - pre_time_2
-        p "Pre time:"
-        p pre_time.inspect
-        p "friend time:"
-        p friend_time.inspect
+        # json_e = Time.now
+        # j_time = json_e-json_s
+        # puts "The dbtime is: "
+        # puts dbtime.inspect 
+        # pre_time = pre_time_2 - s_time
+        # friend_time = pre_time_3 - pre_time_2
+        # p "Pre time:"
+        # p pre_time.inspect
+        # p "friend time:"
+        # p friend_time.inspect
 
-        p "Json time:"
-        p j_time.inspect
-        p "avatar time:"
-        p avatar_time.inspect
-        p "same_venue time:"
-        p same_venue_time.inspect
-        p "different_venue time:"
-        p different_venue_time.inspect
-        p "check badge time:"
-        p check_badge_time.inspect
+        # p "Json time:"
+        # p j_time.inspect
+        # p "avatar time:"
+        # p avatar_time.inspect
+        # p "same_venue time:"
+        # p same_venue_time.inspect
+        # p "different_venue time:"
+        # p different_venue_time.inspect
+        # p "check badge time:"
+        # p check_badge_time.inspect
       end
 
       users = JSON.parse(users).delete_if(&:empty?)

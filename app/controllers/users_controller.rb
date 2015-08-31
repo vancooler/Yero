@@ -745,19 +745,10 @@ class UsersController < ApplicationController
     else
       if User.exists? email: params[:email]
         user = User.find_by_email(params[:email]) # find by email, skip key
-        puts "The user"
-        puts user.authenticate(params[:password])
+
         if user.authenticate(params[:password])
           # Authenticated successfully
-          # Check key change, means login in another device, do update the key 
-          if params[:key].blank? or user.key != params[:key]
-            # generate a new key
-            user.key = loop do
-              random_token = SecureRandom.urlsafe_base64(nil, false)
-              break random_token unless User.exists?(key: random_token)
-            end
-          end
-          user.key_expiration = Time.now + 3.hours
+          
           user.last_active = Time.now
           user.save!
           user_info = user.to_json(true)
