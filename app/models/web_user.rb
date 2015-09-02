@@ -7,6 +7,7 @@ class WebUser < ActiveRecord::Base
 
   validates_presence_of :first_name, :last_name, :business_phone
 
+  # :nocov:
   def country_name
     if !country.nil?
       country_code = ISO3166::Country[country]
@@ -17,9 +18,8 @@ class WebUser < ActiveRecord::Base
   end
 
   def name
-  	(self.first_name.nil? ? '' : self.first_name + ' ') + (self.last_name.nil? ? '' : self.last_name)
+    (self.first_name.nil? ? '' : self.first_name + ' ') + (self.last_name.nil? ? '' : self.last_name)
   end
-
 
 
 
@@ -42,4 +42,5 @@ class WebUser < ActiveRecord::Base
       end
     end
   end
+  # :nocov:
 end

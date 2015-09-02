@@ -20,7 +20,7 @@ class VenueAvatar < ActiveRecord::Base
   validate :avatar_number, :on => :create
  
   # before_create :randomize_file_name
-
+  # :nocov:
   def name
     if self.venue.nil?
 
@@ -28,7 +28,9 @@ class VenueAvatar < ActiveRecord::Base
       "Venue avatar for " + self.venue.name + " #" + self.id.to_s
     end
   end
+  # :nocov:
 
+  
   def avatar_number
     @avatar = VenueAvatar.where('venue_id = ?', self.venue_id)
     if @avatar.size >= 3
@@ -37,7 +39,7 @@ class VenueAvatar < ActiveRecord::Base
     end
   end
   
-
+  # :nocov:
   def set_as_default
     VenueAvatar.where(venue_id: self.venue_id, default: true).each do |avatar|
       if avatar.id != self.id
@@ -50,6 +52,7 @@ class VenueAvatar < ActiveRecord::Base
     #   logger.info "CURRENT DEFAULT VALUE" + self.default.to_s
     # end
   end
+  # :nocov:
 
   private
 

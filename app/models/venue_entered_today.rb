@@ -3,9 +3,9 @@ class VenueEnteredToday < ActiveRecord::Base
   belongs_to :user
 
   #before_save :update_activity
-
+  # :nocov:
+  
   # keeps track of the latest activity of a user
-
   def self.enter_venue_today(venue, user)
 
     vnArray = VenueEnteredToday.where("venue_id = ? and user_id = ?", venue.id, user.id)
@@ -22,7 +22,7 @@ class VenueEnteredToday < ActiveRecord::Base
     end
 
   end
-
+  # :nocov:
 
   def self.five_am_cleanup(venue)
     #vn = VenueEnteredToday.where("last_activity < ? ", Time.now - 0.1.seconds)

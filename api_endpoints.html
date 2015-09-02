@@ -221,7 +221,15 @@
     <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
     <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
   <span class="ruby-string">}</span>
-
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the friend"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+  <span class="ruby-string">}</span>
             </pre>
           </div>
         </div>
@@ -761,6 +769,10 @@
   <span class="ruby-identifier">intro: </span><span class="ruby-string">required text</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">"No photos"</span>
+  <span class="ruby-string">"User blocked"</span>
+  <span class="ruby-string">"Cannot send more whispers"</span>
 
             </pre>
           </div>
@@ -801,6 +813,11 @@
   <span class="ruby-identifier">declined: </span><span class="ruby-string">1/0</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">"Cannot find the whisper."</span>
+  <span class="ruby-string">"You are already friends."</span>
+  <span class="ruby-string">"User blocked."</span>
+  <span class="ruby-string">"There was an error."</span>
 
             </pre>
           </div>
@@ -844,6 +861,15 @@
       <span class="ruby-string">}</span>  
     <span class="ruby-string">]</span>
 
+  <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the whisper"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
   <span class="ruby-string">}</span>
 
             </pre>

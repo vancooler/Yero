@@ -11,6 +11,7 @@ class UserAvatar < ActiveRecord::Base
   # process_in_background :avatar
   # store_in_background :avatar
   
+  # :nocov:
   def update_image(image)
     self.avatar = image
     save!
@@ -28,6 +29,7 @@ class UserAvatar < ActiveRecord::Base
       logger.info "CURRENT DEFAULT VALUE" + self.default.to_s
     end
   end
+  # :nocov:
 
   def self.order_minus_one(user_id, starting_order)
     greater_avatars = UserAvatar.where(user_id: user_id).where(is_active: true).where(order: (starting_order)..Float::INFINITY)
