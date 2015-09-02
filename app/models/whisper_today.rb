@@ -120,19 +120,37 @@ class WhisperToday < ActiveRecord::Base
 							sent = true
 						end
 					end
-					if are_friends
-						json.status 5
-					elsif can_reply and can_handle
-						json.status 4
-					elsif can_handle
-						json.status 3
-					elsif can_reply
-						json.status 2
-					elsif sent
-						json.status 1
-					else
-						json.status 0
-					end
+					# if are_friends
+					# 	json.status 5
+					# elsif can_reply and can_handle
+					# 	json.status 4
+					# elsif can_handle
+					# 	json.status 3
+					# elsif can_reply
+					# 	json.status 2
+					# elsif sent
+					# 	json.status 1
+					# else
+					# 	json.status 0
+					# end
+
+					actions = Array.new
+		            if are_friends
+		              actions << "chat"
+		            end
+		            if can_reply
+		              actions << "reply"
+		              actions << "delete"
+		            end
+		            if can_handle
+		              actions << "accept"
+		              actions << "delete"  
+		            end
+		            if !sent and !are_friends and !can_handle and !can_reply
+		              actions << "whisper"
+		            end
+
+		            json.actions actions.uniq
 							
 					if !a.venue_id.nil?
 						venue = Venue.find_by_id(a.venue_id)

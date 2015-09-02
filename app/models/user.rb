@@ -587,27 +587,26 @@ class User < ActiveRecord::Base
             whisper_sent = (whispers_sent.include? user.id.to_i)
             can_reply = (whispers_can_reply.include?  user.id.to_i)
             can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
+
+            actions = Array.new
             if are_friends
-              json.status 5
-              status = 5
-            elsif can_reply and can_accept_delete 
-              json.status 4
-              status = 4
-            elsif can_accept_delete
-              json.status 3
-              status = 3
-            elsif can_reply
-              json.status 2
-              status = 2
-            elsif whisper_sent
-              json.status 1
-              status = 1
-            else
-              json.status 0
-              status = 0
+              actions << "chat"
+            end
+            if can_reply
+              actions << "reply"
+              actions << "delete"
+            end
+            if can_accept_delete
+              actions << "accept"
+              actions << "delete"  
+            end
+            if !whisper_sent and !are_friends and !can_accept_delete and !can_reply
+              actions << "whisper"
             end
 
-            if status > 1 and status < 5
+            json.actions actions.uniq
+
+            if actions.include? "reply" or actions.include? "delete"
               whisper_today = WhisperToday.find_pending_whisper(user.id, self.id)
               if !whisper_today.nil?
                 json.whisper_id whisper_today.dynamo_id
