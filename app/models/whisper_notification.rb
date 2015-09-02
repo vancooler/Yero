@@ -297,6 +297,7 @@ class WhisperNotification < AWS::Record::HashModel
     # Friends by like
     mutual_follow = current_user.friends_by_like
     mutual_follow_array = Array.new
+    # :nocov:
     mutual_follow.each do |user|
       if user and !user.user_avatars.where(is_active: true).blank?
         h = Hash.new
@@ -311,6 +312,7 @@ class WhisperNotification < AWS::Record::HashModel
         mutual_follow_array << h  
       end
     end
+    # :nocov:
     
     users = Array.new
     users = friends | mutual_follow_array
@@ -714,6 +716,7 @@ class WhisperNotification < AWS::Record::HashModel
   # Handle a whisper accept/decline
   def self.find_whisper(whisper_id, state)
     if Rails.env == 'production'
+      # :nocov:
       dynamo_db = AWS::DynamoDB.new
       table_name = WhisperNotification.table_prefix + 'WhisperNotification'
       table = dynamo_db.tables[table_name]
@@ -739,6 +742,7 @@ class WhisperNotification < AWS::Record::HashModel
           end
         end
       end
+      # :nocov:
     end
     whisper = WhisperToday.find_by_dynamo_id(whisper_id)
     puts "WHISPER:"

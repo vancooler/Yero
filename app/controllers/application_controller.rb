@@ -128,10 +128,12 @@ class ApplicationController < ActionController::Base
 
   protected
 
+  # :nocov:
   def configure_permitted_parameters
     devise_parameter_sanitizer.for(:sign_up) << [:name, :address_line_one, :city, :state, :country, :zipcode, :business_phone, :age_requirement, :dress_code, :venue_name, :web_user_name, :job_title]
     devise_parameter_sanitizer.for(:account_update) << [:name, :address_line_one, :city, :state, :country, :zipcode, :phone, :age_requirement, :dress_code]
   end
+  # :nocov:
 
   # Easy way to send back success/failed API calls
 
@@ -171,6 +173,7 @@ class ApplicationController < ActionController::Base
     response.headers['Access-Control-Request-Method'] = 'GET'
   end
 
+  # :nocov:
   def add_www_subdomain
     # puts "request"
     # puts request.path
@@ -181,5 +184,6 @@ class ApplicationController < ActionController::Base
       end
     end
   end
+  # :nocov:
 
 end

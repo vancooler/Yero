@@ -16,7 +16,7 @@ class Venue < ActiveRecord::Base
 
   # Address is geocoded so it can be returned to the iOS client
   geocoded_by :address
-  after_validation :geocode
+  after_validation :geocode, if: ->(obj){ obj.address.present? and obj.address_changed? and !address_default? }
 
   has_many :venue_logos, dependent: :destroy
   accepts_nested_attributes_for :venue_logos, allow_destroy: true
@@ -39,6 +39,8 @@ class Venue < ActiveRecord::Base
       country_code = ISO3166::Country[country]
       if !country_code.nil?
         country_code.translations[I18n.locale.to_s] || country_code.name
+      else
+        country
       end
     end
   end
@@ -54,17 +56,10 @@ class Venue < ActiveRecord::Base
     else
       venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
     end
-
     if !types_array_string.blank?
       venues = venues.where(venue_type_id: types_array_string)
     end
-
     if !without_featured_venues
-      # campus = VenueType.find_by_name("Campus")
-
-      # if !campus.nil?
-      #   venues = venues.select{|x| !x.venue_type_id.nil? and x.venue_type_id != campus.id.to_s }
-      # end
 
       # reorder it based on featured and featured order
       featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
@@ -106,6 +101,14 @@ class Venue < ActiveRecord::Base
     else
       "375 Water St,Vancouver,BC,CA"
     end
+  end
+
+  def address_changed?
+    address_line_one_changed? || city_changed? || state_changed? || country_changed?
+  end
+
+  def address_default?
+    self.address == "375 Water St,Vancouver,BC,CA"
   end
 
 
@@ -176,46 +179,55 @@ class Venue < ActiveRecord::Base
     return venue_object
   end
 
+
+  def self.import_single_record(venue_obj)
+    name = venue_obj['Network Name'].nil? ? '' : venue_obj['Network Name']
+    venue_name = venue_obj['List Name'].nil? ? '' : venue_obj['List Name']
+    venue_type = venue_obj['Type'].nil? ? '' : venue_obj['Type'].titleize
+    venue_address = venue_obj['Address']
+    venue_city = venue_obj['City']
+    venue_state = venue_obj['State']
+    venue_country = venue_obj['Country']
+    venue_zipcode = venue_obj['Zipcode']
+    venue_network = name.blank? ? '' : (name.split '_').first.titleize
+    if type = VenueType.find_by_name(venue_type) and city_network = VenueNetwork.find_by_name(venue_network)
+      if !name.blank? and !venue_name.blank?
+        b = Beacon.find_by_key(name)
+        if b 
+          b.update(:key => name)
+          if !b.venue.nil?
+            # update
+            # if b.venue.draft_pending.nil? or !b.venue.draft_pending
+            #   b.venue.update(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+            # end
+          else
+            # create
+            venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+            b.update(:venue_id => venue.id)
+          end
+        else
+          # create both
+          venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+          Beacon.create!(:key => name, :venue_id => venue.id)
+        end
+      else
+      end
+    else
+
+    end
+    return true
+  end
+
+  # :nocov:
   def self.import(file)
 
     CSV.foreach(file.path, headers: true) do |row|
       venue_obj = row.to_hash
-      puts venue_obj
-      name = venue_obj['Network Name'].nil? ? '' : venue_obj['Network Name']
-      venue_name = venue_obj['List Name'].nil? ? '' : venue_obj['List Name']
-      venue_type = venue_obj['Type'].nil? ? '' : venue_obj['Type'].titleize
-      venue_address = venue_obj['Address']
-      venue_city = venue_obj['City']
-      venue_state = venue_obj['State']
-      venue_country = venue_obj['Country']
-      venue_zipcode = venue_obj['Zipcode']
-      venue_network = name.blank? ? '' : (name.split '_').first.titleize
-      if type = VenueType.find_by_name(venue_type) and city_network = VenueNetwork.find_by_name(venue_network)
-        if !name.blank? and !venue_name.blank?
-          b = Beacon.find_by_key(name)
-          if b 
-            b.update(:key => name)
-            if !b.venue.nil?
-              # update
-              # if b.venue.draft_pending.nil? or !b.venue.draft_pending
-              #   b.venue.update(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
-              # end
-            else
-              # create
-              venue = Venue.create!(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
-              b.update(:venue_id => venue.id)
-            end
-          else
-            # create both
-            venue = Venue.create!(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
-            Beacon.create!(:key => name, :venue_id => venue.id)
-          end
-        else
-        end
-      else
-
-      end
+      Venue.import_single_record(venue_obj)
+      
     end
     return true
   end
+  # :nocov:
+
 end
