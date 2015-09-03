@@ -441,7 +441,7 @@ ActiveRecord::Schema.define(version: 20150904135523) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
