@@ -807,6 +807,8 @@ class WhisperNotification < AWS::Record::HashModel
       return "No photos"
     elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
       return "User blocked"
+    elsif FriendByWhisper.check_friends(current_user.id, target_id.to_i) 
+      return 'You are already friends'
     else
       # whispers_sent_today = WhisperToday.where(target_user_id: target_id.to_i, origin_user_id: origin_id.to_i)
       pending_whisper = WhisperToday.find_pending_whisper(target_id.to_i, origin_id.to_i)

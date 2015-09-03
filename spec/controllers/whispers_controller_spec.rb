@@ -213,6 +213,13 @@ describe WhispersController do
 	      	
 	      	post :api_create, :notification_type => '2', :target_id => '3', :intro => "Hi!"
 	      	expect(response.status).to eql 200
+	      	expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql 'You are already friends'
+
+	      	FriendByWhisper.delete_all
+
+	      	post :api_create, :notification_type => '2', :target_id => '3', :intro => "Hi!"
+	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
 
 	      	# NO access
