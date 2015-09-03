@@ -782,23 +782,9 @@ class UsersController < ApplicationController
     else
       render json: error(JSON.parse(user.errors.messages.to_json))
     end
-    # if user.valid?
-    #   user.save!
-    #   render json: success(user.to_json(false))
-    # else
-    #   render json: error(JSON.parse(user.errors.messages.to_json))
-    # end
+    
   end
 
-  # def deactivate
-  #   user = current_user
-  #   if !params[:active]
-  #     user.update(active: true)
-  #     render json: success(true)
-  #   else
-  #     render json: error(JSON.parse(user.errors.messages.to_json))
-  #   end
-  # end
 
   # Update chatting ids
   def update_chat_accounts
@@ -1039,26 +1025,7 @@ class UsersController < ApplicationController
     end
   end
 
-  # def update_image
-  #   user = current_user
-  #   avatar = user.user_avatars.find(params[:avatar_id])
-
-  #   if avatar && avatar.update_image(params[:avatar])
-  #     render json: success(user.to_json(true))
-  #   else
-  #     render json: error("Invalid image")
-  #   end
-  # end
-
-  # def update_apn
-  #   user = current_user
-  #   user.apn_token = params[:token]
-  #   if user.save
-  #     render json: success() #
-  #   else
-  #     render json: error()
-  #   end
-  # end
+  
 
   # Notification settings
   def update_notification_preferences
@@ -1071,17 +1038,7 @@ class UsersController < ApplicationController
     render json: success(true)
   end
 
-  # When user clicked "Connect" button, update field is_connect to true
-  # def connect
-  #   user = current_user
-  #   user.is_connected = true
-    
-  #   if user.save
-  #     render json: success() #
-  #   else
-  #     render json: error()
-  #   end
-  # end
+  
 
   # return current user object
   def get_profile
@@ -1089,146 +1046,7 @@ class UsersController < ApplicationController
     render json: success(user.to_json(true))
   end
 
-  # def get_lotto
-  #   winnings = current_user.winners.all
-
-  #   data = Jbuilder.encode do |json|
-  #     json.winnings winnings, :message, :created_at, :winner_id, :claimed
-  #   end
-
-  #   render json: success(JSON.parse(data))
-  # end
-
-  # def poke
-  #   pokee = User.find(params[:user_id])
-
-  #   if pokee
-  #     p = Poke.where(pokee: pokee, poker: current_user).first
-
-  #     unless p
-  #       p = Poke.new
-  #       p.poker = current_user
-  #       p.pokee = pokee
-  #       p.save
-  #     end
-
-  #     render json: success(nil)
-  #   else
-  #     render json: error("User does no exist")
-  #   end
-  # end
-
-  # def add_favourite_venue
-  #   user = current_user
-  #   venue = Venue.find(params[:venue_id])
-  #   if user && venue && !user.favourite_venues.where(venue: venue).first
-  #     fav = FavouriteVenue.new
-  #     fav.user = user
-  #     fav.venue = venue
-  #     fav.save
-
-  #     render json: success(nil)
-  #   else
-  #     render json: error("Error, user/venue does exist or venue is already a favourite of the user")
-  #   end
-  # end
-
-  # def remove_favourite_venue
-  #   user = current_user
-  #   venue = Venue.find(params[:venue_id])
-
-  #   if user && venue
-  #     fav = user.favourite_venues.where(venue: venue).first
-  #     if fav
-  #       fav.destroy
-
-  #       render json: success(nil)
-  #     end
-  #   else
-  #     render json: error("Error, user/venue does not exist or venue is not a favourite of the user")
-  #   end
-  # end
-
-  # # A list of the user's favourite venues
-  # # TODO refactor out the JSON data builder to venue.rb
-  # def favourite_venues
-  #   user = current_user
-
-  #   favourites = user.favourite_venues
-
-  #   data = Jbuilder.encode do |json|
-  #     images = ["https://s3.amazonaws.com/whisprdev/test_nightclub/n1.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n2.jpg", "https://s3.amazonaws.com/whisprdev/test_nightclub/n3.jpg"]
-
-  #     json.array! favourites do |f|
-
-  #       v = f.venue
-
-  #       json.id v.id
-  #       json.name v.name
-  #       json.address v.address_line_one
-  #       json.city v.city
-  #       json.state v.state
-  #       json.longitude v.longitude
-  #       json.latitude v.latitude
-  #       json.is_favourite FavouriteVenue.where(venue: v, user: current_user).exists?
-  #       json.images do
-  #         json.array! images
-  #       end
-
-  #       json.nightly do
-  #         nightly = Nightly.today_or_create(v)
-  #         json.boy_count nightly.boy_count
-  #         json.girl_count nightly.girl_count
-  #         json.guest_wait_time nightly.guest_wait_time
-  #         json.regular_wait_time nightly.regular_wait_time
-  #       end
-  #     end
-  #   end
-
-  #   render json: {
-  #     list: JSON.parse(data)
-  #   }
-  # end
-
-  # # Get all the chat requests sent to the user
-  # # TODO refactor out the JSON builder into poke.rb
-  # def get_pokes
-  #   user = current_user
-
-  #   pokes = Poke.where(pokee: user).all
-
-  #   data = Jbuilder.encode do |json|
-  #     json.array! pokes do |p|
-
-  #       json.id = p.id
-
-  #       json.poker do
-  #         poker = p.poker
-
-  #         json.id poker.id
-  #         json.first_name poker.first_name
-  #         json.avatar poker.default_avatar.avatar.thumb.url
-  #       end
-
-  #       json.timestamp p.poked_at
-  #     end
-  #   end
-
-  #   render json: {
-  #     list: JSON.parse(data)
-  #   }
-  # end
-
-  # # Accept contract makes sure the user accepts the rules of yero
-  # def accept_contract
-  #   user = current_user
-  #   if params[:accept_contract] == true
-  #     user.update(accept_contract: true)
-  #     render json: success(true)
-  #   else
-  #     render json: success(false)
-  #   end
-  # end
+  
 
 
   # block user
@@ -1294,63 +1112,7 @@ class UsersController < ApplicationController
 
   private
 
-  # def requests_friends_json(return_users)
-  #   users = Jbuilder.encode do |json|
-  #     json.array! return_users.each do |user|
-  #       avatar_array = Array.new
-  #       avatar_array[0] = {
-  #             avatar: user["target_user_main"],
-  #             default: true
-  #           }
-  #       avatar_array[1] = {
-  #             avatar: user["target_user_secondary1"],
-  #             default: false
-  #           }
-  #       avatar_array[2] = {
-  #             avatar: user["target_user_secondary2"],
-  #             default: false
-  #           }
-  #       json.same_venue_badge          current_user.same_venue_as?(user["target_user"]["id"].to_i)
-  #       json.different_venue_badge     current_user.different_venue_as?(user["target_user"]["id"].to_i) 
-  #       json.id             user["target_user"]["id"]
-  #       json.first_name     user["target_user"]["first_name"]
-  #       json.key            user["target_user"]["key"]
-  #       json.last_active    user["target_user"]["last_active"]
-  #       json.last_activity  user["target_user"]["last_activity"]
-  #       json.since_1970     (user["target_user"]["last_active"] - Time.new('1970')).seconds.to_i 
-  #       json.gender         user["target_user"]["gender"]
-  #       if user["target_user"]["id"].to_i != 0
-  #         json.birthday       user["target_user"]["birthday"]
-  #       end
-  #       json.created_at     user["target_user"]["created_at"]
-  #       json.updated_at     user["target_user"]["updated_at"]
-  #       json.avatar_thumbnail user["target_user_thumb"] 
-  #       json.avatars         avatar_array
-  #       json.apn_token      user["target_user"].apn_token
-  #       json.notification_read  user["notification_read"].blank? ? nil : user["notification_read"]
-  #       json.email  user["target_user"]["email"]
-  #       json.instagram_id  user["target_user"]["instagram_id"]
-  #       json.snapchat_id  user["target_user"]["snapchat_id"]
-  #       json.wechat_id  user["target_user"]["wechat_id"]
-  #       json.line_id  user["target_user"]["line_id"]
-  #       json.timestamp  user["timestamp"]
-  #       json.seconds_left  user["seconds_left"]
-  #       json.timestamp_read  Time.at(user["timestamp"])
-  #       json.accepted   user["accepted"].blank? ? nil : user["accepted"]
-  #       json.declined   user["declined"].blank? ? nil : user["declined"]
-  #       json.whisper_id  user["whisper_id"].blank? ? nil : user["whisper_id"]
-  #       json.intro_message user["intro"].blank? ? nil : user["intro"]
-  #       json.not_viewed_by_sender user["not_viewed_by_sender"].blank? ? 0 : user["not_viewed_by_sender"]
-
-  #       json.latitude       user["target_user"].latitude  
-  #       json.longitude      user["target_user"].longitude 
-
-  #       json.introduction_1 user["target_user"].introduction_1.blank? ? '' : user["target_user"].introduction_1
-  #       json.notification_type 2
-  #     end         
-  #   end
-  #   return users 
-  # end
+  
 
   def requests_user_whisper_json(return_users, is_friends)
     users = Jbuilder.encode do |json|
@@ -1384,38 +1146,7 @@ class UsersController < ApplicationController
     return users 
   end
 
-  # def requests_venue_whisper_json(return_venues)
-  #   venues = Jbuilder.encode do |json|
-  #     json.array! return_venues.each do |venue|
-  #       venue_obj = Venue.find(venue["venue_id"])
-  #       if !venue_obj.nil?
-  #         venue_object = venue_obj.venue_object
-  #       end
-  #       # venue_avatar = VenueAvatar.find_by_venue_id(venue["venue_id"])
-  #       # if venue_avatar 
-  #       #   json.venue_avatar venue_avatar["avatar"]
-  #       # end
-
-  #       # json.venue_name venue_obj["name"]
-  #       # json.venue_message "Welcome to "+venue_obj["name"]+"! Open this Whisper to learn more about tonight."
-  #       json.timestamp venue["timestamp"]
-  #       # json.seconds_left  nil
-  #       json.timestamp_read Time.at(venue['timestamp'])
-  #       json.accepted   venue["accepted"].blank? ? 0 : venue["accepted"]
-  #       json.declined   venue["declined"].blank? ? 0 : venue["declined"]
-  #       json.viewed venue["viewed"]
-  #       json.intro_message venue["intro"].blank? ? '' : venue["intro"]
-  #       # json.not_viewed_by_sender venue["not_viewed_by_sender"]
-  #       # json.created_date venue["created_date"]
-  #       json.whisper_id venue["whisper_id"]
-  #       json.notification_type  1
-  #       json.object_type "venue"
-  #       json.object venue_object
-  #     end
-  #   end
-
-  #   return venues
-  # end
+  
 
   def sign_up_params
     params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :line_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])

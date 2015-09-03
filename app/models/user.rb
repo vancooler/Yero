@@ -264,6 +264,7 @@ class User < ActiveRecord::Base
       json.discovery discovery
       json.exclusive exclusive
       json.joined_today is_connected
+      json.last_active (last_active.nil? ? 0 : last_active.to_i)
       json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
       json.current_city current_city.blank? ? '' : current_city
 
@@ -653,7 +654,7 @@ class User < ActiveRecord::Base
             # json.since_1970     (user.last_active - Time.new('1970')).seconds.to_i
             json.birthday       user.birthday
             json.gender         user.gender
-
+            json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
             json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
             json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
@@ -798,8 +799,8 @@ class User < ActiveRecord::Base
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
       id:             self.id,
       first_name:     self.first_name,
-      last_active:    self.last_active,
-      last_activity:  self.last_activity,
+      last_active:    self.last_active.nil? ? 0 : self.last_active.to_i,
+      # last_activity:  self.last_activity,
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:         self.gender,
       birthday:       (self.id != 0 ? self.birthday : ''),
