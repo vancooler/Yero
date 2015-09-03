@@ -1,5 +1,5 @@
 class WhisperReply < ActiveRecord::Base
-  belongs_to :whisper, class_name: "WhisperToday"
+  belongs_to :whisper, class_name: "WhisperToday", :foreign_key => 'whisper_id'
 
   # :nocov:
   def self.archive_history(whisper)
@@ -37,7 +37,8 @@ class WhisperReply < ActiveRecord::Base
 	    end
 	    
 	end
-	whisper.whisper_replies.delete_all
+
+	WhisperReply.where(:whisper_id => whisper.id).delete_all
 	whisper.delete
   end
   # :nocov:

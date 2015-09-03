@@ -1,5 +1,5 @@
 class WhisperToday < ActiveRecord::Base
-	has_many :whisper_replies
+	has_many :whisper_replies, :foreign_key => 'whisper_id'
 	def self.all_whispers(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
 		WhisperToday.where(:target_user_id => user_id).where.not(origin_user_id: black_list).where(:declined => false).where(:accepted => false).order("created_at DESC")
