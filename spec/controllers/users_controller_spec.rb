@@ -343,6 +343,7 @@ describe UsersController do
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
 	      	expect(JSON.parse(response.body)['data']['friends'].count).to eql 1
+	      	expect(JSON.parse(response.body)['data']['friends'][0]['actions']).to eql ['chat']
 
 	    	friend.delete
 	    	whisper.delete

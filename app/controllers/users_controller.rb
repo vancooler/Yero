@@ -1291,7 +1291,7 @@ class UsersController < ApplicationController
 
   end
   # :nocov:
-  
+
   private
 
   # def requests_friends_json(return_users)
@@ -1372,6 +1372,7 @@ class UsersController < ApplicationController
           json.notification_type 3
           json.id user_object[:id] 
         end
+        json.actions ['chat']
         json.timestamp  user["timestamp"]
         json.timestamp_read  Time.at(user["timestamp"])
         json.viewed user["viewed"].blank? ? 0 : user["viewed"]

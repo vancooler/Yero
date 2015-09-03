@@ -43,6 +43,7 @@ class FriendByWhisper < ActiveRecord::Base
           		timestamp: self.friend_time.to_i,
           		timestamp_read: Time.at(self.friend_time.to_i),
           		viewed: self.viewed,
+          		actions: ['chat'],
           		object_type: "user",
 	        	object: user_object
           	}
