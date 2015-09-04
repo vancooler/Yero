@@ -15,7 +15,7 @@ class WhisperReply < ActiveRecord::Base
 	      table.load_schema
 	    end
 
-	    replies.each do |replies_group|
+	    replies.each do |reply|
             target_id = (reply.whisper.origin_user_id == reply.speaker_id ? reply.whisper.target_user_id : reply.whisper.origin_user_id)
 	    	item = table.items.put(:origin_id => reply.speaker_id, :timestamp => reply.created_at.to_i, :target_id => target_id, :message => reply.message, :whisper_dynamo_id => reply.whisper.dynamo_id)
 	        # batch = AWS::DynamoDB::BatchWrite.new
