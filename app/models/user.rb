@@ -144,7 +144,7 @@ class User < ActiveRecord::Base
   #         - everyone (true or false, default: true)
   #         - venue_id (not used anymore, might be used in the future)
 
-  def fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+  def fellow_participants(ignore_connected, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     current_venue = self.current_venue
     current_venue_network = self.current_venue_network
     # return nil if current_venue.nil? and current_venue_network.nil?
@@ -177,7 +177,11 @@ class User < ActiveRecord::Base
     # filter for is_connected 
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
-    users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    if ignore_connected
+      users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    else
+      users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
+    end
     if !everyone
       users = users.where(id: active_users_id)
       puts "everyone filter:"
@@ -550,7 +554,8 @@ class User < ActiveRecord::Base
     result = Hash.new
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
-    all_users = self.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+    ignore_connected = false
+    all_users = self.fellow_participants(ignore_connected, nil, 0, 100, nil, 0, 60, true)
     number_of_users = all_users.length + 1
     if number_of_users >= gate_number  
       s_time = Time.now
@@ -568,7 +573,7 @@ class User < ActiveRecord::Base
       friends = mutual_follow | whisper_friends
 
       # get all users with filter params
-      return_users = self.fellow_participants(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      return_users = self.fellow_participants(ignore_connected, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
       puts "RETURN USERS:"
       puts everyone.to_s
       puts return_users.length

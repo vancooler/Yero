@@ -409,7 +409,7 @@ class WhisperNotification < AWS::Record::HashModel
             end
           end
           if Rails.env == 'production'
-            n.send_push_notification_to_target_user(message, whisper.paper_owner_id)
+            n.send_push_notification_to_target_user(message, origin_id.to_i)
           end
 
           return "true"
