@@ -480,6 +480,55 @@ class User < ActiveRecord::Base
   end
 
 
+
+  # gather actions
+  def collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+    actions = Array.new
+    if are_friends
+      actions << "chat"
+    end
+    if can_reply
+      actions << "reply"
+      actions << "delete"
+    end
+    if can_accept_delete
+      actions << "accept"
+      actions << "delete"  
+    end
+    if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and WhisperToday.find_pending_whisper(user.id, self.id).nil?
+      actions << "whisper"
+    end
+
+    return actions.uniq
+  end
+
+  # gather messages array for whisper reply history
+  def collect_whisper_message_history(user, actions)
+    hash = Hash.new
+    if actions.include? "reply" or actions.include? "delete"
+      whisper_today = WhisperToday.find_pending_whisper(user.id, self.id)
+      if !whisper_today.nil?
+        hash['whisper_id'] = whisper_today.dynamo_id
+        replies = WhisperReply.where(whisper_id: whisper_today.id).order("created_at DESC")
+        if replies.count > 0
+          messages_array = Array.new
+          replies.each do |r|
+            new_item = {
+              speaker_id: r.speaker_id,
+              timestamp: r.created_at.to_i,
+              message: r.message.nil? ? '' : r.message
+            }
+            messages_array << new_item
+          end
+        end
+        hash['messages_array'] = messages_array
+      end
+    end
+
+    return hash
+  end
+
+
   # CORE function to gather ppl, all parameters from controller
   # 
   #     @params:
@@ -589,42 +638,16 @@ class User < ActiveRecord::Base
             can_reply = (whispers_can_reply.include?  user.id.to_i)
             can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
 
-            actions = Array.new
-            if are_friends
-              actions << "chat"
-            end
-            if can_reply
-              actions << "reply"
-              actions << "delete"
-            end
-            if can_accept_delete
-              actions << "accept"
-              actions << "delete"  
-            end
-            if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and WhisperToday.find_pending_whisper(user.id, self.id).nil?
-              actions << "whisper"
-            end
+            
 
-            json.actions actions.uniq
-
-            if actions.include? "reply" or actions.include? "delete"
-              whisper_today = WhisperToday.find_pending_whisper(user.id, self.id)
-              if !whisper_today.nil?
-                json.whisper_id whisper_today.dynamo_id
-                replies = WhisperReply.where(whisper_id: whisper_today.id).order("created_at DESC")
-                if replies.count > 0
-                  messages_array = Array.new
-                  replies.each do |r|
-                    new_item = {
-                      speaker_id: r.speaker_id,
-                      timestamp: r.created_at.to_i,
-                      message: r.message.nil? ? '' : r.message
-                    }
-                    messages_array << new_item
-                  end
-                end
-                json.messages_array messages_array
-              end
+            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+            json.actions actions
+            whisper_hash = self.collect_whisper_message_history(user, actions)
+            if !whisper_hash['whisper_id'].nil?
+                json.whisper_id whisper_hash['whisper_id']
+            end
+            if !whisper_hash['messages_array'].nil?
+                json.messages_array whisper_hash['messages_array']
             end
 
             if followees.blank?
