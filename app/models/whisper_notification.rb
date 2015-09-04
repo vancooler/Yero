@@ -427,6 +427,7 @@ class WhisperNotification < AWS::Record::HashModel
             n.id = 'aaa'+current_user.id.to_s
           end
           # WhisperToday.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :venue_id => venue_id.to_i)
+          paper_owner_id = pending_whisper.paper_owner_id
           if pending_whisper.target_user_id == origin_id.to_i
             pending_whisper.paper_owner_id = pending_whisper.origin_user_id
             pending_whisper.message_b = intro
@@ -444,7 +445,7 @@ class WhisperNotification < AWS::Record::HashModel
             RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
           end
           if Rails.env == 'production'
-            n.send_push_notification_to_target_user(message, pending_whisper.paper_owner_id)
+            n.send_push_notification_to_target_user(message, paper_owner_id)
           end
 
           return "true"
