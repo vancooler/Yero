@@ -158,7 +158,7 @@ class UsersController < ApplicationController
       if badge[:whisper_number].to_i > badge[:friend_number].to_i
         if !whispers_array.nil? and whispers_array.count > 0
           # update local tmp db
-          WhisperToday.where(:paper_owner_id => current_user.id).update_all(:viewed => true, :updated_at => Time.now)
+          WhisperToday.where(:paper_owner_id => current_user.id).update_all(:viewed => true)
           # update dynamodb
           if Rails.env == 'production'
             current_user.delay.viewed_by_sender(whispers_array)
