@@ -146,9 +146,9 @@ class WhisperToday < ActiveRecord::Base
 		              actions << "accept"
 		              actions << "delete"  
 		            end
-		            if !sent and !are_friends and !can_handle and !can_reply
-		              actions << "whisper"
-		            end
+		            # if !sent and !are_friends and !can_handle and !can_reply 
+		            #   actions << "whisper"
+		            # end
 
 		            json.actions actions.uniq
 							
