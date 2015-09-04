@@ -50,19 +50,20 @@ class WhisperToday < ActiveRecord::Base
 			json.array! whispers do |a|
 		        if current_user 
 		        	if a.message_b.blank? # whispers without replies
-			        	if !current_user.timezone_name.blank?
-				          hour = a.created_at.in_time_zone(current_user.timezone_name).hour
-				          if hour >= 5
-				            expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
-				          else
-				            expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).beginning_of_day + 5.hours            
-				          end
+			        	# if !current_user.timezone_name.blank?
+				        #   hour = a.created_at.in_time_zone(current_user.timezone_name).hour
+				        #   if hour >= 5
+				        #     expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
+				        #   else
+				        #     expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).beginning_of_day + 5.hours            
+				        #   end
 
-				          json.expire_timestamp expire_timestamp.to_i
-				        else
+				        #   json.expire_timestamp expire_timestamp.to_i
+				        # else
 
-				          json.expire_timestamp Time.now.to_i + 3600*12
-				        end
+				        #   json.expire_timestamp Time.now.to_i + 3600*12
+				        # end
+				        json.expire_timestamp (a.created_at + 12.hours).to_i
 				        json.initial_whisper true
 				    else # whispers with replies
 				    	json.initial_whisper false
