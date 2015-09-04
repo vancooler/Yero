@@ -464,7 +464,7 @@ class WhisperNotification < AWS::Record::HashModel
       deep_link = "yero://whispers/" + paper_owner_id.to_s
     end
 
-    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment", }
+    data = { :alert => message, :type => self.notification_type.to_i, :badge => "Increment", :deep_link => deep_link}
     push = Parse::Push.new(data, "User_" + self.target_id.to_s)
     push.type = "ios"
     begin  
