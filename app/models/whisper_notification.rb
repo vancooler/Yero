@@ -482,7 +482,7 @@ class WhisperNotification < AWS::Record::HashModel
   # :nocov:
   # send network open notification -> NOT used
   def self.send_nightopen_notification(id)
-    data = { :alert => "Your city's network is now online.", :type => 100}
+    data = { :alert => "Your city's network is now online", :type => 100}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  
@@ -502,7 +502,7 @@ class WhisperNotification < AWS::Record::HashModel
   # send enough users notification
   def self.send_enough_users_notification(id)
 
-    data = { :alert => "Enough users have joined your city’s network.", :type => 102, :deep_link => 'yero://people'}
+    data = { :alert => "Enough users have joined your city’s network", :type => 102, :deep_link => 'yero://people'}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  
