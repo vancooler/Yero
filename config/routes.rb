@@ -160,9 +160,38 @@ Rails.application.routes.draw do
 ####################################################################################################
 
 
+####################################################################################################
+# 
+# API V2
+# 
+# 
+  # user APIs
+  get     'api/v2/users',                               to: 'users_version2#index'
+  get     'api/v2/users/:id',                           to: 'users_version2#show'
+  put     'api/v2/current_user',                        to: 'users_version2#update'
+  get     'api/v2/current_user',                        to: 'users_version2#get_profile'
+  get     'api/v2/check-email',                         to: 'users_version2#check_email'
+  post    'api/v2/signup',                              to: 'users_version2#signup'
+  post    'api/v2/login',                               to: 'users_version2#login'
+  post    'api/v2/emails',                              to: 'users_version2#change_email'
+  post    'api/v2/passwords',                           to: 'users_version2#forgot_password'
+  put     'api/v2/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
+  post    'api/v2/report_user_histories',               to: 'users_version2#report'
+  post    'api/v2/block_users',                         to: 'users_version2#block'
+  # post    'api/v2/like-or-unlike',                to: 'users_version2#like'
+  # delete  'api/v2/logout',                        to: 'users_version2#logout'
 
+  # avatar APIs
+  post   'api/v2/avatars',                              to: 'user_avatars_version2#create'
+  put    'api/v2/avatars/:id',                          to: 'user_avatars_version2#update'
+  delete 'api/v2/avatars/:id',                          to: 'user_avatars_version2#destroy'
 
-
+  
+#     
+# 
+# 
+# 
+####################################################################################################
 
 
   # post 'api/v1/users/signup',                 to: 'users#sign_up'
