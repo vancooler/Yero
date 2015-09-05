@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150904135523) do
+ActiveRecord::Schema.define(version: 20150904175131) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -99,8 +99,10 @@ ActiveRecord::Schema.define(version: 20150904135523) do
   end
 
   create_table "block_users", force: true do |t|
-    t.integer "target_user_id", null: false
-    t.integer "origin_user_id", null: false
+    t.integer  "target_user_id", null: false
+    t.integer  "origin_user_id", null: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "block_users", ["target_user_id", "origin_user_id"], name: "index_block_users_on_target_user_id_and_origin_user_id", using: :btree

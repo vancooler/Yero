@@ -96,24 +96,59 @@ end
 describe 'Whisper' do
   	describe 'Version 1.3' do
     
-    # let (:avatar_path) {'/home/alex/sites/yero/purpleoctopus-staging/spec/files/sample_avatar.jpg'}
-    # let!(:user) {FactoryGirl.create(:user)}
+  		it "Auth" do
+	  		birthday = (Time.now - 21.years)
+			user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+		    
 
-    # describe "Existing user uploads a new avatar" do
-    #   before do
-    #     post 'api/v1/avatar/create', 
-    #     {
-    #       key: user.key, 
-    #       avatar: File.new(avatar_path, 'rb')
-    #     }
-    #   end
+	      	post 'api/v1/users'
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "You must authenticate with a valid token"
 
-    #   let(:response_to_client) {puts JSON.parse(response.body, symbolize_names: true)}
+	      	token = "user_2.generate_token"
+	      	post 'api/v1/users',:token => token
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "You must authenticate with a valid token"
 
-    #   it { expect(response).to be_success }
-    #   it { expect(user.user_avatars.count).to be(1) }
-    #   it { expect(user.user_avatars.first.default).to be(true) }
-    # end
+	      	user = {:id => 200, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
+	        secret = 'secret'
+		    token = JWT.encode(user, secret)
+		    post 'api/v1/users',:token => token
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "You must authenticate with a valid token"
+
+	      	user = { } # expire in 24 hours
+	        secret = 'secret'
+		    token = JWT.encode(user, secret)
+		    post 'api/v1/users',:token => token
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "You must authenticate with a valid token"
+
+	      	user = { :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
+	        secret = 'secret'
+		    token = JWT.encode(user, secret)
+		    post 'api/v1/users',:token => token
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "You must authenticate with a valid token"
+
+	      	user = { :id => 2, :exp => (Time.now.to_i - 3600*24) } # expire in 24 hours
+	        secret = 'secret'
+		    token = JWT.encode(user, secret)
+		    post 'api/v1/users',:token => token
+			expect(response.status).to eql 200
+			expect(JSON.parse(response.body)['success']).to eql false
+	      	expect(JSON.parse(response.body)['message']).to eql "Token Expired"
+
+
+	      	UserAvatar.delete_all
+	      	User.delete_all
+	  	end
 
     	it "1.3 sending whispers" do
 	    	birthday = (Time.now - 21.years)
