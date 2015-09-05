@@ -108,7 +108,9 @@ Rails.application.routes.draw do
   delete 'api/v1/users/logout',                  to: 'users#logout'
 
   # users APIs
-  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify', as: :generate_reset_email_verify
+  post 'api/v1/users', to: 'users#index'
+  post 'api/v1/user/show',                 to: 'users#show'
+  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
   post 'api/v1/users/update',                 to: 'users#update_settings'
   post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
   post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
@@ -117,8 +119,6 @@ Rails.application.routes.draw do
   post 'api/v1/users/like-or-unlike',                to: 'users#like'
   get  'api/v1/profile',                      to: 'users#get_profile'
   put  'api/v1/user/update_profile',       to: 'users#update_profile'
-  post 'api/v1/user/show',                 to: 'users#show'
-  post 'api/v1/users', to: 'users#index'
   post 'api/v1/report', to: 'users#report'
   post 'api/v1/users/block-user', to: 'users#block'
   post 'api/v1/user/locations/new', to: 'locations#create'

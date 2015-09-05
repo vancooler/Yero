@@ -262,13 +262,19 @@ class User < ActiveRecord::Base
       json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
       json.instagram_id (instagram_id.blank? ? '' : instagram_id)
       json.instagram_token (instagram_token.blank? ? '' : instagram_token)
+      json.spotify_id (spotify_id.blank? ? '' : spotify_id)
+      json.spotify_token (spotify_token.blank? ? '' : spotify_token)
       json.wechat_id (wechat_id.blank? ? '' : wechat_id)
       json.line_id (line_id.blank? ? '' : line_id)
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
+      json.introduction_2 (introduction_2.blank? ? '' : introduction_2)
+      json.latitude (latitude.blank? ? 0 : latitude)
+      json.longitude (longitude.blank? ? 0 : longitude)
       json.discovery discovery
       json.exclusive exclusive
       json.joined_today is_connected
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
+      json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
       json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
       json.current_city current_city.blank? ? '' : current_city
 
@@ -683,15 +689,18 @@ class User < ActiveRecord::Base
             json.birthday       user.birthday
             json.gender         user.gender
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
+            json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
             json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
             json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
             json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
+            json.spotify_id   user.spotify_id.blank? ? '' : user.spotify_id
 
             # json.apn_token      user.apn_token
             json.latitude       user.latitude  
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
+            json.introduction_2 user.introduction_2.blank? ? '' : user.introduction_2
             json.exclusive      user.exclusive
           end
         end
@@ -825,24 +834,29 @@ class User < ActiveRecord::Base
     user_object = {
       # same_venue_badge:          current_user.same_venue_as?(self.id),
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
-      id:             self.id,
-      first_name:     self.first_name,
-      last_active:    self.last_active.nil? ? 0 : self.last_active.to_i,
+      id:              self.id,
+      first_name:      self.first_name,
+      last_active:     self.last_active.nil? ? 0 : self.last_active.to_i,
+      last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
       # last_activity:  self.last_activity,
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
-      gender:         self.gender,
-      birthday:       (self.id != 0 ? self.birthday : ''),
-      created_at:     self.created_at,
-      updated_at:     self.updated_at,
+      gender:          self.gender,
+      birthday:        (self.id != 0 ? self.birthday : ''),
+      created_at:      self.created_at,
+      updated_at:      self.updated_at,
       avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
-      email:  self.email,
-      instagram_id:  self.instagram_id.blank? ? '' : self.instagram_id,
-      snapchat_id:  self.snapchat_id.blank? ? '' : self.snapchat_id,
-      wechat_id:  self.wechat_id.blank? ? '' : self.wechat_id,
-      line_id:  self.line_id.blank? ? '' : self.line_id,
-      latitude:       self.latitude,
-      longitude:      self.longitude,
-      introduction_1: self.introduction_1.blank? ? '' : self.introduction_1
+      email:           self.email,
+      instagram_id:    self.instagram_id.blank? ? '' : self.instagram_id,
+      instagram_token: self.instagram_token.blank? ? '' : self.instagram_token,
+      spotify_id:      self.spotify_id.blank? ? '' : self.spotify_id,
+      spotify_token:   self.spotify_token.blank? ? '' : self.spotify_token,
+      snapchat_id:     self.snapchat_id.blank? ? '' : self.snapchat_id,
+      wechat_id:       self.wechat_id.blank? ? '' : self.wechat_id,
+      line_id:         self.line_id.blank? ? '' : self.line_id,
+      latitude:        self.latitude,
+      longitude:       self.longitude,
+      introduction_1:  self.introduction_1.blank? ? '' : self.introduction_1,
+      introduction_2:  self.introduction_2.blank? ? '' : self.introduction_2
     }
 
     return user_object
@@ -1109,4 +1123,217 @@ class User < ActiveRecord::Base
     return true
   end
   # :nocov:
+
+
+
+############################################ API V 2 ############################################
+
+
+  # API V2
+  # CORE function to gather ppl, all parameters from controller
+  # 
+  #     @params:
+  # 
+  #         - gate_number (integer, minimum number of users people can see before filter)
+  #         - gender ("M", "F", or "A", default: "A")
+  #         - min_age (integer for minimum age, default: ignore this filter)
+  #         - max_age (integer for maximum age, default: ignore this filter)
+  #         - min_distance (integer for minimum distance, default: 0)
+  #         - max_distance (integer for maximum distance, default: 60)
+  #         - everyone (true or false, default: true)
+  #         - venue_id (not used anymore, might be used in the future)
+  #         - page_number (integer for pagination)
+  #         - users_per_page (integer for pagination)
+
+  def people_list_2_0(gate_number, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone, page_number, users_per_page)
+    diff_1 = 0
+    diff_2 = 0
+    result = Hash.new
+    # check 
+    # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
+    ignore_connected = true
+    all_users = self.fellow_participants(ignore_connected, nil, 0, 100, nil, 0, 60, true)
+    number_of_users = all_users.length + 1
+    if number_of_users >= gate_number  
+      s_time = Time.now
+      # collect all whispers sent 
+      # TODO: use model to do it
+      whispers_sent = WhisperNotification.collect_whispers(self)
+      whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
+      whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
+
+      # colect all users with "like"
+      followees = self.followees(User)
+      # collect all friends with mutual like AND whisper accepted friends
+      mutual_follow = self.friends_by_like
+      whisper_friends = FriendByWhisper.friends(self.id)
+      friends = mutual_follow | whisper_friends
+
+      # get all users with filter params
+      return_users = self.fellow_participants(ignore_connected, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      if self.current_venue.blank?
+        same_venue_user_ids = Array.new
+      else
+        same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
+      end
+
+      campus_id = VenueType.find_by_name("Campus")
+      if campus_id
+        campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
+      else
+        campus_venue_ids = [nil]
+      end
+      if self.current_venue.blank?
+        different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
+      else
+        campus_venue_ids << self.current_venue.id
+        different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
+      end
+
+      # build json format
+      users = Jbuilder.encode do |json|
+        same_venue_time = 0
+        different_venue_time = 0
+        check_badge_time = 0
+        avatar_time = 0
+        other_time = 0
+        json.array! return_users do |user|
+          if user.id != self.id
+            next unless user.user_avatars.present?
+            next unless user.main_avatar.present?
+            
+            other_avatars = user.user_avatars.where(is_active:true).order(:order)
+            avatar_array = Array.new
+
+            if other_avatars.count > 0
+              other_avatars.each do |oa|
+                new_item = {
+                  avatar: !oa.avatar.nil? ? oa.origin_url : '',
+                  thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
+                  avatar_id: oa.id,
+                  default: oa.order.nil? ? true : (oa.order==0),
+                  is_active: true,
+                  order: oa.order.nil? ? '100' : oa.order
+                }
+                avatar_array << new_item
+              end
+            end
+
+            json.avatars avatar_array
+
+
+            json.whisper_sent whispers_sent.include? user.id.to_i
+            are_friends = (friends.map(&:id).include? user.id)
+            whisper_sent = (whispers_sent.include? user.id.to_i)
+            can_reply = (whispers_can_reply.include?  user.id.to_i)
+            can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
+
+            
+
+            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+            json.actions actions
+            whisper_hash = self.collect_whisper_message_history(user, actions)
+            if !whisper_hash['whisper_id'].nil?
+                json.whisper_id whisper_hash['whisper_id']
+            end
+            if !whisper_hash['messages_array'].nil?
+                json.messages_array whisper_hash['messages_array']
+            end
+
+            if followees.blank?
+              json.like false
+            else
+              json.like followees.map(&:id).include? user.id
+            end
+
+            if friends.blank?
+              json.friend false
+            else
+              json.friend friends.map(&:id).include? user.id
+            end
+
+            
+
+            json.same_venue_badge          same_venue_user_ids.include? user.id
+
+            json.different_venue_badge          different_venue_user_ids.include? user.id
+
+            json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
+            
+
+            json.id             user.id
+            json.first_name     user.first_name
+            json.birthday       user.birthday
+            json.gender         user.gender
+            json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
+            json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
+            json.line_id      user.line_id.blank? ? '' : user.line_id
+            json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
+            json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
+            json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
+            json.spotify_id   user.spotify_id.blank? ? '' : user.spotify_id
+
+            json.latitude       user.latitude  
+            json.longitude      user.longitude 
+            json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
+            json.introduction_2 user.introduction_2.blank? ? '' : user.introduction_2
+            json.exclusive      user.exclusive
+          end
+        end
+      end
+
+      users = JSON.parse(users).delete_if(&:empty?)
+
+      # TODO: Move to db level to improve performance
+      different_venue_users = [] # Make a empty array for users in the different venue
+      same_venue_users = [] #Make a empty array for users in the same venue
+      no_badge_users = [] # Make an empty array for no badge users
+      users.each do |u| # Go through the users
+        if !!u['exclusive'] == true
+          if u['same_venue_badge'].to_s == "true"
+             same_venue_users << u # Throw the user into the array
+          end
+        else
+          if !!u['exclusive'] == false
+            if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+              different_venue_users << u # Throw the user into the array
+            elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+              same_venue_users << u # Throw the user into the array
+            elsif everyone
+              different_venue_users << u # Users who are not in a venue also thrown into here.
+            end
+          end
+        end
+      end
+      
+      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+      
+      users = same_venue_users.sort_by{ |hsh| hsh[:last_active] }.reverse + different_venue_users.sort_by{ |hsh| hsh[:last_active] }.reverse  #Sort users by distance
+      # ADD Pagination
+      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
+        users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
+      end
+
+
+      e_time = Time.now
+      runtime = e_time - s_time
+      
+      puts "The runtime is: "
+      puts runtime.inspect
+
+      # count = users.count
+      result['users'] = users
+      puts "USERS RESULT:"
+      puts users.count
+    else
+      # count = ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count
+      count = number_of_users
+      users = Array.new
+      result['percentage'] = (count * 100 / gate_number).to_i
+    end
+    # puts "USERS RESULT:"
+    # puts result.inspect
+    return result
+  end
+
 end

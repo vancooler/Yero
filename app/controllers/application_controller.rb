@@ -36,6 +36,70 @@ class ApplicationController < ActionController::Base
   # :nocov:
 
   # Every user must be authenticated when accessing the API from the iOS client
+  def authenticate_api_v2
+    if Rails.env == 'development' or Rails.env == 'test'
+      secret = 'secret'
+    else
+      secret = ENV['SECRET_KEY_BASE']
+    end
+    if params[:token].blank?
+      error_obj = {
+        code: 499,
+        message: "Token required"
+      }
+      render json: error(error_obj, 'data')
+    else
+      token = params[:token].split(' ').last
+      begin
+        token_info = JWT.decode(token, secret)
+        if token_info.nil? or token_info.empty? or token_info.first.nil?
+          error_obj = {
+            code: 497,
+            message: "Token Invalid"
+          }
+          render json: error(error_obj, 'data')
+        else
+          user_info = token_info.first
+          user_id = user_info['id']
+          if user_id.nil?
+            error_obj = {
+              code: 497,
+              message: "Token Invalid"
+            }
+            render json: error(error_obj, 'data')
+          else
+            user = User.find_by_id(user_id.to_i)
+            if user.nil?
+              error_obj = {
+                code: 497,
+                message: "Token Invalid"
+              }
+              render json: error(error_obj, 'data')
+            else
+              user.last_active = Time.now
+              user.save!
+            end
+          end
+        end
+
+      rescue JWT::ExpiredSignature
+        error_obj = {
+          code: 497,
+          message: "Token Expired"
+        }
+        render json: error(error_obj, 'data')
+      rescue JWT::DecodeError
+        error_obj = {
+          code: 497,
+          message: "Token Invalid"
+        }
+        render json: error(error_obj, 'data')
+      end
+    end
+
+  end
+
+  # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api
     if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
