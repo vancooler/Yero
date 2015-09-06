@@ -3,7 +3,7 @@ class VenueAvatar < ActiveRecord::Base
   # before_destroy :validate_min_number_of_avatars, :validate_cant_delete_default_avatar
   belongs_to :venue
 
-  validates_presence_of :venue
+  # validates_presence_of :venue
   # scope :main_avatar, -> {find_by(default:true)}
   # scope :secondary_avatars, -> {where.not(default:true)}
   

@@ -2,9 +2,10 @@ ActiveAdmin.register Venue do
   menu :parent => "VENUE"
   permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, 
                 :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, 
-                :age_requirement, :latitude, :longitude, :web_user, :web_user_id,
+                :age_requirement, :latitude, :longitude, :web_user, :web_user_id, :draft_pending, :featured,
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
+                
   
   config.per_page = 100
   before_filter :check_super, only: [:edit, :update, :create, :new, :destroy]
