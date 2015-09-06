@@ -31,7 +31,7 @@ ActiveAdmin.register User do
           end
         end
 
-        all_users = user.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+        all_users = user.fellow_participants(false, nil, 0, 100, nil, 0, 60, true)
         number_of_users = all_users.length + 1
         if number_of_users >= gate_number
           user.enough_user_notification_sent_tonight = true
