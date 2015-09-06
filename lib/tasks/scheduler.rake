@@ -66,7 +66,7 @@ task :enough_users => :environment do
   end
 
   User.where(:is_connected => true).where(:fake_user => false).where(:enough_user_notification_sent_tonight => false).find_each do |joint_user|
-    all_users = joint_user.fellow_participants(nil, 0, 100, nil, 0, 60, true)
+    all_users = joint_user.fellow_participants(false, nil, 0, 100, nil, 0, 60, true)
     number_of_users = all_users.length + 1
     if number_of_users >= gate_number  
       WhisperNotification.send_enough_users_notification(joint_user.id)
