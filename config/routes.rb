@@ -97,56 +97,56 @@ Rails.application.routes.draw do
   
 
 
-  post 'api/users/check-email',                  to: 'users#check_email'
-  post 'api/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
-  post 'api/users/login',                  to: 'users#login'
-  delete 'api/users/logout',                  to: 'users#logout'
+  post 'api/v1/users/check-email',                  to: 'users#check_email'
+  post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
+  post 'api/v1/users/login',                  to: 'users#login'
+  delete 'api/v1/users/logout',                  to: 'users#logout'
 
   # users APIs
-  post 'api/users', to: 'users#index'
-  post 'api/user/show',                 to: 'users#show'
-  post 'api/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
-  post 'api/users/update',                 to: 'users#update_settings'
-  post 'api/users/update_chat_accounts',   to: 'users#update_chat_accounts'
-  post 'api/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
-  post 'api/users/forgot_password',        to: 'users#forgot_password'
-  post 'api/users/notification-preference', to: 'users#update_notification_preferences'
-  get  'api/profile',                      to: 'users#get_profile'
-  put  'api/user/update_profile',       to: 'users#update_profile'
-  post 'api/report', to: 'users#report'
-  post 'api/users/block-user', to: 'users#block'
-  post 'api/user/locations/new', to: 'locations#create'
-  post 'api/user/locations/show', to: 'locations#show'
-  # post 'api/users/like-or-unlike',                to: 'users#like'
+  post 'api/v1/users', to: 'users#index'
+  post 'api/v1/user/show',                 to: 'users#show'
+  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
+  post 'api/v1/users/update',                 to: 'users#update_settings'
+  post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
+  post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
+  post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
+  post 'api/v1/users/notification-preference', to: 'users#update_notification_preferences'
+  get  'api/v1/profile',                      to: 'users#get_profile'
+  put  'api/v1/user/update_profile',       to: 'users#update_profile'
+  post 'api/v1/report', to: 'users#report'
+  post 'api/v1/users/block-user', to: 'users#block'
+  post 'api/v1/user/locations/new', to: 'locations#create'
+  post 'api/v1/user/locations/show', to: 'locations#show'
+  # post 'api/v1/users/like-or-unlike',                to: 'users#like'
 
   # avatar APIs
-  post 'api/avatar/create',             to: 'user_avatars#create'
-  delete 'api/avatar/destroy',            to: 'user_avatars#destroy'
-  put  'api/avatar/update',        to: 'user_avatars#update'
+  post 'api/v1/avatar/create',             to: 'user_avatars#create'
+  delete 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
+  put  'api/v1/avatar/update',        to: 'user_avatars#update'
 
   # whisper APIs
-  post 'api/whispers', to: 'users#requests_new'
-  get  'api/whispers/:id', to: 'whispers#show'
-  post 'api/whisper/create', to: 'whispers#api_create'
-  post 'api/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
-  post 'api/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
+  post 'api/v1/whispers', to: 'users#requests_new'
+  get  'api/v1/whispers/:id', to: 'whispers#show'
+  post 'api/v1/whisper/create', to: 'whispers#api_create'
+  post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
+  post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
 
   # friend APIs
-  post 'api/friends', to: 'users#myfriends_new'
-  get  'api/friends/:id', to: 'friends#show'
+  post 'api/v1/friends', to: 'users#myfriends_new'
+  get  'api/v1/friends/:id', to: 'friends#show'
   
   # Activity APIs
-  get  'api/activities', to: 'whispers#chat_request_history'
+  get  'api/v1/activities', to: 'whispers#chat_request_history'
 
   # Enter Venue APIs
-  post 'api/room/enter',   to: 'rooms#user_enter'
-  post 'api/room/leave',   to: 'rooms#user_leave'
+  post 'api/v1/room/enter',   to: 'rooms#user_enter'
+  post 'api/v1/room/leave',   to: 'rooms#user_leave'
 
   # venue APIs
-  get  'api/venues/list',                  to: 'venues#list'
+  get  'api/v1/venues/list',                  to: 'venues#list'
 
   # Other APIs for development
-  get  'api/set-variable', to: 'users#set_global_variable'
+  get  'api/v1/set-variable', to: 'users#set_global_variable'
 
 ####################################################################################################
 # 
