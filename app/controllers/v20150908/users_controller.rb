@@ -1,7 +1,7 @@
 module V20150908
   class UsersController < ApplicationController
-    prepend_before_filter :get_api_token, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
-    before_action :authenticate_api, except: [:import, :email_reset, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :password_reset, :check_email]
+    prepend_before_filter :get_api_token, except: [:import, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :check_email]
+    before_action :authenticate_api, except: [:import, :set_global_variable, :sign_up, :sign_up_without_avatar, :login, :forgot_password, :reset_password, :check_email]
     before_action :authenticate_admin_user!, only: [:import]
     skip_before_filter  :verify_authenticity_token
 
@@ -663,98 +663,7 @@ module V20150908
     # :nocov:
 
 
-    # # Renders a page for user to change password
-    # def reset_password
-    #   @user = current_user
-    #   render "password_reset"
-    # end
-
-    # Reset password page and action
-    def password_reset
-      if !params[:user].blank? and !params[:user][:password_reset_token].blank?
-        @user = User.find_by_password_reset_token(params[:user][:password_reset_token])
-        puts "params[:user].blank"
-        puts @user.inspect
-        @error = Array.new
-        if @user.email.to_s.downcase != params[:user][:email].to_s.downcase 
-          flash[:danger] = true 
-          @error << "Email given does not match email from password recovery."
-          puts "Email given does not match email from password recovery."
-          email_mismatch = false
-        else
-          email_mismatch = true
-        end
-        if params[:user][:email].blank?
-          flash[:danger] = true
-          @error << "Email cannot be blank."
-          puts "Email cannot be blank."
-          email_blank = false
-        else
-          email_blank = true
-        end
-        if params[:user][:password].blank?
-          flash[:danger] = true 
-          @error << "Password cannot be empty."
-          puts "Password cannot be empty."
-          password_blank = false
-        else 
-          password_blank = true
-        end
-        if params[:user][:password_confirmation].blank?
-          flash[:danger] = true
-          @error << "Password confirmation cannot be empty."
-          puts "Password confirmation cannot be empty."
-          password_conf_empty = false
-        else
-          password_conf_empty = true
-        end
-        if params[:user][:password].length < 6
-          flash[:danger]= true
-          @error << "Your new password must be at least 6 characters."
-          puts "Password is too short (minimum is 6 characters)."
-          password_short = false
-        else
-          password_short = true
-        end
-        if params[:user][:password] != params[:user][:password_confirmation]
-          flash[:danger] = true 
-          @error << "Your new passwords do not match."
-          puts "Your new passwords do not match"
-          password_mismatch = false
-        else 
-          password_mismatch = true
-        end
-        if !params[:user][:email].blank?
-          if !params[:user][:email].match /\A[\w+\-.]+@[a-z\d\-]+(?:\.[a-z\d\-]+)*\.[a-z]+\z/i
-            flash[:danger] = true 
-            @error << "Please enter a valid email address." 
-            puts "Please enter a valid email address"
-            email_invalid = false
-          else
-            email_invalid = true
-          end
-        end
-
-        if email_mismatch && email_blank && password_blank && password_conf_empty && password_short && password_mismatch && email_invalid
-          puts "everything passed"
-          @user.password = params[:user][:password]
-          @user.password_confirmation = params[:user][:password_confirmation]
-          @user.password_reset_token = ''
-          if @user.save
-            puts "saved"
-            UserMailer.delay.password_change_success(@user)
-            flash[:danger] = nil
-            flash[:success] = "Password Change Succeeded"
-          end
-        end
-      else
-        # @user = current_user
-        @user = User.find_by_password_reset_token(params[:password_reset_token])
-        @error = Array.new
-        flash[:danger] = nil
-        puts "we got into else"
-      end
-    end
+    
 
     # change to find by email
     def forgot_password
@@ -794,30 +703,6 @@ module V20150908
 
       else
         render json: error("New email cannot be blank")
-      end
-    end
-
-    def email_reset
-      if params[:email_reset_token].blank?
-        @message = "Invalid email reset token"
-      else
-        @user = User.find_by_email_reset_token(params[:email_reset_token])
-        if @user.nil?
-          @message = "Invalid email reset token"
-        else
-          new_email = Base64.urlsafe_decode64(params[:email_reset_token])
-          if User.find_by_email(new_email).nil?
-            @user.email = new_email
-            @user.email_reset_token = nil
-            if @user.save
-              @message = "Email verified successfully"
-            else
-              @message = "Failed to verify your email"
-            end
-          else
-            @message = "There is already an account with this email address."
-          end
-        end
       end
     end
 
@@ -942,16 +827,6 @@ module V20150908
       return users 
     end
 
-    
-
-    def sign_up_params
-      params.require(:user).permit(:birthday, :nonce, :first_name, :gender, :email, :instagram_id, :snapchat_id, :wechat_id, :line_id, :password, :password_confirmation, :exclusive, user_avatars_attributes: [:avatar, :avatar_tmp])
-      # params.require(:user).permit(:birthday, : :first_name, :gender, :avatar_id)
-    end
-
-    def login_params
-      params.require(:user).permit(:email, :password, :token)
-    end
 
     def get_api_token
       if Rails.env == 'test' && api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]
