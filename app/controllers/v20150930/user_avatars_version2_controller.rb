@@ -12,14 +12,10 @@ module V20150930
       next_order = current_order.nil? ? 0 : current_order+1
       avatar.order = next_order
       avatar.is_active = true
-      avatar.avatar = params[:avatar]
+      avatar.origin_url = params[:avatar_url]
+      avatar.thumb_url = params[:thumb_url]
       if avatar.save
-        avatar.origin_url = avatar.avatar.url
-        avatar.thumb_url = avatar.avatar.thumb.url
-        avatar.save
         user_info = current_user.to_json(true)
-        
-        
         render json: success(user_info)
       else
         error_obj = {
@@ -43,11 +39,9 @@ module V20150930
           }
           render json: error(error_obj, 'data')
         else
-          avatar.avatar = params[:avatar]
+          avatar.origin_url = params[:avatar_url]
+          avatar.thumb_url = params[:thumb_url]
           if avatar.save
-            avatar.origin_url = avatar.avatar.url
-            avatar.thumb_url = avatar.avatar.thumb.url
-            avatar.save
             user_info = current_user.to_json(true)
             
             render json: success(user_info)
