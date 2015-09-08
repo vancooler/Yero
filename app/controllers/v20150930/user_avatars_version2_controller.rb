@@ -6,21 +6,29 @@ module V20150930
 
     # create new photo
     def create
-      current_order = UserAvatar.where(:user_id => current_user.id).where(:is_active => true).maximum(:order)
-    
-      avatar = UserAvatar.new(user: current_user)
-      next_order = current_order.nil? ? 0 : current_order+1
-      avatar.order = next_order
-      avatar.is_active = true
-      avatar.origin_url = params[:avatar_url]
-      avatar.thumb_url = params[:thumb_url]
-      if avatar.save
-        user_info = current_user.to_json(true)
-        render json: success(user_info)
+      if !params['avatar_url'].blank? and !params['thumb_url'].blank?
+        current_order = UserAvatar.where(:user_id => current_user.id).where(:is_active => true).maximum(:order)
+      
+        avatar = UserAvatar.new(user: current_user)
+        next_order = current_order.nil? ? 0 : current_order+1
+        avatar.order = next_order
+        avatar.is_active = true
+        avatar.origin_url = params[:avatar_url]
+        avatar.thumb_url = params[:thumb_url]
+        if avatar.save
+          user_info = current_user.to_json(true)
+          render json: success(user_info)
+        else
+          error_obj = {
+            code: 520,
+            message: "Cannot create this photo"
+          }
+          render json: error(error_obj, 'data')
+        end
       else
         error_obj = {
-          code: 520,
-          message: "Cannot create this photo"
+          code: 400,
+          message: "Invalid Parameters"
         }
         render json: error(error_obj, 'data')
       end
@@ -28,7 +36,7 @@ module V20150930
 
     # update a photo
     def update
-      if !params[:id].nil? and !params[:avatar].nil?
+      if !params[:id].blank? and !params['avatar_url'].blank? and !params['thumb_url'].blank?
         avatar_id = params[:id] 
         avatar = UserAvatar.find_by(user: current_user, id: params[:id])
 
@@ -46,7 +54,11 @@ module V20150930
             
             render json: success(user_info)
           else
-            render json: error(avatar.errors)
+            error_obj = {
+              code: 520,
+              message: "Cannot update the photo."
+            }
+            render json: error(error_obj, 'data')
           end
         end
       else  
@@ -70,7 +82,11 @@ module V20150930
           user_info = current_user.to_json(true)
           render json: success(user_info)
         else
-          render json: error(avatar.errors)
+          error_obj = {
+            code: 520,
+            message: "Cannot delete the photo."
+          }
+          render json: error(error_obj, 'data')
         end
       else
         error_obj = {

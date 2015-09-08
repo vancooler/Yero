@@ -307,13 +307,70 @@ describe 'V2.0.0' do
 	    ua = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 0)
 	    
 	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "133456", birthday: birthday, gender: 'F', latitude: 49.3857334, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
-	    ua = UserAvatar.create!(id: 3, user: user_3, is_active: true, order: 0)
+	    # ua = UserAvatar.create!(id: 3, user: user_3, is_active: true, order: 0)
 	    
-	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "143456", birthday: birthday, gender: 'F', latitude: 49.3857434, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
-	    ua = UserAvatar.create!(id: 4, user: user_4, is_active: true, order: 0)
+	    # user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "143456", birthday: birthday, gender: 'F', latitude: 49.3857434, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    # ua = UserAvatar.create!(id: 4, user: user_4, is_active: true, order: 0)
 
-	  	token = user_2.generate_token
+	  	token = user_3.generate_token
       	
+      	post 'api/avatars', {:token => token, :avatar_url => '', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+	  	post 'api/avatars', {:token => token, :avatar_url => 'avatar', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 1
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
+		avatar_id = JSON.parse(response.body)['data']['avatars'][0]['avatar_id']
+
+		post 'api/avatars', {:token => token, :avatar_url => 'avatar_2', :thumb_url => 'thumb_2'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 2
+		expect(JSON.parse(response.body)['data']['avatars'][1]['thumbnail']).to eql 'thumb_2'
+		expect(JSON.parse(response.body)['data']['avatars'][1]['avatar']).to eql 'avatar_2'
+		expect(JSON.parse(response.body)['data']['avatars'][1]['order']).to eql 1
+		avatar_1_id = JSON.parse(response.body)['data']['avatars'][1]['avatar_id']
+
+		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => '', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => 'avatar_3', :thumb_url => 'thumb_3'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 2
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb_3'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar_3'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
+
+
+		delete 'api/avatars/3300', {:token => token}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+		delete 'api/avatars/'+avatar_id.to_s, {:token => token}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 1
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb_2'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar_2'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
+
+
+		token = user_2.generate_token
+      	delete 'api/avatars/'+avatar_1_id.to_s, {:token => token}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+		put 'api/avatars/'+avatar_1_id.to_s, {:token => token, :avatar_url => 'haha', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+
 
       	BlockUser.delete_all
 		ReportUserHistory.delete_all

@@ -634,8 +634,8 @@ describe 'Whisper' do
 	      	expect(RecentActivity.count).to eql 2
 
 	      	whisper = WhisperToday.first
-	      	whisper.created_at = Time.now - 24.hours - 1.second
-	      	whisper.updated_at = Time.now - 24.hours - 1.second
+	      	whisper.created_at = Time.now - 55.hours - 1.second
+	      	whisper.updated_at = Time.now - 55.hours - 1.second
 	      	whisper.save!
 
 	      	WhisperToday.expire

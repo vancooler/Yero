@@ -126,10 +126,10 @@ module V20150930
         render json: success(user.to_json(false))
       else
      	  error_obj = {
-  	    code: 520,
-  	    message: "Cannot update the user."
-  	  }
-  	  render json: error(error_obj, 'data')
+    	    code: 520,
+    	    message: "Cannot update the user."
+    	  }
+    	  render json: error(error_obj, 'data')
       end
     end
 
