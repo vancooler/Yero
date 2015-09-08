@@ -96,62 +96,116 @@ Rails.application.routes.draw do
   match 'welcome',          to: 'home#welcome_reference', as: "share_reference", via: [:get]
   
 
+
+  post 'api/users/check-email',                  to: 'users#check_email'
+  post 'api/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
+  post 'api/users/login',                  to: 'users#login'
+  delete 'api/users/logout',                  to: 'users#logout'
+
+  # users APIs
+  post 'api/users', to: 'users#index'
+  post 'api/user/show',                 to: 'users#show'
+  post 'api/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
+  post 'api/users/update',                 to: 'users#update_settings'
+  post 'api/users/update_chat_accounts',   to: 'users#update_chat_accounts'
+  post 'api/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
+  post 'api/users/forgot_password',        to: 'users#forgot_password'
+  post 'api/users/notification-preference', to: 'users#update_notification_preferences'
+  get  'api/profile',                      to: 'users#get_profile'
+  put  'api/user/update_profile',       to: 'users#update_profile'
+  post 'api/report', to: 'users#report'
+  post 'api/users/block-user', to: 'users#block'
+  post 'api/user/locations/new', to: 'locations#create'
+  post 'api/user/locations/show', to: 'locations#show'
+  # post 'api/users/like-or-unlike',                to: 'users#like'
+
+  # avatar APIs
+  post 'api/avatar/create',             to: 'user_avatars#create'
+  delete 'api/avatar/destroy',            to: 'user_avatars#destroy'
+  put  'api/avatar/update',        to: 'user_avatars#update'
+
+  # whisper APIs
+  post 'api/whispers', to: 'users#requests_new'
+  get  'api/whispers/:id', to: 'whispers#show'
+  post 'api/whisper/create', to: 'whispers#api_create'
+  post 'api/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
+  post 'api/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
+
+  # friend APIs
+  post 'api/friends', to: 'users#myfriends_new'
+  get  'api/friends/:id', to: 'friends#show'
+  
+  # Activity APIs
+  get  'api/activities', to: 'whispers#chat_request_history'
+
+  # Enter Venue APIs
+  post 'api/room/enter',   to: 'rooms#user_enter'
+  post 'api/room/leave',   to: 'rooms#user_leave'
+
+  # venue APIs
+  get  'api/venues/list',                  to: 'venues#list'
+
+  # Other APIs for development
+  get  'api/set-variable', to: 'users#set_global_variable'
+
 ####################################################################################################
 # 
 # API V1
 # 
 # 
-  # Auth APIs
-  post 'api/v1/users/check-email',                  to: 'users#check_email'
-  post 'api/v1/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
-  post 'api/v1/users/login',                  to: 'users#login'
-  delete 'api/v1/users/logout',                  to: 'users#logout'
+  api_version(:module => "V20150908", :header => {:name => "API-VERSION", :value => "V1_0"}, :defaults => {:format => :json}, :default => true) do
 
-  # users APIs
-  post 'api/v1/users', to: 'users#index'
-  post 'api/v1/user/show',                 to: 'users#show'
-  post 'api/v1/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
-  post 'api/v1/users/update',                 to: 'users#update_settings'
-  post 'api/v1/users/update_chat_accounts',   to: 'users#update_chat_accounts'
-  post 'api/v1/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
-  post 'api/v1/users/forgot_password',        to: 'users#forgot_password'
-  post 'api/v1/users/notification-preference', to: 'users#update_notification_preferences'
-  post 'api/v1/users/like-or-unlike',                to: 'users#like'
-  get  'api/v1/profile',                      to: 'users#get_profile'
-  put  'api/v1/user/update_profile',       to: 'users#update_profile'
-  post 'api/v1/report', to: 'users#report'
-  post 'api/v1/users/block-user', to: 'users#block'
-  post 'api/v1/user/locations/new', to: 'locations#create'
-  post 'api/v1/user/locations/show', to: 'locations#show'
+    post 'api/users/check-email',                  to: 'users#check_email'
+    post 'api/users/signup_no_avatar',       to: 'users#sign_up_without_avatar'
+    post 'api/users/login',                  to: 'users#login'
+    delete 'api/users/logout',                  to: 'users#logout'
 
-  # avatar APIs
-  post 'api/v1/avatar/create',             to: 'user_avatars#create'
-  delete 'api/v1/avatar/destroy',            to: 'user_avatars#destroy'
-  put  'api/v1/avatar/update',        to: 'user_avatars#update'
+    # users APIs
+    post 'api/users', to: 'users#index'
+    post 'api/user/show',                 to: 'users#show'
+    post 'api/users/generate_reset_email_verify',          to: 'users#generate_reset_email_verify'
+    post 'api/users/update',                 to: 'users#update_settings'
+    post 'api/users/update_chat_accounts',   to: 'users#update_chat_accounts'
+    post 'api/users/remove_chat_accounts',   to: 'users#remove_chat_accounts'
+    post 'api/users/forgot_password',        to: 'users#forgot_password'
+    post 'api/users/notification-preference', to: 'users#update_notification_preferences'
+    get  'api/profile',                      to: 'users#get_profile'
+    put  'api/user/update_profile',       to: 'users#update_profile'
+    post 'api/report', to: 'users#report'
+    post 'api/users/block-user', to: 'users#block'
+    post 'api/user/locations/new', to: 'locations#create'
+    post 'api/user/locations/show', to: 'locations#show'
+    # post 'api/users/like-or-unlike',                to: 'users#like'
 
-  # whisper APIs
-  post 'api/v1/whispers', to: 'users#requests_new'
-  get  'api/v1/whispers/:id', to: 'whispers#show'
-  post 'api/v1/whisper/create', to: 'whispers#api_create'
-  post 'api/v1/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
-  post 'api/v1/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
+    # avatar APIs
+    post 'api/avatar/create',             to: 'user_avatars#create'
+    delete 'api/avatar/destroy',            to: 'user_avatars#destroy'
+    put  'api/avatar/update',        to: 'user_avatars#update'
 
-  # friend APIs
-  post 'api/v1/friends', to: 'users#myfriends_new'
-  get  'api/v1/friends/:id', to: 'friends#show'
-  
-  # Activity APIs
-  get  'api/v1/activities', to: 'whispers#chat_request_history'
+    # whisper APIs
+    post 'api/whispers', to: 'users#requests_new'
+    get  'api/whispers/:id', to: 'whispers#show'
+    post 'api/whisper/create', to: 'whispers#api_create'
+    post 'api/whisper/whisper_request_state', to: 'whispers#whisper_request_state'
+    post 'api/whisper/decline_whisper_requests', to: 'whispers#decline_whisper_requests'
 
-  # Enter Venue APIs
-  post 'api/v1/room/enter',   to: 'rooms#user_enter'
-  post 'api/v1/room/leave',   to: 'rooms#user_leave'
+    # friend APIs
+    post 'api/friends', to: 'users#myfriends_new'
+    get  'api/friends/:id', to: 'friends#show'
+    
+    # Activity APIs
+    get  'api/activities', to: 'whispers#chat_request_history'
 
-  # venue APIs
-  get  'api/v1/venues/list',                  to: 'venues#list',       as: :venue_list
+    # Enter Venue APIs
+    post 'api/room/enter',   to: 'rooms#user_enter'
+    post 'api/room/leave',   to: 'rooms#user_leave'
 
-  # Other APIs for development
-  get  'api/v1/set-variable', to: 'users#set_global_variable'
+    # venue APIs
+    get  'api/venues/list',                  to: 'venues#list'
+
+    # Other APIs for development
+    get  'api/set-variable', to: 'users#set_global_variable'
+  end
 
 # 
 # 
@@ -165,26 +219,28 @@ Rails.application.routes.draw do
 # API V2
 # 
 # 
-  # user APIs
-  get     'api/v2/users',                               to: 'users_version2#index'
-  get     'api/v2/users/:id',                           to: 'users_version2#show'
-  put     'api/v2/current_user',                        to: 'users_version2#update'
-  get     'api/v2/current_user',                        to: 'users_version2#get_profile'
-  get     'api/v2/check-email',                         to: 'users_version2#check_email'
-  post    'api/v2/signup',                              to: 'users_version2#signup'
-  post    'api/v2/login',                               to: 'users_version2#login'
-  post    'api/v2/emails',                              to: 'users_version2#change_email'
-  post    'api/v2/passwords',                           to: 'users_version2#forgot_password'
-  put     'api/v2/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
-  post    'api/v2/report_user_histories',               to: 'users_version2#report'
-  post    'api/v2/block_users',                         to: 'users_version2#block'
-  # post    'api/v2/like-or-unlike',                to: 'users_version2#like'
-  # delete  'api/v2/logout',                        to: 'users_version2#logout'
 
-  # avatar APIs
-  post   'api/v2/avatars',                              to: 'user_avatars_version2#create'
-  put    'api/v2/avatars/:id',                          to: 'user_avatars_version2#update'
-  delete 'api/v2/avatars/:id',                          to: 'user_avatars_version2#destroy'
+
+  api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
+    # user APIs
+    get     'api/users',                               to: 'users_version2#index'
+    get     'api/users/:id',                           to: 'users_version2#show'
+    put     'api/current_user',                        to: 'users_version2#update'
+    get     'api/current_user',                        to: 'users_version2#get_profile'
+    get     'api/check-email',                         to: 'users_version2#check_email'
+    post    'api/signup',                              to: 'users_version2#signup'
+    post    'api/login',                               to: 'users_version2#login'
+    post    'api/emails',                              to: 'users_version2#change_email'
+    post    'api/passwords',                           to: 'users_version2#forgot_password'
+    put     'api/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
+    post    'api/report_user_histories',               to: 'users_version2#report'
+    post    'api/block_users',                         to: 'users_version2#block'
+
+    # avatar APIs
+    post   'api/avatars',                              to: 'user_avatars_version2#create'
+    put    'api/avatars/:id',                          to: 'user_avatars_version2#update'
+    delete 'api/avatars/:id',                          to: 'user_avatars_version2#destroy'
+  end
 
   
 #     

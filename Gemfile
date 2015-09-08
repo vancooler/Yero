@@ -33,6 +33,9 @@ gem 'phonelib'
 # Use unicorn as the app server
 # gem 'unicorn'
 
+# API Versions
+gem 'versionist'
+
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
