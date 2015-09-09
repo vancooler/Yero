@@ -37,11 +37,13 @@ class FriendsController < ApplicationController
           friend_obj = friend_ship.to_json(friend, current_user)
           render json: success(friend_obj)
         else
+          # :nocov:
           error_obj = {
             code: 404,
             message: "Sorry, cannot find the friend"
           }
           render json: error(error_obj, 'data')
+          # :nocov:
         end
       end
 

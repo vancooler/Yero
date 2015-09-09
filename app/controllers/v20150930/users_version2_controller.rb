@@ -515,9 +515,6 @@ module V20150930
 
     private
     def get_api_token
-      if Rails.env == 'test' && api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]
-        params[:token] = api_token
-      end
       if Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
         params[:token] = api_token
       end

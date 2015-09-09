@@ -52,4 +52,29 @@ class FriendByWhisper < ActiveRecord::Base
 	    	return nil
         end
     end
+
+
+    def self.friends_json(return_users, current_user)
+	    users = Jbuilder.encode do |json|
+	      json.array! return_users.each do |user|
+	        target_user = User.find_by_id(user["target_user"]["id"].to_i)
+	        if !target_user.nil?
+	          user_object = target_user.user_object(current_user)
+	        end
+
+
+	        json.notification_type 3
+	        json.id user_object[:id] 
+
+	        json.actions ['chat']
+	        json.timestamp  user["timestamp"]
+	        json.timestamp_read  Time.at(user["timestamp"])
+	        json.viewed user["viewed"].blank? ? 0 : user["viewed"]
+	        json.object_type "user"
+	        json.object user_object
+
+	      end         
+	    end
+	    return users 
+	end
 end

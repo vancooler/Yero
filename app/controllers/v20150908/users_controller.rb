@@ -249,8 +249,7 @@ module V20150908
         if !page_number.nil? and !friends_per_page.nil? and friends_per_page > 0 and page_number >= 0
           friends = Kaminari.paginate_array(friends).page(page_number).per(friends_per_page) 
         end
-        is_friends = true
-        users = requests_user_whisper_json(friends, is_friends)
+        users = FriendByWhisper.friends_json(friends, current_user)
         users = JSON.parse(users).delete_if(&:blank?)
         users = users.sort_by { |hsh| hsh["timestamp"] }
         # WhisperNotification.delay.accept_friend_viewed_by_sender(current_user.id)
@@ -772,8 +771,7 @@ module V20150908
           friends = WhisperNotification.myfriends(current_user.id)
 
           if !friends.blank?
-            is_friends = true
-            users = requests_user_whisper_json(friends, is_friends)
+            users = FriendByWhisper.friends_json(friends, current_user)
             users = JSON.parse(users).delete_if(&:blank?)
             users = users.sort_by { |hsh| hsh[:timestamp] }
 
@@ -792,41 +790,6 @@ module V20150908
     # :nocov:
 
     private
-
-    
-
-    def requests_user_whisper_json(return_users, is_friends)
-      users = Jbuilder.encode do |json|
-        json.array! return_users.each do |user|
-          target_user = User.find_by_id(user["target_user"]["id"].to_i)
-          if !target_user.nil?
-            user_object = target_user.user_object(current_user)
-          end
-
-          if !is_friends
-            json.seconds_left  user["seconds_left"]
-            json.expire_timestamp  user["expire_timestamp"]
-            json.accepted   user["accepted"].blank? ? 0 : user["accepted"]
-            json.declined   user["declined"].blank? ? 0 : user["declined"]
-            json.intro_message user["intro"].blank? ? '' : user["intro"]
-            json.whisper_id  user["whisper_id"].blank? ? '' : user["whisper_id"]
-            json.notification_type 2
-          else
-            json.notification_type 3
-            json.id user_object[:id] 
-          end
-          json.actions ['chat']
-          json.timestamp  user["timestamp"]
-          json.timestamp_read  Time.at(user["timestamp"])
-          json.viewed user["viewed"].blank? ? 0 : user["viewed"]
-          json.object_type "user"
-          json.object user_object
-
-        end         
-      end
-      return users 
-    end
-
 
     def get_api_token
       if Rails.env == 'test' && api_token = params[:token].blank? && request.headers.env["X-API-TOKEN"]

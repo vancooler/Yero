@@ -227,7 +227,7 @@ Rails.application.routes.draw do
     get     'api/users/:id',                           to: 'users_version2#show'
     put     'api/current_user',                        to: 'users_version2#update'
     get     'api/current_user',                        to: 'users_version2#get_profile'
-    get     'api/check-email',                         to: 'users_version2#check_email'
+    get     'api/verify',                              to: 'users_version2#check_email'
     post    'api/signup',                              to: 'users_version2#signup'
     post    'api/login',                               to: 'users_version2#login'
     post    'api/emails',                              to: 'users_version2#change_email'
@@ -248,6 +248,20 @@ Rails.application.routes.draw do
     # Enter Venue APIs
     post   'api/venues/:id',                           to: 'rooms#user_enter'
     delete 'api/venues',                               to: 'rooms#user_leave'
+
+    # friend APIs
+    get    'api/friends',                              to: 'friends#index'
+    get    'api/friends/:id',                          to: 'friends#show'
+
+    # whisper APIs
+    get    'api/whispers',                             to: 'whispers#index'
+    get    'api/whispers/:id',                         to: 'whispers#show'
+    post   'api/whispers',                             to: 'whispers#create'
+    put    'api/whispers/:id',                         to: 'whispers#update'
+    delete 'api/whispers/collection',                  to: 'whispers#destroy'
+
+    # Activity APIs
+    get    'api/activities',                           to: 'activities#index'
 
   end
 
@@ -297,4 +311,8 @@ Rails.application.routes.draw do
   # get 'test/venues'
   # get 'test/users'
   # get 'test/'
+
+
+
+
 end
