@@ -68,6 +68,11 @@ class Venue < ActiveRecord::Base
         featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
         venues = featured_venues + other_venues
       end
+    else
+      featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
+      if !featured_venues.empty?
+        venues = venues - featured_venues
+      end
     end
     return venues
   end

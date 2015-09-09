@@ -240,6 +240,15 @@ Rails.application.routes.draw do
     post   'api/avatars',                              to: 'user_avatars_version2#create'
     put    'api/avatars/:id',                          to: 'user_avatars_version2#update'
     delete 'api/avatars/:id',                          to: 'user_avatars_version2#destroy'
+
+
+    # venue APIs
+    get    'api/venues',                               to: 'venues_version2#list'
+
+    # Enter Venue APIs
+    post   'api/venues/:id',                           to: 'rooms#user_enter'
+    delete 'api/venues',                               to: 'rooms#user_leave'
+
   end
 
   

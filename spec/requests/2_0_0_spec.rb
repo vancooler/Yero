@@ -381,5 +381,113 @@ describe 'V2.0.0' do
       	User.delete_all
   	end
 
+  	it "Venues" do
+  		birthday = (Time.now - 21.years)
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 0)
+
+
+	    venue_network = VenueNetwork.create!(id:1, name: "V")
+        venue_type = VenueType.create!(id:1, name:"Campus")
+        venue_type_2 = VenueType.create!(id:2, name:"Club")
+        venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.153, longitude: -123.436, featured: false)
+        venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type_2, latitude: 49.423, longitude: -123.532, featured: false)
+        venue_3 = Venue.create!(id:3, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.353, longitude: -123.424, featured: false)
+        venue_4 = Venue.create!(id:4, venue_network: venue_network, name: "DDD", venue_type:venue_type_2, latitude: 49.463, longitude: -123.312, featured: true)
+        VenueAvatar.create!(id: 2, venue_id: 1, default: true)
+        VenueAvatar.create!(id: 3, venue_id: 2, default: true)
+        VenueAvatar.create!(id: 4, venue_id: 3, default: true)
+        VenueAvatar.create!(id: 5, venue_id: 4, default: true)
+
+
+
+	   	token = user_2.generate_token
+
+	   	get 'api/venues?page=0&per_page=12&latitude=49.4563&longitude=-122.8787&distance=1000&without_featured_venues=1&token='+token, {}, {'API-VERSION' => 'V2_0'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 3
+
+		get 'api/venues?token='+token, {}, {'API-VERSION' => 'V2_0'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 4
+
+		VenueAvatar.delete_all
+		Venue.delete_all
+		VenueType.delete_all
+		UserAvatar.delete_all
+		User.delete_all
+		VenueNetwork.delete_all
+	end
+
+
+  	it "Enter/leave venue" do
+  		birthday = (Time.now - 21.years)
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+
+	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
+      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
+      	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
+	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
+      	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
+	    
+      	token = user_2.generate_token
+
+
+      	post 'api/venues/sfsdf', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+      	expect(JSON.parse(response.body)['data']['code']).to eql 404
+
+      	post 'api/venues/Vancouver_TestVenue_test', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/venues/Vancouver_TestVenue2_test', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue2_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+
+      	delete 'api/venues', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	delete 'api/venues', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+      	post 'api/venues/Vancouver_TestVenue_test', {:token => token}, {'API-VERSION' => 'V2_0'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+
+      	ActiveInVenueNetwork.five_am_cleanup(venue_network)
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 0
+
+
+
+      	ActiveInVenue.delete_all
+      	ActiveInVenueNetwork.delete_all
+      	VenueEnteredToday.delete_all
+      	Beacon.delete_all
+      	Venue.delete_all
+      	VenueNetwork.delete_all
+      	UserAvatar.delete_all
+      	User.delete_all
+  	end
 
 end

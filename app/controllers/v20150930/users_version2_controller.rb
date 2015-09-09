@@ -125,11 +125,13 @@ module V20150930
       if user.save
         render json: success(user.to_json(false))
       else
-     	  error_obj = {
+     	  # :nocov:
+        error_obj = {
     	    code: 520,
     	    message: "Cannot update the user."
     	  }
     	  render json: error(error_obj, 'data')
+        # :nocov:
       end
     end
 
@@ -300,11 +302,13 @@ module V20150930
             
             render json: success(response)
           else
+            # :nocov:
             error_obj = {
-  		    code: 520,
-  		    message: "Cannot sign up this user."
-  		  }
-  		  render json: error(error_obj, 'data')
+      		    code: 520,
+      		    message: "Cannot sign up this user."
+      		  }
+      		  render json: error(error_obj, 'data')
+            # :nocov:
           end
         else
         	  error_obj = {
@@ -364,11 +368,13 @@ module V20150930
             UserMailer.delay.email_reset(@user)
             render json: success(true)
           else
+            # :nocov:
             error_obj = {
-  		    code: 520,
-  		    message: "Cannot generate reset email token for this user."
-  		  }
-  		  render json: error(error_obj, 'data')
+      		    code: 520,
+      		    message: "Cannot generate reset email token for this user."
+      		  }
+      		  render json: error(error_obj, 'data')
+            # :nocov:
           end
         else
   	    error_obj = {
@@ -399,11 +405,13 @@ module V20150930
           UserMailer.delay.forget_password(@user)
           render json: success(true)
         else
+          # :nocov:
           error_obj = {
-  		  code: 520,
-      	  message: "Cannot generate reset password token for this user."
-  		}
+      		  code: 520,
+        	  message: "Cannot generate reset password token for this user."
+      		}
   	    render json: error(error_obj, 'data')
+        # :nocov:
         end
       else
         error_obj = {
@@ -456,11 +464,13 @@ module V20150930
   	      reports_need_update.update_all(:frequency => rep.frequency)
   	      render json: success(true)
   	    else
-  	      error_obj = {
-  		    code: 520,
+  	      # :nocov:
+          error_obj = {
+    		    code: 520,
       	    message: "Cannot report this user."
-  		  }
+    		  }
   	      render json: error(error_obj, 'data')
+          # :nocov:
   	    end
         
       else

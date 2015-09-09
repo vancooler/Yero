@@ -39,6 +39,7 @@ class UserAvatar < ActiveRecord::Base
     end
   end
 
+  # :nocov:
   def self.move_url
     avatars = UserAvatar.where("origin_url is ?", nil)
     avatars.each do |a|
@@ -55,9 +56,10 @@ class UserAvatar < ActiveRecord::Base
       avatar.save
     end
   end
+  # :nocov:
 
   private
-
+    # :nocov:
     def set_order_zero_if_only_one_avatar_present
       if !self.user.nil?
         return if (self.user.user_avatars.where(:is_active => true).count > 1 || self.order == 0)   
@@ -90,4 +92,5 @@ class UserAvatar < ActiveRecord::Base
       errors.add :base, "You cannot delete the default avatar."
       return false
     end
+    # :nocov:
 end

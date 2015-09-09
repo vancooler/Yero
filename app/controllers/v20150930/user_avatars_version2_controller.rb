@@ -19,11 +19,13 @@ module V20150930
           user_info = current_user.to_json(true)
           render json: success(user_info)
         else
+          # :nocov:
           error_obj = {
             code: 520,
             message: "Cannot create this photo"
           }
           render json: error(error_obj, 'data')
+          # :nocov:
         end
       else
         error_obj = {
@@ -54,11 +56,13 @@ module V20150930
             
             render json: success(user_info)
           else
+            # :nocov:
             error_obj = {
               code: 520,
               message: "Cannot update the photo."
             }
             render json: error(error_obj, 'data')
+            # :nocov:
           end
         end
       else  
@@ -82,11 +86,13 @@ module V20150930
           user_info = current_user.to_json(true)
           render json: success(user_info)
         else
+          # :nocov:
           error_obj = {
             code: 520,
             message: "Cannot delete the photo."
           }
           render json: error(error_obj, 'data')
+          # :nocov:
         end
       else
         error_obj = {
