@@ -220,50 +220,51 @@ Rails.application.routes.draw do
 # 
 # 
 
+  # constraints subdomain: 'api' do
+    api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
+      # user APIs
+      get     'api/users',                               to: 'users_version2#index'
+      get     'api/users/:id',                           to: 'users_version2#show'
+      put     'api/current_user',                        to: 'users_version2#update'
+      get     'api/current_user',                        to: 'users_version2#get_profile'
+      get     'api/verify',                              to: 'users_version2#check_email'
+      post    'api/signup',                              to: 'users_version2#signup'
+      post    'api/login',                               to: 'users_version2#login'
+      post    'api/emails',                              to: 'users_version2#change_email'
+      post    'api/passwords',                           to: 'users_version2#forgot_password'
+      put     'api/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
+      post    'api/report_user_histories',               to: 'users_version2#report'
+      post    'api/block_users',                         to: 'users_version2#block'
 
-  api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
-    # user APIs
-    get     'api/users',                               to: 'users_version2#index'
-    get     'api/users/:id',                           to: 'users_version2#show'
-    put     'api/current_user',                        to: 'users_version2#update'
-    get     'api/current_user',                        to: 'users_version2#get_profile'
-    get     'api/verify',                              to: 'users_version2#check_email'
-    post    'api/signup',                              to: 'users_version2#signup'
-    post    'api/login',                               to: 'users_version2#login'
-    post    'api/emails',                              to: 'users_version2#change_email'
-    post    'api/passwords',                           to: 'users_version2#forgot_password'
-    put     'api/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
-    post    'api/report_user_histories',               to: 'users_version2#report'
-    post    'api/block_users',                         to: 'users_version2#block'
-
-    # avatar APIs
-    post   'api/avatars',                              to: 'user_avatars_version2#create'
-    put    'api/avatars/:id',                          to: 'user_avatars_version2#update'
-    delete 'api/avatars/:id',                          to: 'user_avatars_version2#destroy'
+      # avatar APIs
+      post   'api/avatars',                              to: 'user_avatars_version2#create'
+      put    'api/avatars/:id',                          to: 'user_avatars_version2#update'
+      delete 'api/avatars/:id',                          to: 'user_avatars_version2#destroy'
 
 
-    # venue APIs
-    get    'api/venues',                               to: 'venues_version2#list'
+      # venue APIs
+      get    'api/venues',                               to: 'venues_version2#list'
 
-    # Enter Venue APIs
-    post   'api/venues/:id',                           to: 'rooms#user_enter'
-    delete 'api/venues',                               to: 'rooms#user_leave'
+      # Enter Venue APIs
+      post   'api/venues/:id',                           to: 'rooms#user_enter'
+      delete 'api/venues',                               to: 'rooms#user_leave'
 
-    # friend APIs
-    get    'api/friends',                              to: 'friends#index'
-    get    'api/friends/:id',                          to: 'friends#show'
+      # friend APIs
+      get    'api/friends',                              to: 'friends#index'
+      get    'api/friends/:id',                          to: 'friends#show'
 
-    # whisper APIs
-    get    'api/whispers',                             to: 'whispers#index'
-    get    'api/whispers/:id',                         to: 'whispers#show'
-    post   'api/whispers',                             to: 'whispers#create'
-    put    'api/whispers/:id',                         to: 'whispers#update'
-    delete 'api/whispers/collection',                  to: 'whispers#destroy'
+      # whisper APIs
+      get    'api/whispers',                             to: 'whispers#index'
+      get    'api/whispers/:id',                         to: 'whispers#show'
+      post   'api/whispers',                             to: 'whispers#create'
+      put    'api/whispers/:id',                         to: 'whispers#update'
+      delete 'api/whispers/collection',                  to: 'whispers#destroy'
 
-    # Activity APIs
-    get    'api/activities',                           to: 'activities#index'
+      # Activity APIs
+      get    'api/activities',                           to: 'activities#index'
 
-  end
+    end
+  # end
 
   
 #     

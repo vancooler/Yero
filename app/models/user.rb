@@ -1308,7 +1308,8 @@ class User < ActiveRecord::Base
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
       
-      users = same_venue_users.sort_by{ |hsh| hsh[:last_active] }.reverse + different_venue_users.sort_by{ |hsh| hsh[:last_active] }.reverse  #Sort users by distance
+      users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
+      
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
@@ -1336,4 +1337,75 @@ class User < ActiveRecord::Base
     return result
   end
 
+
+  def self.authenticate_v2(token)
+    if Rails.env == 'development' or Rails.env == 'test'
+      secret = 'secret'
+    else
+      secret = ENV['SECRET_KEY_BASE']
+    end
+    if token.blank?
+      error_obj = {
+        code: 499,
+        message: "Token required"
+      }
+      result = {'success' => false, 'error_data' => error_obj}
+      return result
+    else
+      token = token.split(' ').last
+      begin
+        token_info = JWT.decode(token, secret)
+        if token_info.nil? or token_info.empty? or token_info.first.nil?
+          error_obj = {
+            code: 497,
+            message: "Token Invalid"
+          }
+          result = {'success' => false, 'error_data' => error_obj}
+          return result
+        else
+          user_info = token_info.first
+          user_id = user_info['id']
+          if user_id.nil?
+            error_obj = {
+              code: 497,
+              message: "Token Invalid"
+            }
+            result = {'success' => false, 'error_data' => error_obj}
+            return result
+          else
+            user = User.find_by_id(user_id.to_i)
+            if user.nil?
+              error_obj = {
+                code: 497,
+                message: "Token Invalid"
+              }
+              result = {'success' => false, 'error_data' => error_obj}
+              return result
+            else
+              user.last_active = Time.now + 1.second
+              user.save!
+              # user.update(last_active: Time.now+1.second)
+              result = {'success' => true}
+              return result
+            end
+          end
+        end
+
+      rescue JWT::ExpiredSignature
+        error_obj = {
+          code: 497,
+          message: "Token Expired"
+        }
+        result = {'success' => false, 'error_data' => error_obj}
+        return result
+      rescue JWT::DecodeError
+        error_obj = {
+          code: 497,
+          message: "Token Invalid"
+        }
+        result = {'success' => false, 'error_data' => error_obj}
+        return result
+      end
+    end
+  end
 end

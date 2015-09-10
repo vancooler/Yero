@@ -62,9 +62,7 @@ module V20150930
     private
 
     def get_api_token
-      if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
-        params[:token] = api_token
-      end
+      params[:token] = api_token if (api_token = params[:token].blank? && request.headers["X-API-TOKEN"])
     end
   end
 end

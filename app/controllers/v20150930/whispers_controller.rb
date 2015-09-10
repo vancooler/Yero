@@ -85,11 +85,13 @@ module V20150930
             whisper_obj = whisper_array.first
             render json: success(whisper_obj)
           else
+            # :nocov:
             error_obj = {
               code: 404,
               message: "Sorry, cannot find the whisper"
             }
             render json: error(error_obj, 'data')
+            # :nocov:
           end
         end
       end
@@ -128,7 +130,9 @@ module V20150930
         if params[:accepted].to_i == 1 and item.target_user_id.to_i == current_user.id
           state = 'accepted'
           if Rails.env == 'production'
+            # :nocov:
             WhisperNotification.delay.find_whisper(whisperId, state)
+            # :nocov:
           else
             WhisperNotification.find_whisper(whisperId, state)
           end
@@ -150,11 +154,13 @@ module V20150930
             # :nocov:
           else
             if FriendByWhisper.check_friends(origin_id, target_id) 
+              # :nocov:
               error_obj = {
                 code: 403,
                 message: "You are already friends."
               }
               render json: error(error_obj, 'data')
+              # :nocov:
             elsif BlockUser.check_block(origin_id, target_id)
               error_obj = {
                 code: 403,
@@ -163,7 +169,9 @@ module V20150930
               render json: error(error_obj, 'data')
             else
               if Rails.env == 'production'
+                # :nocov:
                 n = WhisperNotification.create_in_aws(origin_id, target_id, venue_id, "3", "")
+                # :nocov:
               else
                 n = WhisperNotification.new 
               end
@@ -175,11 +183,11 @@ module V20150930
                 WhisperReply.where(whisper_id: item.id).delete_all
                 user = User.find(target_id.to_i)
                 if Rails.env == 'production'
+                  # :nocov:
                   message = user.first_name + " is now your friend!"
                   n.send_push_notification_to_target_user(message, 0)
-                end
-                if Rails.env == 'production'
                   WhisperReply.delay.archive_history(item)
+                  # :nocov:
                 else
                   WhisperReply.where(whisper_id: item.id).delete_all
                   item.delete
@@ -199,12 +207,16 @@ module V20150930
         elsif params[:declined].to_i == 1
           state = 'declined'
           if Rails.env == 'production'
+            # :nocov:
             WhisperNotification.delay.find_whisper(whisperId, state)
+            # :nocov:
           else
             WhisperNotification.find_whisper(whisperId, state)
           end
           if Rails.env == 'production'
+            # :nocov:
             WhisperReply.delay.archive_history(item)
+            # :nocov:
           else
             WhisperReply.where(whisper_id: item.id).delete_all
             item.delete
@@ -237,7 +249,9 @@ module V20150930
         render json: error(error_obj, 'data')
       else
         if Rails.env == 'production'
+          # :nocov:
           WhisperNotification.delay.delete_whispers(params[:array].to_a)
+          # :nocov:
         else
           whisper_id_array = WhisperToday.where(dynamo_id: params[:array].to_a).map(&:id)
           WhisperReply.where(whisper_id: whisper_id_array).delete_all
@@ -250,9 +264,7 @@ module V20150930
 
 
     def get_api_token
-      if Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
-        params[:token] = api_token
-      end
+      params[:token] = api_token if (Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"])
     end
   end
 end
