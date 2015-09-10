@@ -289,7 +289,7 @@ describe User do
 	      	user_obj = Hash.new 
 	      	user_obj['Email'] = "alenafaz13@live.ca"
 	      	user_obj['Password'] = "upper1lower1"
-	      	user_obj['Name'] = "Alena"
+	      	user_obj['Name'] = "Julia"
 	      	user_obj['Birthday'] = "22-Dec-92"
 	      	user_obj['Gender'] = "F"
 	      	user_obj['Latitude'] = "49.226248"
@@ -297,14 +297,14 @@ describe User do
 	      	expect(UserAvatar.all.count).to eql 0
 	      	expect(User.all.count).to eql 0
 	      	User.import_single_user(user_obj)
-	      	expect(UserAvatar.all.count).to eql 5
+	      	expect(UserAvatar.all.count).to eql 2
 	      	expect(User.all.count).to eql 1
 	      	
 	      	UserAvatar.delete_all
 	      	expect(UserAvatar.all.count).to eql 0
 	      	expect(User.all.count).to eql 1
 	      	User.import_single_user(user_obj)
-	      	expect(UserAvatar.all.count).to eql 5
+	      	expect(UserAvatar.all.count).to eql 2
 	      	expect(User.all.count).to eql 1
 
 	      	UserAvatar.delete_all

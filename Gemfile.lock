@@ -254,6 +254,7 @@ GEM
       activerecord (>= 3.0)
     polyglot (0.3.5)
     rack (1.5.2)
+    rack-ssl-enforcer (0.2.9)
     rack-test (0.6.3)
       rack (>= 1.0)
     rails (4.1.0)
@@ -416,6 +417,7 @@ DEPENDENCIES
   parse-ruby-client
   pg
   phonelib
+  rack-ssl-enforcer
   rails (= 4.1.0)
   rails-perftest
   rails_12factor

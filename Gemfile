@@ -93,6 +93,9 @@ gem 'socialization'
 gem 'rails-perftest'
 gem 'ruby-prof'
 
+# SSL
+gem 'rack-ssl-enforcer'
+
 group :development do 
   gem 'rest-client'
 end

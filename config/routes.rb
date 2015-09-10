@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # get 'temp_beacon/enter_random_users', as: 'enter_users'
   # get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
-  constraints DomainConstraint.new(['www.yero.co', 'localhost:3000', 'yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com', 'purpleoctopus-staging.herokuapp.com']) do
+  constraints DomainConstraint.new(['www.yero.co', 'localhost', 'yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com', 'purpleoctopus-staging.herokuapp.com']) do
     devise_for :users
     resources :venue_portals
     resources :early_venues
@@ -235,7 +235,7 @@ Rails.application.routes.draw do
 # 
 # 
 
-  constraints DomainConstraint.new(['api.yero.co', 'localhost:3000', 'devapi.yero.co', 'www.example.com']) do
+  constraints DomainConstraint.new(['api.yero.co', 'localhost', 'devapi.yero.co', 'www.example.com']) do
     api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
       # user APIs
       get     'api/users',                               to: 'users_version2#index'
