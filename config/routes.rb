@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   require 'domain'
+  require 'domain_constraint'
 
   devise_for :users
   resources :venue_portals
@@ -220,7 +221,7 @@ Rails.application.routes.draw do
 # 
 # 
 
-  # constraints subdomain: 'api' do
+  constraints DomainConstraint.new(['api.yero.co', 'localhost:3000', 'devapi.yero.co', 'www.example.com']) do
     api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
       # user APIs
       get     'api/users',                               to: 'users_version2#index'
@@ -264,7 +265,7 @@ Rails.application.routes.draw do
       get    'api/activities',                           to: 'activities#index'
 
     end
-  # end
+  end
 
   
 #     
