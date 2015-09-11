@@ -1,9 +1,11 @@
 class WhisperToday < ActiveRecord::Base
 	has_many :whisper_replies, :foreign_key => 'whisper_id'
+	# :nocov:
 	def self.all_whispers(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
 		WhisperToday.where(:target_user_id => user_id).where.not(origin_user_id: black_list).where(:declined => false).where(:accepted => false).order("created_at DESC")
 	end
+	# :nocov:
 
 	def self.unviewed_whispers_count(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
@@ -16,11 +18,15 @@ class WhisperToday < ActiveRecord::Base
 		elsif current_user_id == self.target_user_id
 			user = User.find_by_id(origin_user_id)
 		else
+			# :nocov:
 			return true
+			# :nocov:
 		end
 
 		if user.nil?
+			# :nocov:
 			return true
+			# :nocov:
 		else
 			return user.user_avatars.where(is_active: true).blank?
 		end
@@ -63,7 +69,11 @@ class WhisperToday < ActiveRecord::Base
 
 				        #   json.expire_timestamp Time.now.to_i + 3600*24
 				        # end
-				        json.expire_timestamp (a.created_at + 48.hours).to_i
+				        if a.message_b == ''
+					        json.expire_timestamp (a.created_at + 12.hours).to_i
+				        else
+					        json.expire_timestamp (a.updated_at + 48.hours).to_i
+					    end
 				        json.initial_whisper true
 				    else # whispers with replies
 				    	json.initial_whisper false
@@ -94,7 +104,9 @@ class WhisperToday < ActiveRecord::Base
 						if !a.accepted and !a.declined
 							can_handle = true
 						else
+							# :nocov:
 							can_handle = false
+							# :nocov:
 						end
 						if !a.origin_user_id.nil?
 							origin_user = User.find_by_id(a.origin_user_id)
@@ -114,13 +126,13 @@ class WhisperToday < ActiveRecord::Base
 							end
 						end
 					end
-					sent = false
-					if !origin_user.nil?
-						array = WhisperSent.where(['whisper_time > ?', Time.now-48.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => origin_user.id)
-						if !array.blank?
-							sent = true
-						end
-					end
+					# sent = false
+					# if !origin_user.nil?
+					# 	array = WhisperSent.where(['whisper_time > ?', Time.now-48.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => origin_user.id)
+					# 	if !array.blank?
+					# 		sent = true
+					# 	end
+					# end
 					# if are_friends
 					# 	json.status 5
 					# elsif can_reply and can_handle
@@ -187,7 +199,13 @@ class WhisperToday < ActiveRecord::Base
 
 
 	def self.expire
-		expire_array = WhisperToday.where(['created_at < ?', Time.now-48.hours]).where(:message_b => '')
+		# introduction whispers
+		expire_array = WhisperToday.where(['created_at < ?', Time.now-12.hours]).where(:message_b => '')
+		whisper_ids = expire_array.map(&:id)
+		WhisperReply.where(whisper_id: whisper_ids).delete_all
+		expire_array.delete_all
+		# replied whispers
+		expire_array = WhisperToday.where(['updated_at < ?', Time.now-48.hours]).where("message_b != ?", '')
 		whisper_ids = expire_array.map(&:id)
 		WhisperReply.where(whisper_id: whisper_ids).delete_all
 		expire_array.delete_all

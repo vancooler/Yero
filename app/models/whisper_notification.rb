@@ -266,7 +266,7 @@ class WhisperNotification < AWS::Record::HashModel
   # Function that gets all the users received whisper from current user
   def self.collect_whispers(current_user)
     # array = WhisperToday.where.not(paper_owner_id: current_user.id).where(origin_user_id: current_user.id).map(&:target_user_id)
-    array = WhisperSent.where(['whisper_time > ?', Time.now-48.hours]).where(:origin_user_id => current_user.id).map(&:target_user_id)
+    array = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).map(&:target_user_id)
 
     return array.uniq
   end
@@ -386,7 +386,7 @@ class WhisperNotification < AWS::Record::HashModel
       pending_whisper = WhisperToday.find_pending_whisper(target_id.to_i, origin_id.to_i)
       # check if whisper sent today
       if pending_whisper.nil?
-        whisper_just_sent = WhisperSent.where(['whisper_time > ?', Time.now-48.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => target_id.to_i)
+        whisper_just_sent = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => target_id.to_i)
         if whisper_just_sent.blank?
           if Rails.env == 'production'
             n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
