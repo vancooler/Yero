@@ -9,26 +9,30 @@ module V20150930
     	if friend.nil?
     	  error_obj = {
           code: 404,
-          message: "Sorry, cannot find the friend"
+          message: "Sorry, cannot find the friend",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
     	else
     	  if !FriendByWhisper.check_friends(current_user.id, friend.id) 
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         elsif BlockUser.check_block(current_user.id, friend.id) 
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         elsif friend.user_avatars.where(is_active: true).blank?        
         	error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         else
@@ -40,7 +44,8 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 404,
-              message: "Sorry, cannot find the friend"
+              message: "Sorry, cannot find the friend",
+              external_message: ''
             }
             render json: error(error_obj, 'data')
             # :nocov:
@@ -90,7 +95,8 @@ module V20150930
       if friend.nil?
         error_obj = {
           code: 404,
-          message: "Friend cannot be found"
+          message: "Friend cannot be found",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       else
@@ -100,7 +106,8 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot delete the friend."
+            message: "Cannot delete the friend.",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
           # :nocov:

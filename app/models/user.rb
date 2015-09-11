@@ -1347,7 +1347,8 @@ class User < ActiveRecord::Base
     if token.blank?
       error_obj = {
         code: 499,
-        message: "Token required"
+        message: "Token required",
+        external_message: ''
       }
       result = {'success' => false, 'error_data' => error_obj}
       return result
@@ -1358,7 +1359,8 @@ class User < ActiveRecord::Base
         if token_info.nil? or token_info.empty? or token_info.first.nil?
           error_obj = {
             code: 497,
-            message: "Token Invalid"
+            message: "Token Invalid",
+            external_message: ''
           }
           result = {'success' => false, 'error_data' => error_obj}
           return result
@@ -1368,7 +1370,8 @@ class User < ActiveRecord::Base
           if user_id.nil?
             error_obj = {
               code: 497,
-              message: "Token Invalid"
+              message: "Token Invalid",
+              external_message: ''
             }
             result = {'success' => false, 'error_data' => error_obj}
             return result
@@ -1377,7 +1380,8 @@ class User < ActiveRecord::Base
             if user.nil?
               error_obj = {
                 code: 497,
-                message: "Token Invalid"
+                message: "Token Invalid",
+                external_message: ''
               }
               result = {'success' => false, 'error_data' => error_obj}
               return result
@@ -1394,14 +1398,16 @@ class User < ActiveRecord::Base
       rescue JWT::ExpiredSignature
         error_obj = {
           code: 497,
-          message: "Token Expired"
+          message: "Token Expired",
+          external_message: ''
         }
         result = {'success' => false, 'error_data' => error_obj}
         return result
       rescue JWT::DecodeError
         error_obj = {
           code: 497,
-          message: "Token Invalid"
+          message: "Token Invalid",
+          external_message: ''
         }
         result = {'success' => false, 'error_data' => error_obj}
         return result

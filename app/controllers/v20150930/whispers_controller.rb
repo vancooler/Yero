@@ -56,7 +56,8 @@ module V20150930
       if whisper.blank?
         error_obj = {
           code: 404,
-          message: "Sorry, cannot find the whisper"
+          message: "Sorry, cannot find the whisper",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       else
@@ -64,19 +65,22 @@ module V20150930
         if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         elsif whisper.photo_disabled(current_user.id)
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it"
+            message: "Sorry, you don't have access to it",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         else
@@ -88,7 +92,8 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 404,
-              message: "Sorry, cannot find the whisper"
+              message: "Sorry, cannot find the whisper",
+              external_message: ''
             }
             render json: error(error_obj, 'data')
             # :nocov:
@@ -114,7 +119,8 @@ module V20150930
       else
         error_obj = {
           code: 403,
-          message: result
+          message: result,
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       end  
@@ -148,7 +154,8 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 404,
-              message: "Sorry, cannot find the whisper"
+              message: "Sorry, cannot find the whisper",
+              external_message: ''
             }
             render json: error(error_obj, 'data')
             # :nocov:
@@ -157,14 +164,16 @@ module V20150930
               # :nocov:
               error_obj = {
                 code: 403,
-                message: "You are already friends."
+                message: "You are already friends.",
+                external_message: ''
               }
               render json: error(error_obj, 'data')
               # :nocov:
             elsif BlockUser.check_block(origin_id, target_id)
               error_obj = {
                 code: 403,
-                message: "User blocked"
+                message: "User blocked",
+                external_message: ''
               }
               render json: error(error_obj, 'data')
             else
@@ -197,7 +206,8 @@ module V20150930
                 # :nocov:
                 error_obj = {
                   code: 520,
-                  message: "Sorry cannot execute the action"
+                  message: "Sorry cannot execute the action",
+                  external_message: ''
                 }
                 render json: error(error_obj, 'data')
                 # :nocov:
@@ -226,7 +236,8 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Sorry cannot execute the action"
+            message: "Sorry cannot execute the action",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
           # :nocov:
@@ -234,7 +245,8 @@ module V20150930
       else
         error_obj = {
           code: 404,
-          message: "Sorry, cannot find the whisper"
+          message: "Sorry, cannot find the whisper",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       end
@@ -244,7 +256,8 @@ module V20150930
       if params[:array].blank?
         error_obj = {
           code: 400,
-          message: "Invalid Parameters"
+          message: "Invalid Parameters",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       else

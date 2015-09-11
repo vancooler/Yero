@@ -22,7 +22,8 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot create this photo"
+            message: "Cannot create this photo",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
           # :nocov:
@@ -30,7 +31,8 @@ module V20150930
       else
         error_obj = {
           code: 400,
-          message: "Invalid Parameters"
+          message: "Invalid Parameters",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       end
@@ -45,7 +47,8 @@ module V20150930
         if avatar.nil?
           error_obj = {
             code: 404,
-            message: "Photo cannot be found"
+            message: "Photo cannot be found",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
         else
@@ -62,7 +65,8 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 520,
-              message: "Cannot update the photo."
+              message: "Cannot update the photo.",
+              external_message: ''
             }
             render json: error(error_obj, 'data')
             # :nocov:
@@ -71,7 +75,8 @@ module V20150930
       else  
         error_obj = {
           code: 400,
-          message: "Invalid Parameters"
+          message: "Invalid Parameters",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       end
@@ -99,7 +104,8 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot delete the photo."
+            message: "Cannot delete the photo.",
+            external_message: ''
           }
           render json: error(error_obj, 'data')
           # :nocov:
@@ -107,7 +113,8 @@ module V20150930
       else
         error_obj = {
           code: 404,
-          message: "Photo cannot be found"
+          message: "Photo cannot be found",
+          external_message: ''
         }
         render json: error(error_obj, 'data')
       end
