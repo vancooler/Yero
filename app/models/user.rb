@@ -889,8 +889,9 @@ class User < ActiveRecord::Base
   end
 
   # Generate auth token
-  def generate_token
-    user = {:id => self.id, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
+  def generate_token(with_expire_time = nil)
+    expire_time = (Time.now.to_i + 3600*24)
+    user = {:id => self.id, :exp => expire_time } # expire in 24 hours
     if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
     else
@@ -898,7 +899,14 @@ class User < ActiveRecord::Base
     end
     token = JWT.encode(user, secret)
 
-    return token
+    if with_expire_time.nil?
+      return token
+    else
+      token_obj = Hash.new
+      token_obj['expire'] = expire_time.to_i
+      token_obj['token'] = token
+      return token_obj
+    end
   end
 
   # Join network with click the button

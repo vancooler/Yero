@@ -295,7 +295,7 @@ module V20150930
         if !(User.exists? email: params[:email])
           if @user.save
             response = @user.to_json(true)
-            response['token'] = @user.generate_token
+            response['token'] = @user.generate_token(true)
             intro = "Welcome to Yero"
             # TODO: future feature
             # n = WhisperNotification.create_in_aws(@user.id, 0, 1, 2, intro)
@@ -341,7 +341,7 @@ module V20150930
             user.last_active = Time.now
             user.save!
             user_info = user.to_json(true)
-            user_info['token'] = user.generate_token
+            user_info['token'] = user.generate_token(true)
             render json: success(user_info)
           else
             error_obj = {
