@@ -282,6 +282,7 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'][0]['user']['id']).to eql 2
 
 		BlockUser.delete_all
+		TimeZonePlace.delete_all
 		ReportUserHistory.delete_all
 		ReportType.delete_all
       	GlobalVariable.delete_all
