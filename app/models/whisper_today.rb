@@ -69,13 +69,10 @@ class WhisperToday < ActiveRecord::Base
 
 				        #   json.expire_timestamp Time.now.to_i + 3600*24
 				        # end
-				        if a.message_b == ''
-					        json.expire_timestamp (a.created_at + 12.hours).to_i
-				        else
-					        json.expire_timestamp (a.updated_at + 48.hours).to_i
-					    end
+				        json.expire_timestamp (a.created_at + 12.hours).to_i
 				        json.initial_whisper true
 				    else # whispers with replies
+				        json.expire_timestamp (a.updated_at + 48.hours).to_i
 				    	json.initial_whisper false
 				    end
 
