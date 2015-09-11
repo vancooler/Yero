@@ -1,7 +1,7 @@
 module V20150930
   class VenuesVersion2Controller < ApplicationController
-    prepend_before_filter :get_api_token, only: [:list]
-    before_action :authenticate_api_v2, only: [:list]
+    prepend_before_filter :get_api_token
+    before_action :authenticate_api_v2
     # list all the venues for this owner
 
 

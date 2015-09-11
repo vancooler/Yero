@@ -1,7 +1,7 @@
 module V20150930
   class ActivitiesController < ApplicationController
-  	prepend_before_filter :get_api_token, only: [:index]
-    before_action :authenticate_api_v2, only: [:index]
+  	prepend_before_filter :get_api_token
+    before_action :authenticate_api_v2
 
     # Activity history
     def index
