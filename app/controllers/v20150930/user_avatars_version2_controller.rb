@@ -49,11 +49,14 @@ module V20150930
           }
           render json: error(error_obj, 'data')
         else
+          avatar_url = avatar.origin_url
+          thumb_url = avatar.thumb_url
+
           avatar.origin_url = params[:avatar_url]
           avatar.thumb_url = params[:thumb_url]
           if avatar.save
+            UserAvatar.remove_from_aws(avatar_url, thumb_url)
             user_info = current_user.to_json(true)
-            
             render json: success(user_info)
           else
             # :nocov:
@@ -80,7 +83,14 @@ module V20150930
       active_avatars_number = current_user.user_avatars.where(:is_active => true).size
       if avatar
         this_order = avatar.order
+        
+
+        avatar_url = avatar.origin_url
+        thumb_url = avatar.thumb_url
+
         if avatar.destroy
+          UserAvatar.remove_from_aws(avatar_url, thumb_url)
+
           UserAvatar.order_minus_one(current_user.id, this_order)
 
           user_info = current_user.to_json(true)

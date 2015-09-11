@@ -85,6 +85,30 @@ module V20150930
       render json: success(response_data, "data")
     end
 
+    def destroy
+      friend = FriendByWhisper.find_friendship(current_user.id, params[:id].to_i)
+      if friend.nil?
+        error_obj = {
+          code: 404,
+          message: "Friend cannot be found"
+        }
+        render json: error(error_obj, 'data')
+      else
+        if friend.destroy
+          render json: success(true)
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot delete the friend."
+          }
+          render json: error(error_obj, 'data')
+          # :nocov:
+        end
+
+      end
+    end
+
     private
 
     def get_api_token

@@ -1,3 +1,4 @@
+require 'aws-sdk'
 class UserAvatar < ActiveRecord::Base
   after_save :set_order_zero_if_only_one_avatar_present
   before_destroy :validate_min_number_of_avatars
@@ -58,6 +59,41 @@ class UserAvatar < ActiveRecord::Base
   end
   # :nocov:
 
+  def self.remove_from_aws(avatar_url, thumb_url)
+    # remove in AWS
+    if ENV['AWS_ACCESS_KEY_ID'].blank?
+      access_key_id = 'AKIAJYFD6Q4GYZSGTX5Q'
+    end
+    if ENV['AWS_SECRET_ACCESS_KEY'].blank?
+      access_key = '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'
+    end
+    if ENV['S3_BUCKET_NAME'].blank?
+      bucket = 'yero-development'
+    end
+    AWS.config(:access_key_id => access_key_id, :secret_access_key => access_key)
+    s3 = AWS::S3.new
+
+    array = avatar_url.split(bucket+'/')
+    if array.count>1
+      s3_bucket = s3.buckets[bucket]
+      if s3_bucket
+        object = s3_bucket.objects[array.last]
+        if object
+          object.delete
+        end
+      end
+    end
+    array = thumb_url.split(bucket+'/')
+    if array.count>1
+      s3_bucket = s3.buckets[bucket]
+      if s3_bucket
+        object = s3_bucket.objects[array.last]
+        if object
+          object.delete
+        end
+      end
+    end
+  end
   private
     # :nocov:
     def set_order_zero_if_only_one_avatar_present

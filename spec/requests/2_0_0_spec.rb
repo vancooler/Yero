@@ -1,6 +1,5 @@
 require 'spec_helper'
 
-
 describe 'V2.0.0' do
 	before(:each) do
 	  host! "api.yero.co"
@@ -98,7 +97,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['id']).to eql 2
 
 
-      	put 'api/current_user', {:token => token, :wechat_id => "we are ", :snapchat_id => "sa are", :line_id => "li are", :spotify_id => "sp are", :spotify_token => "AS DF", :instagram_id => "in are", :instagram_token => "SDd F", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => true, :exclusive => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/users', {:token => token, :wechat_id => "we are ", :snapchat_id => "sa are", :line_id => "li are", :spotify_id => "sp are", :spotify_token => "AS DF", :instagram_id => "in are", :instagram_token => "SDd F", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => true, :exclusive => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['latitude']).to eql 49.1
@@ -107,7 +106,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['spotify_id']).to eql "spare"
 
 
-      	put 'api/current_user', {:token => token, :wechat_id => "wedare", :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/users', {:token => token, :wechat_id => "wedare", :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['wechat_id']).to eql "wedare"
@@ -140,12 +139,7 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['users'].count).to eql 4
 
-      	get 'api/current_user?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
-		expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['id']).to eql 2
-
-
+      	
       	get 'api/verify', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
@@ -310,38 +304,38 @@ describe 'V2.0.0' do
 
 	  	token = user_3.generate_token
       	
-      	post 'api/avatars', {:token => token, :avatar_url => '', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/avatars', {:token => token, :avatar_url => '', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
 
-	  	post 'api/avatars', {:token => token, :avatar_url => 'avatar', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	  	post 'api/avatars', {:token => token, :avatar_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar.jpg', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 1
-		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb'
-		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb.jpg'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar.jpg'
 		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
 		avatar_id = JSON.parse(response.body)['data']['avatars'][0]['avatar_id']
 
-		post 'api/avatars', {:token => token, :avatar_url => 'avatar_2', :thumb_url => 'thumb_2'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		post 'api/avatars', {:token => token, :avatar_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar_2.jpg', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb_2.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 2
-		expect(JSON.parse(response.body)['data']['avatars'][1]['thumbnail']).to eql 'thumb_2'
-		expect(JSON.parse(response.body)['data']['avatars'][1]['avatar']).to eql 'avatar_2'
+		expect(JSON.parse(response.body)['data']['avatars'][1]['thumbnail']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb_2.jpg'
+		expect(JSON.parse(response.body)['data']['avatars'][1]['avatar']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar_2.jpg'
 		expect(JSON.parse(response.body)['data']['avatars'][1]['order']).to eql 1
 		avatar_1_id = JSON.parse(response.body)['data']['avatars'][1]['avatar_id']
 
-		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => '', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => '', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
 
-		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => 'avatar_3', :thumb_url => 'thumb_3'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/avatars/'+avatar_id.to_s, {:token => token, :avatar_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar_3.jpg', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb_3.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 2
-		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb_3'
-		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar_3'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb_3.jpg'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar_3.jpg'
 		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
 
 
@@ -353,16 +347,16 @@ describe 'V2.0.0' do
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(JSON.parse(response.body)['data']['avatars'].count).to eql 1
-		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'thumb_2'
-		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'avatar_2'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['thumbnail']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb_2.jpg'
+		expect(JSON.parse(response.body)['data']['avatars'][0]['avatar']).to eql 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/avatar_2.jpg'
 		expect(JSON.parse(response.body)['data']['avatars'][0]['order']).to eql 0
 
-
+		
 		token = user_2.generate_token
       	delete 'api/avatars/'+avatar_1_id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-		put 'api/avatars/'+avatar_1_id.to_s, {:token => token, :avatar_url => 'haha', :thumb_url => 'thumb'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/avatars/'+avatar_1_id.to_s, {:token => token, :avatar_url => 'haha', :thumb_url => 'https://s3-us-west-2.amazonaws.com/yero-development/uploads/user_avatar/avatar/v2_1/thumb.jpg'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
 
@@ -573,7 +567,7 @@ describe 'V2.0.0' do
 	    
 	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
-
+		
 	    gate = GlobalVariable.create!(name: "min_ppl_size", value: "2")
       	token = user_2.generate_token
 
@@ -755,12 +749,16 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, cannot find the whisper"
 
 
-      	token = user_4.generate_token
+      	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test5@yero.co", password: "123556", birthday: (birthday-20.years), gender: 'F', latitude: 59.3257235, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_5 = UserAvatar.create!(id: 4, user: user_5, is_active: true, order: 0)
+		
+      	token = user_5.generate_token
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['data']['code']).to eql 403
       	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	user_5.delete
 
       	# Block
       	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
@@ -812,9 +810,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['users'][1]['actions'].count).to eql 3
-      	expect(JSON.parse(response.body)['users'][1]['messages_array'].count).to eql 3
-      	expect(JSON.parse(response.body)['users'][1]['whisper_id']).to eql 'aaa2'
+      	expect(JSON.parse(response.body)['users'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['users'][0]['messages_array'].count).to eql 3
+      	expect(JSON.parse(response.body)['users'][0]['whisper_id']).to eql 'aaa2'
 
 
 
@@ -877,6 +875,15 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['data']['code']).to eql 404
       	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry, cannot find the whisper'
+
+      	delete 'api/friends/33', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+
+      	delete 'api/friends/3', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(FriendByWhisper.count).to eql 0
 
 
       	gate.delete
@@ -1187,6 +1194,18 @@ describe 'V2.0.0' do
 
       	expect(WhisperToday.count).to eql 0
       	expect(WhisperReply.count).to eql 0
+
+      	delete 'api/activities/9347876', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+
+      	activity = RecentActivity.last
+      	delete 'api/activities/'+activity.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(RecentActivity.count).to eql 3
+
+
 
       	token = user_3.generate_token
       	put 'api/whispers/aaa2', {:declined => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

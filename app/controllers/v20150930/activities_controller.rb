@@ -14,6 +14,30 @@ module V20150930
       render json: success(items)
     end
 
+    def destroy
+      activity = RecentActivity.find_by(target_user_id: current_user.id, id: params[:id])
+      if activity.nil?
+        error_obj = {
+          code: 404,
+          message: "Activity cannot be found"
+        }
+        render json: error(error_obj, 'data')
+      else
+        if activity.destroy
+          render json: success(true)
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot delete the activity."
+          }
+          render json: error(error_obj, 'data')
+          # :nocov:
+        end
+
+      end
+    end
+
     def get_api_token
       params[:token] = api_token if (Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"])
     end

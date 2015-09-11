@@ -3,15 +3,6 @@ module V20150930
     prepend_before_filter :get_api_token, except: [:check_email, :signup, :login, :forgot_password]
     before_action :authenticate_api_v2, except: [:check_email, :signup, :login, :forgot_password]
 
-    # skip_before_filter  :verify_authenticity_token
-
-    # API V1 & V2
-    # return current user object
-    def get_profile
-      user = current_user
-      render json: success(user.to_json(true))
-    end
-
   ############################################ API V 2 ############################################
 
     # API V2
