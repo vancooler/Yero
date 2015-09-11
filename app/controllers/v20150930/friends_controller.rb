@@ -65,6 +65,10 @@ module V20150930
         friends_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
         if !page_number.nil? and !friends_per_page.nil? and friends_per_page > 0 and page_number >= 0
+          pagination = Hash.new
+          pagination['page'] = page_number - 1
+          pagination['per_page'] = friends_per_page
+          pagination['total_count'] = friends.length
           friends = Kaminari.paginate_array(friends).page(page_number).per(friends_per_page) 
         end
         users = FriendByWhisper.friends_json(friends, current_user)
@@ -87,7 +91,7 @@ module V20150930
       # puts "serialize friends"
       # puts (t3-t1).inspect
 
-      render json: success(response_data, "data")
+      render json: success(response_data, "data", pagination)
     end
 
     def destroy

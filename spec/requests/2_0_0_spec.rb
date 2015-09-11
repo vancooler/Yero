@@ -138,6 +138,9 @@ describe 'V2.0.0' do
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['users'].count).to eql 4
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 7
+      	expect(JSON.parse(response.body)['pagination']['page']).to eql 0
+      	expect(JSON.parse(response.body)['pagination']['per_page']).to eql 4
 
       	
       	get 'api/verify', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -394,9 +397,12 @@ describe 'V2.0.0' do
 
 	   	token = user_2.generate_token
 
-	   	get 'api/venues?page=0&per_page=12&latitude=49.4563&longitude=-122.8787&distance=1000&without_featured_venues=1&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	get 'api/venues?page=1&per_page=2&latitude=49.4563&longitude=-122.8787&distance=1000&without_featured_venues=1&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['data'].count).to eql 3
+		expect(JSON.parse(response.body)['data'].count).to eql 1
+		expect(JSON.parse(response.body)['pagination']['page']).to eql 1
+		expect(JSON.parse(response.body)['pagination']['per_page']).to eql 2
+		expect(JSON.parse(response.body)['pagination']['total_count']).to eql 3
 
 		get 'api/venues?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
@@ -532,6 +538,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['friends'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['friends'][0]['id']).to eql 3
       	expect(JSON.parse(response.body)['data']['friends'][0]['object']['id']).to eql 3
+      	expect(JSON.parse(response.body)['pagination']['page']).to eql 0
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 1
 
       	# Block
       	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
@@ -1023,6 +1031,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data'].count).to eql 2
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 2
 
 
       	token = user_3.generate_token

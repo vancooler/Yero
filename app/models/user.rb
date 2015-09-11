@@ -1318,8 +1318,13 @@ class User < ActiveRecord::Base
       
       users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
       
+      pagination = Hash.new
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
+        pagination['page'] = page_number - 1
+        pagination['per_page'] = users_per_page
+        pagination['total_count'] = users.count
+        result['pagination'] = pagination
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
       end
 

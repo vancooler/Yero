@@ -48,12 +48,16 @@ module V20150930
       venues_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
       if !page_number.nil? and !venues_per_page.nil? and venues_per_page > 0 and page_number >= 0
+        pagination = Hash.new
+        pagination['page'] = page_number - 1
+        pagination['per_page'] = venues_per_page
+        pagination['total_count'] = venues.length
         venues = Kaminari.paginate_array(venues).page(page_number).per(venues_per_page) if !venues.nil?
       end
 
       data = Venue.venues_object(venues)
       
-      render json: success(JSON.parse data)
+      render json: success((JSON.parse data), 'data', pagination)
     end
 
    

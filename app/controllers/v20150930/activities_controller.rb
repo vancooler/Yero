@@ -8,10 +8,17 @@ module V20150930
       page_number = nil
       venues_per_page = nil
       page_number = params[:page].to_i + 1 if !params[:page].blank?
-      whispers_per_page = params[:per_page].to_i if !params[:per_page].blank?
+      activities_per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      items = WhisperNotification.my_chat_request_history(current_user, page_number, whispers_per_page)
-      render json: success(items)
+      activities = RecentActivity.all_activities(current_user.id).length
+      if !page_number.nil? and !activities_per_page.nil? and activities_per_page > 0 and page_number >= 0
+        pagination = Hash.new
+        pagination['page'] = page_number - 1
+        pagination['per_page'] = activities_per_page
+        pagination['total_count'] = activities
+      end
+      items = WhisperNotification.my_chat_request_history(current_user, page_number, activities_per_page)
+      render json: success(items, 'data', pagination)
     end
 
     def destroy
