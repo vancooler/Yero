@@ -237,7 +237,7 @@ Rails.application.routes.draw do
 
   constraints DomainConstraint.new(['api.yero.co', 'localhost', 'devapi.yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com']) do
     api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
-      # user APIs
+      # user APIs 11
       get     'api/users',                               to: 'users_version2#index'
       get     'api/users/:id',                           to: 'users_version2#show'
       put     'api/users',                               to: 'users_version2#update'
@@ -250,32 +250,32 @@ Rails.application.routes.draw do
       post    'api/report_user_histories',               to: 'users_version2#report'
       post    'api/block_users',                         to: 'users_version2#block'
 
-      # avatar APIs
+      # avatar APIs 3
       post   'api/avatars',                              to: 'user_avatars_version2#create'
       put    'api/avatars/:id',                          to: 'user_avatars_version2#update'
       delete 'api/avatars/:id',                          to: 'user_avatars_version2#destroy'
 
 
-      # venue APIs
+      # venue APIs 1
       get    'api/venues',                               to: 'venues_version2#list'
 
-      # Enter Venue APIs
+      # Enter Venue APIs 2
       post   'api/venues/:id',                           to: 'rooms#user_enter'
       delete 'api/venues',                               to: 'rooms#user_leave'
-      delete 'api/friends/:id',                          to: 'friends#destroy'
 
-      # friend APIs
+      # friend APIs 3
       get    'api/friends',                              to: 'friends#index'
       get    'api/friends/:id',                          to: 'friends#show'
+      delete 'api/friends/:id',                          to: 'friends#destroy'
 
-      # whisper APIs
+      # whisper APIs 5
       get    'api/whispers',                             to: 'whispers#index'
       get    'api/whispers/:id',                         to: 'whispers#show'
       post   'api/whispers',                             to: 'whispers#create'
       put    'api/whispers/:id',                         to: 'whispers#update'
       delete 'api/whispers/collection',                  to: 'whispers#destroy'
 
-      # Activity APIs
+      # Activity APIs 2
       get    'api/activities',                           to: 'activities#index'
       delete 'api/activities/:id',                       to: 'activities#destroy'
 

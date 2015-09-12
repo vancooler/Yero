@@ -117,7 +117,10 @@ module V20150930
         user.longitude = params[:longitude].to_f
       end
 
-      if user.save
+
+      avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
+
+      if user.save and user.avatar_reorder(avatar_ids)
         render json: success(user.to_json(false))
       else
      	  # :nocov:

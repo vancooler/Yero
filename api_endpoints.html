@@ -23,9 +23,10 @@
   <div id="project-navigation">
     <div id="home-section" role="region" title="Quick navigation" class="nav-section">
   <h2>
-    <a href="./index.html" rel="home">Home</a>
+    <a href="./index.html" rel="home">Home</a> | 
+    <a href="./api_endpoints.html" rel="home">API Endpoints</a>
   </h2>
-
+</div>
   <div id="table-of-contents-navigation">
     <a href="./table_of_contents.html#pages">Pages</a>
     <a href="./table_of_contents.html#classes">Classes</a>
@@ -57,7 +58,44 @@
     
     
     <!-- Method Quickref -->
-<div id="method-list-section" class="nav-section">
+<div id="method-list-section-v2" class="nav-section">
+  <h3>API Endpoints V2</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-api_activities">GET api/activities</a></li>
+    <li ><a href="#method-i-api_delete_activity">DELETE api/activities/:id</a></li>
+    <li ><a href="#method-i-api_avatar_create">POST api/avatars</a></li>
+    <li ><a href="#method-i-api_avatar_update">PUT api/avatars/:id</a></li>
+    <li ><a href="#method-i-api_avatar_destroy">DELETE api/avatars/:id</a></li>
+    <li ><a href="#method-i-api_users_block_user">POST api/block_users</a></li>
+    <li ><a href="#method-i-api_users_generate_reset_email_verify">POST api/emails</a></li>
+    <li ><a href="#method-i-api_friends">GET api/friends</a></li>
+    <li ><a href="#method-i-api_friends_id">GET api/friends/:id</a></li>
+    <li ><a href="#method-i-api_delete_friend">DELETE api/friends/:id</a></li>
+    <li ><a href="#method-i-api_users_login">POST api/login</a></li>
+    <li ><a href="#method-i-api_users_forgot_password">POST api/passwords</a></li>
+    <li ><a href="#method-i-api_report">POST api/report_user_histories</a></li>
+    <li ><a href="#method-i-api_users_signup_no_avatar">POST api/signup</a></li>
+    <li ><a href="#method-i-api_users">GET api/users</a></li>
+    <li ><a href="#method-i-api_user_update_profile">PUT api/users</a></li>
+    <li ><a href="#method-i-api_users_profile">GET api/users/:id</a></li>
+    <li ><a href="#method-i-api_users_notification_preference">PUT api/user_notification_preferences</a></li>
+    <li ><a href="#method-i-api_venues_list">GET api/venues</a></li>
+    <li ><a href="#method-i-api_room_leave">DELETE api/venues</a></li>
+    <li ><a href="#method-i-api_room_enter">POST api/venues/:id</a></li>
+    <li ><a href="#method-i-api_users_check_email">GET api/verify</a></li>
+    <li ><a href="#method-i-api_whisper_create">POST api/whispers</a></li>
+    <li ><a href="#method-i-api_whispers">GET api/whispers</a></li>
+    <li ><a href="#method-i-api_whispers_id">GET api/whispers/:id</a></li>
+    <li ><a href="#method-i-api_whisper_whisper_request_state">PUT api/whispers/:id</a></li>
+    <li ><a href="#method-i-api_whisper_decline_whisper_requests">DELETE api/whispers/:id</a></li>
+    
+
+  </ul>
+</div>
+
+<div id="method-list-section-v1" class="nav-section">
   <h3>API Endpoints V1</h3>
 
   <ul class="link-list" role="directory">
@@ -107,7 +145,865 @@
     API Endpoints
   </h1>  
   <section id="5Buntitled-5D" class="documentation-section">
+      
+      <!-- V2 -->
+      <section id="public-instance-5Buntitled-5D-method-details-v1" class="method-section">
+      <header>
+         <h3>Version 2</h3>
+      </header>
+
+
+      <div id="method-i-api_activities" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/activities [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ActivitiesController.html#method-i-index">Activities#index</a>
+
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">activity_id: </span><span class="ruby-string">1</span>
+      <span class="ruby-identifier">activity_type: </span><span class="ruby-string">"Sent Whisper"</span>
+      <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+      <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_delete_activity" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/activities/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ActivitiesController.html#method-i-destroy">Activities#destroy</a>
+
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">activity_id: </span><span class="ruby-string">1</span>
+      <span class="ruby-identifier">activity_type: </span><span class="ruby-string">"Sent Whisper"</span>
+      <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+      <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_avatar_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/avatars [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UserAvatarsVersion2Controller.html#method-i-create">UserAvatarsVersion2#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">optional for update an exist photo</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_avatar_update" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/avatars/:id [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UserAvatarsVersion2Controller.html#method-i-update">UserAvatarsVersion2#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_avatar_destroy" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/avatars/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UserAvatarsVersion2Controller.html#method-i-destroy">UserAvatarsVersion2#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_block_user" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/block_users [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-block">UsersVersion2#block</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">2, 4, 5</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_generate_reset_email_verify" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/emails [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-change_email">UsersVersion2#change_email</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">new_email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"New email cannot be blank"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"There is already an account with this email address."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot generate reset email token for this user."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_friends" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/friends [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/FriendsController.html#method-i-index">Friends#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-constant">StandardFriendObject</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_friends_id" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/friends/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/FriendsController.html#method-i-show">Friends#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">notification_type: </span><span class="ruby-string">3</span>
+    <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">1453827423</span>
+    <span class="ruby-identifier">viewed: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+    <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the friend"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_delete_friend" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/friends/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/FriendsController.html#method-i-destroy">Friends#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">notification_type: </span><span class="ruby-string">3</span>
+    <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">1453827423</span>
+    <span class="ruby-identifier">viewed: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+    <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+  <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the friend"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_login" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/login [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-login">UsersVersion2#login</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">password: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Responses</span>
+  <span class="ruby-constant">- StandardCurrentUserObject</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Login information missing."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Email address not found"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Your email or password is incorrect"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_forgot_password" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/passwords [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-forgot_password">UsersVersion2#forgot_password</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find accout with your email address"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot generate reset password token for this user."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_report" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/report_user_histories [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-report">UsersVersion2#report</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">type_id: </span><span class="ruby-string">required report type id</span>
+  <span class="ruby-identifier">reason: </span><span class="ruby-string">optional text</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE/FALSE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot report this user."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+      <div id="method-i-api_users_signup_no_avatar" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/signup [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-signup">UsersVersion2#signup</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">password: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">birthday: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">gender: </span><span class="ruby-string">required string "M"/"F"</span>
+  <span class="ruby-identifier">first_name: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">exclusive: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">line_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Required fields cannot be blank"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"This email has already been taken."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot sign up this user."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+      <div id="method-i-api_users" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/users [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-index">UsersVersion2#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">gender: </span><span class="ruby-string">optional: "M"/"F"/"A"</span>
+  <span class="ruby-identifier">min_age: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">max_age: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">min_distance </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">max_distance: </span><span class="ruby-string">optional integer</span>
+  <span class="ruby-identifier">everyone: </span><span class="ruby-string">optional: "true"/"false"</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional for pagination</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional for pagination</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">Senario 1: (Below gate number)</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">percentage: </span><span class="ruby-string">50</span>  
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">Senario 2: (Above gate number)</span>
+    <span class="ruby-identifier">users: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">avatars: </span>
+        <span class="ruby-string">[</span>
+          <span class="ruby-string">{</span>  
+            <span class="ruby-identifier">avatar: </span><span class="ruby-string">"http://..."</span>
+            <span class="ruby-identifier">thumbnail: </span><span class="ruby-string">"http://..."</span>
+            <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">1</span>
+            <span class="ruby-identifier">default: </span><span class="ruby-constant">TRUE</span>
+            <span class="ruby-identifier">is_active: </span><span class="ruby-constant">TRUE</span>
+            <span class="ruby-identifier">order: </span><span class="ruby-string">0</span>
+          <span class="ruby-string">}</span>  
+        <span class="ruby-string">]</span>
+        <span class="ruby-identifier">whisper_sent: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">actions: </span>
+        <span class="ruby-string">[</span>
+          <span class="ruby-string">"chat"</span>   
+        <span class="ruby-string">]</span>
+        <span class="ruby-identifier">friend: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">same_venue_badge: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">different_venue_badge: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">venue_type: </span><span class="ruby-string">"Club"</span>
+        <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
+        <span class="ruby-identifier">first_name: </span><span class="ruby-string">"Sam"</span>
+        <span class="ruby-identifier">birthday: </span><span class="ruby-string">"June 3, 1990"</span>
+        <span class="ruby-identifier">gender: </span><span class="ruby-string">"F"</span>
+        <span class="ruby-identifier">line_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">""</span>
+        <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">"snap"</span>
+        <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">"Hi"</span>
+        <span class="ruby-identifier">latitude: </span><span class="ruby-string">49.543532</span>
+        <span class="ruby-identifier">longitude: </span><span class="ruby-string">-123.012434</span>
+        <span class="ruby-identifier">exclusive: </span><span class="ruby-constant">FALSE</span>
+      <span class="ruby-string">}</span>  
+    <span class="ruby-string">],</span>
+    <span class="ruby-identifier">pagination: </span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
+      <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"No photos"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_user_update_profile" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/users [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-update">UsersVersion2#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">introduction_1: </span><span class="ruby-string"> bio text</span>
+  <span class="ruby-identifier">introduction_2: </span><span class="ruby-string"> status text</span>
+  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">line_id: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">instagram_id: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">instagram_token: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">spotify_id: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">spotify_token: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">timezone: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">latitude: </span><span class="ruby-string"> float</span>
+  <span class="ruby-identifier">longitude: </span><span class="ruby-string"> float</span>
+  <span class="ruby-identifier">exclusive: </span><span class="ruby-string"> bool</span>
+  <span class="ruby-identifier">discovery: </span><span class="ruby-string"> bool</span>
+  <span class="ruby-identifier">avatars: </span><span class="ruby-string"> array of photo ids</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardCurrentUserObject</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update this user."</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_users_profile" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/users/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-show">UsersVersion2#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardUserObject</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the user"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
  
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+
+      
+
+      <div id="method-i-api_users_notification_preference" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/user_notification_preferences [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-update_notification_preferences">UsersVersion2#update_notification_preferences</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">network_online: </span><span class="ruby-string">optional (need to rebuild it )</span>
+  <span class="ruby-identifier">enter_venue_network: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">leave_venue_network: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+
+
+      
+
+      
+
+
+
+      <div id="method-i-api_venues_list" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venues [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/VenuesVersion2Controller.html#method-i-list">VenuesVersion2#list</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">distance: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">latitude: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">longitude: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">without_featured_venues: </span><span class="ruby-string">optional true/false</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-constant">StandardVenueObject</span>
+  <span class="ruby-string">]</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_room_leave" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venues [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/RoomsController.html#method-i-user_leave">Rooms#user_leave</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_room_enter" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venues/:id [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/RoomController.html#method-i-room_enter">Room#room_enter</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">beacon_key: </span><span class="ruby-string">required string or array of strings</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">"Success"/"Could not enter."</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_check_email" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/verify [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-check_email">UsersVersion2#check_email</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"No email address"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Email address exists"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+ 
+    
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+
+      <div id="method-i-api_whispers_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/whispers [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/WhispersController.html#method-i-create">Whispers#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">venue_id: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">notification_type: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">intro: </span><span class="ruby-string">required text</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">"No photos"</span>
+  <span class="ruby-string">"User blocked"</span>
+  <span class="ruby-string">"You are already friends"</span>
+  <span class="ruby-string">"Cannot send more whispers"</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+
+     
+
+      <div id="method-i-api_whispers" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/whispers [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/WhispersController.html#method-i-index">Whispers#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">whispers: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-constant">StandardWhisperObject</span>
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">badge_number: </span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">whisper_number: </span><span class="ruby-string">3</span>
+      <span class="ruby-identifier">friend_number: </span><span class="ruby-string">1</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_whispers_id" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/whispers/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/WhispersController.html#method-i-show">Whispers#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required whisper id or related user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">initial_whisper: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">expire_timestamp: </span><span class="ruby-string">145455947</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
+    <span class="ruby-identifier">timestamp_read: </span><span class="ruby-string">"June 2, 2015 14:45:23 -7000"</span>
+    <span class="ruby-identifier">viewed: </span><span class="ruby-constant">TRUE</span>
+    <span class="ruby-identifier">accepted: </span><span class="ruby-constant">FALSE</span>
+    <span class="ruby-identifier">declined: </span><span class="ruby-constant">FALSE</span>
+    <span class="ruby-identifier">whisper_id: </span><span class="ruby-string">"SsDF-34SFSF-SDFS3-SF"</span>
+    <span class="ruby-identifier">notification_type: </span><span class="ruby-string">2</span>
+    <span class="ruby-identifier">intro_message: </span><span class="ruby-string">"Hello"</span>
+    <span class="ruby-identifier">actions: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">"reply"</span>   
+      <span class="ruby-string">"delete"</span>   
+      <span class="ruby-string">"accept"</span>   
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+    <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-identifier">messages_array: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">{</span>  
+        <span class="ruby-identifier">speaker_id: </span><span class="ruby-string">3</span>
+        <span class="ruby-identifier">timestamp: </span><span class="ruby-string">143243489</span>
+        <span class="ruby-identifier">message: </span><span class="ruby-string">"asfdasf sdfsd sdf"</span>
+      <span class="ruby-string">}</span>  
+    <span class="ruby-string">]</span>
+
+  <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the whisper"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+    
+      
+       <div id="method-i-api_whisper_whisper_request_state" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/whispers/:id [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/WhispersController.html#method-i-update">Whispers#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">whisper_id: </span><span class="ruby-string">required whisper id</span>
+  <span class="ruby-identifier">accepted: </span><span class="ruby-string">1/0</span>
+  <span class="ruby-identifier">declined: </span><span class="ruby-string">1/0</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">"Cannot find the whisper."</span>
+  <span class="ruby-string">"You are already friends."</span>
+  <span class="ruby-string">"User blocked."</span>
+  <span class="ruby-string">"There was an error."</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_whispers_decline_whisper_requests" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/whispers/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/WhispersController.html#method-i-destroy">Whispers#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">array: </span><span class="ruby-string">required whisper id array</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+    
+    </section>
+
+
+    <!-- V1 -->
+     
+
+
      <section id="public-instance-5Buntitled-5D-method-details-v1" class="method-section">
       <header>
          <h3>Version 1</h3>
@@ -116,7 +1012,7 @@
 
       <div id="method-i-api_v1_activities" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/v1/activities [GET]</span>
+          <span class="method-name">api/v1activities [GET]</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
