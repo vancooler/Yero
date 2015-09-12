@@ -218,11 +218,21 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
-  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">optional for update an exist photo</span>
+  <span class="ruby-identifier">avatar_url: </span><span class="ruby-string">required image url</span>
+  <span class="ruby-identifier">thumb_url: </span><span class="ruby-string">required thumbnail url</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardCurrentUserObject</span>
-
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid Parameters"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot create this photo"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
             </pre>
           </div>
         </div>
@@ -239,11 +249,28 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required avatar id</span>
+  <span class="ruby-identifier">avatar_url: </span><span class="ruby-string">required image url</span>
+  <span class="ruby-identifier">thumb_url: </span><span class="ruby-string">required thumbnail url</span>
   <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardCurrentUserObject</span>
-
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid Parameters"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Photo cannot be found"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update this photo"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
             </pre>
           </div>
         </div>
@@ -259,11 +286,20 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier">avatar: </span><span class="ruby-string">required image file</span>
-  <span class="ruby-identifier">avatar_id: </span><span class="ruby-string">required id</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required avatar id</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardCurrentUserObject</span>
-
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Photo cannot be found"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot delete this photo"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
             </pre>
           </div>
         </div>
@@ -282,9 +318,22 @@
   <span class="ruby-identifier">user_id: </span><span class="ruby-string">required user id</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-string">[</span>
-    <span class="ruby-string">2, 4, 5</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">blocked_at: </span><span class="ruby-string">143453454</span>
+      <span class="ruby-identifier">user: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-string">}</span>
   <span class="ruby-string">]</span>
-
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, this user doesn't exist"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+  <span class="ruby-string">}</span>
             </pre>
           </div>
         </div>
