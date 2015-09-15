@@ -228,12 +228,12 @@ describe 'V2.0.0' do
 		NotificationPreference.create!(name: "Enter venue network")
 		NotificationPreference.create!(name: "Leave venue network")
 
-		put 'api/user_notification_preferences', {:token => token, :network_online => false, :enter_venue_network => false, :leave_venue_network => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => ["Network online",  "Enter venue network",  "Leave venue network"]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 3
 
-		put 'api/user_notification_preferences', {:token => token, :network_online => true, :enter_venue_network => true, :leave_venue_network => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => ["Network online", "Enter venue network", "Leave venue network"]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 0

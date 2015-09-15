@@ -427,9 +427,9 @@ module V20150930
         end
       else
         error_obj = {
-  		code: 404,
-  		message: "Cannot find accout with your email address",
-      external_message: ''
+      		code: 404,
+      		message: "Cannot find accout with your email address",
+          external_message: ''
         }
   	  render json: error(error_obj, 'data')
       end
@@ -437,12 +437,11 @@ module V20150930
 
     # Notification settings
     def update_notification_preferences
-      network_online = (!params['network_online'].nil? ? (params['network_online'].to_s == '0' or params['network_online'].to_s == 'false') : nil)
-      enter_venue_network = (!params['enter_venue_network'].nil? ? (params['enter_venue_network'].to_s == '0' or params['enter_venue_network'].to_s == 'false') : nil)
-      leave_venue_network = (!params['leave_venue_network'].nil? ? (params['leave_venue_network'].to_s == '1' or params['leave_venue_network'].to_s == 'true') : nil)
-      
-      UserNotificationPreference.update_preferences_settings(current_user, network_online, enter_venue_network, leave_venue_network)
-      
+      # network_online = (!params['network_online'].nil? ? (params['network_online'].to_s == '0' or params['network_online'].to_s == 'false') : nil)
+      # enter_venue_network = (!params['enter_venue_network'].nil? ? (params['enter_venue_network'].to_s == '0' or params['enter_venue_network'].to_s == 'false') : nil)
+      # leave_venue_network = (!params['leave_venue_network'].nil? ? (params['leave_venue_network'].to_s == '1' or params['leave_venue_network'].to_s == 'true') : nil)
+      preferences = params['notification_settings']
+      UserNotificationPreference.update_preferences_settings_v2(current_user, preferences)
       render json: success(true)
     end
 
@@ -489,11 +488,11 @@ module V20150930
         
       else
         	error_obj = {
-  		  code: 400,
-  		  message: "Invalid params",
-        external_message: ''
-  	    }
-  		render json: error(error_obj, 'data')
+      		  code: 400,
+      		  message: "Invalid params",
+            external_message: ''
+    	    }
+      		render json: error(error_obj, 'data')
       end
       
     end
@@ -511,19 +510,19 @@ module V20150930
           render json: success(black_list)
         else
           error_obj = {
-  		  code: 404,
-  		  message: "Sorry, this user doesn't exist",
-        external_message: ''
-  	    }
-  		render json: error(error_obj, 'data')
+      		  code: 404,
+      		  message: "Sorry, this user doesn't exist",
+            external_message: ''
+    	    }
+      		render json: error(error_obj, 'data')
         end
       else
         	error_obj = {
-  		  code: 400,
-  		  message: "Invalid params",
-        external_message: ''
-  	    }
-  		render json: error(error_obj, 'data')
+      		  code: 400,
+      		  message: "Invalid params",
+            external_message: ''
+    	    }
+      		render json: error(error_obj, 'data')
       end
     end
 

@@ -12,6 +12,22 @@ class UserNotificationPreference < ActiveRecord::Base
   end
 
 
+  def self.update_preferences_settings_v2(current_user, preferences)
+    puts preferences.inspect
+    preferences.each do |p|
+      notification_preference = NotificationPreference.find_by_name(p)
+      if  !notification_preference.nil? and current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
+        UserNotificationPreference.create!(:notification_preference_id => notification_preference.id, :user_id => current_user.id)
+      elsif !notification_preference.nil? and !current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
+        # remove
+        current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).delete_all
+      end
+    end
+    return true
+  end
+
+
+
   def self.update_preferences_settings(current_user, network_online, enter_venue_network, leave_venue_network)
   	n_o = NotificationPreference.find_by_name("Network online")
 
