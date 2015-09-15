@@ -22,8 +22,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot create this photo",
-            external_message: ''
+            message: "Cannot create this photo"
           }
           render json: error(error_obj, 'error')
           # :nocov:
@@ -31,8 +30,7 @@ module V20150930
       else
         error_obj = {
           code: 400,
-          message: "Invalid Parameters",
-          external_message: ''
+          message: "Invalid Parameters"
         }
         render json: error(error_obj, 'error')
       end
@@ -47,8 +45,7 @@ module V20150930
         if avatar.nil?
           error_obj = {
             code: 404,
-            message: "Photo cannot be found",
-            external_message: ''
+            message: "Photo cannot be found"
           }
           render json: error(error_obj, 'error')
         else
@@ -65,8 +62,7 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 520,
-              message: "Cannot update the photo.",
-              external_message: ''
+              message: "Cannot update the photo."
             }
             render json: error(error_obj, 'error')
             # :nocov:
@@ -75,8 +71,7 @@ module V20150930
       else  
         error_obj = {
           code: 400,
-          message: "Invalid Parameters",
-          external_message: ''
+          message: "Invalid Parameters"
         }
         render json: error(error_obj, 'error')
       end
@@ -104,8 +99,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot delete the photo.",
-            external_message: ''
+            message: "Cannot delete the photo."
           }
           render json: error(error_obj, 'error')
           # :nocov:
@@ -113,8 +107,7 @@ module V20150930
       else
         error_obj = {
           code: 404,
-          message: "Photo cannot be found",
-          external_message: ''
+          message: "Photo cannot be found"
         }
         render json: error(error_obj, 'error')
       end

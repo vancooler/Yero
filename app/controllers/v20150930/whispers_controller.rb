@@ -56,8 +56,7 @@ module V20150930
       if whisper.blank?
         error_obj = {
           code: 404,
-          message: "Sorry, cannot find the whisper",
-          external_message: ''
+          message: "Sorry, cannot find the whisper"
         }
         render json: error(error_obj, 'error')
       else
@@ -65,22 +64,19 @@ module V20150930
         if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it",
-            external_message: ''
+            message: "Sorry, you don't have access to it"
           }
           render json: error(error_obj, 'error')
         elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it",
-            external_message: ''
+            message: "Sorry, you don't have access to it"
           }
           render json: error(error_obj, 'error')
         elsif whisper.photo_disabled(current_user.id)
           error_obj = {
             code: 403,
-            message: "Sorry, you don't have access to it",
-            external_message: ''
+            message: "Sorry, you don't have access to it"
           }
           render json: error(error_obj, 'error')
         else
@@ -92,8 +88,7 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 404,
-              message: "Sorry, cannot find the whisper",
-              external_message: ''
+              message: "Sorry, cannot find the whisper"
             }
             render json: error(error_obj, 'error')
             # :nocov:
@@ -119,9 +114,11 @@ module V20150930
       else
         error_obj = {
           code: 403,
-          message: result,
-          external_message: ''
+          message: result
         }
+        if result != "User blocked" and result != "You are already friends"
+          error_obj[:external_message] = result 
+        end
         render json: error(error_obj, 'error')
       end  
     end
@@ -154,8 +151,7 @@ module V20150930
             # :nocov:
             error_obj = {
               code: 404,
-              message: "Sorry, cannot find the whisper",
-              external_message: ''
+              message: "Sorry, cannot find the whisper"
             }
             render json: error(error_obj, 'error')
             # :nocov:
@@ -164,16 +160,14 @@ module V20150930
               # :nocov:
               error_obj = {
                 code: 403,
-                message: "You are already friends.",
-                external_message: ''
+                message: "You are already friends."
               }
               render json: error(error_obj, 'error')
               # :nocov:
             elsif BlockUser.check_block(origin_id, target_id)
               error_obj = {
                 code: 403,
-                message: "User blocked",
-                external_message: ''
+                message: "User blocked"
               }
               render json: error(error_obj, 'error')
             else
@@ -206,8 +200,7 @@ module V20150930
                 # :nocov:
                 error_obj = {
                   code: 520,
-                  message: "Sorry cannot execute the action",
-                  external_message: ''
+                  message: "Sorry cannot execute the action"
                 }
                 render json: error(error_obj, 'error')
                 # :nocov:
@@ -236,8 +229,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Sorry cannot execute the action",
-            external_message: ''
+            message: "Sorry cannot execute the action"
           }
           render json: error(error_obj, 'error')
           # :nocov:
@@ -245,8 +237,7 @@ module V20150930
       else
         error_obj = {
           code: 404,
-          message: "Sorry, cannot find the whisper",
-          external_message: ''
+          message: "Sorry, cannot find the whisper"
         }
         render json: error(error_obj, 'error')
       end
@@ -256,8 +247,7 @@ module V20150930
       if params[:array].blank?
         error_obj = {
           code: 400,
-          message: "Invalid Parameters",
-          external_message: ''
+          message: "Invalid Parameters"
         }
         render json: error(error_obj, 'error')
       else

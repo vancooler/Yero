@@ -11,8 +11,7 @@ module V20150930
       if beacons.blank? or beacons.length <= 0
         error_obj = {
           code: 404,
-          message: "Venue cannot be found",
-          external_message: ''
+          message: "Venue cannot be found"
         }
         render json: error(error_obj, 'error')
       else
@@ -33,8 +32,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot enter the venue.",
-            external_message: ''
+            message: "Cannot enter the venue."
           }
           render json: error(error_obj, 'error')
           # :nocov:
@@ -53,8 +51,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot leave venues.",
-            external_message: ''
+            message: "Cannot leave venues."
           }
           render json: error(error_obj, 'error')
           # :nocov:

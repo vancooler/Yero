@@ -14,8 +14,7 @@ module V20150930
       if user.nil?
         error_obj = {
           code: 404,
-          message: "Sorry, cannot find the user",
-          external_message: ''
+          message: "Sorry, cannot find the user"
         }
         render json: error(error_obj, 'error')
       else
@@ -126,8 +125,7 @@ module V20150930
      	  # :nocov:
         error_obj = {
     	    code: 520,
-    	    message: "Cannot update the user.",
-          external_message: ''
+    	    message: "Cannot update the user."
     	  }
     	  render json: error(error_obj, 'error')
         # :nocov:
@@ -152,7 +150,7 @@ module V20150930
         error_obj = {
           code: 403,
           message: "No photos",
-          external_message: ''
+          external_message: 'Please upload a profile photo first'
         }
         render json: error(error_obj, 'error')
       else
@@ -195,16 +193,14 @@ module V20150930
       if params[:email].nil? or params[:email].blank?
         error_obj = {
           code: 400,
-          message: "No email address",
-          external_message: ''
+          message: "No email address"
         }
         render json: error(error_obj, 'error')
       else
         if User.exists? email: params[:email]
           error_obj = {
             code: 403,
-            message: "Email address exists",
-            external_message: ''
+            message: "Email address exists"
           }
           render json: error(error_obj, 'error')
         else
@@ -223,7 +219,7 @@ module V20150930
         error_obj = {
           code: 400,
           message: "Required fields cannot be blank",
-          external_message: ''
+          external_message: 'Please fill the required fields'
         }
         render json: error(error_obj, 'error')
       else
@@ -308,8 +304,7 @@ module V20150930
             # :nocov:
             error_obj = {
       		    code: 520,
-      		    message: "Cannot sign up this user.",
-              external_message: ''
+      		    message: "Cannot sign up this user."
       		  }
       		  render json: error(error_obj, 'error')
             # :nocov:
@@ -318,7 +313,7 @@ module V20150930
         	  error_obj = {
   	        code: 400,
   	        message: "This email has already been taken.",
-            external_message: ''
+            external_message: 'Your email is token by another account'
   	      }
             render json: error(error_obj, 'error')
         end
@@ -331,7 +326,7 @@ module V20150930
         error_obj = {
           code: 400,
           message: "Login information missing.",
-          external_message: ''
+          external_message: 'Please fill the required fields'
         }
         render json: error(error_obj, 'error')
       else
@@ -350,7 +345,7 @@ module V20150930
             error_obj = {
   	        code: 403,
   	        message: "Your email or password is incorrect",
-            external_message: ''
+            external_message: 'Email and password do not match'
   	      }
             render json: error(error_obj, 'error')
           end  
@@ -358,7 +353,7 @@ module V20150930
           error_obj = {
   	      code: 403,
   	      message: "Email address not found",
-          external_message: ''
+          external_message: 'Sorry, cannot find account with ' + params[:email]
   	    }
   	    render json: error(error_obj, 'error')
         end
@@ -379,18 +374,17 @@ module V20150930
             # :nocov:
             error_obj = {
       		    code: 520,
-      		    message: "Cannot generate reset email token for this user.",
-              external_message: ''
+      		    message: "Cannot generate reset email token for this user."
       		  }
       		  render json: error(error_obj, 'error')
             # :nocov:
           end
         else
   	    error_obj = {
-  		  code: 403,
-  		  message: "There is already an account with this email address.",
-        external_message: ''
-  		}
+    		  code: 403,
+    		  message: "There is already an account with this email address.",
+          external_message: 'Your email is token by another account'
+    		}
   		render json: error(error_obj, 'error')
         end
 
@@ -398,7 +392,7 @@ module V20150930
         error_obj = {
   	    code: 400,
   	    message: "New email cannot be blank",
-        external_message: ''
+        external_message: 'Please fill the required fields'
   	  }
   	  render json: error(error_obj, 'error')
       end
@@ -419,8 +413,7 @@ module V20150930
           # :nocov:
           error_obj = {
       		  code: 520,
-        	  message: "Cannot generate reset password token for this user.",
-            external_message: ''
+        	  message: "Cannot generate reset password token for this user."
       		}
   	    render json: error(error_obj, 'error')
         # :nocov:
@@ -429,7 +422,7 @@ module V20150930
         error_obj = {
       		code: 404,
       		message: "Cannot find accout with your email address",
-          external_message: ''
+          external_message: 'Sorry, cannot find account with ' + params[:email]
         }
   	  render json: error(error_obj, 'error')
       end
@@ -479,8 +472,7 @@ module V20150930
   	      # :nocov:
           error_obj = {
     		    code: 520,
-      	    message: "Cannot report this user.",
-            external_message: ''
+      	    message: "Cannot report this user."
     		  }
   	      render json: error(error_obj, 'error')
           # :nocov:
@@ -490,7 +482,6 @@ module V20150930
         	error_obj = {
       		  code: 400,
       		  message: "Invalid params",
-            external_message: ''
     	    }
       		render json: error(error_obj, 'error')
       end
@@ -511,16 +502,14 @@ module V20150930
         else
           error_obj = {
       		  code: 404,
-      		  message: "Sorry, this user doesn't exist",
-            external_message: ''
+      		  message: "Sorry, this user doesn't exist"
     	    }
       		render json: error(error_obj, 'error')
         end
       else
         	error_obj = {
       		  code: 400,
-      		  message: "Invalid params",
-            external_message: ''
+      		  message: "Invalid params"
     	    }
       		render json: error(error_obj, 'error')
       end
