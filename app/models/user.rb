@@ -454,7 +454,7 @@ class User < ActiveRecord::Base
     # cleanup active_in_venue_network & active_in_venue & enter_today
     venue_networks = VenueNetwork.where(:timezone => times_array)
     venue_networks.each do |vn|
-      ActiveInVenueNetwork.five_am_cleanup(vn)
+      ActiveInVenueNetwork.five_am_cleanup(vn, people_array)
     end
     time2 = Time.now
     puts "CLOSE runtimeALL: "
@@ -1360,8 +1360,7 @@ class User < ActiveRecord::Base
     if token.blank?
       error_obj = {
         code: 499,
-        message: "Token required",
-        external_message: ''
+        message: "Token required"
       }
       result = {'success' => false, 'error_data' => error_obj}
       return result
@@ -1372,8 +1371,7 @@ class User < ActiveRecord::Base
         if token_info.nil? or token_info.empty? or token_info.first.nil?
           error_obj = {
             code: 497,
-            message: "Token Invalid",
-            external_message: ''
+            message: "Token Invalid"
           }
           result = {'success' => false, 'error_data' => error_obj}
           return result
@@ -1383,8 +1381,7 @@ class User < ActiveRecord::Base
           if user_id.nil?
             error_obj = {
               code: 497,
-              message: "Token Invalid",
-              external_message: ''
+              message: "Token Invalid"
             }
             result = {'success' => false, 'error_data' => error_obj}
             return result
@@ -1393,8 +1390,7 @@ class User < ActiveRecord::Base
             if user.nil?
               error_obj = {
                 code: 497,
-                message: "Token Invalid",
-                external_message: ''
+                message: "Token Invalid"
               }
               result = {'success' => false, 'error_data' => error_obj}
               return result
@@ -1412,16 +1408,14 @@ class User < ActiveRecord::Base
       rescue JWT::ExpiredSignature
         error_obj = {
           code: 497,
-          message: "Token Expired",
-          external_message: ''
+          message: "Token Expired"
         }
         result = {'success' => false, 'error_data' => error_obj}
         return result
       rescue JWT::DecodeError
         error_obj = {
           code: 497,
-          message: "Token Invalid",
-          external_message: ''
+          message: "Token Invalid"
         }
         result = {'success' => false, 'error_data' => error_obj}
         return result

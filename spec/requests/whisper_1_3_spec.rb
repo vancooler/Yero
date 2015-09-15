@@ -76,7 +76,7 @@ describe 'Enter/Leave Venue' do
       	expect(ActiveInVenueNetwork.count).to eql 1
 
 
-      	ActiveInVenueNetwork.five_am_cleanup(venue_network)
+      	ActiveInVenueNetwork.five_am_cleanup(venue_network, [2])
       	expect(ActiveInVenue.count).to eql 0
       	expect(ActiveInVenueNetwork.count).to eql 0
 

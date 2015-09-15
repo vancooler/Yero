@@ -26,8 +26,7 @@ module V20150930
       if activity.nil?
         error_obj = {
           code: 404,
-          message: "Activity cannot be found",
-          external_message: ''
+          message: "Activity cannot be found"
         }
         render json: error(error_obj, 'error')
       else
@@ -37,8 +36,7 @@ module V20150930
           # :nocov:
           error_obj = {
             code: 520,
-            message: "Cannot delete the activity.",
-            external_message: ''
+            message: "Cannot delete the activity."
           }
           render json: error(error_obj, 'error')
           # :nocov:

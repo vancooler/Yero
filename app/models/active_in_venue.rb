@@ -75,7 +75,7 @@ class ActiveInVenue < ActiveRecord::Base
     return true
   end
 
-  def self.five_am_cleanup(venue)
-    ActiveInVenue.where(:venue_id => venue.id).delete_all
+  def self.five_am_cleanup(venue, people_array)
+    ActiveInVenue.where(:venue_id => venue.id).where(user_id: people_array).delete_all
   end
 end

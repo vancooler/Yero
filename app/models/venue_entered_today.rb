@@ -24,9 +24,9 @@ class VenueEnteredToday < ActiveRecord::Base
   end
   # :nocov:
 
-  def self.five_am_cleanup(venue)
+  def self.five_am_cleanup(venue, people_array)
     #vn = VenueEnteredToday.where("last_activity < ? ", Time.now - 0.1.seconds)
-    VenueEnteredToday.where(:venue_id => venue.id).delete_all
+    VenueEnteredToday.where(:venue_id => venue.id).where(user_id: people_array).delete_all
     return true
   end
 

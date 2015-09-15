@@ -28,14 +28,14 @@ class ActiveInVenueNetwork < ActiveRecord::Base
   end
 
 
-  def self.five_am_cleanup(venue_network)
-    ActiveInVenueNetwork.where(:venue_network_id => venue_network.id).delete_all
+  def self.five_am_cleanup(venue_network, people_array)
+    ActiveInVenueNetwork.where(:venue_network_id => venue_network.id).where(user_id: people_array).delete_all
 
     # cleanup active_in_venue records in this venue_network
     venues = Venue.where(:venue_network_id => venue_network.id)
     venues.each do |v|
-      ActiveInVenue.five_am_cleanup(v)
-      VenueEnteredToday.five_am_cleanup(v)
+      ActiveInVenue.five_am_cleanup(v, people_array)
+      VenueEnteredToday.five_am_cleanup(v, people_array)
     end
     return true
   end
