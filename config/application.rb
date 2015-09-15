@@ -20,7 +20,7 @@ module PurpleOctopus
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.middleware.use Oink::Middleware, :logger => Hodel3000CompliantLogger.new(STDOUT)
-    config.middleware.use Rack::SslEnforcer, :only_hosts => ['api.yero.co', 'devapi.yero.co', 'dev.yero.co']
+    config.middleware.use Rack::SslEnforcer, :only_hosts => ['api.yero.co', 'devapi.yero.co']
     config.assets.precompile += %w( vendor/modernizr )
 
     config.before_configuration do
