@@ -13,13 +13,13 @@ describe 'V2.0.0' do
       	get 'api/users', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 499
+      	expect(JSON.parse(response.body)['error']['code']).to eql 499
 
       	token = "user_2.generate_token"
       	get 'api/users?token=' + token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 497
+      	expect(JSON.parse(response.body)['error']['code']).to eql 497
 
       	user = {:id => 200, :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
         secret = 'secret'
@@ -27,7 +27,7 @@ describe 'V2.0.0' do
 	    get 'api/users?token=' + token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 497
+      	expect(JSON.parse(response.body)['error']['code']).to eql 497
 
       	user = { } # expire in 24 hours
         secret = 'secret'
@@ -35,7 +35,7 @@ describe 'V2.0.0' do
 	    get 'api/users?token=' + token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 497
+      	expect(JSON.parse(response.body)['error']['code']).to eql 497
 
       	user = { :exp => (Time.now.to_i + 3600*24) } # expire in 24 hours
         secret = 'secret'
@@ -43,7 +43,7 @@ describe 'V2.0.0' do
 	    get 'api/users?token=' + token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 497
+      	expect(JSON.parse(response.body)['error']['code']).to eql 497
 
       	user = { :id => 2, :exp => (Time.now.to_i - 3600*24) } # expire in 24 hours
         secret = 'secret'
@@ -51,7 +51,7 @@ describe 'V2.0.0' do
 	    get 'api/users?token=' + token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 497
+      	expect(JSON.parse(response.body)['error']['code']).to eql 497
 
 
       	UserAvatar.delete_all
@@ -73,8 +73,8 @@ describe 'V2.0.0' do
       	get 'api/users?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'No photos'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'No photos'
 
 	    ua = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 0)
 
@@ -88,7 +88,7 @@ describe 'V2.0.0' do
       	get 'api/users/433?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
 
       	
       	get 'api/users/2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -146,12 +146,12 @@ describe 'V2.0.0' do
       	get 'api/verify', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 400
+      	expect(JSON.parse(response.body)['error']['code']).to eql 400
 
       	get 'api/verify?email=test8@yero.co', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
       	get 'api/verify?email=test81@yero.co', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
@@ -160,14 +160,14 @@ describe 'V2.0.0' do
 		post 'api/signup', {:email=>'test8@yero.co', :first_name => "", :birthday => birthday, :gender => "M", :password => "123456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 400
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Required fields cannot be blank'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 400
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Required fields cannot be blank'
 
       	post 'api/signup', {:email=>'test8@yero.co', :first_name => "AAA", :birthday => birthday, :gender => "M", :password => "123456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 400
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'This email has already been taken.'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 400
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'This email has already been taken.'
 
       	post 'api/signup', {:email=>'test 85@yero.co', :first_name => "A AA", :birthday => birthday, :gender => " M ", :password => "123456", :wechat_id => "we sf", :instagram_id => "SFD d", :snapchat_id => "DSF SFD", :line_id => "SDF sDF"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
@@ -181,20 +181,20 @@ describe 'V2.0.0' do
 		post 'api/login', {:email=>'test85@yero.co', :password => ""}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 400
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Login information missing.'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 400
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Login information missing.'
 
       	post 'api/login', {:email=>'test85d@yero.co', :password => "123456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Email address not found'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Email address not found'
 
       	post 'api/login', {:email=>'test85@yero.co', :password => "12d3456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Your email or password is incorrect'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Your email or password is incorrect'
 
       	post 'api/login', {:email=>'test85@yero.co', :password => "123456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
@@ -204,12 +204,12 @@ describe 'V2.0.0' do
       	post 'api/emails', {:new_email=>'', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 400
+      	expect(JSON.parse(response.body)['error']['code']).to eql 400
 
       	post 'api/emails', {:new_email=>'test85@yero.co', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
       	post 'api/emails', {:new_email=>'test85adf@yero.co', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
@@ -218,22 +218,33 @@ describe 'V2.0.0' do
 		post 'api/passwords', {:email=>'test8asfsf5@yero.co'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
 
       	post 'api/passwords', {:email=>'test2@yero.co'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 
-		NotificationPreference.create!(name: "Network online")
-		NotificationPreference.create!(name: "Enter venue network")
-		NotificationPreference.create!(name: "Leave venue network")
+		NotificationPreference.create!(name: "Network online", default_value: true)
+		NotificationPreference.create!(name: "Enter venue network", default_value: true)
+		NotificationPreference.create!(name: "Leave venue network", default_value: false)
 
-		put 'api/user_notification_preferences', {:token => token, :notification_settings => ["Network online",  "Enter venue network",  "Leave venue network"]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => {:name => "Network online", :value => 0 }}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
-		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 3
+		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 1
 
-		put 'api/user_notification_preferences', {:token => token, :notification_settings => ["Network online", "Enter venue network", "Leave venue network"]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => {:name => "Leave venue network", :value => 1} }, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 2
+
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => {:name => "Network online", :value => 1} }, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 1
+
+
+		put 'api/user_notification_preferences', {:token => token, :notification_settings => {:name => "Leave venue network", :value => 0} }, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(UserNotificationPreference.where(:user_id => 2).count).to eql 0
@@ -254,17 +265,17 @@ describe 'V2.0.0' do
 		post 'api/report_user_histories', {:token => token, :user_id => 43, :type_id => 5, :reason => ''}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-		expect(JSON.parse(response.body)['data']['code']).to eql 400
+		expect(JSON.parse(response.body)['error']['code']).to eql 400
 
 		post 'api/block_users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-		expect(JSON.parse(response.body)['data']['code']).to eql 400
+		expect(JSON.parse(response.body)['error']['code']).to eql 400
 
 		post 'api/block_users', {:token => token, :user_id => 2345}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
-		expect(JSON.parse(response.body)['data']['code']).to eql 404
+		expect(JSON.parse(response.body)['error']['code']).to eql 404
 
 		post 'api/block_users', {:token => token, :user_id => 4}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
@@ -434,7 +445,7 @@ describe 'V2.0.0' do
       	post 'api/venues/sfsdf', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
 
       	post 'api/venues/Vancouver_TestVenue_test', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -505,8 +516,8 @@ describe 'V2.0.0' do
       	get 'api/friends/3?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
       	get 'api/friends?page=0&per_page=3&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -523,14 +534,14 @@ describe 'V2.0.0' do
       	get 'api/friends/8?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry, cannot find the friend'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry, cannot find the friend'
 
       	get 'api/friends/4?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
       	get 'api/friends?page=0&per_page=3&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -547,8 +558,8 @@ describe 'V2.0.0' do
       	get 'api/friends/2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
       	BlockUser.delete_all
       	# No photo
@@ -557,8 +568,8 @@ describe 'V2.0.0' do
       	get 'api/friends/2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
 
       	FriendByWhisper.delete_all
@@ -608,7 +619,7 @@ describe 'V2.0.0' do
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Cannot send more whispers"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Cannot send more whispers"
 
       	get 'api/users?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -670,7 +681,7 @@ describe 'V2.0.0' do
       	post "api/whispers", {:notification_type => '2', :target_id => '2', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Cannot send more whispers"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Cannot send more whispers"
 
       	get 'api/whispers?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -736,7 +747,7 @@ describe 'V2.0.0' do
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Cannot send more whispers"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Cannot send more whispers"
 
       	get 'api/whispers?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -754,8 +765,8 @@ describe 'V2.0.0' do
       	get 'api/whispers/aaa2asdf?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, cannot find the whisper"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, cannot find the whisper"
 
 
       	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test5@yero.co", password: "123556", birthday: (birthday-20.years), gender: 'F', latitude: 59.3257235, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
@@ -765,8 +776,8 @@ describe 'V2.0.0' do
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
       	user_5.delete
 
       	# Block
@@ -775,8 +786,8 @@ describe 'V2.0.0' do
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
       	BlockUser.delete_all
       	# No photo
@@ -787,8 +798,8 @@ describe 'V2.0.0' do
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 403
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, you don't have access to it"
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
 
 
       	ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
@@ -828,18 +839,18 @@ describe 'V2.0.0' do
       	put 'api/whispers/aaa2', {:accepted => '0', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry cannot execute the action'
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry cannot execute the action'
 
       	put 'api/whispers/aaa', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry, cannot find the whisper'
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry, cannot find the whisper'
 
       	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
       	put 'api/whispers/aaa2', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "User blocked"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "User blocked"
       	BlockUser.delete_all
       	put 'api/whispers/aaa2', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -882,8 +893,8 @@ describe 'V2.0.0' do
       	get 'api/whispers/3?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['code']).to eql 404
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Sorry, cannot find the whisper'
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry, cannot find the whisper'
 
       	delete 'api/friends/33', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -947,7 +958,7 @@ describe 'V2.0.0' do
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Cannot send more whispers"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Cannot send more whispers"
 
       	get 'api/users?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1038,7 +1049,7 @@ describe 'V2.0.0' do
       	delete 'api/whispers/collection', {:token => token, :array => []}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql 'Invalid Parameters'
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Invalid Parameters'
 
 
       	delete 'api/whispers/collection', {:token => token, :array => ['aaa2']}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1103,7 +1114,7 @@ describe 'V2.0.0' do
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Cannot send more whispers"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Cannot send more whispers"
 
       	WhisperSent.delete_all
 
@@ -1221,7 +1232,7 @@ describe 'V2.0.0' do
       	put 'api/whispers/aaa2', {:declined => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['data']['message']).to eql "Sorry, cannot find the whisper"
+      	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, cannot find the whisper"
 
 
 

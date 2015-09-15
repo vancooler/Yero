@@ -29,7 +29,7 @@ module V20150930
           message: "Activity cannot be found",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         if activity.destroy
           render json: success(true)
@@ -40,7 +40,7 @@ module V20150930
             message: "Cannot delete the activity.",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
           # :nocov:
         end
 

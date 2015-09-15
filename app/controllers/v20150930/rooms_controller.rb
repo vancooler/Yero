@@ -14,7 +14,7 @@ module V20150930
           message: "Venue cannot be found",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         beacons = beacon_key.collect {|key| beacons.detect {|x| x.key == key}}
         result = true
@@ -36,7 +36,7 @@ module V20150930
             message: "Cannot enter the venue.",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
           # :nocov:
         end
       end
@@ -56,7 +56,7 @@ module V20150930
             message: "Cannot leave venues.",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
           # :nocov:
         end
       # end

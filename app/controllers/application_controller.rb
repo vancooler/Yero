@@ -41,7 +41,7 @@ class ApplicationController < ActionController::Base
     if result['success'] == true
 
     else
-      render json: error(result['error_data'], 'data')
+      render json: error(result['error_data'], 'error')
     end
 
   end

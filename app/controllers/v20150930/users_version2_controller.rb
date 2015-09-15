@@ -17,7 +17,7 @@ module V20150930
           message: "Sorry, cannot find the user",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         user_obj = user.user_object(current_user)
         render json: success(user_obj)
@@ -129,7 +129,7 @@ module V20150930
     	    message: "Cannot update the user.",
           external_message: ''
     	  }
-    	  render json: error(error_obj, 'data')
+    	  render json: error(error_obj, 'error')
         # :nocov:
       end
     end
@@ -154,7 +154,7 @@ module V20150930
           message: "No photos",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         user = current_user
         # user.join_network
@@ -198,7 +198,7 @@ module V20150930
           message: "No email address",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         if User.exists? email: params[:email]
           error_obj = {
@@ -206,7 +206,7 @@ module V20150930
             message: "Email address exists",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
         else
           render json: success()
         end
@@ -225,7 +225,7 @@ module V20150930
           message: "Required fields cannot be blank",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         # good to signup
         if params[:email].match(/\s/).blank?
@@ -311,7 +311,7 @@ module V20150930
       		    message: "Cannot sign up this user.",
               external_message: ''
       		  }
-      		  render json: error(error_obj, 'data')
+      		  render json: error(error_obj, 'error')
             # :nocov:
           end
         else
@@ -320,7 +320,7 @@ module V20150930
   	        message: "This email has already been taken.",
             external_message: ''
   	      }
-            render json: error(error_obj, 'data')
+            render json: error(error_obj, 'error')
         end
       end
     end
@@ -333,7 +333,7 @@ module V20150930
           message: "Login information missing.",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       else
         if User.exists? email: params[:email]
           user = User.find_by_email(params[:email]) # find by email, skip key
@@ -352,7 +352,7 @@ module V20150930
   	        message: "Your email or password is incorrect",
             external_message: ''
   	      }
-            render json: error(error_obj, 'data')
+            render json: error(error_obj, 'error')
           end  
         else
           error_obj = {
@@ -360,7 +360,7 @@ module V20150930
   	      message: "Email address not found",
           external_message: ''
   	    }
-  	    render json: error(error_obj, 'data')
+  	    render json: error(error_obj, 'error')
         end
       end
     end
@@ -382,7 +382,7 @@ module V20150930
       		    message: "Cannot generate reset email token for this user.",
               external_message: ''
       		  }
-      		  render json: error(error_obj, 'data')
+      		  render json: error(error_obj, 'error')
             # :nocov:
           end
         else
@@ -391,7 +391,7 @@ module V20150930
   		  message: "There is already an account with this email address.",
         external_message: ''
   		}
-  		render json: error(error_obj, 'data')
+  		render json: error(error_obj, 'error')
         end
 
       else
@@ -400,7 +400,7 @@ module V20150930
   	    message: "New email cannot be blank",
         external_message: ''
   	  }
-  	  render json: error(error_obj, 'data')
+  	  render json: error(error_obj, 'error')
       end
     end
 
@@ -422,7 +422,7 @@ module V20150930
         	  message: "Cannot generate reset password token for this user.",
             external_message: ''
       		}
-  	    render json: error(error_obj, 'data')
+  	    render json: error(error_obj, 'error')
         # :nocov:
         end
       else
@@ -431,7 +431,7 @@ module V20150930
       		message: "Cannot find accout with your email address",
           external_message: ''
         }
-  	  render json: error(error_obj, 'data')
+  	  render json: error(error_obj, 'error')
       end
     end
 
@@ -482,7 +482,7 @@ module V20150930
       	    message: "Cannot report this user.",
             external_message: ''
     		  }
-  	      render json: error(error_obj, 'data')
+  	      render json: error(error_obj, 'error')
           # :nocov:
   	    end
         
@@ -492,7 +492,7 @@ module V20150930
       		  message: "Invalid params",
             external_message: ''
     	    }
-      		render json: error(error_obj, 'data')
+      		render json: error(error_obj, 'error')
       end
       
     end
@@ -514,7 +514,7 @@ module V20150930
       		  message: "Sorry, this user doesn't exist",
             external_message: ''
     	    }
-      		render json: error(error_obj, 'data')
+      		render json: error(error_obj, 'error')
         end
       else
         	error_obj = {
@@ -522,7 +522,7 @@ module V20150930
       		  message: "Invalid params",
             external_message: ''
     	    }
-      		render json: error(error_obj, 'data')
+      		render json: error(error_obj, 'error')
       end
     end
 

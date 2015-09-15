@@ -13,16 +13,17 @@ class UserNotificationPreference < ActiveRecord::Base
 
 
   def self.update_preferences_settings_v2(current_user, preferences)
-    puts preferences.inspect
-    preferences.each do |p|
-      notification_preference = NotificationPreference.find_by_name(p)
-      if  !notification_preference.nil? and current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
-        UserNotificationPreference.create!(:notification_preference_id => notification_preference.id, :user_id => current_user.id)
-      elsif !notification_preference.nil? and !current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
-        # remove
-        current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).delete_all
-      end
+
+    notification_preference = NotificationPreference.find_by_name(preferences['name'])
+    value = (!preferences['value'].nil? ? (preferences['value'].to_s == '1' or preferences['value'].to_s == 'true') : nil)
+     
+    if  !notification_preference.nil? and notification_preference.default_value != value and current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
+      UserNotificationPreference.create!(:notification_preference_id => notification_preference.id, :user_id => current_user.id)
+    elsif !notification_preference.nil? and notification_preference.default_value == value and !current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).blank?
+      # remove
+      current_user.user_notification_preference.where(:notification_preference_id => notification_preference.id).delete_all
     end
+
     return true
   end
 

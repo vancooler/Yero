@@ -25,7 +25,7 @@ module V20150930
             message: "Cannot create this photo",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
           # :nocov:
         end
       else
@@ -34,7 +34,7 @@ module V20150930
           message: "Invalid Parameters",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       end
     end
 
@@ -50,7 +50,7 @@ module V20150930
             message: "Photo cannot be found",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
         else
           avatar_url = avatar.origin_url
           thumb_url = avatar.thumb_url
@@ -68,7 +68,7 @@ module V20150930
               message: "Cannot update the photo.",
               external_message: ''
             }
-            render json: error(error_obj, 'data')
+            render json: error(error_obj, 'error')
             # :nocov:
           end
         end
@@ -78,7 +78,7 @@ module V20150930
           message: "Invalid Parameters",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       end
     end
 
@@ -107,7 +107,7 @@ module V20150930
             message: "Cannot delete the photo.",
             external_message: ''
           }
-          render json: error(error_obj, 'data')
+          render json: error(error_obj, 'error')
           # :nocov:
         end
       else
@@ -116,7 +116,7 @@ module V20150930
           message: "Photo cannot be found",
           external_message: ''
         }
-        render json: error(error_obj, 'data')
+        render json: error(error_obj, 'error')
       end
     end
 
