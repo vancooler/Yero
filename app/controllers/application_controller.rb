@@ -198,7 +198,7 @@ class ApplicationController < ActionController::Base
     # puts "request"
     # puts request.path
     if Rails.env != "test"
-      unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com'
+      unless /^www/.match(request.host) or request.host_with_port == 'localhost:3000' or request.host == 'purpleoctopus-staging.herokuapp.com' or request.host == 'purpleoctopus-dev.herokuapp.com' or request.host == 'dev.yero.co' or request.host == 'api.yero.co' or request.host == 'devapi.yero.co'
         redirect_to("#{request.protocol}www.#{request.host_with_port}#{request.path}",
                     :status => 301)
       end
