@@ -15,7 +15,7 @@ describe WhisperNotification do
 		      	expect(WhisperNotification.myfriends(user).count).to eql 1
 		      	expect(WhisperNotification.unviewd_whisper_number(user_2.id)[:friend_number]).to eql 1
 
-		      	expect(WhisperNotification.send_whisper('2', user_3, 0, '1', 'hello', "Something")).to eql "No photos"
+		      	expect(WhisperNotification.send_whisper('2', user_3, 0, '1', 'hello', "Something")).to eql "Please upload a profile photo first"
 		      	expect(WhisperToday.count).to eql 0
 		      	expect(WhisperSent.count).to eql 0
 		      	expect(RecentActivity.count).to eql 0
