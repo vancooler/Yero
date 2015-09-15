@@ -1400,6 +1400,7 @@ class User < ActiveRecord::Base
               return result
             else
               user.last_active = Time.now + 1.second
+              user.version = "2.0"
               user.save!
               # user.update(last_active: Time.now+1.second)
               result = {'success' => true}

@@ -72,6 +72,7 @@ class ApplicationController < ActionController::Base
               render json: error("You must authenticate with a valid token")
             else
               user.last_active = Time.now
+              user.version = '1.0'
               user.save!
             end
           end
