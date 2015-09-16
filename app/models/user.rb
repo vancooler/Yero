@@ -1144,11 +1144,12 @@ class User < ActiveRecord::Base
 
   def collect_users(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
     ignore_connected = true
+    time_1 = Time.now
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
     all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
     all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
-
+    time_2 = Time.now
     if self.current_venue.blank?
       same_venue_user_ids = Array.new
       different_venue_user_ids = Array.new
@@ -1157,16 +1158,31 @@ class User < ActiveRecord::Base
       different_venue_user_ids = ActiveInVenue.where("venue_id <> ?", self.current_venue.id).map(&:user_id)
       
     end
+    time_3 = Time.now
     same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
     same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
 
     different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
     different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    time_4  = Time.now
     if everyone
       all_users = same_venue_users + (all_users - same_venue_users)
     else
       all_users = same_venue_users + different_venue_users
     end
+    time_5 = Time.now
+
+    puts "All TT"
+    puts (time_2-time_1).inspect
+    puts "Venue id TT"
+    puts (time_3-time_2).inspect
+    puts "Venue users TT"
+    puts (time_4-time_3).inspect
+    puts "Everyone TT"
+    puts (time_5-time_4).inspect
+
+    puts "Total TT"
+    puts (time_5-time_1).inspect
 
     return all_users
   end
@@ -1223,6 +1239,7 @@ class User < ActiveRecord::Base
         pagination['per_page'] = users_per_page
         pagination['total_count'] = return_users.length
         result['pagination'] = pagination
+        return_users = Kaminari.paginate_array(return_users).page(page_number).per(users_per_page) if !return_users.nil?
       end
       if self.current_venue.blank?
         same_venue_user_ids = Array.new
@@ -1366,9 +1383,7 @@ class User < ActiveRecord::Base
         # puts "count B"
         # puts users.count
       # ADD Pagination
-      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
-        users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
-      end
+      
 
 
       e_time = Time.now
