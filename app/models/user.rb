@@ -1150,13 +1150,20 @@ class User < ActiveRecord::Base
     all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
     all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_2 = Time.now
+    campus_id = VenueType.find_by_name("Campus")
+    if campus_id
+      campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
+    else
+      campus_venue_ids = [nil]
+    end
     if self.current_venue.blank?
       same_venue_user_ids = Array.new
-      different_venue_user_ids = Array.new
+      different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
     else
       same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
-      different_venue_user_ids = ActiveInVenue.where("venue_id <> ?", self.current_venue.id).map(&:user_id)
-      
+      campus_venue_ids << self.current_venue.id
+      different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
+
     end
     time_3 = Time.now
     same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
@@ -1261,6 +1268,7 @@ class User < ActiveRecord::Base
       end
 
       # build json format
+      time_j_s = Time.now
       users = Jbuilder.encode do |json|
         same_venue_time = 0
         different_venue_time = 0
@@ -1353,7 +1361,7 @@ class User < ActiveRecord::Base
       end
 
       users = JSON.parse(users).delete_if(&:empty?)
-
+      time_j_e = Time.now
       # TODO: Move to db level to improve performance
         # different_venue_users = [] # Make a empty array for users in the different venue
         # same_venue_users = [] #Make a empty array for users in the same venue
@@ -1387,8 +1395,10 @@ class User < ActiveRecord::Base
 
 
       e_time = Time.now
-      runtime = e_time - s_time
-      
+      runtime = time_j_e - time_j_s
+      puts "The json time is: "
+      puts runtime.inspect
+
       puts "The runtime is: "
       puts runtime.inspect
 
