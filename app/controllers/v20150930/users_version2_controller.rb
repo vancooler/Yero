@@ -88,8 +88,8 @@ module V20150930
       end
 
       # status
-      if params[:introduction_2].present? 
-        user.introduction_2 = params[:introduction_2]
+      if params[:status].present? 
+        user.introduction_2 = params[:status]
         user.last_status_active_time = Time.now
       end
 
@@ -358,6 +358,10 @@ module V20150930
   	    render json: error(error_obj, 'error')
         end
       end
+    end
+
+    def logout
+      render json: success(true)
     end
 
     # reset email

@@ -267,7 +267,7 @@ class User < ActiveRecord::Base
       json.wechat_id (wechat_id.blank? ? '' : wechat_id)
       json.line_id (line_id.blank? ? '' : line_id)
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
-      json.introduction_2 (introduction_2.blank? ? '' : introduction_2)
+      json.status (introduction_2.blank? ? '' : introduction_2)
       json.latitude (latitude.blank? ? 0 : latitude)
       json.longitude (longitude.blank? ? 0 : longitude)
       json.discovery discovery
@@ -700,7 +700,7 @@ class User < ActiveRecord::Base
             json.latitude       user.latitude  
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
-            json.introduction_2 user.introduction_2.blank? ? '' : user.introduction_2
+            json.status user.introduction_2.blank? ? '' : user.introduction_2
             json.exclusive      user.exclusive
           end
         end
@@ -856,7 +856,7 @@ class User < ActiveRecord::Base
       latitude:        self.latitude,
       longitude:       self.longitude,
       introduction_1:  self.introduction_1.blank? ? '' : self.introduction_1,
-      introduction_2:  self.introduction_2.blank? ? '' : self.introduction_2
+      status:  self.introduction_2.blank? ? '' : self.introduction_2
     }
 
     return user_object
@@ -1284,7 +1284,7 @@ class User < ActiveRecord::Base
             json.latitude       user.latitude  
             json.longitude      user.longitude 
             json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
-            json.introduction_2 user.introduction_2.blank? ? '' : user.introduction_2
+            json.status user.introduction_2.blank? ? '' : user.introduction_2
             json.exclusive      user.exclusive
           end
         end

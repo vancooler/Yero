@@ -244,6 +244,7 @@ Rails.application.routes.draw do
       get     'api/verify',                              to: 'users_version2#check_email'
       post    'api/signup',                              to: 'users_version2#signup'
       post    'api/login',                               to: 'users_version2#login'
+      delete  'api/logout',                              to: 'users_version2#logout'
       post    'api/emails',                              to: 'users_version2#change_email'
       post    'api/passwords',                           to: 'users_version2#forgot_password'
       put     'api/user_notification_preferences',       to: 'users_version2#update_notification_preferences'

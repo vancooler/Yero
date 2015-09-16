@@ -74,6 +74,7 @@
     <li ><a href="#method-i-api_friends_id">GET api/friends/:id</a></li>
     <li ><a href="#method-i-api_delete_friend">DELETE api/friends/:id</a></li>
     <li ><a href="#method-i-api_users_login">POST api/login</a></li>
+    <li ><a href="#method-i-api_users_logout">DELETE api/logout</a></li>
     <li ><a href="#method-i-api_users_forgot_password">POST api/passwords</a></li>
     <li ><a href="#method-i-api_report">POST api/report_user_histories</a></li>
     <li ><a href="#method-i-api_users_signup_no_avatar">POST api/signup</a></li>
@@ -207,12 +208,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Activity cannot be found"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot delete the activity."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
 
             </pre>
@@ -238,12 +237,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid Parameters"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot create this photo"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -271,17 +268,14 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid Parameters"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Photo cannot be found"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update this photo"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -305,12 +299,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Photo cannot be found"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot delete this photo"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -339,12 +331,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, this user doesn't exist"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -368,17 +358,16 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"New email cannot be blank"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please fill the required fields"</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"There is already an account with this email address."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Your email is token by another account"</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot generate reset email token for this user."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -439,12 +428,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the friend"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -496,20 +483,28 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Login information missing."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Email address not found"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Your email or password is incorrect"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_logout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/logout [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-logout">UsersVersion2#logout</a>
+          
         </div>
       </div>
 
@@ -530,12 +525,11 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find accout with your email address"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Sorry, cannot find account with example@yero.co"</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot generate reset password token for this user."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   
             </pre>
@@ -563,12 +557,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot report this user."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   
             </pre>
@@ -598,21 +590,26 @@
   <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardCurrentUserObject</span>
+  <span class="ruby-constant">New Fields:</span>
+    <span class="ruby-constant">+ status: (string)</span>
+    <span class="ruby-constant">+ last_active: (integer)</span>
+    <span class="ruby-constant">token -> token{token: (string), expire: (integer)}</span>
+  
+  
 <span class="ruby-keyword">Error Messages:</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Required fields cannot be blank"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please fill the required fields"</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
-    <span class="ruby-identifier">message: </span><span class="ruby-string">"This email has already been taken."</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Your email is token by another account"</span>
     <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot sign up this user."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   
             </pre>
@@ -677,6 +674,8 @@
         <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">""</span>
         <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">"snap"</span>
         <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">"Hi"</span>
+        <span class="ruby-identifier">status: </span><span class="ruby-string">"Hi"</span>
+        <span class="ruby-identifier">last_active: </span><span class="ruby-string">144535334</span>
         <span class="ruby-identifier">latitude: </span><span class="ruby-string">49.543532</span>
         <span class="ruby-identifier">longitude: </span><span class="ruby-string">-123.012434</span>
         <span class="ruby-identifier">exclusive: </span><span class="ruby-constant">FALSE</span>
@@ -692,7 +691,7 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"No photos"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -710,7 +709,7 @@
             <pre>
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">introduction_1: </span><span class="ruby-string"> bio text</span>
-  <span class="ruby-identifier">introduction_2: </span><span class="ruby-string"> status text</span>
+  <span class="ruby-identifier">status: </span><span class="ruby-string"> status text</span>
   <span class="ruby-identifier">wechat_id: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">line_id: </span><span class="ruby-string"> string</span>
@@ -730,7 +729,6 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update this user."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   
             </pre>
@@ -756,7 +754,6 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the user"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
  
             </pre>
@@ -847,7 +844,6 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot leave venues."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
  
             </pre>
@@ -872,12 +868,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot enter venues."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Venue cannot be found"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -901,12 +895,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"No email address"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Email address exists"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
  
     
@@ -936,23 +928,21 @@
 <span class="ruby-keyword">Error Messages:</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
-    <span class="ruby-identifier">message: </span><span class="ruby-string">"No photos"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"User blocked"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"You are already friends"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot send more whispers"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Cannot send more whispers"</span>
   <span class="ruby-string">}</span>
 
             </pre>
@@ -1070,22 +1060,18 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the whisper."</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"User blocked"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"You are already friends"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry cannot execute the action"</span>
-    <span class="ruby-identifier">external_message: </span><span class="ruby-string">""</span>
   <span class="ruby-string">}</span>
 
             </pre>
