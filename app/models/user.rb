@@ -1399,6 +1399,7 @@ class User < ActiveRecord::Base
       puts "The json time is: "
       puts runtime.inspect
 
+      runtime = e_time - s_time
       puts "The runtime is: "
       puts runtime.inspect
 
