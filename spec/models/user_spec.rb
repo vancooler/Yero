@@ -95,6 +95,7 @@ describe User do
 	        expect(user_3.fellow_participants(false, nil, 19, 50, nil, 0, 1000, false).length).to eql 1
 	        expect(user_3.fellow_participants(false, 'F', 19, 50, nil, 1, 1000, false).length).to eql 1
 	        expect(user_3.people_list(1, 'F', 19, 40, nil, 1, 100, true, 0, 48)['users'].count).to eql 1
+	        expect(user_3.people_list_2_0(1, 'F', 19, 40, nil, 1, 100, true, 0, 48)['users'].count).to eql 1
 	        expect(user_3.people_list(4, 'F', 19, 40, nil, 1, 100, true, 0, 48)['percentage']).to eql 50
 	        ActiveInVenue.destroy_all
 	        venue.destroy

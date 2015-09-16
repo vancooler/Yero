@@ -165,7 +165,7 @@ module V20150930
         venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
         puts "EVERYONE: " + params[:everyone].to_s
         everyone = true
-        everyone = (params[:everyone].to_s == "true" ? true : false) if !params[:everyone].nil?
+        everyone = ((params[:everyone].to_s == "true" or params[:everyone].to_s == "1") ? true : false) if !params[:everyone].nil?
         puts "EVERYONE2: " + everyone.to_s
         page_number = nil
         users_per_page = nil

@@ -182,11 +182,19 @@ class User < ActiveRecord::Base
     else
       users = User.includes(:user_avatars).where.not(id: black_list).where(is_connected: true).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).near(self, max_distance, :units => :km)
     end
+
     if !everyone
       users = users.where(id: active_users_id)
       puts "everyone filter:"
       puts users.length
     end
+    users = self.additional_filter(users, gender, min_age, max_age, min_distance, max_distance, everyone)
+    
+    return users
+  end
+
+  def additional_filter(users, gender, min_age, max_age, min_distance, max_distance, everyone)
+
 
     # users.delete(self)
     if !gender.nil? || gender != "A"
@@ -202,10 +210,10 @@ class User < ActiveRecord::Base
     end
     min_distance = 0 if min_distance.nil? 
     max_distance = 60 if max_distance.nil?
+    max_distance = max_distance.blank? ? 60 : max_distance+1
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
+
   end
-
-
 
   ##########################################################################
   #
@@ -1134,6 +1142,36 @@ class User < ActiveRecord::Base
 
 
 
+  def collect_users(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+    ignore_connected = true
+    black_list = BlockUser.blocked_user_ids(self.id)
+    black_list << self.id
+    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
+    all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+
+    if self.current_venue.blank?
+      same_venue_user_ids = Array.new
+      different_venue_user_ids = Array.new
+    else
+      same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
+      different_venue_user_ids = ActiveInVenue.where("venue_id <> ?", self.current_venue.id).map(&:user_id)
+      
+    end
+    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
+    same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+
+    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
+    different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    if everyone
+      all_users = same_venue_users + (all_users - same_venue_users)
+    else
+      all_users = same_venue_users + different_venue_users
+    end
+
+    return all_users
+  end
+
+
 ############################################ API V 2 ############################################
 
 
@@ -1159,10 +1197,10 @@ class User < ActiveRecord::Base
     result = Hash.new
     # check 
     # if ActiveInVenueNetwork.joins(:user).where('users.is_connected' => true).count >= gate_number
-    ignore_connected = true
-    all_users = self.fellow_participants(ignore_connected, nil, 0, 100, nil, 0, 60, true)
+    all_users = self.collect_users('A', 0, 100, nil, 0, 60, true)
     number_of_users = all_users.length + 1
     if number_of_users >= gate_number  
+      # ADD Pagination
       s_time = Time.now
       # collect all whispers sent 
       # TODO: use model to do it
@@ -1178,7 +1216,14 @@ class User < ActiveRecord::Base
       friends = mutual_follow | whisper_friends
 
       # get all users with filter params
-      return_users = self.fellow_participants(ignore_connected, gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      return_users = self.collect_users(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
+      if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
+        pagination = Hash.new
+        pagination['page'] = page_number - 1
+        pagination['per_page'] = users_per_page
+        pagination['total_count'] = return_users.length
+        result['pagination'] = pagination
+      end
       if self.current_venue.blank?
         same_venue_user_ids = Array.new
       else
@@ -1293,40 +1338,35 @@ class User < ActiveRecord::Base
       users = JSON.parse(users).delete_if(&:empty?)
 
       # TODO: Move to db level to improve performance
-      different_venue_users = [] # Make a empty array for users in the different venue
-      same_venue_users = [] #Make a empty array for users in the same venue
-      no_badge_users = [] # Make an empty array for no badge users
-      users.each do |u| # Go through the users
-        if !!u['exclusive'] == true
-          if u['same_venue_badge'].to_s == "true"
-             same_venue_users << u # Throw the user into the array
-          end
-        else
-          if !!u['exclusive'] == false
-            if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-              different_venue_users << u # Throw the user into the array
-            elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-              same_venue_users << u # Throw the user into the array
-            elsif everyone
-              different_venue_users << u # Users who are not in a venue also thrown into here.
-            end
-          end
-        end
-      end
-      
-      # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      puts "count A"
-      puts users.count
-      users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
-      puts "count B"
-      puts users.count
-      pagination = Hash.new
+        # different_venue_users = [] # Make a empty array for users in the different venue
+        # same_venue_users = [] #Make a empty array for users in the same venue
+        # no_badge_users = [] # Make an empty array for no badge users
+        # users.each do |u| # Go through the users
+        #   if !!u['exclusive'] == true
+        #     if u['same_venue_badge'].to_s == "true"
+        #        same_venue_users << u # Throw the user into the array
+        #     end
+        #   else
+        #     if !!u['exclusive'] == false
+        #       if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
+        #         different_venue_users << u # Throw the user into the array
+        #       elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
+        #         same_venue_users << u # Throw the user into the array
+        #       elsif everyone
+        #         different_venue_users << u # Users who are not in a venue also thrown into here.
+        #       end
+        #     end
+        #   end
+        # end
+        
+        # # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
+        # puts "count A"
+        # puts users.count
+        # users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
+        # puts "count B"
+        # puts users.count
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
-        pagination['page'] = page_number - 1
-        pagination['per_page'] = users_per_page
-        pagination['total_count'] = users.count
-        result['pagination'] = pagination
         users = Kaminari.paginate_array(users).page(page_number).per(users_per_page) if !users.nil?
       end
 
