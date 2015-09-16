@@ -1315,9 +1315,11 @@ class User < ActiveRecord::Base
       end
       
       # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-      
+      puts "count A"
+      puts users.count
       users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
-      
+      puts "count B"
+      puts users.count
       pagination = Hash.new
       # ADD Pagination
       if !page_number.nil? and !users_per_page.nil? and users_per_page > 0 and page_number >= 0
