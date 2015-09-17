@@ -251,7 +251,7 @@ Rails.application.routes.draw do
       post    'api/report_user_histories',               to: 'users_version2#report'
       post    'api/block_users',                         to: 'block_users#create'
       get     'api/block_users',                         to: 'block_users#index'
-      delete  'api/block_users',                         to: 'block_users#destroy'
+      delete  'api/block_users/:id',                     to: 'block_users#destroy'
 
       # avatar APIs 3
       post   'api/avatars',                              to: 'user_avatars_version2#create'

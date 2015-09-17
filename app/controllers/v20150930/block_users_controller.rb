@@ -12,8 +12,8 @@ module V20150930
     end
 
     def destroy
-      if !params[:user_id].nil?
-        user_id = params[:user_id].to_i
+      if !params[:id].nil?
+        user_id = params[:id].to_i
         if User.exists? id: user_id
           if BlockUser.check_block(current_user.id, user_id)
             BlockUser.where(origin_user_id: current_user.id, target_user_id: user_id).delete_all
@@ -27,11 +27,13 @@ module V20150930
           render json: error(error_obj, 'error')
         end
       else
+          # :nocov:
           error_obj = {
             code: 400,
             message: "Invalid params"
           }
           render json: error(error_obj, 'error')
+          # :nocov:
       end
     end
     

@@ -295,6 +295,21 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 2
 		expect(JSON.parse(response.body)['data'][0]['user']['id']).to eql 2
 
+		get 'api/block_users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(JSON.parse(response.body)['data'].count).to eql 2
+		expect(JSON.parse(response.body)['data'][0]['user']['id']).to eql 2
+
+		delete 'api/block_users/29', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+		delete 'api/block_users/2', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(BlockUser.count).to eql 1
+
 		BlockUser.delete_all
 		TimeZonePlace.delete_all
 		ReportUserHistory.delete_all
