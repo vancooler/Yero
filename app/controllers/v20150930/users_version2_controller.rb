@@ -492,28 +492,30 @@ module V20150930
       
     end
 
-    # block user
-    def block
+    def collection_delete
       # user = current_user
-      if !params[:user_id].nil?
-        user_id = params[:user_id].to_i
-        if User.exists? id: user_id
-          if !BlockUser.check_block(current_user.id, user_id)
-            BlockUser.create!(origin_user_id: current_user.id, target_user_id: user_id)
+      if !params[:object_type].blank? and !params[:ids].blank?
+        model_name = params[:object_type]
+        model = nil
+        case model_name
+        when "whispers"
+          if Rails.env == 'production'
+            # :nocov:
+            WhisperNotification.delay.delete_whispers(params[:ids].to_a)
+            # :nocov:
+          else
+            whisper_id_array = WhisperToday.where(dynamo_id: params[:ids].to_a).map(&:id)
+            WhisperReply.where(whisper_id: whisper_id_array).delete_all
+            WhisperToday.where(dynamo_id: params[:ids].to_a).delete_all
           end
-          black_list = BlockUser.blocked_users_json(current_user.id)
-          render json: success(black_list)
-        else
-          error_obj = {
-      		  code: 404,
-      		  message: "Sorry, this user doesn't exist"
-    	    }
-      		render json: error(error_obj, 'error')
+          whispers_delete = WhisperToday.where(dynamo_id: params[:ids].to_a).update_all(:declined => true)
+          render json: success(whispers_delete)
         end
+        
       else
         	error_obj = {
       		  code: 400,
-      		  message: "Invalid params"
+      		  message: "Invalid parameters"
     	    }
       		render json: error(error_obj, 'error')
       end

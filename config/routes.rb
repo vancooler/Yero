@@ -249,7 +249,9 @@ Rails.application.routes.draw do
       post    'api/passwords',                           to: 'users_version2#forgot_password'
       put     'api/user_notification_preferences',       to: 'users_version2#update_notification_preferences'
       post    'api/report_user_histories',               to: 'users_version2#report'
-      post    'api/block_users',                         to: 'users_version2#block'
+      post    'api/block_users',                         to: 'block_users#create'
+      get     'api/block_users',                         to: 'block_users#index'
+      delete  'api/block_users',                         to: 'block_users#destroy'
 
       # avatar APIs 3
       post   'api/avatars',                              to: 'user_avatars_version2#create'
@@ -274,12 +276,14 @@ Rails.application.routes.draw do
       get    'api/whispers/:id',                         to: 'whispers#show'
       post   'api/whispers',                             to: 'whispers#create'
       put    'api/whispers/:id',                         to: 'whispers#update'
-      delete 'api/whispers/collection',                  to: 'whispers#destroy'
+      delete 'api/whispers/:id',                         to: 'whispers#destroy'
 
       # Activity APIs 2
       get    'api/activities',                           to: 'activities#index'
       delete 'api/activities/:id',                       to: 'activities#destroy'
 
+      #Batch delete
+      delete 'api/collection',                           to: 'users_version2#collection_delete'
     end
   end
 

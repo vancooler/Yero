@@ -1046,13 +1046,13 @@ describe 'V2.0.0' do
 
 
       	token = user_3.generate_token
-      	delete 'api/whispers/collection', {:token => token, :array => []}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	delete 'api/collection', {:token => token, :object_type => "whispers", :ids => []}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
-      	expect(JSON.parse(response.body)['error']['message']).to eql 'Invalid Parameters'
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Invalid parameters'
 
 
-      	delete 'api/whispers/collection', {:token => token, :array => ['aaa2']}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	delete 'api/collection', {:token => token, :object_type => "whispers", :ids => ['aaa2']}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
 
@@ -1063,6 +1063,35 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['users'][0]['actions'].count).to eql 1
       	expect(WhisperToday.count).to eql 0
       	expect(WhisperReply.count).to eql 0
+
+
+      	ws = WhisperSent.last
+		ws.whisper_time = Time.now - 53.hours
+		ws.save!
+
+		token = user_2.generate_token
+      	
+      	token = user_2.generate_token
+      	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(WhisperToday.count).to eql 1
+      	expect(WhisperToday.first.message).to eql 'Hi!'
+      	expect(WhisperToday.first.message_b).to eql ''
+      	expect(WhisperToday.first.accepted).to eql false
+      	expect(WhisperToday.first.declined).to eql false
+      	expect(WhisperToday.first.paper_owner_id).to eql 3
+      	expect(WhisperReply.count).to eql 1
+      	expect(WhisperReply.last.message).to eql 'Hi!'
+      	expect(WhisperSent.count).to eql 1
+      	expect(RecentActivity.count).to eql 6
+
+
+      	token = user_3.generate_token
+      	delete 'api/whispers/2', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(WhisperToday.count).to eql 0
 
       	gate.delete
       	WhisperReply.delete_all

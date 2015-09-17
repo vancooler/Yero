@@ -244,24 +244,56 @@ module V20150930
     end
 
     def destroy
-      if params[:array].blank?
+      whisper_id = params[:id]
+      if !/\A\d+\z/.match(whisper_id.to_s)
+        whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+      else
+        whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+      end
+      if whisper.blank?
         error_obj = {
-          code: 400,
-          message: "Invalid Parameters"
+          code: 404,
+          message: "Sorry, cannot find the whisper"
         }
         render json: error(error_obj, 'error')
       else
-        if Rails.env == 'production'
-          # :nocov:
-          WhisperNotification.delay.delete_whispers(params[:array].to_a)
-          # :nocov:
+
+        if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        elsif whisper.photo_disabled(current_user.id)
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
         else
-          whisper_id_array = WhisperToday.where(dynamo_id: params[:array].to_a).map(&:id)
-          WhisperReply.where(whisper_id: whisper_id_array).delete_all
-          WhisperToday.where(dynamo_id: params[:array].to_a).delete_all
+          if Rails.env == 'production'
+            # :nocov:
+            WhisperNotification.delay.find_whisper(whisper.dynamo_id, 'declined')
+            # :nocov:
+          else
+            WhisperNotification.find_whisper(whisper.dynamo_id, 'declined')
+          end
+          if Rails.env == 'production'
+            # :nocov:
+            WhisperReply.delay.archive_history(whisper)
+            # :nocov:
+          else
+            WhisperReply.where(whisper_id: whisper.id).delete_all
+            whisper.delete
+          end
+          render json: success
         end
-        whispers_delete = WhisperToday.where(dynamo_id: params[:array].to_a).update_all(:declined => true)
-        render json: success(whispers_delete)
       end
     end
 
