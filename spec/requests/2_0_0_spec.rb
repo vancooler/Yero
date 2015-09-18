@@ -295,10 +295,10 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 2
 		expect(JSON.parse(response.body)['data'][0]['user']['id']).to eql 2
 
-		get 'api/block_users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		get 'api/block_users?page=0&per_page=1', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
-		expect(JSON.parse(response.body)['data'].count).to eql 2
+		expect(JSON.parse(response.body)['data'].count).to eql 1
 		expect(JSON.parse(response.body)['data'][0]['user']['id']).to eql 2
 
 		delete 'api/block_users/29', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

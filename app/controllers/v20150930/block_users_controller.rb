@@ -6,7 +6,14 @@ module V20150930
   ############################################ API V 2 ############################################
 
     def index
-      black_list = BlockUser.blocked_users_json(current_user.id)
+
+      page = nil
+      per_page = nil
+      page = params[:page].to_i + 1 if !params[:page].blank?
+      per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+
+      black_list = BlockUser.blocked_users_json(current_user.id, page, per_page)
           
       render json: success(black_list)
     end
