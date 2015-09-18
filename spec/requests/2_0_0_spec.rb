@@ -310,6 +310,16 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(BlockUser.count).to eql 1
 
+		BlockUser.create!(origin_user_id: 3, target_user_id: 2)
+
+		expect(BlockUser.count).to eql 2
+
+		delete 'api/collection', {:token => token, :object_type => "block_users", :ids => [2, 4]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(BlockUser.count).to eql 0
+
+
 		BlockUser.delete_all
 		TimeZonePlace.delete_all
 		ReportUserHistory.delete_all
@@ -575,6 +585,12 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
       	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, you don't have access to it"
+
+      	delete 'api/collection', {:token => token, :object_type => "friends", :ids => [2, 4]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(FriendByWhisper.count).to eql 0
+
 
       	BlockUser.delete_all
       	# No photo

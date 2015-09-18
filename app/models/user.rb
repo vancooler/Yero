@@ -1269,17 +1269,19 @@ class User < ActiveRecord::Base
 
       # build json format
       time_j_s = Time.now
+
       users = Jbuilder.encode do |json|
         same_venue_time = 0
         different_venue_time = 0
         check_badge_time = 0
-        avatar_time = 0
-        other_time = 0
+        time_avatar = 0
+        actions_time = 0
+        whispers_time = 0
         json.array! return_users do |user|
           if user.id != self.id
             next unless user.user_avatars.present?
             next unless user.main_avatar.present?
-            
+            time_avatar_a = Time.now
             other_avatars = user.user_avatars.where(is_active:true).order(:order)
             avatar_array = Array.new
 
@@ -1298,18 +1300,21 @@ class User < ActiveRecord::Base
             end
 
             json.avatars avatar_array
+            time_avatar_b = Time.now
+            time_avatar += (time_avatar_b - time_avatar_a)
 
-
+            actions_time_a = Time.now
             json.whisper_sent whispers_sent.include? user.id.to_i
             are_friends = (friends.map(&:id).include? user.id)
             whisper_sent = (whispers_sent.include? user.id.to_i)
             can_reply = (whispers_can_reply.include?  user.id.to_i)
             can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
-
-            
-
             actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
             json.actions actions
+            actions_time_b = Time.now
+            actions_time += (actions_time_b - actions_time_a)
+            
+            whispers_time_a = Time.now
             whisper_hash = self.collect_whisper_message_history(user, actions)
             if !whisper_hash['whisper_id'].nil?
                 json.whisper_id whisper_hash['whisper_id']
@@ -1317,6 +1322,9 @@ class User < ActiveRecord::Base
             if !whisper_hash['messages_array'].nil?
                 json.messages_array whisper_hash['messages_array']
             end
+            whispers_time_b = Time.now
+            whispers_time += (whispers_time_b - whispers_time_a)
+            
 
             if followees.blank?
               json.like false
@@ -1358,6 +1366,14 @@ class User < ActiveRecord::Base
             json.exclusive      user.exclusive
           end
         end
+        puts "The avatar time is: "
+        puts time_avatar.inspect
+
+        puts "The actions time is: "
+        puts actions_time.inspect
+
+        puts "The whisper time is: "
+        puts whispers_time.inspect
       end
 
       users = JSON.parse(users).delete_if(&:empty?)
@@ -1391,6 +1407,8 @@ class User < ActiveRecord::Base
         # puts "count B"
         # puts users.count
       # ADD Pagination
+      
+
       
 
 

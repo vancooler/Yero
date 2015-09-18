@@ -509,7 +509,16 @@ module V20150930
             WhisperToday.where(dynamo_id: params[:ids].to_a).delete_all
           end
           whispers_delete = WhisperToday.where(dynamo_id: params[:ids].to_a).update_all(:declined => true)
-          render json: success(whispers_delete)
+          render json: success
+
+        when "block_users"
+          block_users_delete = BlockUser.where(origin_user_id: current_user.id, target_user_id: params[:ids].to_a).delete_all
+          render json: success
+
+        when "friends"
+          FriendByWhisper.where(origin_user_id: current_user.id, target_user_id: params[:ids].to_a).delete_all
+          FriendByWhisper.where(origin_user_id: params[:ids].to_a, target_user_id: current_user.id).delete_all
+          render json: success
         end
         
       else
