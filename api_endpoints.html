@@ -68,7 +68,10 @@
     <li ><a href="#method-i-api_avatar_create">POST api/avatars</a></li>
     <li ><a href="#method-i-api_avatar_update">PUT api/avatars/:id</a></li>
     <li ><a href="#method-i-api_avatar_destroy">DELETE api/avatars/:id</a></li>
+    <li ><a href="#method-i-api_users_get_block_user">GET api/block_users</a></li>
     <li ><a href="#method-i-api_users_block_user">POST api/block_users</a></li>
+    <li ><a href="#method-i-api_users_delete_block_user">DELETE api/block_users/:id</a></li>
+    <li ><a href="#method-i-api_users_delete_collection">DELETE api/collection</a></li>
     <li ><a href="#method-i-api_users_generate_reset_email_verify">POST api/emails</a></li>
     <li ><a href="#method-i-api_friends">GET api/friends</a></li>
     <li ><a href="#method-i-api_friends_id">GET api/friends/:id</a></li>
@@ -309,13 +312,45 @@
         </div>
       </div>
 
+      <div id="method-i-api_users_get_block_user" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/block_users [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/BlockUsersController.html#method-i-index">block_users#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-identifier">data: </span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">blocked_at: </span><span class="ruby-string">143453454</span>
+      <span class="ruby-identifier">user: </span><span class="ruby-constant">StandardUserObject</span>
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">]</span>
+  <span class="ruby-identifier">pagination: </span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+      <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+      <span class="ruby-identifier">total_count: </span><span class="ruby-string">34</span>
+    <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
       <div id="method-i-api_users_block_user" class="method-detail ">
         <div class="method-heading">
           <span class="method-name">api/block_users [POST]</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
-          <a href="./V20150930/UsersVersion2Controller.html#method-i-block">UsersVersion2#block</a>
+          <a href="./V20150930/BlockUsersController.html#method-i-create">block_users#create</a>
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
@@ -335,6 +370,57 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_delete_block_user" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/block_users/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/BlockUsersController.html#method-i-destroy">block_users#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">id: </span><span class="ruby-string">required user id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, this user doesn't exist"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid params"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_users_delete_collection" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/collection [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/UsersVersion2Controller.html#method-i-collection_delete">users_version2#collection_delete</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">object_type: </span><span class="ruby-string">required string (whispers, block_users, friends)</span>
+  <span class="ruby-identifier">ids: </span><span class="ruby-string">required id array</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">400</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Invalid parameters"</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
@@ -776,7 +862,7 @@
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">notification_settings: </span>
   <span class="ruby-string">{</span>
-    <span class="ruby-identifier">name: </span><span class="ruby-string">"Enter venue network"</span>
+    <span class="ruby-identifier">name: </span><span class="ruby-string">options: ("Enter venue network", "Leave venue network")</span>
     <span class="ruby-identifier">value: </span><span class="ruby-string">0</span>
   <span class="ruby-string">}</span>
 <span class="ruby-keyword">Response:</span>
@@ -1090,7 +1176,7 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier">array: </span><span class="ruby-string">required whisper id array</span>
+  <span class="ruby-identifier">array: </span><span class="ruby-string">required whisper id</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
 <span class="ruby-keyword">Error Messages:</span>
