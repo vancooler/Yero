@@ -51,6 +51,12 @@ class WhisperToday < ActiveRecord::Base
 		end	
 	end
 
+	def self.pending_whispers(user_id)
+		whisper_a = WhisperToday.where(origin_user_id: user_id).map(&:target_user_id)
+		whisper_b = WhisperToday.where(target_user_id: user_id).map(&:origin_user_id)
+		return (whisper_a | whisper_b)
+	end
+
 	def self.to_json(whispers, current_user)
 		result = Jbuilder.encode do |json|
 			json.array! whispers do |a|

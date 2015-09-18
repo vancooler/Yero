@@ -500,7 +500,7 @@ class User < ActiveRecord::Base
 
 
   # gather actions
-  def collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+  def collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
     actions = Array.new
     if are_friends
       actions << "chat"
@@ -513,7 +513,7 @@ class User < ActiveRecord::Base
       actions << "accept"
       actions << "delete"  
     end
-    if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and WhisperToday.find_pending_whisper(user.id, self.id).nil?
+    if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and pending_whispers.blank?
       actions << "whisper"
     end
 
@@ -578,6 +578,7 @@ class User < ActiveRecord::Base
       whispers_sent = WhisperNotification.collect_whispers(self)
       whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
       whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
+      pending_whispers = WhisperToday.pending_whispers(self.id)
 
       # colect all users with "like"
       followees = self.followees(User)
@@ -659,7 +660,7 @@ class User < ActiveRecord::Base
 
             
 
-            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
             json.actions actions
             whisper_hash = self.collect_whisper_message_history(user, actions)
             if !whisper_hash['whisper_id'].nil?
@@ -1230,7 +1231,7 @@ class User < ActiveRecord::Base
       whispers_sent = WhisperNotification.collect_whispers(self)
       whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
       whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
-
+      pending_whispers = WhisperToday.pending_whispers(self.id)
       # colect all users with "like"
       followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends
@@ -1309,7 +1310,7 @@ class User < ActiveRecord::Base
             whisper_sent = (whispers_sent.include? user.id.to_i)
             can_reply = (whispers_can_reply.include?  user.id.to_i)
             can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
-            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user)
+            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
             json.actions actions
             actions_time_b = Time.now
             actions_time += (actions_time_b - actions_time_a)
