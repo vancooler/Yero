@@ -55,7 +55,11 @@ module V20150930
           avatar.origin_url = params[:avatar_url]
           avatar.thumb_url = params[:thumb_url]
           if avatar.save
-            UserAvatar.remove_from_aws(avatar_url, thumb_url)
+            if Rails.env == 'production'
+              # :nocov:
+              UserAvatar.remove_from_aws(avatar_url, thumb_url)
+              # :nocov:
+            end
             user_info = current_user.to_json(true)
             render json: success(user_info)
           else
@@ -89,8 +93,11 @@ module V20150930
         thumb_url = avatar.thumb_url
 
         if avatar.destroy
-          UserAvatar.remove_from_aws(avatar_url, thumb_url)
-
+          if Rails.env == 'production'
+            # :nocov:
+            UserAvatar.delay.remove_from_aws(avatar_url, thumb_url)
+            # :nocov:
+          end
           UserAvatar.order_minus_one(current_user.id, this_order)
 
           user_info = current_user.to_json(true)

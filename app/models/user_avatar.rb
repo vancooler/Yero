@@ -82,7 +82,8 @@ class UserAvatar < ActiveRecord::Base
         if s3_bucket
           object = s3_bucket.objects[array.last]
           if object
-            response_1 = object.delete
+            object.delete
+            response = object.exists?
           end
         end
       else
@@ -92,7 +93,8 @@ class UserAvatar < ActiveRecord::Base
           if s3_bucket
             object = s3_bucket.objects['uploads'+array.last]
             if object
-              response_1 = object.delete
+              object.delete
+              response = object.exists?
             end
           end
         end
@@ -103,7 +105,8 @@ class UserAvatar < ActiveRecord::Base
         if s3_bucket
           object = s3_bucket.objects[array.last]
           if object
-            response_2 = object.delete
+            object.delete
+            response2 = object.exists?
           end
         end
       else
@@ -113,7 +116,8 @@ class UserAvatar < ActiveRecord::Base
           if s3_bucket
             object = s3_bucket.objects['uploads'+array.last]
             if object
-              response_2 = object.delete
+              object.delete
+              response2 = object.exists?
             end
           end
         end
@@ -121,7 +125,13 @@ class UserAvatar < ActiveRecord::Base
     end
     # :nocov:
 
-    return [response_1, response_2]
+    result = true
+
+    if !response.nil? and !response2.nil?
+      result = result && response && response2
+    end
+
+    return result
   end
   private
     # :nocov:
