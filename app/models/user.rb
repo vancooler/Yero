@@ -1167,7 +1167,7 @@ class User < ActiveRecord::Base
 
     end
     time_3 = Time.now
-    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
+    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-14.days)
     same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
 
     different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
