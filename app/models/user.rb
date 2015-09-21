@@ -513,7 +513,7 @@ class User < ActiveRecord::Base
       actions << "accept"
       actions << "delete"  
     end
-    if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and pending_whispers.blank?
+    if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and !(pending_whispers.include? user.id)
       actions << "whisper"
     end
 
