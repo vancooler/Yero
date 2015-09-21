@@ -73,6 +73,7 @@ class UserAvatar < ActiveRecord::Base
       #   bucket = ENV['S3_BUCKET_NAME']
       # end
       # AWS.config(:access_key_id => access_key_id, :secret_access_key => access_key)
+      bucket = ENV['S3_BUCKET_NAME']
       s3 = AWS::S3.new
 
       array = avatar_url.split(bucket+'/')
