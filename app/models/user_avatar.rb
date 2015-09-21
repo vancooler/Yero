@@ -63,16 +63,16 @@ class UserAvatar < ActiveRecord::Base
     # remove in AWS
     # :nocov:
     if Rails.env == 'production'
-      if !ENV['AWS_ACCESS_KEY_ID'].blank?
-        access_key_id = ENV['AWS_ACCESS_KEY_ID']
-      end
-      if !ENV['AWS_SECRET_ACCESS_KEY'].blank?
-        access_key = ENV['AWS_SECRET_ACCESS_KEY']
-      end
-      if !ENV['S3_BUCKET_NAME'].blank?
-        bucket = ENV['S3_BUCKET_NAME']
-      end
-      AWS.config(:access_key_id => access_key_id, :secret_access_key => access_key)
+      # if !ENV['AWS_ACCESS_KEY_ID'].blank?
+      #   access_key_id = ENV['AWS_ACCESS_KEY_ID']
+      # end
+      # if !ENV['AWS_SECRET_ACCESS_KEY'].blank?
+      #   access_key = ENV['AWS_SECRET_ACCESS_KEY']
+      # end
+      # if !ENV['S3_BUCKET_NAME'].blank?
+      #   bucket = ENV['S3_BUCKET_NAME']
+      # end
+      # AWS.config(:access_key_id => access_key_id, :secret_access_key => access_key)
       s3 = AWS::S3.new
 
       array = avatar_url.split(bucket+'/')
@@ -81,7 +81,18 @@ class UserAvatar < ActiveRecord::Base
         if s3_bucket
           object = s3_bucket.objects[array.last]
           if object
-            object.delete
+            response_1 = object.delete
+          end
+        end
+      else
+        array = avatar_url.split('amazonaws.com/uploads')
+        if array.count > 1
+          s3_bucket = s3.buckets[bucket]
+          if s3_bucket
+            object = s3_bucket.objects['uploads'+array.last]
+            if object
+              response_1 = object.delete
+            end
           end
         end
       end
@@ -91,12 +102,25 @@ class UserAvatar < ActiveRecord::Base
         if s3_bucket
           object = s3_bucket.objects[array.last]
           if object
-            object.delete
+            response_2 = object.delete
+          end
+        end
+      else
+        array = thumb_url.split('amazonaws.com/uploads')
+        if array.count > 1
+          s3_bucket = s3.buckets[bucket]
+          if s3_bucket
+            object = s3_bucket.objects['uploads'+array.last]
+            if object
+              response_2 = object.delete
+            end
           end
         end
       end
     end
     # :nocov:
+
+    return [response_1, response_2]
   end
   private
     # :nocov:
