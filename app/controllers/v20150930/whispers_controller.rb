@@ -105,7 +105,7 @@ module V20150930
       venue_id = params[:venue_id].nil? ? 0 : params[:venue_id]
       notification_type = params[:notification_type].to_s
       intro = params[:intro].blank? ? "" : params[:intro].to_s
-      message = current_user.first_name + " just sent you a whisper"   
+      message = current_user.first_name + " sent you a whisper"   
       
       result = WhisperNotification.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
 
