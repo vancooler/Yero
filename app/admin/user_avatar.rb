@@ -87,6 +87,19 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       end
     end
 
+    def remove_status
+      user = User.find_by_id(params[:id])
+      if !user.nil?
+        if user.update(:introduction_2 => '')
+          redirect_to :back, :notice => "Status of user " + user.name + " was successfully removed."
+        else
+          redirect_to :back, :notice => "Failed to remove status of user " + user.name 
+        end
+      else
+        redirect_to :back, :notice => "Cannot find the user" 
+      end
+    end
+
     # def disable_single_user
     #   ua = UserAvatar.find_by_id(params[:id])
     #   if !ua.nil? and !ua.user.nil?
@@ -174,17 +187,20 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       link + ((avatar.is_active.nil? or avatar.order.nil?) ? '' : ((avatar.is_active == false or avatar.order.to_i != 0) ? '' : raw('<span class="status_tag yes">P</span>')))
     end
     column "User (ID)", :user
-    column "Gender", :user do |ua|
-      ua.user.nil? ? '' : ua.user.gender
-    end
-    column "Age", :user do |ua|
-      ua.user.nil? ? '' : ua.user.age
-    end
-    column "Email", :user do |ua|
-      ua.user.nil? ? '' : ua.user.email
-    end
-    column "Instagram", :user do |ua|
-      ua.user.nil? ? '' : ua.user.instagram_id
+    # column "Gender", :user do |ua|
+    #   ua.user.nil? ? '' : ua.user.gender
+    # end
+    # column "Age", :user do |ua|
+    #   ua.user.nil? ? '' : ua.user.age
+    # end
+    # column "Email", :user do |ua|
+    #   ua.user.nil? ? '' : ua.user.email
+    # end
+    # column "Instagram", :user do |ua|
+    #   ua.user.nil? ? '' : ua.user.instagram_id
+    # end
+    column "Status", :user do |ua|
+      (ua.user.blank? or ua.user.introduction_2.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_status_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.introduction_2)
     end
     column "Snapchat", :user do |ua|
       (ua.user.blank? or ua.user.snapchat_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_snapchat_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.snapchat_id)

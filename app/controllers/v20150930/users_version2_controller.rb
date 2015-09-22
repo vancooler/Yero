@@ -179,7 +179,10 @@ module V20150930
         else
           user.enough_user_notification_sent_tonight = true
           user.save
-          render json: success(result, "data", result['pagination'])
+          response = {
+            users: result['users']
+          }
+          render json: success(response, "data", result['pagination'])
         end   
       end
     end
