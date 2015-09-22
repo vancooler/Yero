@@ -194,6 +194,8 @@ class Venue < ActiveRecord::Base
     venue_state = venue_obj['State']
     venue_country = venue_obj['Country']
     venue_zipcode = venue_obj['Zipcode']
+    latitude = venue_obj['Latitude'].nil? ? nil : venue_obj['Latitude'].to_f
+    longitude = venue_obj['Longitude'].nil? ? nil : venue_obj['Longitude'].to_f
     venue_network = name.blank? ? '' : (name.split '_').first.titleize
     if type = VenueType.find_by_name(venue_type) and city_network = VenueNetwork.find_by_name(venue_network)
       if !name.blank? and !venue_name.blank?
@@ -207,12 +209,12 @@ class Venue < ActiveRecord::Base
             # end
           else
             # create
-            venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+            venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
             b.update(:venue_id => venue.id)
           end
         else
           # create both
-          venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
+          venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
           Beacon.create!(:key => name, :venue_id => venue.id)
         end
       else

@@ -547,7 +547,7 @@ describe 'V2.0.0' do
       	get 'api/friends?page=0&per_page=3&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['friends'].count).to eql 0
+      	expect(JSON.parse(response.body)['data'].count).to eql 0
 
       	token = user_2.generate_token
       	get 'api/friends/3?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -571,9 +571,9 @@ describe 'V2.0.0' do
       	get 'api/friends?page=0&per_page=3&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['friends'].count).to eql 1
-      	expect(JSON.parse(response.body)['data']['friends'][0]['id']).to eql 3
-      	expect(JSON.parse(response.body)['data']['friends'][0]['object']['id']).to eql 3
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
+      	expect(JSON.parse(response.body)['data'][0]['object']['id']).to eql 3
       	expect(JSON.parse(response.body)['pagination']['page']).to eql 0
       	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 1
 
@@ -867,23 +867,23 @@ describe 'V2.0.0' do
 
 
 
-      	put 'api/whispers/aaa2', {:accepted => '0', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:accepted => false, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry cannot execute the action'
 
-      	put 'api/whispers/aaa', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa', {:accepted => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql 'Sorry, cannot find the whisper'
 
       	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
-      	put 'api/whispers/aaa2', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:accepted => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql "User blocked"
       	BlockUser.delete_all
-      	put 'api/whispers/aaa2', {:accepted => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:accepted => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(WhisperToday.count).to eql 0
@@ -1029,7 +1029,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 1
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
-      	put 'api/whispers/aaa2', {:declined => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:declined => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
 
@@ -1268,7 +1268,7 @@ describe 'V2.0.0' do
       	expect(RecentActivity.count).to eql 4
 
       	token = user_2.generate_token
-      	put 'api/whispers/aaa2', {:declined => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:declined => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
 
@@ -1289,7 +1289,7 @@ describe 'V2.0.0' do
 
 
       	token = user_3.generate_token
-      	put 'api/whispers/aaa2', {:declined => '1', :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	put 'api/whispers/aaa2', {:declined => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql "Sorry, cannot find the whisper"

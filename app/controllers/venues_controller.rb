@@ -94,6 +94,8 @@ class VenuesController < ApplicationController
     @venue.state = @venue.pending_state
     @venue.zipcode = @venue.pending_zipcode
     @venue.country = @venue.pending_country
+    @venue.latitude = @venue.pending_latitude
+    @venue.longitude = @venue.pending_longitude
     @venue.manager_first_name = @venue.pending_manager_first_name
     @venue.manager_last_name = @venue.pending_manager_last_name
     @venue.phone = @venue.pending_phone

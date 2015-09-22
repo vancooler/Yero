@@ -123,7 +123,6 @@ class UserAvatar < ActiveRecord::Base
         end
       end
     end
-    # :nocov:
 
     result = true
 
@@ -132,6 +131,7 @@ class UserAvatar < ActiveRecord::Base
     end
 
     return result
+    # :nocov:
   end
   private
     # :nocov:

@@ -130,7 +130,7 @@ module V20150930
 
       item = WhisperToday.find_by_dynamo_id(whisperId)
       if item 
-        if !params[:accepted].nil? and params[:accepted] and item.target_user_id.to_i == current_user.id
+        if !params[:accepted].nil? and params[:accepted].to_s == "true" and item.target_user_id.to_i == current_user.id
           state = 'accepted'
           if Rails.env == 'production'
             # :nocov:
@@ -207,7 +207,7 @@ module V20150930
               end
             end
           end
-        elsif !params[:declined].nil? and params[:declined]
+        elsif !params[:declined].nil? and params[:declined].to_s == "true"
           state = 'declined'
           if Rails.env == 'production'
             # :nocov:
