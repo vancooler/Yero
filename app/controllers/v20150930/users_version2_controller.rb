@@ -27,7 +27,7 @@ module V20150930
     # update current user with given fields and return user object
     def update
       user = current_user
-      if params[:wechat_id].present? 
+      if !params[:wechat_id].nil? 
         if params[:wechat_id].match(/\s/).blank?
           user.wechat_id = params[:wechat_id]
         else
@@ -35,7 +35,7 @@ module V20150930
         end
       end
 
-      if params[:snapchat_id].present? 
+      if !params[:snapchat_id].nil? 
         if params[:snapchat_id].match(/\s/).blank?
           user.snapchat_id = params[:snapchat_id]
         else
@@ -43,7 +43,7 @@ module V20150930
         end
       end
 
-      if params[:line_id].present? 
+      if !params[:line_id].nil? 
         if params[:line_id].match(/\s/).blank?
           user.line_id = params[:line_id]
         else
@@ -51,7 +51,7 @@ module V20150930
         end
       end
       
-      if params[:instagram_id].present? 
+      if !params[:instagram_id].nil? 
         if params[:instagram_id].match(/\s/).blank?
           user.instagram_id = params[:instagram_id]
         else
@@ -59,7 +59,7 @@ module V20150930
         end
       end
 
-      if params[:instagram_token].present? 
+      if !params[:instagram_token].nil? 
         if params[:instagram_token].match(/\s/).blank?
           user.instagram_token = params[:instagram_token]
         else
@@ -67,7 +67,7 @@ module V20150930
         end
       end
 
-      if params[:spotify_id].present? 
+      if !params[:spotify_id].nil? 
         if params[:spotify_id].match(/\s/).blank?
           user.spotify_id = params[:spotify_id]
         else
@@ -75,7 +75,7 @@ module V20150930
         end
       end
 
-      if params[:spotify_token].present? 
+      if !params[:spotify_token].nil? 
         if params[:spotify_token].match(/\s/).blank?
           user.spotify_token = params[:spotify_token]
         else
@@ -83,12 +83,12 @@ module V20150930
         end
       end
 
-      if params[:introduction_1].present? 
+      if !params[:introduction_1].nil? 
         user.introduction_1 = params[:introduction_1]
       end
 
       # status
-      if params[:status].present? 
+      if !params[:status].nil? 
         user.introduction_2 = params[:status]
         user.last_status_active_time = Time.now
       end
