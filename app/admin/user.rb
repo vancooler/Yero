@@ -51,6 +51,15 @@ ActiveAdmin.register User do
       redirect_to :back, :notice => "User is left"
     end
 
+    def refresh
+      user = User.find_by_id(params[:id])
+      if !user.nil?
+        user.last_active = Time.now
+        user.save
+      end
+      redirect_to :back, :notice => "User is refreshed"
+    end
+
     def send_whisper
       user = User.find_by_id(params[:id])
       if !user.nil?
@@ -69,11 +78,14 @@ ActiveAdmin.register User do
   end
   index do
   	column :id
+    column "First Name" do |user|
+      link_to user.first_name, admin_user_path(user)
+    end
+    # column :first_name
     column :email
     column :birthday
-    column :first_name
     column :gender
-    column :is_connected
+    column :last_active, :sortable => :last_active
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
     # end
@@ -82,7 +94,7 @@ ActiveAdmin.register User do
     
   	# actions
     column "Actions", :actions do |user|
-      link_to("Join network", admin_user_join_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this join?"}) + link_to("Leave network", admin_user_leave_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to simulate this leave?"})
+      link_to("Edit", edit_admin_user_path(user), :class => "member_link button small", :method => "get") + link_to("Refresh User", admin_user_refresh_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to refresh this user?"})
 
     end
   end
@@ -105,7 +117,8 @@ ActiveAdmin.register User do
       f.input :wechat_id
       f.input :snapchat_id
       f.input :instagram_id
-      f.input :introduction_1, :label => "Intrduction"
+      f.input :introduction_1, :label => "Bio"
+      f.input :introduction_2, :label => "Status"
       f.inputs do
         f.has_many :user_avatars, heading: 'Avatars', allow_destroy: false, new_record: false do |b|
           b.input :avatar, :image_preview => true, :style => "height:100px;width:100px;"

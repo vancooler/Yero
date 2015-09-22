@@ -33,6 +33,8 @@ class User < ActiveRecord::Base
   }
   has_secure_password
 
+
+
   # user's profile photo
   def main_avatar
     user_avatars.find_by(order: 0)
@@ -1047,7 +1049,7 @@ class User < ActiveRecord::Base
       fake_user = true
 
       # create user
-      user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true)
+      user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true, :last_active => Time.now)
 
       if !user.nil?
         user.birthday = user.birthday + 1900.years

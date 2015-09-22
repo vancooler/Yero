@@ -62,6 +62,7 @@ Rails.application.routes.draw do
       put 'admin/remove-status/:id', to: 'admin/user_screenings#remove_status', as: :admin_remove_status
       post 'admin/user-join/:id', to: 'admin/users#join_network', as: :admin_user_join
       post 'admin/user-leave/:id', to: 'admin/users#leave_network', as: :admin_user_leave
+      post 'admin/user-refresh/:id', to: 'admin/users#refresh', as: :admin_user_refresh
       post 'admin/user-send-whisper/:id', to: 'admin/users#send_whisper', as: :admin_user_send_whisper
       # Venue API
       post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
