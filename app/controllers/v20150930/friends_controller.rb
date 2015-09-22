@@ -86,7 +86,7 @@ module V20150930
       # puts "serialize friends"
       # puts (t3-t1).inspect
 
-      render json: success(response_data[:friends], "data", pagination)
+      render json: success(response_data, "data", pagination)
     end
 
     def destroy
