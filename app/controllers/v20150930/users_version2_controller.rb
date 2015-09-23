@@ -104,7 +104,7 @@ module V20150930
       if !params[:timezone].nil?
         user.timezone_name = params[:timezone]
         if TimeZonePlace.find_by_timezone(params[:timezone]).nil?
-          TimeZonePlace.create!(timezone: params[:timezone])
+          TimeZonePlace.create!(timezone: params[:timezone], time_no_active: 0)
         end
       end
 

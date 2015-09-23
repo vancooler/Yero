@@ -203,15 +203,29 @@ describe User do
 	      	user_7 = User.create!(id:7, last_active: Time.now, first_name: "SF", email: "test7@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"7", fake_user: true, timezone_name: "America/Vancouver")
 	      	user_8 = User.create!(id:8, last_active: Time.now, first_name: "SF", email: "test8@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"8", fake_user: true, timezone_name: "America/Vancouver")
 	      	user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"9", fake_user: true, timezone_name: "America/Vancouver")
-	      	
+	      	ua_2 = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 0)
+	      	ua_3 = UserAvatar.create!(id: 1, user: user_3, is_active: true, order: 0)
+	      	ua_4 = UserAvatar.create!(id: 4, user: user_4, is_active: true, order: 0)
+	      	ua_5 = UserAvatar.create!(id: 5, user: user_5, is_active: true, order: 0)
+	      	ua_6 = UserAvatar.create!(id: 6, user: user_6, is_active: true, order: 0)
+	      	ua_7 = UserAvatar.create!(id: 7, user: user_7, is_active: true, order: 0)
+	      	ua_8 = UserAvatar.create!(id: 8, user: user_8, is_active: true, order: 0)
+	      	ua_9 = UserAvatar.create!(id: 9, user: user_9, is_active: true, order: 0)
+
 	      	expect(RecentActivity.count).to eql 0
 	      	expect(User.where(is_connected: true).length).to eql 0
 	      	User.random_join_fake_users("America/Vancouver", 2, 3)
 	      	expect(RecentActivity.count).to eql 5
 	      	expect(User.where(is_connected: true).length).to eql 5
-
-
+	      	TimeZonePlace.create!(timezone: "America/Vancouver", time_no_active: 0)
+	      	User.fake_users_activate
+	      	users = User.last.people_list_2_0(1, 'A', 0, 50, nil, 0, 60, true, 0, 10)['users']
+	      	user = users[0]
+	      	id = user['id']
+	      	expect(User.find(id).fake_user).to eql true
+	      	TimeZonePlace.delete_all
 	      	RecentActivity.delete_all
+	      	UserAvatar.delete_all
 	        User.delete_all
 	      end
 

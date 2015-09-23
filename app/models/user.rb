@@ -1029,9 +1029,9 @@ class User < ActiveRecord::Base
     
     timezones = User.where(fake_user: true).map(&:timezone_name).uniq
 
+    times_day = Array.new
+    times_night = Array.new
     timezones.each do |tz|
-      times_day = Array.new
-      times_night = Array.new
       Time.zone = tz # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
       if int_time >= 100 and int_time < 1000 # If time is 1:00 ~ 10:00
@@ -1053,8 +1053,10 @@ class User < ActiveRecord::Base
       time_zone = TimeZonePlace.find_by_timezone(tz)
       if time_zone.has_attribute?(:time_no_active)
         case time_zone.time_no_active
-        when 0
         when nil
+          posibility = [false, false, false, true]
+          next_time = 1
+        when 0
           posibility = [false, false, false, true]
           next_time = 1
         when 1
@@ -1085,7 +1087,9 @@ class User < ActiveRecord::Base
             else
               fake_users = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample(2)
               if !fake_users.blank?
-                fake_users.update_all(last_active: Time.now)
+                fake_users.each do |u|
+                  u.update(last_active: Time.now)
+                end
               end
               fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').sample
               if !fake_user.nil?
@@ -1107,7 +1111,9 @@ class User < ActiveRecord::Base
             else
               fake_users = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').sample(2)
               if !fake_users.blank?
-                fake_users.update_all(last_active: Time.now)
+                fake_users.each do |u|
+                  u.update(last_active: Time.now)
+                end
               end
               fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample
               if !fake_user.nil?
@@ -1131,8 +1137,10 @@ class User < ActiveRecord::Base
       time_zone = TimeZonePlace.find_by_timezone(tz)
       if time_zone.has_attribute?(:time_no_active)
         case time_zone.time_no_active
-        when 0
         when nil
+          posibility = [false]
+          next_time = 1
+        when 0
           posibility = [false]
           next_time = 1
         when 1
