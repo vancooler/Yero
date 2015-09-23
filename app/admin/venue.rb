@@ -133,6 +133,8 @@ ActiveAdmin.register Venue do
       f.input :state
       f.input :country, :priority_countries => ["CA", "US"]
       f.input :zipcode
+      f.input :latitude
+      f.input :longitude
       f.input :phone
       # f.input :dress_code
       f.input :age_requirement
