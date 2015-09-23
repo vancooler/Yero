@@ -35,6 +35,12 @@ task :fake_users_join => :environment do
   puts "Done."
 end
 
+task :fake_users_activate => :environment do
+  puts "Random activate fake users"
+  User.fake_users_activate
+  puts "Done."
+end
+
 task :whisper_expire => :environment do
   puts "Expire whispers without replies older than 12 hours"
   WhisperToday.expire

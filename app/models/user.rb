@@ -1025,6 +1025,141 @@ class User < ActiveRecord::Base
   end
   # :nocov:
 
+  def self.fake_users_activate
+    
+    timezones = User.where(fake_user: true).map(&:timezone_name).uniq
+
+    timezones.each do |tz|
+      times_day = Array.new
+      times_night = Array.new
+      Time.zone = tz # Assign timezone
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 100 and int_time < 1000 # If time is 1:00 ~ 10:00
+        times_night << tz #Throw into array
+      else
+        times_day << tz
+      end
+    end
+
+    User.activate_day(times_day)
+    User.activate_night(times_night)
+
+
+  end
+
+
+  def self.activate_day(times_day)
+    times_day.each do |tz|
+      time_zone = TimeZonePlace.find_by_timezone(tz)
+      if time_zone.has_attribute?(:time_no_active)
+        case time_zone.time_no_active
+        when 0
+        when nil
+          posibility = [false, false, false, true]
+          next_time = 1
+        when 1
+          posibility = [false, false, true]
+          next_time = 2
+        when 2
+          posibility = [false, true]
+          next_time = 3
+        when 3
+          posibility = [true]
+          next_time = 0
+        end
+
+        if posibility.sample
+          more_girls = [false, true, true].sample
+          if more_girls
+            fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').where("last_active < ?", Time.now-24.hours).sample
+            if !fake_user.nil?
+              fake_user.update(last_active: Time.now)
+              fake_user_1 = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).where(gender: 'F').sample
+              if !fake_user_1.nil?
+                fake_user_1.update(last_active: Time.now)
+              end
+              fake_user_2 = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').sample
+              if !fake_user_2.nil?
+                fake_user_2.update(last_active: Time.now)
+              end
+            else
+              fake_users = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample(2)
+              if !fake_users.blank?
+                fake_users.update_all(last_active: Time.now)
+              end
+              fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').sample
+              if !fake_user.nil?
+                fake_user.update(last_active: Time.now)
+              end
+            end
+          else
+            fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').where("last_active < ?", Time.now-24.hours).sample
+            if !fake_user.nil?
+              fake_user.update(last_active: Time.now)
+              fake_user_1 = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).where(gender: 'M').sample
+              if !fake_user_1.nil?
+                fake_user_1.update(last_active: Time.now)
+              end
+              fake_user_2 = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample
+              if !fake_user_2.nil?
+                fake_user_2.update(last_active: Time.now)
+              end
+            else
+              fake_users = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'M').sample(2)
+              if !fake_users.blank?
+                fake_users.update_all(last_active: Time.now)
+              end
+              fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample
+              if !fake_user.nil?
+                fake_user.update(last_active: Time.now)
+              end
+
+            end
+
+          end
+          time_zone.update(time_no_active: 0)
+        else
+          time_zone.update(time_no_active: next_time)
+        end
+      end
+    end
+  end
+
+
+  def self.activate_night(times_night)
+    times_night.each do |tz|
+      time_zone = TimeZonePlace.find_by_timezone(tz)
+      if time_zone.has_attribute?(:time_no_active)
+        case time_zone.time_no_active
+        when 0
+        when nil
+          posibility = [false]
+          next_time = 1
+        when 1
+          posibility = [false, false, true]
+          next_time = 2
+        when 2
+          posibility = [false, true]
+          next_time = 3
+        when 3
+          posibility = [true]
+          next_time = 0
+        end
+
+        if posibility.sample
+          fake_user = User.where(timezone_name: tz).where(fake_user: true).sample
+          fake_user.update(last_active: Time.now)
+          time_zone.update(time_no_active: 0)
+        else
+          time_zone.update(time_no_active: next_time)
+        end
+      end
+    end
+
+
+  end
+
+
   # Inport a single user with hash structure
   def self.import_single_user(user_obj)
     email = user_obj['Email'].nil? ? '' : user_obj['Email']
