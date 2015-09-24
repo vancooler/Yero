@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   # get 'temp_beacon/enter_random_users', as: 'enter_users'
   # get 'temp_beacon/exit_active_users', as: 'exit_active_users'
 
-  constraints DomainConstraint.new(['www.yero.co', 'dev.yero.co', 'localhost', 'yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com', 'purpleoctopus-staging.herokuapp.com']) do
+  constraints DomainConstraint.new(['www.yero.co', 'api.yero.co', 'dev.yero.co', 'localhost', 'yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com', 'purpleoctopus-staging.herokuapp.com']) do
     devise_for :users
     resources :venue_portals
     resources :early_venues

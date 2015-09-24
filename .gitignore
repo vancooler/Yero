@@ -21,3 +21,7 @@
 config/local_env.yml
 dump.rdb
 coverage
+server.csr
+server.key
+server.pass.key
+STAR_yero_co.crt
