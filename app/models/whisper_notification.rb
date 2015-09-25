@@ -211,6 +211,7 @@ class WhisperNotification < AWS::Record::HashModel
         h['viewed'] = FriendByWhisper.find_friendship(user.id, user_id).nil? ? true : FriendByWhisper.find_friendship(user.id, user_id).viewed
         h['timestamp'] = timestamp
         h['timestamp_read'] = Time.at(timestamp) # TODO: change format
+        h['actions'] = ['delete']
         friends << h  
       end
 
@@ -230,6 +231,7 @@ class WhisperNotification < AWS::Record::HashModel
         timestamp_2 = Follow.where(:follower_type => "User", :follower_id => current_user.id, :followable_type => "User", :followable_id => user.id).first.created_at.to_i
         h['timestamp'] = (timestamp_1 > timestamp_2) ? timestamp_1 : timestamp_2
         h['timestamp_read'] = Time.at(h['timestamp']) # TODO: change format
+        h['actions'] = ['delete']
         mutual_follow_array << h  
       end
     end
