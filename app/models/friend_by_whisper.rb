@@ -43,7 +43,7 @@ class FriendByWhisper < ActiveRecord::Base
           		timestamp: self.friend_time.to_i,
           		timestamp_read: Time.at(self.friend_time.to_i),
           		viewed: self.viewed,
-          		actions: ['chat'],
+          		actions: ['chat', 'delete'],
           		object_type: "user",
 	        	object: user_object
           	}
@@ -66,7 +66,7 @@ class FriendByWhisper < ActiveRecord::Base
 	        json.notification_type 3
 	        json.id user_object[:id] 
 
-	        json.actions ['chat']
+	        json.actions ['chat', 'delete']
 	        json.timestamp  user["timestamp"]
 	        json.timestamp_read  Time.at(user["timestamp"])
 	        json.viewed user["viewed"].blank? ? 0 : user["viewed"]
