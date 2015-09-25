@@ -136,10 +136,10 @@ ActiveAdmin.register Venue do
       f.input :latitude
       f.input :longitude
       f.input :phone
-      # f.input :dress_code
+      f.input :timezone, :as => :select, :collection => ['America/Vancouver', 'America/Toronto']
+      f.input :start_time
+      f.input :end_time
       f.input :age_requirement
-      # f.input :longitude
-      # f.input :latitude
     end
     f.inputs do
       f.has_many :beacons, heading: 'Places', allow_destroy: true, new_record: true do |b|

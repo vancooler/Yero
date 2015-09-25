@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150923120309) do
+ActiveRecord::Schema.define(version: 20150925131208) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -537,6 +537,9 @@ ActiveRecord::Schema.define(version: 20150923120309) do
     t.boolean  "draft_pending",              default: false
     t.boolean  "featured",                   default: false
     t.integer  "featured_order"
+    t.string   "timezone",                   default: "America/Vancouver"
+    t.datetime "start_time"
+    t.datetime "end_time"
   end
 
   add_index "venues", ["venue_type_id"], name: "index_venues_on_venue_type_id", using: :btree

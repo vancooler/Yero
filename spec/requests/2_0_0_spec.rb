@@ -418,16 +418,19 @@ describe 'V2.0.0' do
 
 
 	    venue_network = VenueNetwork.create!(id:1, name: "V")
-        venue_type = VenueType.create!(id:1, name:"Campus")
+        venue_type = VenueType.create!(id:1, name:"Festivals")
         venue_type_2 = VenueType.create!(id:2, name:"Club")
-        venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.153, longitude: -123.436, featured: false)
-        venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type_2, latitude: 49.423, longitude: -123.532, featured: false)
-        venue_3 = Venue.create!(id:3, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.353, longitude: -123.424, featured: false)
-        venue_4 = Venue.create!(id:4, venue_network: venue_network, name: "DDD", venue_type:venue_type_2, latitude: 49.463, longitude: -123.312, featured: true)
+        TimeZonePlace.create(timezone: "America/Vancouver")
+        venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.153, longitude: -123.436, featured: false, timezone: "America/Vancouver", start_time: Time.now - 2.hours, end_time: Time.now + 2.hours)
+        venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type, latitude: 49.423, longitude: -123.532, featured: false)
+        venue_3 = Venue.create!(id:3, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.463, longitude: -123.312, featured: false, timezone: "America/Vancouver", start_time: Time.now - 1.hours, end_time: Time.now + 1.hours)
+        venue_4 = Venue.create!(id:4, venue_network: venue_network, name: "DDD", venue_type:venue_type_2, latitude: 49.353, longitude: -123.424, featured: true)
+        venue_5 = Venue.create!(id:5, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.423, longitude: -123.532, featured: false, timezone: "America/Vancouver", start_time: Time.now + 1.hours, end_time: Time.now + 12.hours)
         VenueAvatar.create!(id: 2, venue_id: 1, default: true)
         VenueAvatar.create!(id: 3, venue_id: 2, default: true)
         VenueAvatar.create!(id: 4, venue_id: 3, default: true)
         VenueAvatar.create!(id: 5, venue_id: 4, default: true)
+        VenueAvatar.create!(id: 6, venue_id: 5, default: true)
 
 
 
@@ -435,15 +438,17 @@ describe 'V2.0.0' do
 
 	   	get 'api/venues?page=1&per_page=2&latitude=49.4563&longitude=-122.8787&distance=1000&without_featured_venues=1&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['data'].count).to eql 1
+		expect(JSON.parse(response.body)['data'].count).to eql 2
 		expect(JSON.parse(response.body)['pagination']['page']).to eql 1
 		expect(JSON.parse(response.body)['pagination']['per_page']).to eql 2
-		expect(JSON.parse(response.body)['pagination']['total_count']).to eql 3
+		expect(JSON.parse(response.body)['pagination']['total_count']).to eql 4
 
 		get 'api/venues?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['data'].count).to eql 4
+		expect(JSON.parse(response.body)['data'].count).to eql 5
+		expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
 
+		TimeZonePlace.delete_all
 		VenueAvatar.delete_all
 		Venue.delete_all
 		VenueType.delete_all

@@ -62,12 +62,29 @@ class Venue < ActiveRecord::Base
     if !without_featured_venues
 
       # reorder it based on featured and featured order
-      featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
-      if !featured_venues.empty?
-        other_venues = venues - featured_venues
-        featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
-        venues = featured_venues + other_venues
+      festival_ids = VenueType.all.where("lower(name) like ?", "%festival%").map(&:id)
+      festivals_string = Array.new
+      festival_ids.each do |a|
+        festivals_string << a.to_s
       end
+      festivals = Venue.where(venue_type_id: festivals_string)
+      puts festivals.count
+      featured_festivals = festivals.select{|x|  x.happen_now }
+      if !featured_festivals.empty?
+        other_venues = venues - featured_festivals
+        featured_festivals = featured_festivals.sort_by{|e| e.end_time.to_i}
+        puts 'FEST'
+        featured_festivals.each do |f|
+          puts f.id.to_s + ' -> ' + f.end_time.to_i.to_s
+        end
+        venues = featured_festivals + other_venues
+      end
+      # featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
+      # if !featured_venues.empty?
+      #   other_venues = venues - featured_venues
+      #   featured_venues = featured_venues.sort_by{|e| e[:featured_order]}
+      #   venues = featured_venues + other_venues
+      # end
     else
       featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
       if !featured_venues.empty?
@@ -75,6 +92,26 @@ class Venue < ActiveRecord::Base
       end
     end
     return venues
+  end
+
+  def happen_now
+    if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
+      now = Time.now
+      Time.zone = self.timezone
+      puts "A"
+      puts now.to_i
+      puts self.start_time.to_i
+      puts self.end_time.to_i
+      if now.to_i >= self.start_time.to_i and now.to_i < self.end_time.to_i
+        Time.zone = "UTC"
+        return true
+      else
+        Time.zone = "UTC"
+        return false
+      end
+    else
+      return false
+    end
   end
 
   def default_avatar
@@ -196,6 +233,10 @@ class Venue < ActiveRecord::Base
     venue_zipcode = venue_obj['Zipcode']
     latitude = venue_obj['Latitude'].nil? ? nil : venue_obj['Latitude'].to_f
     longitude = venue_obj['Longitude'].nil? ? nil : venue_obj['Longitude'].to_f
+    timezone = venue_obj['Timezone'].nil? ? nil : venue_obj['Timezone']
+    # Format: YYYY-MM-DDThh:mm
+    start_time = venue_obj['Start Time'].nil? ? nil : venue_obj['Start Time']
+    end_time = venue_obj['End Time'].nil? ? nil : venue_obj['End Time']
     venue_network = name.blank? ? '' : (name.split '_').first.titleize
     if type = VenueType.find_by_name(venue_type) and city_network = VenueNetwork.find_by_name(venue_network)
       if !name.blank? and !venue_name.blank?
@@ -209,12 +250,12 @@ class Venue < ActiveRecord::Base
             # end
           else
             # create
-            venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
+            venue = Venue.create!(:name => venue_name, :timezone => timezone, :start_time => start_time, :end_time => end_time, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
             b.update(:venue_id => venue.id)
           end
         else
           # create both
-          venue = Venue.create!(:name => venue_name, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
+          venue = Venue.create!(:name => venue_name, :timezone => timezone, :start_time => start_time, :end_time => end_time, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
           Beacon.create!(:key => name, :venue_id => venue.id)
         end
       else

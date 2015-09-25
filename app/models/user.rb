@@ -1071,24 +1071,28 @@ class User < ActiveRecord::Base
         end
 
         if posibility.sample
-          more_users = [1, 2, 3].sample
+          more_users = [0, 1].sample
           if !more_users.nil?
             fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').where("last_active < ?", Time.now-24.hours).sample
             if !fake_user.nil?
               fake_user.update(last_active: Time.now)
-              fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
-              if !fake_users.blank?
-                fake_users.each do |u|
-                  u.update(last_active: Time.now)
+              if more_users > 0
+                fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
+                if !fake_users.blank?
+                  fake_users.each do |u|
+                    u.update(last_active: Time.now)
+                  end
                 end
               end
             else
               fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample
               fake_user.update(last_active: Time.now)
-              fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
-              if !fake_users.blank?
-                fake_users.each do |u|
-                  u.update(last_active: Time.now)
+              if more_users > 0
+                fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
+                if !fake_users.blank?
+                  fake_users.each do |u|
+                    u.update(last_active: Time.now)
+                  end
                 end
               end
             end
