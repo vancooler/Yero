@@ -96,8 +96,8 @@ class Venue < ActiveRecord::Base
 
   def happen_now
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
-      now = Time.now
       Time.zone = self.timezone
+      now = Time.zone.now
       puts "A"
       puts now.to_i
       puts self.start_time.to_i
