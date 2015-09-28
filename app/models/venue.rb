@@ -222,15 +222,38 @@ class Venue < ActiveRecord::Base
   end
 
 
+  def upload_img(name)
+
+    origin_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Venues/'+name+'.jpg'
+    downcase_img_url = 'http://s3-us-west-2.amazonaws.com/yero/Venues/'+name.downcase+'.jpg'
+    res = Net::HTTP.get_response(URI.parse(origin_img_url))
+    downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
+    if res.code == '200'
+      # current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
+      
+      avatar = VenueAvatar.new(venue: self, default: true)
+
+      avatar.remote_avatar_url = origin_img_url
+      avatar.save
+    elsif downcase_res.code == '200'
+      avatar = VenueAvatar.new(venue: self, default: true)
+
+      avatar.remote_avatar_url = downcase_img_url
+      avatar.save
+    end
+  end
+
+
+
   def self.import_single_record(venue_obj)
     name = venue_obj['Network Name'].nil? ? '' : venue_obj['Network Name']
     venue_name = venue_obj['List Name'].nil? ? '' : venue_obj['List Name']
     venue_type = venue_obj['Type'].nil? ? '' : venue_obj['Type'].titleize
-    venue_address = venue_obj['Address']
-    venue_city = venue_obj['City']
-    venue_state = venue_obj['State']
-    venue_country = venue_obj['Country']
-    venue_zipcode = venue_obj['Zipcode']
+    venue_address = venue_obj['Address'].nil? ? nil : venue_obj['Address']
+    venue_city = venue_obj['City'].nil? ? nil : venue_obj['City']
+    venue_state = venue_obj['State'].nil? ? nil : venue_obj['State']
+    venue_country = venue_obj['Country'].nil? ? nil : venue_obj['Country']
+    venue_zipcode = venue_obj['Zipcode'].nil? ? nil : venue_obj['Zipcode']
     latitude = venue_obj['Latitude'].nil? ? nil : venue_obj['Latitude'].to_f
     longitude = venue_obj['Longitude'].nil? ? nil : venue_obj['Longitude'].to_f
     timezone = venue_obj['Timezone'].nil? ? nil : venue_obj['Timezone']
@@ -248,18 +271,26 @@ class Venue < ActiveRecord::Base
             # if b.venue.draft_pending.nil? or !b.venue.draft_pending
             #   b.venue.update(:pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true)
             # end
+            if b.venue.venue_avatars.blank?
+              b.venue.upload_img(name)
+            end
           else
             # create
             venue = Venue.create!(:name => venue_name, :timezone => timezone, :start_time => start_time, :end_time => end_time, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
+            venue.upload_img(name)
             b.update(:venue_id => venue.id)
           end
         else
           # create both
           venue = Venue.create!(:name => venue_name, :timezone => timezone, :start_time => start_time, :end_time => end_time, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
+          venue.upload_img(name)
           Beacon.create!(:key => name, :venue_id => venue.id)
         end
       else
       end
+      puts "FFF"
+      puts type.inspect
+      puts city_network.inspect
     else
 
     end
