@@ -93,6 +93,10 @@ gem 'socialization'
 gem 'rails-perftest'
 gem 'ruby-prof'
 
+
+# real time
+gem 'pusher'
+
 # SSL
 gem 'rack-ssl-enforcer'
 
