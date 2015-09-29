@@ -5,9 +5,8 @@ module V20150930
 
     def auth
       if current_user
-        auth = Pusher[params[:channel_name]].authenticate(params[:socket_id])
-
-        render :text => params[:callback] + "(" + auth.to_json + ")", :content_type => 'application/javascript'
+        response = Pusher[params[:channel_name]].authenticate(params[:socket_id])
+        render :json => response
       else
         render :text => "Forbidden", :status => '403'
       end
