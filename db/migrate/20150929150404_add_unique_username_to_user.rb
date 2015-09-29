@@ -1,4 +1,4 @@
-class AddUsernameToUser < ActiveRecord::Migration
+class AddUniqueUsernameToUser < ActiveRecord::Migration
   def change
   	add_column :users, :username, :string
   end
