@@ -26,8 +26,11 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
             RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
     
-            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
-
+            if u.pusher_private_online
+              u.pusher_delete_photo_event
+            else
+              WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+            end
             # notification
             ReportUserHistory.mark_as_notified(ua.user_id)
           end
@@ -139,8 +142,11 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
           end
           # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
           RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
-    
-          WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+          if u.pusher_private_online
+            u.pusher_delete_photo_event
+          else
+            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+          end
           ReportUserHistory.mark_as_notified(ua.user_id)
         end
       end
