@@ -96,13 +96,13 @@ class Venue < ActiveRecord::Base
 
   def happen_now
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
+      now = Time.now
       Time.zone = self.timezone
-      now = Time.zone.now
       puts "A"
-      puts now.to_i
+      puts now.to_i+Time.zone.utc_offset
       puts self.start_time.to_i
       puts self.end_time.to_i
-      if now.to_i >= self.start_time.to_i and now.to_i < self.end_time.to_i
+      if now.to_i+Time.zone.utc_offset >= self.start_time.to_i and now.to_i+Time.zone.utc_offset < self.end_time.to_i
         Time.zone = "UTC"
         return true
       else
