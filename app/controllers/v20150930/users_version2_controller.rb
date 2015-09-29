@@ -201,7 +201,7 @@ module V20150930
         else
           render json: success()
         end
-      if !params[:username].blank?
+      elsif !params[:username].blank?
         if User.exists? username: params[:username]
           error_obj = {
             code: 403,
