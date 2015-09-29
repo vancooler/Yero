@@ -12,7 +12,7 @@ class PusherController < ApplicationController
   end
 
   def webhook_channel_exist
-    webhook = Pusher::WebHook.new(request)
+    webhook = Pusher.webhook(request)
     if webhook.valid?
       webhook.events.each do |event|
         case event["name"]
@@ -42,9 +42,9 @@ class PusherController < ApplicationController
           end
         end
       end
-      # render text: 'ok'
+      render text: 'ok'
     else
-      # render text: 'invalid', status: 401
+      render text: 'invalid', status: 401
     end
   end
 
