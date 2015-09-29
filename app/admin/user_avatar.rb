@@ -137,7 +137,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             default = 1
 
           end
-          WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
+          # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
           RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
     
           WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)

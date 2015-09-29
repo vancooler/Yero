@@ -15,6 +15,7 @@
 //= require jquery_ujs
 //= require jquery.ui.autocomplete
 //= require foundation
+//= require active_admin_datetimepicker
 
 $(function(){ $(document).foundation(); });
 

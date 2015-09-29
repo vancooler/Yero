@@ -66,6 +66,8 @@ GEM
       activesupport (= 4.1.0)
       builder (~> 3.1)
       erubis (~> 2.7.0)
+    active_admin_datetimepicker (0.1.0)
+      xdan-datetimepicker-rails (~> 2.4)
     activemodel (4.1.0)
       activesupport (= 4.1.0)
       builder (~> 3.1)
@@ -375,6 +377,9 @@ GEM
     warden (1.2.3)
       rack (>= 1.0)
     websocket (1.0.7)
+    xdan-datetimepicker-rails (2.4.3)
+      jquery-rails
+      rails (>= 3.2.16)
     xpath (2.0.0)
       nokogiri (~> 1.3)
     yard (0.8.7.6)
@@ -383,6 +388,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  active_admin_datetimepicker
   activeadmin!
   aws-sdk (< 2.0)
   bcrypt (= 3.1.7)
