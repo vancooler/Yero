@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150929150404) do
+ActiveRecord::Schema.define(version: 20150930114536) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -362,6 +362,52 @@ ActiveRecord::Schema.define(version: 20150929150404) do
     t.datetime "updated_at"
   end
 
+  create_table "shout_comment_votes", force: true do |t|
+    t.integer  "shout_comment_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "upvote"
+  end
+
+  add_index "shout_comment_votes", ["shout_comment_id"], name: "index_shout_comment_votes_on_shout_comment_id", using: :btree
+
+  create_table "shout_comments", force: true do |t|
+    t.text     "body"
+    t.integer  "shout_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.float    "latitude"
+    t.float    "longitude"
+  end
+
+  add_index "shout_comments", ["shout_id"], name: "index_shout_comments_on_shout_id", using: :btree
+  add_index "shout_comments", ["user_id"], name: "index_shout_comments_on_user_id", using: :btree
+
+  create_table "shout_votes", force: true do |t|
+    t.integer  "shout_id"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "upvote"
+  end
+
+  add_index "shout_votes", ["shout_id"], name: "index_shout_votes_on_shout_id", using: :btree
+
+  create_table "shouts", force: true do |t|
+    t.text     "body"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.boolean  "allow_nearby"
+    t.float    "latitude"
+    t.float    "longitude"
+    t.integer  "venue_id"
+  end
+
+  add_index "shouts", ["user_id"], name: "index_shouts_on_user_id", using: :btree
+
   create_table "temperatures", force: true do |t|
     t.integer  "beacon_id"
     t.integer  "celsius"
@@ -445,7 +491,7 @@ ActiveRecord::Schema.define(version: 20150929150404) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
     t.string   "spotify_id"
     t.string   "spotify_token"
     t.string   "version"
