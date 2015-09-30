@@ -103,7 +103,7 @@ class Venue < ActiveRecord::Base
       now = Time.now
       Time.zone = self.timezone
 
-      if now.to_i+Time.zone.utc_offset >=  self.end_time.to_i
+      if now.to_i+Time.zone.now.utc_offset >=  self.end_time.to_i
         Time.zone = "UTC"
         return true
       else
@@ -121,10 +121,10 @@ class Venue < ActiveRecord::Base
       now = Time.now
       Time.zone = self.timezone
       puts "A"
-      puts now.to_i+Time.zone.utc_offset
+      puts now.to_i+Time.zone.now.utc_offset
       puts self.start_time.to_i
       puts self.end_time.to_i
-      if now.to_i+Time.zone.utc_offset >= self.start_time.to_i and now.to_i+Time.zone.utc_offset < self.end_time.to_i
+      if now.to_i+Time.zone.now.utc_offset >= self.start_time.to_i and now.to_i+Time.zone.now.utc_offset < self.end_time.to_i
         Time.zone = "UTC"
         return true
       else
