@@ -69,7 +69,8 @@ class Venue < ActiveRecord::Base
       end
       festivals = Venue.where(venue_type_id: festivals_string)
       puts festivals.count
-      featured_festivals = festivals.select{|x|  x.happen_now }
+      featured_festivals = festivals.select{|x|  x.happen_now == true }
+      finished_festivals = festivals.select{|x|  x.finished == true }
       if !featured_festivals.empty?
         other_venues = venues - featured_festivals
         featured_festivals = featured_festivals.sort_by{|e| e.end_time.to_i}
@@ -78,6 +79,9 @@ class Venue < ActiveRecord::Base
           puts f.id.to_s + ' -> ' + f.end_time.to_i.to_s
         end
         venues = featured_festivals + other_venues
+      end
+      if !finished_festivals.empty?
+        venues = venues - finished_festivals
       end
       # featured_venues = venues.select{|x| !x.featured.nil? and x.featured }
       # if !featured_venues.empty?
@@ -93,6 +97,24 @@ class Venue < ActiveRecord::Base
     end
     return venues
   end
+
+  def finished
+    if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
+      now = Time.now
+      Time.zone = self.timezone
+
+      if now.to_i+Time.zone.utc_offset >=  self.end_time.to_i
+        Time.zone = "UTC"
+        return true
+      else
+        Time.zone = "UTC"
+        return false
+      end
+    else
+      return false
+    end
+  end
+
 
   def happen_now
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
