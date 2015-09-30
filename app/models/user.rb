@@ -13,6 +13,10 @@ class User < ActiveRecord::Base
   has_one :active_in_venue, dependent: :destroy
   has_one :active_in_venue_network, dependent: :destroy
   has_many :user_notification_preference, dependent: :destroy
+  has_many :shouts
+  has_many :shout_comments
+  has_many :shout_votes
+  has_many :shout_comment_votes
 
   # Like feature
   acts_as_follower

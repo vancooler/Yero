@@ -1,0 +1,62 @@
+module V20150930
+  class ShoutsController < ApplicationController
+    prepend_before_filter :get_api_token
+    before_action :authenticate_api_v2
+
+    # create a shout
+    def create
+      shout = Shout.create_shout(current_user, params[:body], params[:allow_nearby])
+      if shout
+        # Pusher later
+        render json: success
+      else
+        error_obj = {
+          code: 520,
+          message: "Cannot create the shout."
+        }
+        render json: error(error_obj, 'error')
+      end
+    end
+
+    # retrieve shouts with venue filter and order
+    def index
+      list = Shout.list(current_user, params[:order_by], params[:venue])
+      render json: success(list)
+    end
+
+    # upvote or downvote
+    def update
+      shout = Shout.find_by_id(params[:id])
+      result = shout.change_vote(current_user, params[:upvote])
+
+      if result[:result]
+        # Pusher later
+        render json: success
+      else
+        error_obj = {
+          code: 520,
+          message: "Cannot update the shout."
+        }
+        render json: error(error_obj, 'error')
+      end
+    end
+
+    def destroy
+      shout = Shout.find_by_id(params[:id])
+      shout.shout_votes.delete_all
+      shout.shout_comments.delete_all
+      shout.delete
+      # Pusher later
+      render json: success
+    end
+
+
+    private
+
+    def get_api_token
+      if (Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"])
+        params[:token] = api_token 
+      end
+    end
+  end
+end

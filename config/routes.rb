@@ -288,6 +288,18 @@ Rails.application.routes.draw do
       get    'api/activities',                           to: 'activities#index'
       delete 'api/activities/:id',                       to: 'activities#destroy'
 
+      # Shouts APIs 4
+      post   'api/shouts',                               to: 'shouts#create'
+      delete 'api/shouts/:id',                           to: 'shouts#destroy'
+      get    'api/shouts',                               to: 'shouts#index'
+      put    'api/shouts/:id',                           to: 'shouts#update'
+
+      # Comments APIs 4
+      post   'api/shout_comments',                               to: 'shout_comments#create'
+      delete 'api/shout_comments/:id',                           to: 'shout_comments#destroy'
+      get    'api/shout_comments',                               to: 'shout_comments#index'
+      put    'api/shout_comments/:id',                           to: 'shout_comments#update'
+
       #Batch delete
       delete 'api/collection',                           to: 'users_version2#collection_delete'
     end
