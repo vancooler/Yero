@@ -5,6 +5,20 @@ class Shout < ActiveRecord::Base
   belongs_to :user
   reverse_geocoded_by :latitude, :longitude
 
+
+# 
+# Point system:
+
+# 2/post
+
+# 4/upvote for OP
+# 2/upvote for others
+# 0/self
+
+# Voter 1 for up/down
+
+
+
   # total upvote of a shout
   def total_upvotes
   	self.shout_votes.where(upvote: true).length - self.shout_votes.where(upvote: false).length
@@ -62,19 +76,20 @@ class Shout < ActiveRecord::Base
 
   # collect shouts in a venue or near users
   def self.collect_shouts_nearby(current_user, venue)
+  	black_list = BlockUser.blocked_user_ids(current_user.id)
   	if venue.nil?
   		current_venue = current_user.current_venue
   		if !current_venue.nil?
-  			same_venue_shouts = Shout.where(venue_id: current_venue.id).where("created_at >= ?", 5.days.ago)
+  			same_venue_shouts = Shout.where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 5.days.ago)
   		else
   			same_venue_shouts = []
   		end
-  		shouts = Shout.where(allow_nearby: true).where("created_at >= ?", 5.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
+  		shouts = Shout.where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 5.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
   		shouts = shouts | same_venue_shouts
   		
   	else
   		venue_id = venue
-  		shouts = Shout.where(venue_id: venue_id).where("created_at >= ?", 5.days.ago)
+  		shouts = Shout.where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 5.days.ago)
   	end
   	return shouts
   end

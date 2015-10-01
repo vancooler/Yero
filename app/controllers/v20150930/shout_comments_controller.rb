@@ -61,7 +61,9 @@ module V20150930
       end
     end
 
+    def report
 
+    end
     
     private
 

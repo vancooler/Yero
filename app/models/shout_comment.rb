@@ -56,9 +56,10 @@ class ShoutComment < ActiveRecord::Base
 
   # return shouts list
   def self.list(current_user, shout_id)
+  	black_list = BlockUser.blocked_user_ids(current_user.id)
   	shout_comments = ShoutComment.where(shout_id: shout_id).order("created_at DESC")
   	
-  	return ShoutComment.shout_comments_json(current_user, shout_comments)
+  	return ShoutComment.where.not(user_id: black_list).shout_comments_json(current_user, shout_comments)
   end
 
   def self.shout_comments_json(current_user, shout_comments)
