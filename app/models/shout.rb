@@ -1,6 +1,7 @@
 class Shout < ActiveRecord::Base
   has_many :shout_comments, dependent: :destroy
   has_many :shout_votes, dependent: :destroy
+  has_many :shout_report_histories, dependent: :destroy, as: :reportable
   belongs_to :user
   reverse_geocoded_by :latitude, :longitude
 

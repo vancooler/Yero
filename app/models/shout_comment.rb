@@ -2,6 +2,7 @@ class ShoutComment < ActiveRecord::Base
   belongs_to :shout
   has_many :shout_comment_votes, dependent: :destroy
   belongs_to :user
+  has_many :shout_report_histories, dependent: :destroy, as: :reportable
 
 
 

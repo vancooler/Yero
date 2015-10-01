@@ -17,6 +17,7 @@ class User < ActiveRecord::Base
   has_many :shout_comments
   has_many :shout_votes
   has_many :shout_comment_votes
+  has_many :shout_report_histories
 
   # Like feature
   acts_as_follower
