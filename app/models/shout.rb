@@ -40,29 +40,40 @@ class Shout < ActiveRecord::Base
   	if current_user.current_venue.nil?
   		shout.latitude = current_user.latitude
   		shout.longitude = current_user.longitude
+  		shout.allow_nearby = true
   	else
   		shout.venue_id = current_user.current_venue.id 
   		shout.latitude = current_user.current_venue.latitude
   		shout.longitude = current_user.current_venue.longitude
+	  	shout.allow_nearby = allow_nearby
   	end
   	shout.body = body
-  	shout.allow_nearby = allow_nearby
   	shout.user_id = current_user.id
   	result = shout.save
   	if result
 	  	return shout
     else
+    	# :nocov:
     	return false
+    	# :nocov:
     end
   end
 
   # collect shouts in a venue or near users
   def self.collect_shouts_nearby(current_user, venue)
   	if venue.nil?
-  		shouts = Shout.where(allow_nearby: true).where("created_at >= ?", 5.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km).order("created_at DESC")
+  		current_venue = current_user.current_venue
+  		if !current_venue.nil?
+  			same_venue_shouts = Shout.where(venue_id: current_venue.id).where("created_at >= ?", 5.days.ago)
+  		else
+  			same_venue_shouts = []
+  		end
+  		shouts = Shout.where(allow_nearby: true).where("created_at >= ?", 5.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
+  		shouts = shouts | same_venue_shouts
+  		
   	else
   		venue_id = venue
-  		shouts = Shout.where(venue_id: venue_id).where("created_at >= ?", 5.days.ago).order("created_at DESC")
+  		shouts = Shout.where(venue_id: venue_id).where("created_at >= ?", 5.days.ago)
   	end
   	return shouts
   end
@@ -74,12 +85,34 @@ class Shout < ActiveRecord::Base
   	case order_by
   	when 'new'
   		# shouts order by created_at
+  		shouts = shouts.sort_by{|s| s.created_at}.reverse
   	when 'hot'
   		# shouts order by upvote
-  		shouts.sort_by{|s| s.total_upvotes}.reverse
+  		shouts = shouts.sort_by(&:total_upvotes).reverse
   	end
 
-  	return shouts
+  	return Shout.shouts_json(current_user, shouts)
+  end
+
+  def self.shouts_json(current_user, shouts)
+  	shout_upvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_id)
+  	shout_downvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_id)
+  	result = Jbuilder.encode do |json|
+      json.array! shouts do |shout|
+        json.id 			shout.id
+        json.body 			shout.body
+        json.latitude 		shout.latitude
+        json.longitude 		shout.longitude
+        json.timestamp 		shout.created_at.to_i
+        json.total_votes 	shout.total_upvotes
+        json.upvoted 		(shout_upvoted_ids.include? shout.id)
+        json.downvoted 		(shout_downvoted_ids.include? shout.id)
+        json.replies_count 	shout.shout_comments.length
+        json.author_id 		shout.user_id
+      end         
+    end
+    result = JSON.parse(result).delete_if(&:empty?)
+    return result 
   end
 
 end

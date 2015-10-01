@@ -56,7 +56,7 @@ class FriendByWhisper < ActiveRecord::Base
 
     def self.friends_json(return_users, current_user)
 	    users = Jbuilder.encode do |json|
-	      json.array! return_users.each do |user|
+	      json.array! return_users do |user|
 	        target_user = User.find_by_id(user["target_user"]["id"].to_i)
 	        if !target_user.nil?
 	          user_object = target_user.user_object(current_user)

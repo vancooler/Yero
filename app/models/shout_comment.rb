@@ -11,9 +11,9 @@ class ShoutComment < ActiveRecord::Base
 
 
   def change_vote(current_user, upvote)
-  	sv = ShoutCommentVote.find_by_shout_comment_id_and_user_id(self.id, current_user.id)
-  	if !sv.nil?
-  		result = sv.update(upvote: upvote)
+  	scv = ShoutCommentVote.find_by_shout_comment_id_and_user_id(self.id, current_user.id)
+  	if !scv.nil?
+  		result = scv.update(upvote: upvote)
   		event = 'change_comment_vote'
   		data = {
   			user_id: current_user.id,
@@ -21,9 +21,9 @@ class ShoutComment < ActiveRecord::Base
   		}
 
   	else
-  		sv = ShoutVote.new(user_id: current_user.id, shout_comment_id: self.id)
-  		sv.upvote = upvote
-  		result = sv.save
+  		scv = ShoutCommentVote.new(user_id: current_user.id, shout_comment_id: self.id)
+  		scv.upvote = upvote
+  		result = scv.save
   		event = 'add_comment_vote'
   		data = {
   			user_id: current_user.id,
@@ -46,22 +46,38 @@ class ShoutComment < ActiveRecord::Base
   	if result
 	  	return shout_comment
     else
+    	# :nocov:
     	return false
+    	# :nocov:
     end
   end
 
 
   # return shouts list
-  def self.list(current_user, order_by, shout_id)
+  def self.list(current_user, shout_id)
   	shout_comments = ShoutComment.where(shout_id: shout_id).order("created_at DESC")
-  	case order_by
-  	when 'new'
-  		# shout_comments order by created_at
-  	when 'hot'
-  		# shout_comments order by upvote
-  		shout_comments.sort_by{|s| s.total_upvotes}.reverse
-  	end
+  	
+  	return ShoutComment.shout_comments_json(current_user, shout_comments)
+  end
 
-  	return shout_comments
+  def self.shout_comments_json(current_user, shout_comments)
+  	shout_comment_upvoted_ids = ShoutCommentVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_comment_id)
+  	shout_comment_downvoted_ids = ShoutCommentVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_comment_id)
+  	return_shout_comments = Jbuilder.encode do |json|
+      json.array! shout_comments do |shout_comment|
+        json.id 			shout_comment.id
+        json.shout_id 		shout_comment.shout_id
+        json.body 			shout_comment.body
+        json.latitude 		shout_comment.latitude
+        json.longitude 		shout_comment.longitude
+        json.timestamp 		shout_comment.created_at.to_i
+        json.total_votes 	shout_comment.total_upvotes
+        json.upvoted 		(shout_comment_upvoted_ids.include? shout_comment.id)
+        json.downvoted 		(shout_comment_downvoted_ids.include? shout_comment.id)
+        json.author_id 		shout_comment.user_id
+      end         
+    end
+    return_shout_comments = JSON.parse(return_shout_comments).delete_if(&:empty?)
+    return return_shout_comments 
   end
 end

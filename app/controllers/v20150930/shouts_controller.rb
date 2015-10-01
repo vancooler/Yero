@@ -10,11 +10,13 @@ module V20150930
         # Pusher later
         render json: success
       else
+        # :nocov:
         error_obj = {
           code: 520,
           message: "Cannot create the shout."
         }
         render json: error(error_obj, 'error')
+        # :nocov:
       end
     end
 
@@ -33,21 +35,31 @@ module V20150930
         # Pusher later
         render json: success
       else
+        # :nocov:
         error_obj = {
           code: 520,
           message: "Cannot update the shout."
         }
         render json: error(error_obj, 'error')
+        # :nocov:
       end
     end
 
     def destroy
       shout = Shout.find_by_id(params[:id])
-      shout.shout_votes.delete_all
-      shout.shout_comments.delete_all
-      shout.delete
-      # Pusher later
-      render json: success
+      if shout.user_id == current_user.id
+        shout.shout_votes.delete_all
+        shout.shout_comments.delete_all
+        shout.delete
+        # Pusher later
+        render json: success
+      else
+        error_obj = {
+          code: 403,
+          message: "You are not the author of this shout"
+        }
+        render json: error(error_obj, 'error')
+      end
     end
 
 
@@ -55,7 +67,9 @@ module V20150930
 
     def get_api_token
       if (Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"])
+        # :nocov:
         params[:token] = api_token 
+        # :nocov:
       end
     end
   end
