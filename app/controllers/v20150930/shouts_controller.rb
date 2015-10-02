@@ -45,6 +45,7 @@ module V20150930
       end
     end
 
+    # delete a shout
     def destroy
       shout = Shout.find_by_id(params[:id])
       if shout.user_id == current_user.id
@@ -62,8 +63,22 @@ module V20150930
       end
     end
 
+    # report a shout
     def report
-
+      shout = Shout.find_by_id(params[:shout_id])
+      report_type = ShoutReportType.find_by_id(params[:report_type_id])
+      if shout and report_type
+        shout.report(current_user, report_type.id)
+        render json: success
+      else
+        # :nocov:
+        error_obj = {
+          code: 520,
+          message: "Cannot report the shout."
+        }
+        render json: error(error_obj, 'error')
+        # :nocov:
+      end
     end
 
 

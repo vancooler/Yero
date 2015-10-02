@@ -40,6 +40,7 @@ ActiveAdmin.register ShoutReportHistory do
 
       row("Type") { |history| history.reportable_type}
       row("Reported Item") { |history| link_to(history.reportable_id, ((history.reportable_type == "shout") ? admin_shout_path(history.reportable_id) : admin_shout_comment_path(history.reportable_id)))}
+      row("Reported Content") { |history| ((history.reportable_type == "shout") ? Shout.find_by_id(history.reportable_id).body : ShoutComment.find_by_id(history.reportable_id).body)}
       row("Reported Count") { |history| history.frequency}
       row("Recent Solved Time") { |history| history.solved_at}
 

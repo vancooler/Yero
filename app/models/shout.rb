@@ -143,6 +143,7 @@ class Shout < ActiveRecord::Base
   	return final_result
   end
 
+  # convert to json structure
   def self.shouts_json(current_user, shouts)
   	shout_upvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_id)
   	shout_downvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_id)
@@ -164,6 +165,7 @@ class Shout < ActiveRecord::Base
     return result 
   end
 
+  # report a shout
   def report(user, type)
   	history = ShoutReportHistory.where(reportable_type: 'shout', reportable_id: self.id, shout_report_type_id: type)
   	if history.blank?

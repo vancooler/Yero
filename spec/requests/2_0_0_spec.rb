@@ -1470,12 +1470,61 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data'].count).to eql 2
       	expect(JSON.parse(response.body)['data'][0]['id']).to eql shout_2.id
 
+      	BlockUser.create!(origin_user_id: 4, target_user_id: 2)
+      	get 'api/shouts', {:token => token, :order_by => "hot"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['id']).to eql shout_3.id
+      	BlockUser.delete_all
 
+      	get 'api/shouts', {:token => token, :order_by => "hot"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 2
+      	expect(JSON.parse(response.body)['data'][0]['id']).to eql shout_2.id
+
+      	post 'api/report_shouts', {:token => token, :report_type_id => 2, :shout_id => shout_3.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_2.generate_token
+      	post 'api/report_shouts', {:token => token, :report_type_id => 2, :shout_id => shout_3.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_4.generate_token
+      	get 'api/shouts', {:token => token, :order_by => "hot"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['id']).to eql shout_2.id
+      	expect(ShoutReportHistory.first.all_reporter.count).to eql 2
+
+      	ShoutReportHistory.delete_all
       	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ShoutComment.count).to eql 2
       	shout_comment_2 = ShoutComment.last
+
+      	post 'api/report_shout_comments', {:token => token, :report_type_id => 2, :shout_comment_id => shout_comment_1.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	get 'api/shout_comments', {:token => token, :shout_id => shout_2.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['id']).to eql shout_comment_2.id
+
+      	token = user_2.generate_token
+      	post 'api/report_shout_comments', {:token => token, :report_type_id => 2, :shout_comment_id => shout_comment_1.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_4.generate_token
+      	ShoutReportHistory.delete_all
 
       	expect(User.find(2).point).to eql 8
       	expect(User.find(3).point).to eql 5
