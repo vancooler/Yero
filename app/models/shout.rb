@@ -100,19 +100,20 @@ class Shout < ActiveRecord::Base
   # collect shouts in a venue or near users
   def self.collect_shouts_nearby(current_user, venue)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
+  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'shout').map(&:reportable_id)
   	if venue.nil?
   		current_venue = current_user.current_venue
   		if !current_venue.nil?
-  			same_venue_shouts = Shout.where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 5.days.ago)
+  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago)
   		else
   			same_venue_shouts = []
   		end
-  		shouts = Shout.where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 5.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
+  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 90000, units: :km)
   		shouts = shouts | same_venue_shouts
   		
   	else
   		venue_id = venue
-  		shouts = Shout.where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 5.days.ago)
+  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago)
   	end
   	return shouts
   end
@@ -120,6 +121,7 @@ class Shout < ActiveRecord::Base
 
   # return shouts list
   def self.list(current_user, order_by, venue)
+  	time_0 = Time.now
   	shouts = Shout.collect_shouts_nearby(current_user, venue)
   	case order_by
   	when 'new'
@@ -129,8 +131,16 @@ class Shout < ActiveRecord::Base
   		# shouts order by upvote
   		shouts = shouts.sort_by(&:total_upvotes).reverse
   	end
+  	time_1 = Time.now
+  	final_result = Shout.shouts_json(current_user, shouts)
+  	time_2 = Time.now
 
-  	return Shout.shouts_json(current_user, shouts)
+  	puts "TOTAL: " + final_result.count.to_s
+  	puts "TIME: "
+  	puts (time_1-time_0).inspect
+  	puts (time_2-time_1).inspect
+
+  	return final_result
   end
 
   def self.shouts_json(current_user, shouts)
@@ -153,5 +163,64 @@ class Shout < ActiveRecord::Base
     result = JSON.parse(result).delete_if(&:empty?)
     return result 
   end
+
+  def report(user, type)
+  	history = ShoutReportHistory.where(reportable_type: 'shout', reportable_id: self.id, shout_report_type_id: type)
+  	if history.blank?
+  		frequency = 1
+  	else
+  		frequency = history.first.frequency + 1
+  	end
+
+  	srh = ShoutReportHistory.create(reportable_type: 'shout', reportable_id: self.id, reporter_id: user.id, shout_report_type_id: type, frequency: frequency)
+  	if srh
+  		history.update_all(frequency: frequency)
+  	end
+  end
+
+  # :nocov:
+  def self.random_generate
+
+  	(1..100).each do |i|
+  		offset = rand(User.count)
+		rand_user = User.offset(offset).first
+		shout = Shout.create_shout(rand_user, (0...8).map { (65 + rand(26)).chr }.join, true)
+		(1..i%8).each do |k|
+			upvote = [true, true, false]
+			offset_3 = rand(User.count)
+			rand_user_3 = User.offset(offset_3).first
+			shout.change_vote(rand_user_3, upvote.sample)
+		end
+		comments_count = i/100*100 + 1
+		(1..comments_count).each do |j|
+			offset_2 = rand(User.count)
+			rand_user_2 = User.offset(offset_2).first
+			shout_comment = ShoutComment.create_shout_comment(rand_user_2, (0...8).map { (65 + rand(26)).chr }.join, shout.id)
+			# upvotes
+			(1..i%8).each do |k|
+				upvote = [true, true, false]
+				offset_3 = rand(User.count)
+				rand_user_3 = User.offset(offset_3).first
+				shout_comment.change_vote(rand_user_3, upvote.sample)
+
+			end
+		end
+	end
+  end
+
+  def self.random_report
+	(1..100).each do |i|
+		if (i%30 == 5)
+	  		offset = rand(User.count)
+			rand_user = User.offset(offset).first
+			rand_type = ShoutReportType.all.map(&:id).sample
+			shout = Shout.find(i)
+			shout.report(rand_user, rand_type)
+			shout_comment = ShoutComment.find(i+4)
+			shout_comment.report(rand_user, rand_type)
+		end
+	end
+  end
+  # :nocov:
 
 end

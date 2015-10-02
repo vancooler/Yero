@@ -29,10 +29,11 @@ ActiveAdmin.register Shout do
       end
       redirect_to :back, :notice => "Shout is deleted"
     end
-
-    
   end 
 
+  action_item :delete, only: :show do
+    link_to("Delete", admin_remove_single_shout_path(shout), :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
+  end
   
   index do
     selectable_column

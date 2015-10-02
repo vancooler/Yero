@@ -28,10 +28,11 @@ ActiveAdmin.register ShoutComment do
       end
       redirect_to :back, :notice => "Comment is deleted"
     end
-
-    
   end 
 
+  action_item :delete, only: :show do
+    link_to("Delete", admin_remove_single_shout_comment_path(shout_comment), :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
+  end
   
   index do
     selectable_column

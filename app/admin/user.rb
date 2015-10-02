@@ -85,6 +85,7 @@ ActiveAdmin.register User do
     column :email
     column :birthday
     column :gender
+    column :point
     column :last_active, :sortable => :last_active
     # column :position do |project|
     #  best_in_place project, :position, :type => :input,:path =>[:admin,project]
