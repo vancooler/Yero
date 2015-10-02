@@ -28,7 +28,18 @@ class Shout < ActiveRecord::Base
   def change_vote(current_user, upvote)
   	sv = ShoutVote.find_by_shout_id_and_user_id(self.id, current_user.id)
   	if !sv.nil?
+  		old_upvote = sv.upvote
   		result = sv.update(upvote: upvote)
+  		if result and old_upvote and !(upvote.to_s == "true" or upvote.to_s == '1') 
+  			if self.user_id != current_user.id
+				self.user.update(point: self.user.point-2)
+			end
+  		end
+  		if result and !old_upvote and (upvote.to_s == "true" or upvote.to_s == '1') 
+  			if self.user_id != current_user.id
+				self.user.update(point: self.user.point+2)
+			end
+  		end
   		event = 'change_shout_vote'
   		data = {
   			user_id: current_user.id,
@@ -39,6 +50,17 @@ class Shout < ActiveRecord::Base
   		sv = ShoutVote.new(user_id: current_user.id, shout_id: self.id)
   		sv.upvote = upvote
   		result = sv.save
+  		if result
+  			# update points
+  			if (upvote.to_s == "true" or upvote.to_s == '1') 
+  				if self.user_id != current_user.id
+  					puts "REALLY?"
+  					puts upvote.to_s
+  					self.user.update(point: self.user.point+2)
+  				end
+  			end
+			current_user.update(point: current_user.point+1)
+  		end
   		event = 'add_shout_vote'
   		data = {
   			user_id: current_user.id,
@@ -66,6 +88,7 @@ class Shout < ActiveRecord::Base
   	shout.user_id = current_user.id
   	result = shout.save
   	if result
+  		current_user.update(point: current_user.point+2)
 	  	return shout
     else
     	# :nocov:
