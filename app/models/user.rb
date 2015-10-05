@@ -1154,7 +1154,7 @@ class User < ActiveRecord::Base
     check_user = User.find_by_email(email)
     if check_user.nil?
       first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
-      password = user_obj['Password'].nil? ? '' : user_obj['Password'].titleize
+      password = user_obj['Password'].nil? ? '' : user_obj['Password']
       key = loop do
         random_token = SecureRandom.urlsafe_base64(nil, false)
         break random_token unless User.exists?(key: random_token)
