@@ -222,9 +222,23 @@ class Shout < ActiveRecord::Base
   	# pusher
 	# users in shout_id channel
 	channel = 'public-shout-' + shout_id.to_s
+	if Rails.env == 'production'
+		# :nocov:
+		Pusher.trigger(channel, 'Delete shout', {shout_id: shout_id})
+		# :nocov:
+	end
 	# users can access this shout
+	user_channels = Array.new
 	user_ids.each do |id|
 		channel = 'private-user-' + id.to_s
+		user_channels << channel
+	end
+	if !user_channels.empty?
+		if Rails.env == 'production'
+			# :nocov:
+			Pusher.trigger(user_channels, 'Delete shout', {shout_id: shout_id})
+			# :nocov:
+		end
 	end
   end
 
