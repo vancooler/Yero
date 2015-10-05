@@ -22,8 +22,17 @@ module V20150930
 
     # retrieve comments with comment filter and order
     def index
-      list = ShoutComment.list(current_user, params[:shout_id])
-      render json: success(list)
+
+      page = nil
+      per_page = nil
+      page = params[:page].to_i + 1 if !params[:page].blank?
+      per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+      result = ShoutComment.list(current_user, params[:shout_id], page, per_page)
+      response = {
+        shout_comments: result['shout_comments']
+      }
+      render json: success(response, "data", result['pagination'])
     end
 
     # upvote or downvote

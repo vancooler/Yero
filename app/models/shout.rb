@@ -120,7 +120,8 @@ class Shout < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue)
+  def self.list(current_user, order_by, venue, page, per_page)
+  	result = Hash.new
   	time_0 = Time.now
   	shouts = Shout.collect_shouts_nearby(current_user, venue)
   	case order_by
@@ -131,6 +132,15 @@ class Shout < ActiveRecord::Base
   		# shouts order by upvote
   		shouts = shouts.sort_by(&:total_upvotes).reverse
   	end
+  	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
+        pagination = Hash.new
+        pagination['page'] = page - 1
+        pagination['per_page'] = per_page
+        pagination['total_count'] = shouts.length
+        result['pagination'] = pagination
+        shouts = Kaminari.paginate_array(shouts).page(page).per(per_page) if !shouts.nil?
+    end
+
   	time_1 = Time.now
   	final_result = Shout.shouts_json(current_user, shouts)
   	time_2 = Time.now
@@ -139,8 +149,8 @@ class Shout < ActiveRecord::Base
   	puts "TIME: "
   	puts (time_1-time_0).inspect
   	puts (time_2-time_1).inspect
-
-  	return final_result
+  	result['shouts'] = final_result
+  	return result
   end
 
   # convert to json structure

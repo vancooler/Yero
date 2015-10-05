@@ -86,13 +86,22 @@ class ShoutComment < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, shout_id)
+  def self.list(current_user, shout_id, page, per_page)
+  	result = Hash.new
   	time_0 = Time.now
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'shout_comment').map(&:reportable_id)
   	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at DESC")
+  	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
+        pagination = Hash.new
+        pagination['page'] = page - 1
+        pagination['per_page'] = per_page
+        pagination['total_count'] = shout_comments.length
+        result['pagination'] = pagination
+        shout_comments = Kaminari.paginate_array(shout_comments).page(page).per(per_page) if !shout_comments.nil?
+    end
   	time_1 = Time.now
-  	final_result = shout_comments.shout_comments_json(current_user, shout_comments)
+  	final_result = ShoutComment.shout_comments_json(current_user, shout_comments)
   	time_2 = Time.now
 
   	puts "TOTAL: " + final_result.count.to_s
@@ -100,7 +109,8 @@ class ShoutComment < ActiveRecord::Base
   	puts (time_1-time_0).inspect
   	puts (time_2-time_1).inspect
 
-  	return final_result
+  	result['shout_comments'] = final_result
+  	return result
   end
 
   # convert to json structure

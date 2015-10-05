@@ -22,8 +22,16 @@ module V20150930
 
     # retrieve shouts with venue filter and order
     def index
-      list = Shout.list(current_user, params[:order_by], params[:venue])
-      render json: success(list)
+      page = nil
+      per_page = nil
+      page = params[:page].to_i + 1 if !params[:page].blank?
+      per_page = params[:per_page].to_i if !params[:per_page].blank?
+
+      result = Shout.list(current_user, params[:order_by], params[:venue], page, per_page)
+      response = {
+        shouts: result['shouts']
+      }
+      render json: success(response, "data", result['pagination'])
     end
 
     # upvote or downvote
