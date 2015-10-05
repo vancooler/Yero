@@ -108,7 +108,7 @@ class Shout < ActiveRecord::Base
   		else
   			same_venue_shouts = []
   		end
-  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 90000, units: :km)
+  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
   		shouts = shouts | same_venue_shouts
   		
   	else
@@ -188,6 +188,44 @@ class Shout < ActiveRecord::Base
   	if srh
   		history.update_all(frequency: frequency)
   	end
+  end
+
+  # collect user ids that can access this shout
+  def permitted_users_id
+	return_user_ids = Array.new
+	if !self.venue_id.nil?
+	  return_user_ids = ActiveInVenue.where(venue_id: self.venue_id).where.not(user_id: self.user_id).map(&:user_id)
+    end
+	if self.allow_nearby
+		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 60, units: :km).map(&:id)
+	end
+	black_list = BlockUser.blocked_user_ids(self.user_id)
+  	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'shout').map(&:reporter_id)
+  	return_user_ids = return_user_ids - black_list - content_black_list
+
+  	return return_user_ids
+  end
+
+  def in_shout_users_id
+  	
+  end
+
+  # destroy a single shout
+  def destroy_single
+  	user_ids = self.permitted_users_id
+  	shout_id = self.id
+  	# delete
+	self.shout_votes.delete_all
+    self.shout_comments.delete_all
+    self.delete
+
+  	# pusher
+	# users in shout_id channel
+	channel = 'public-shout-' + shout_id.to_s
+	# users can access this shout
+	user_ids.each do |id|
+		channel = 'private-user-' + id.to_s
+	end
   end
 
   # :nocov:

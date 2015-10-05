@@ -58,9 +58,8 @@ module V20150930
     def destroy
       shout_comment = ShoutComment.find_by_id(params[:id])
       if shout_comment.user_id == current_user.id
-        shout_comment.shout_comment_votes.delete_all
-        shout_comment.delete
-        # Pusher later
+        shout_comment.destroy_single
+
         render json: success
       else
         error_obj = {

@@ -149,4 +149,23 @@ class ShoutComment < ActiveRecord::Base
   		history.update_all(frequency: frequency)
   	end
   end
+
+  # destroy a single shout comment
+  def destroy_single
+  	user_ids = self.shout.permitted_users_id
+  	shout_comment_id = self.id
+  	shout_id = self.shout.id
+  	# delete
+    self.shout_comment_votes.delete_all
+    self.delete
+
+  	# pusher
+	# users in shout_id channel
+	channel = 'public-shout-' + shout_id.to_s
+	# users can access this shout
+	user_ids.each do |id|
+		channel = 'private-user-' + id.to_s
+	end
+  end
+
 end

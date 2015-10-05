@@ -57,10 +57,8 @@ module V20150930
     def destroy
       shout = Shout.find_by_id(params[:id])
       if shout.user_id == current_user.id
-        shout.shout_votes.delete_all
-        shout.shout_comments.delete_all
-        shout.delete
-        # Pusher later
+        shout.destroy_single
+        
         render json: success
       else
         error_obj = {
@@ -88,6 +86,9 @@ module V20150930
         # :nocov:
       end
     end
+
+
+
 
 
     private

@@ -1614,6 +1614,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
+
       	delete 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
