@@ -67,6 +67,31 @@ class Shout < ActiveRecord::Base
   			vote:    (upvote ? "up" : "down")
   		}
   	end
+  	current_upvotes = self.total_upvotes
+  	user_ids = self.permitted_users_id
+  	shout_id = self.id
+  	
+  	# pusher
+	# users in shout_id channel
+	channel = 'public-shout-' + shout_id.to_s
+	if Rails.env == 'production'
+		# :nocov:
+		Pusher.delay.trigger(channel, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+		# :nocov:
+	end
+	# users can access this shout
+	user_channels = Array.new
+	user_ids.each do |id|
+		channel = 'private-user-' + id.to_s
+		user_channels << channel
+	end
+	if !user_channels.empty?
+		if Rails.env == 'production'
+			# :nocov:
+			Pusher.delay.trigger(user_channels, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+			# :nocov:
+		end
+	end
   	return {result: result, event: event, data: data}
 
   end
@@ -89,6 +114,35 @@ class Shout < ActiveRecord::Base
   	result = shout.save
   	if result
   		current_user.update(point: current_user.point+2)
+  		# pusher
+  		user_ids = shout.permitted_users_id
+	  	shout_id = shout.id
+	  	
+		# users can access this shout
+		user_channels = Array.new
+		user_ids.each do |id|
+			channel = 'private-user-' + id.to_s
+			user_channels << channel
+		end
+		if !user_channels.empty?
+			shout_json = {
+				id: 			shout.id,
+		        body: 			shout.body,
+		        latitude: 		shout.latitude,
+		        longitude: 		shout.longitude,
+		        timestamp: 		shout.created_at.to_i,
+		        total_votes: 	0,
+		        upvoted: 		false,
+		        downvoted: 		false,
+		        replies_count: 	0,
+		        author_id: 		shout.user_id
+			}
+			if Rails.env == 'production'
+				# :nocov:
+				Pusher.delay.trigger(user_channels, 'Create shout', {shout: shout_json})
+				# :nocov:
+			end
+		end
 	  	return shout
     else
     	# :nocov:
@@ -224,7 +278,7 @@ class Shout < ActiveRecord::Base
 	channel = 'public-shout-' + shout_id.to_s
 	if Rails.env == 'production'
 		# :nocov:
-		Pusher.trigger(channel, 'Delete shout', {shout_id: shout_id})
+		Pusher.delay.trigger(channel, 'Delete shout', {shout_id: shout_id})
 		# :nocov:
 	end
 	# users can access this shout
@@ -236,7 +290,7 @@ class Shout < ActiveRecord::Base
 	if !user_channels.empty?
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.trigger(user_channels, 'Delete shout', {shout_id: shout_id})
+			Pusher.delay.trigger(user_channels, 'Delete shout', {shout_id: shout_id})
 			# :nocov:
 		end
 	end
