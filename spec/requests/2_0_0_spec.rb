@@ -1423,6 +1423,12 @@ describe 'V2.0.0' do
       	expect(ShoutComment.count).to eql 1
       	shout_comment_1 = ShoutComment.last
 
+      	get 'api/shouts', {:token => token, :order_by => "hot", :my_comments => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
+
+
       	expect(User.find(2).point).to eql 6
       	expect(User.find(3).point).to eql 5
       	expect(User.find(4).point).to eql 0
@@ -1492,9 +1498,16 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
 
       	token = user_2.generate_token
+      	get 'api/shouts', {:token => token, :order_by => "hot", :my_shouts => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
+
       	post 'api/report_shouts', {:token => token, :report_type_id => 2, :shout_id => shout_3.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
+
+
 
       	token = user_4.generate_token
       	get 'api/shouts', {:token => token, :order_by => "hot"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

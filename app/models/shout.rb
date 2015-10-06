@@ -152,32 +152,40 @@ class Shout < ActiveRecord::Base
   end
 
   # collect shouts in a venue or near users
-  def self.collect_shouts_nearby(current_user, venue)
+  def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'shout').map(&:reportable_id)
-  	if venue.nil?
-  		current_venue = current_user.current_venue
-  		if !current_venue.nil?
-  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago)
-  		else
-  			same_venue_shouts = []
-  		end
-  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
-  		shouts = shouts | same_venue_shouts
+  	if !my_comments.nil? and (my_comments.to_s == '1' or my_comments.to_s == 'true')
+  		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
+  		shouts = Shout.where(id: comments)
   		
+  	elsif !my_shouts.nil? and (my_shouts.to_s == '1' or my_shouts.to_s == 'true')
+  		shouts = Shout.where(user_id: current_user.id)
   	else
-  		venue_id = venue
-  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago)
-  	end
+	  	if venue.nil?
+	  		current_venue = current_user.current_venue
+	  		if !current_venue.nil?
+	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago)
+	  		else
+	  			same_venue_shouts = []
+	  		end
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
+	  		shouts = shouts | same_venue_shouts
+	  		
+	  	else
+	  		venue_id = venue
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago)
+	  	end
+	end
   	return shouts
   end
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue, page, per_page)
+  def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page)
   	result = Hash.new
   	time_0 = Time.now
-  	shouts = Shout.collect_shouts_nearby(current_user, venue)
+  	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
   	case order_by
   	when 'new'
   		# shouts order by created_at

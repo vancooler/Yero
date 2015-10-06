@@ -27,7 +27,7 @@ module V20150930
       page = params[:page].to_i + 1 if !params[:page].blank?
       per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      result = Shout.list(current_user, params[:order_by], params[:venue], page, per_page)
+      result = Shout.list(current_user, params[:order_by], params[:venue], params[:my_shouts], params[:my_comments], page, per_page)
       response = {
         shouts: result['shouts']
       }
