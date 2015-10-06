@@ -9,24 +9,15 @@ ActiveAdmin.register ShoutComment do
     def remove_single_shout_comment
       sc = ShoutComment.find_by_id(params[:id])
       shout_comment_author = sc.user
-      if !s.nil?
-        if sc.shout_comment_votes.delete_all and sc.delete
-          # Handle notifications/activities after remove
-
-          # if !shout_comments_authors.blank? 
-          #   RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
-    
-          #   if u.pusher_private_online
-          #     u.pusher_delete_photo_event
-          #   else
-          #     WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
-          #   end
-          #   # notification
-          #   ReportUserHistory.mark_as_notified(ua.user_id)
-          # end
+      if !sc.nil?
+        sc.destroy_single
+        if sc.destroy_single
+          # notify author
+          redirect_to :back, :notice => "Comment is deleted"
+        else
+          redirect_to :back, :notice => "Sorry, cannot delete this shout comment"
         end
       end
-      redirect_to :back, :notice => "Comment is deleted"
     end
   end 
 

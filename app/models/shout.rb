@@ -269,30 +269,35 @@ class Shout < ActiveRecord::Base
   	user_ids = self.permitted_users_id
   	shout_id = self.id
   	# delete
-	self.shout_votes.delete_all
-    self.shout_comments.delete_all
-    self.delete
+	
+    if self.destroy
 
-  	# pusher
-	# users in shout_id channel
-	channel = 'public-shout-' + shout_id.to_s
-	if Rails.env == 'production'
-		# :nocov:
-		Pusher.delay.trigger(channel, 'Delete shout', {shout_id: shout_id})
-		# :nocov:
-	end
-	# users can access this shout
-	user_channels = Array.new
-	user_ids.each do |id|
-		channel = 'private-user-' + id.to_s
-		user_channels << channel
-	end
-	if !user_channels.empty?
+	  	# pusher
+		# users in shout_id channel
+		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.delay.trigger(user_channels, 'Delete shout', {shout_id: shout_id})
+			Pusher.delay.trigger(channel, 'Delete shout', {shout_id: shout_id})
 			# :nocov:
 		end
+		# users can access this shout
+		user_channels = Array.new
+		user_ids.each do |id|
+			channel = 'private-user-' + id.to_s
+			user_channels << channel
+		end
+		if !user_channels.empty?
+			if Rails.env == 'production'
+				# :nocov:
+				Pusher.delay.trigger(user_channels, 'Delete shout', {shout_id: shout_id})
+				# :nocov:
+			end
+		end
+		return true
+	else
+		# :nocov:
+		return false
+		# :nocov:
 	end
   end
 

@@ -58,9 +58,17 @@ module V20150930
     def destroy
       shout_comment = ShoutComment.find_by_id(params[:id])
       if shout_comment.user_id == current_user.id
-        shout_comment.destroy_single
-
-        render json: success
+        if shout_comment.destroy_single
+          render json: success
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot delete this shout comment"
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       else
         error_obj = {
           code: 403,

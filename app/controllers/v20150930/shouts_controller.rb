@@ -57,9 +57,17 @@ module V20150930
     def destroy
       shout = Shout.find_by_id(params[:id])
       if shout.user_id == current_user.id
-        shout.destroy_single
-        
-        render json: success
+        if shout.destroy_single
+          render json: success
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot delete this shout"
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       else
         error_obj = {
           code: 403,
