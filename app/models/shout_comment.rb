@@ -125,6 +125,10 @@ class ShoutComment < ActiveRecord::Base
 				# :nocov:
 			end
 		end
+
+
+		# notification to OP and other repliers
+		
 	  	return shout_comment
     else
     	# :nocov:
