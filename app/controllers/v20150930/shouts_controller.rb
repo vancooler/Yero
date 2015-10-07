@@ -3,6 +3,48 @@ module V20150930
     prepend_before_filter :get_api_token
     before_action :authenticate_api_v2
 
+    # show a shout
+    def show
+      shout = Shout.find_by_id(params[:id])
+      if shout
+        page = 1
+        per_page = 24
+        page = params[:page].to_i + 1 if !params[:page].blank?
+        per_page = params[:per_page].to_i if !params[:per_page].blank?
+        shout_upvoted = ShoutVote.where(user_id: current_user.id).where(upvote: true).where(shout_id: shout.id)
+        shout_downvoted = ShoutVote.where(user_id: current_user.id).where(upvote: false).where(shout_id: shout.id)
+    
+        shout_json = {
+          id: shout.id,
+          body: shout.body,
+          latitude:       shout.latitude,
+          longitude:      shout.longitude,
+          timestamp:      shout.created_at.to_i,
+          total_upvotes:  shout.total_upvotes,
+          upvoted:        (shout_upvoted.nil? ? false : true),
+          downvoted:      (shout_downvoted.nil? ? false : true),
+          replies_count:  shout.shout_comments.length,
+          author_id:      shout.user_id
+        }
+        result = ShoutComment.list(current_user, shout.id, page, per_page)
+        response = {
+          shout:          shout_json,
+          shout_comments: result['shout_comments'],
+          pagination:     result['pagination']
+        }
+        render json: success(response)
+      else
+        # :nocov:
+        error_obj = {
+          code: 520,
+          message: "Cannot find the shout."
+        }
+        render json: error(error_obj, 'error')
+        # :nocov:
+      end
+    end
+
+
     # create a shout
     def create
       shout = Shout.create_shout(current_user, params[:body], params[:allow_nearby])

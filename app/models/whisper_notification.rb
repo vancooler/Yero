@@ -19,6 +19,29 @@ class WhisperNotification < AWS::Record::HashModel
               # 200 level means system activity records
               # '200' => join network
               # '201' => leave network
+              # 300 level means related to shout
+              # '301' => someone replied to your shout
+              # '302' => someone replied to the same shout
+              # '303' => your shout was removed by admin
+              # '304' => your shout comment was removed by admin
+              # '310' => you received 10 votes on your shout
+              # '311' => you received 25 votes on your shout
+              # '312' => you received 50 votes on your shout
+              # '313' => you received 100 votes on your shout
+              # '314' => you received 250 votes on your shout
+              # '315' => you received 500 votes on your shout
+              # '316' => you received 1000 votes on your shout
+              # '317' => you received 2500 votes on your shout
+              # '318' => you received 5000 votes on your shout
+              # '330' => you received 10 votes on your shout comment
+              # '331' => you received 25 votes on your shout comment
+              # '332' => you received 50 votes on your shout comment
+              # '333' => you received 100 votes on your shout comment
+              # '334' => you received 250 votes on your shout comment
+              # '335' => you received 500 votes on your shout comment
+              # '336' => you received 1000 votes on your shout comment
+              # '337' => you received 2500 votes on your shout comment
+              # '338' => you received 5000 votes on your shout comment
   boolean_attr :viewed                 #0->1
   boolean_attr :not_viewed_by_sender   #1->0
   integer_attr :accepted
@@ -498,6 +521,64 @@ class WhisperNotification < AWS::Record::HashModel
   end
   # :nocov:
 
+
+  # :nocov:
+  def self.send_notification_301(id, username, shout_id)
+    deep_link = deep_link = "yero://shouts/" + shout_id
+    data = { :alert => "@"+username+" replied to your shout", :type => 301, :deep_link => deep_link}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result    
+  end
+  # :nocov:
+
+  # :nocov:
+  def self.send_notification_302(ids, username, shout_id)
+    deep_link = deep_link = "yero://shouts/" + shout_id
+    data = { :alert => "@"+username+" replied to the same shout", :type => 302, :deep_link => deep_link}
+    channel_array = Array.new
+    ids.each do |id|
+      channel_array << "User_" + id.to_s
+    end
+    push = Parse::Push.new(data, channel_array)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result    
+  end
+  # :nocov:
+
+
+  # :nocov:
+  def self.send_notification_330_level(id, type, total_votes, shout_id)
+    deep_link = deep_link = "yero://shouts/" + shout_id
+    data = { :alert => "You received " + total_votes.to_s + " votes on your" + ((type > 329) ? "reply!" : "shout!"), :type => type, :deep_link => deep_link}
+  
+    push = Parse::Push.new(data, "User_"+id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result    
+  end
+  # :nocov:
+
   # :nocov:
   # send enough users notification
   def self.send_enough_users_notification(id)
@@ -518,6 +599,7 @@ class WhisperNotification < AWS::Record::HashModel
   end
   # :nocov:
 
+  
   # :nocov:
   # Send notification when the avatar is disabled by admin
   def self.send_avatar_disabled_notification(id, default)

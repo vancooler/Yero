@@ -6,6 +6,10 @@ class ShoutComment < ActiveRecord::Base
 
 
 
+  def total_votes
+  	self.shout_comment_votes.length
+  end
+
   def total_upvotes
   	self.shout_comment_votes.where(upvote: true).length - self.shout_comment_votes.where(upvote: false).length
   end
@@ -53,6 +57,10 @@ class ShoutComment < ActiveRecord::Base
   				end
   			end
 			current_user.update(point: current_user.point+1)
+
+
+			# push notification to author
+			self.votes_notification
   		end
 
   		event = 'add_comment_vote'
@@ -78,6 +86,44 @@ class ShoutComment < ActiveRecord::Base
 
   end
 
+
+  # activity and notifications related to total votes
+  # :nocov:
+  def votes_notification
+  	type = 0
+	case self.total_votes
+	when 10
+		type = 330
+	when 25
+		type = 331
+	when 50
+		type = 332
+	when 100
+		type = 333
+	when 250
+		type = 334
+	when 500
+		type = 335
+	when 1000
+		type = 336
+	when 2500
+		type = 337
+	when 5000
+		type = 338
+	end
+	if type > 0
+		op_user_id = self.user_id
+		# create activity 
+		current_time = Time.now
+		if Rails.env == 'production'
+			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-comment-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+self.shout.id.to_s, 'You received ' + self.total_votes.to_s + ' votes on your reply "'+self.body.truncate(23, separator: /\s/)+'"')
+			WhisperNotification.delay.send_notification_330_level(op_user_id, type, self.total_votes, self.shout.id)
+		end	
+	end 
+  	
+  end
+  # :nocov:
+
   # Create a new shout
   def self.create_shout_comment(current_user, body, shout_id)
   	shout_comment = ShoutComment.new
@@ -99,7 +145,7 @@ class ShoutComment < ActiveRecord::Base
 	        latitude: 		shout_comment.latitude,
 	        longitude: 		shout_comment.longitude,
 	        timestamp: 		shout_comment.created_at.to_i,
-	        total_votes: 	0,
+	        total_upvotes: 	0,
 	        upvoted: 		false,
 	        downvoted: 		false,
 	        shout_id: 		shout_comment.shout_id,
@@ -128,13 +174,45 @@ class ShoutComment < ActiveRecord::Base
 
 
 		# notification to OP and other repliers
-		
+		# OP
+		op_user_id = shout_comment.shout.user_id
+		black_list = BlockUser.blocked_user_ids(current_user.id)
+		# create activity 
+		current_time = Time.now
+		if !black_list.include? op_user_id
+			if Rails.env == 'production'
+				# :nocov:
+				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+shout_comment.shout.id.to_s, current_user.username + ' replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
+				WhisperNotification.delay.send_notification_301(op_user_id, current_user.username, shout_id)
+				# :nocov:
+			end	
+		end
+		# other repliers
+		other_repliers_user_ids = ShoutComment.where(shout_id: shout_comment.shout_id).where.not(user_id: current_user.id).where.not(user_id: black_list).map(&:user_id).uniq
+		if !other_repliers_user_ids.empty?
+			# create activities
+			if Rails.env == 'production'
+				# :nocov:
+				shout_comment.delay.create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
+
+				WhisperNotification.delay.send_notification_302(other_repliers_user_ids, current_user.username, shout_id)
+				# :nocov:
+			end	
+		end
 	  	return shout_comment
     else
     	# :nocov:
     	return false
     	# :nocov:
     end
+  end
+
+
+  # 
+  def create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
+  	other_repliers_user_ids.each do |user_id|
+		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+self.shout.id.to_s, current_user.username + ' replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
+	end
   end
 
 
@@ -178,7 +256,7 @@ class ShoutComment < ActiveRecord::Base
         json.latitude 		shout_comment.latitude
         json.longitude 		shout_comment.longitude
         json.timestamp 		shout_comment.created_at.to_i
-        json.total_votes 	shout_comment.total_upvotes
+        json.total_upvotes 	shout_comment.total_upvotes
         json.upvoted 		(shout_comment_upvoted_ids.include? shout_comment.id)
         json.downvoted 		(shout_comment_downvoted_ids.include? shout_comment.id)
         json.author_id 		shout_comment.user_id

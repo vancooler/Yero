@@ -272,6 +272,7 @@ class User < ActiveRecord::Base
       json.id id
       json.birthday birthday
       json.first_name first_name
+      json.username username
       json.gender gender
       json.email email
       json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
@@ -852,6 +853,7 @@ class User < ActiveRecord::Base
       # different_venue_badge:     current_user.different_venue_as?(self.id) ,
       id:              self.id,
       first_name:      self.first_name,
+      username:        self.username,
       last_active:     self.last_active.nil? ? 0 : self.last_active.to_i,
       last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
       # last_activity:  self.last_activity,
@@ -1475,6 +1477,7 @@ class User < ActiveRecord::Base
 
             json.id             user.id
             json.first_name     user.first_name
+            json.username     user.username
             json.birthday       user.birthday
             json.gender         user.gender
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 

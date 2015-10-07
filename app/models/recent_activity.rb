@@ -2,24 +2,24 @@ class RecentActivity < ActiveRecord::Base
 
 	def self.all_activities(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
-		all_activity = RecentActivity.where(:target_user_id => user_id).order("created_at DESC")
-		black_activity = RecentActivity.where(target_user_id: user_id).where(origin_user_id: black_list).order("created_at DESC")
-		return (all_activity - black_activity)
+		# all_activity = RecentActivity.where(:target_user_id => user_id).order("created_at DESC")
+		all_activity = RecentActivity.where(target_user_id: user_id).where.not(origin_user_id: black_list).order("created_at DESC")
+		return all_activity
 	end
 
 
 
 	def self.can_add_more(user_id)
-		RecentActivity.where(:target_user_id => user_id).count < 48
+		true
 	end
 
 
-	def self.add_activity(user_id, type, origin_user_id, venue_id, dynamo_id)
-		if RecentActivity.can_add_more(user_id)
-		else
-			RecentActivity.all_activities(user_id).last.destroy	
-		end
-		RecentActivity.create!(:target_user_id => user_id, :activity_type => type, :origin_user_id => origin_user_id, :venue_id => venue_id, :dynamo_id => dynamo_id)
+	def self.add_activity(user_id, type, origin_user_id, venue_id, dynamo_id, deep_link=nil, message=nil)
+		# if RecentActivity.can_add_more(user_id)
+		# else
+		# 	RecentActivity.all_activities(user_id).last.destroy	
+		# end
+		RecentActivity.create!(:target_user_id => user_id, :activity_type => type, :origin_user_id => origin_user_id, :venue_id => venue_id, :dynamo_id => dynamo_id, :deep_link => deep_link, :message => message)
 	end
 
 
@@ -56,5 +56,10 @@ class RecentActivity < ActiveRecord::Base
 
 		result = JSON.parse(result).delete_if(&:empty?)
 		return result
+	end
+
+	# migrate messages and deeplinks to exist activities
+	def self.migrate_message_and_deep_link
+
 	end
 end

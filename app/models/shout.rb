@@ -17,7 +17,10 @@ class Shout < ActiveRecord::Base
 
 # Voter 1 for up/down
 
-
+  # total vote of a shout
+  def total_votes
+  	self.shout_votes.length
+  end
 
   # total upvote of a shout
   def total_upvotes
@@ -60,6 +63,9 @@ class Shout < ActiveRecord::Base
   				end
   			end
 			current_user.update(point: current_user.point+1)
+
+			# push notification to author
+			self.votes_notification
   		end
   		event = 'add_shout_vote'
   		data = {
@@ -96,6 +102,43 @@ class Shout < ActiveRecord::Base
 
   end
 
+
+  # activity and notification related to total votes
+  # :nocov:
+  def votes_notification
+  	type = 0
+	case self.total_votes
+	when 10
+		type = 310
+	when 25
+		type = 311
+	when 50
+		type = 312
+	when 100
+		type = 313
+	when 250
+		type = 314
+	when 500
+		type = 315
+	when 1000
+		type = 316
+	when 2500
+		type = 317
+	when 5000
+		type = 318
+	end
+	if type > 0
+		op_user_id = self.user_id
+		# create activity 
+		current_time = Time.now
+		if Rails.env == 'production'
+			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+self.id.to_s, 'You received ' + self.total_votes.to_s + ' votes on your shout "'+self.body.truncate(23, separator: /\s/)+'"')
+			WhisperNotification.delay.send_notification_330_level(op_user_id, type, self.total_votes, self.id)
+		end	
+	end 
+  end
+  # :nocov:
+
   # Create a new shout
   def self.create_shout(current_user, body, allow_nearby)
   	shout = Shout.new
@@ -131,7 +174,7 @@ class Shout < ActiveRecord::Base
 		        latitude: 		shout.latitude,
 		        longitude: 		shout.longitude,
 		        timestamp: 		shout.created_at.to_i,
-		        total_votes: 	0,
+		        total_upvotes: 	0,
 		        upvoted: 		false,
 		        downvoted: 		false,
 		        replies_count: 	0,
@@ -226,7 +269,7 @@ class Shout < ActiveRecord::Base
         json.latitude 		shout.latitude
         json.longitude 		shout.longitude
         json.timestamp 		shout.created_at.to_i
-        json.total_votes 	shout.total_upvotes
+        json.total_upvotes 	shout.total_upvotes
         json.upvoted 		(shout_upvoted_ids.include? shout.id)
         json.downvoted 		(shout_downvoted_ids.include? shout.id)
         json.replies_count 	shout.shout_comments.length

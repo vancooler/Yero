@@ -1313,13 +1313,13 @@ describe 'V2.0.0' do
 
 	it "Shouts" do
     	birthday = (Time.now - 21.years)
-		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", username: "user_2", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
 	    
-	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "user_3", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
 	    
-	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
 
 	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
@@ -1423,6 +1423,8 @@ describe 'V2.0.0' do
       	expect(ShoutComment.count).to eql 1
       	shout_comment_1 = ShoutComment.last
 
+
+
       	get 'api/shouts', {:token => token, :order_by => "hot", :my_comments => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -1524,6 +1526,8 @@ describe 'V2.0.0' do
       	expect(ShoutComment.count).to eql 2
       	shout_comment_2 = ShoutComment.last
 
+
+
       	post 'api/report_shout_comments', {:token => token, :report_type_id => 2, :shout_comment_id => shout_comment_1.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -1532,6 +1536,13 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_2.id
+
+      	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['shout']['id']).to eql shout_2.id
       	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_2.id
 
       	token = user_2.generate_token
@@ -1642,6 +1653,7 @@ describe 'V2.0.0' do
       	expect(ShoutComment.count).to eql 0
       	expect(ShoutVote.count).to eql 0
 
+      	RecentActivity.delete_all
       	ShoutCommentVote.delete_all
       	ShoutComment.delete_all
       	ShoutVote.delete_all

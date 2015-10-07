@@ -296,6 +296,7 @@ Rails.application.routes.draw do
       post   'api/shouts',                               to: 'shouts#create'
       delete 'api/shouts/:id',                           to: 'shouts#destroy'
       get    'api/shouts',                               to: 'shouts#index'
+      get    'api/shouts/:id',                           to: 'shouts#show'
       put    'api/shouts/:id',                           to: 'shouts#update'
       post   'api/report_shouts',                        to: 'shouts#report'
 
