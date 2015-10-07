@@ -58,7 +58,7 @@ gem "fog", "~> 1.3.1"
 gem 'mini_magick', '~> 3.7.0'
 gem 'rmagick', '2.13.2', require: false
 gem 'houston'
-gem "parse-ruby-client"
+gem 'parse-ruby-client', git: 'https://github.com/adelevie/parse-ruby-client.git'
 gem 'aws-sdk', '< 2.0'
 gem 'geocoder'
 # gem 'sidekiq'
