@@ -30,6 +30,31 @@ class RecentActivity < ActiveRecord::Base
 				case a.activity_type.to_s
 				when '200'
 					json.activity_type 'Joined Network'
+				when '301'
+					json.activity_type 'Replied Your Shout'
+				when '302'
+					json.activity_type 'Replied Same Shout'
+				when '310'
+				when '311'
+				when '312'
+				when '313'
+				when '314'
+				when '315'
+				when '316'
+				when '317'
+				when '318'
+					json.activity_type 'Shout Votes'
+				when '330'
+				when '331'
+				when '332'
+				when '333'
+				when '334'
+				when '335'
+				when '336'
+				when '337'
+				when '338'
+					json.activity_type 'Shout Comment Votes'
+			
 				when '201'
 					json.activity_type 'Offline'
 				when '101'
@@ -41,7 +66,10 @@ class RecentActivity < ActiveRecord::Base
 				when '2-received'
 					json.activity_type 'Received Whisper'
 				end
+
 				json.timestamp a.created_at.to_i
+				json.message (a.message.nil? ? '' : a.message)
+				json.deep_link (a.deep_link.nil? ? '' : a.deep_link)
 				if !a.origin_user_id.nil? and !a.target_user_id.nil?
 					origin_user = User.find_by_id(a.origin_user_id)
 					target_user = User.find_by_id(a.target_user_id)
@@ -58,7 +86,7 @@ class RecentActivity < ActiveRecord::Base
 		return result
 	end
 
-	# migrate messages and deeplinks to exist activities
+	# migrate messages and deep_links to exist activities
 	def self.migrate_message_and_deep_link
 
 	end

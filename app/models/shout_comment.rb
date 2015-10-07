@@ -208,12 +208,14 @@ class ShoutComment < ActiveRecord::Base
   end
 
 
-  # 
+  # :nocov:
+  # Function to create activities for a batch of users
   def create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
   	other_repliers_user_ids.each do |user_id|
 		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+self.shout.id.to_s, current_user.username + ' replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
 	end
   end
+  # :nocov:
 
 
   # return shouts list
