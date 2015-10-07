@@ -288,11 +288,11 @@ class User < ActiveRecord::Base
       json.longitude (longitude.blank? ? 0 : longitude)
       json.discovery discovery
       json.exclusive exclusive
-      json.joined_today is_connected
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
-      json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
-      json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
-      json.current_city current_city.blank? ? '' : current_city
+      # json.joined_today is_connected
+      # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
+      # json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
+      # json.current_city current_city.blank? ? '' : current_city
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
@@ -302,8 +302,6 @@ class User < ActiveRecord::Base
           json.array! avatars do |a|
             json.avatar a.origin_url
             json.thumbnail a.thumb_url
-            json.default (!a.order.nil? and a.order == 0)
-            json.is_active a.is_active
             json.avatar_id a.id
             json.order (a.order.nil? ? 100 : a.order)
           end
@@ -322,9 +320,9 @@ class User < ActiveRecord::Base
         end
       end
 
-      if with_key
-        json.key key
-      end
+      # if with_key
+      #   json.key key
+      # end
     end
 
     response = JSON.parse(data)
@@ -855,7 +853,7 @@ class User < ActiveRecord::Base
       first_name:      self.first_name,
       username:        self.username,
       last_active:     self.last_active.nil? ? 0 : self.last_active.to_i,
-      last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
+      # last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
       # last_activity:  self.last_activity,
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:          self.gender,
@@ -893,8 +891,8 @@ class User < ActiveRecord::Base
 
             json.avatar a.origin_url
             json.thumbnail a.thumb_url
-            json.default (!a.order.nil? and a.order == 0)
-            json.is_active a.is_active
+            # json.default (!a.order.nil? and a.order == 0)
+            # json.is_active a.is_active
             json.avatar_id a.id
             json.order (a.order.nil? ? 100 : a.order)
 
@@ -1360,11 +1358,11 @@ class User < ActiveRecord::Base
       whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
       pending_whispers = WhisperToday.pending_whispers(self.id)
       # colect all users with "like"
-      followees = self.followees(User)
+      # followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends
-      mutual_follow = self.friends_by_like
-      whisper_friends = FriendByWhisper.friends(self.id)
-      friends = mutual_follow | whisper_friends
+      # mutual_follow = self.friends_by_like
+      # whisper_friends = FriendByWhisper.friends(self.id)
+      # friends = mutual_follow | whisper_friends
 
       # get all users with filter params
       return_users = self.collect_users(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
@@ -1419,8 +1417,8 @@ class User < ActiveRecord::Base
                   avatar: !oa.avatar.nil? ? oa.origin_url : '',
                   thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
                   avatar_id: oa.id,
-                  default: oa.order.nil? ? true : (oa.order==0),
-                  is_active: true,
+                  # default: oa.order.nil? ? true : (oa.order==0),
+                  # is_active: true,
                   order: oa.order.nil? ? '100' : oa.order
                 }
                 avatar_array << new_item
@@ -1433,11 +1431,11 @@ class User < ActiveRecord::Base
 
             actions_time_a = Time.now
             json.whisper_sent whispers_sent.include? user.id.to_i
-            are_friends = (friends.map(&:id).include? user.id)
+            # are_friends = (friends.map(&:id).include? user.id)
             whisper_sent = (whispers_sent.include? user.id.to_i)
             can_reply = (whispers_can_reply.include?  user.id.to_i)
             can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
-            actions = self.collect_whisper_actions(are_friends, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
+            actions = self.collect_whisper_actions(false, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
             json.actions actions
             actions_time_b = Time.now
             actions_time += (actions_time_b - actions_time_a)
@@ -1454,17 +1452,17 @@ class User < ActiveRecord::Base
             whispers_time += (whispers_time_b - whispers_time_a)
             
 
-            if followees.blank?
-              json.like false
-            else
-              json.like followees.map(&:id).include? user.id
-            end
+            # if followees.blank?
+            #   json.like false
+            # else
+            #   json.like followees.map(&:id).include? user.id
+            # end
 
-            if friends.blank?
-              json.friend false
-            else
-              json.friend friends.map(&:id).include? user.id
-            end
+            # if friends.blank?
+            #   json.friend false
+            # else
+            #   json.friend friends.map(&:id).include? user.id
+            # end
 
             
 
@@ -1481,7 +1479,7 @@ class User < ActiveRecord::Base
             json.birthday       user.birthday
             json.gender         user.gender
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
-            json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
+            # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
             json.line_id      user.line_id.blank? ? '' : user.line_id
             json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
             json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id

@@ -253,10 +253,10 @@ describe User do
 	      	expect(user_2.to_json(true)["instagram_id"]).to eql 'instagram_id'
 	      	expect(user_2.to_json(true)["discovery"]).to eql false
 	      	expect(user_2.to_json(true)["exclusive"]).to eql false
-	      	expect(user_2.to_json(true)["joined_today"]).to eql true
-	      	expect(user_2.to_json(true)["key"]).to eql "1"
-	      	expect(user_2.to_json(true)["current_venue"]).to eql "TestVenue"
-	      	expect(user_2.to_json(true)["current_city"]).to eql "Vancouver"
+	      	# expect(user_2.to_json(true)["joined_today"]).to eql true
+	      	# expect(user_2.to_json(true)["key"]).to eql "1"
+	      	# expect(user_2.to_json(true)["current_venue"]).to eql "TestVenue"
+	      	# expect(user_2.to_json(true)["current_city"]).to eql "Vancouver"
 	      	expect(user_2.to_json(true)["avatars"][0]['order']).to eql 0
 	      	expect(user_2.to_json(true)["notification_preferences"].length).to eql 3
 	      	expect(user_2.to_json(true)["notification_preferences"][0]["type"]).to eql "Network online"
@@ -274,10 +274,10 @@ describe User do
 	      	expect(user_2.to_json(true)["avatars"][1]['avatar_id']).to eql 1
 
 	      	user_2.leave_network
-	      	expect(user_2.to_json(true)["joined_today"]).to eql false
+	      	# expect(user_2.to_json(true)["joined_today"]).to eql false
 
 	      	user_2.join_network
-	      	expect(user_2.to_json(true)["joined_today"]).to eql true
+	      	# expect(user_2.to_json(true)["joined_today"]).to eql true
 	      	WhisperToday.create(target_user_id: 2, origin_user_id: 1, whisper_type: "2")
 	      	User.handle_close(["America/Vancouver"])
 
