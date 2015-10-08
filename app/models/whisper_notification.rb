@@ -548,6 +548,7 @@ class WhisperNotification < AWS::Record::HashModel
       channel_array << "User_" + id.to_s
     end
     push = Parse::Push.new(data, channel_array)
+    push.channels = channel_array
     push.type = "ios"
     begin  
       push.save
