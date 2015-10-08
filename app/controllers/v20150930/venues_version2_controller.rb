@@ -5,10 +5,105 @@ module V20150930
     # list all the venues for this owner
 
 
-    # API
+    # List of venue types
+    def list_types
+      user = current_user
+      if !params[:distance].nil? and params[:distance].to_i > 0
+        distance = params[:distance].to_i
+      else
+        distance = 60
+      end
+      if !params[:latitude].blank? 
+        latitude = params[:latitude].to_f
+      else
+        latitude = user.latitude
+      end
+      if !params[:longitude].blank? 
+        longitude = params[:longitude].to_f
+      else
+        longitude = user.longitude
+      end
+
+      if !params[:latitude].blank? and !params[:longitude].blank? 
+        user.latitude = latitude
+        user.longitude = longitude
+        user.save
+      end
+      result = Array.new
+
+      # venues nearby
+      nearby_venues = Venue.nearby_networks(latitude, longitude, distance)
+      # puts latitude
+      # puts longitude
+      # puts distance
+      # puts nearby_venues.inspect
+      if !nearby_venues.blank?
+        nearby_obj = {
+          title: "NEARBY",
+          total: nearby_venues.length
+        }
+        if !nearby_venues.first.venue_avatars.blank? and !nearby_venues.first.venue_avatars.first.avatar.nil?  and !nearby_venues.first.venue_avatars.first.avatar.url.nil?
+          nearby_obj[:image] = nearby_venues.first.venue_avatars.first.avatar.url
+        end
+        result << nearby_obj
+      end
+
+      # Colleges
+      colleges = Venue.colleges(latitude, longitude)
+      if !colleges.blank?
+        college_obj = {
+          title: "COLLEGES",
+          total: colleges.length
+        }
+        if  !colleges.first.venue_avatars.blank? and !colleges.first.venue_avatars.first.avatar.nil?  and !colleges.first.venue_avatars.first.avatar.url.nil?
+          college_obj[:image] = colleges.first.venue_avatars.first.avatar.url
+        end
+        result << college_obj
+      end
+
+      # Stadiums
+      stadiums = Venue.stadiums(latitude, longitude)
+      if !stadiums.blank?
+        stadium_obj = {
+          title: "STADIUMS",
+          total: stadiums.length
+        }
+        if  !stadiums.first.venue_avatars.blank? and !stadiums.first.venue_avatars.first.avatar.nil?  and !stadiums.first.venue_avatars.first.avatar.url.nil?
+          stadium_obj[:image] = stadiums.first.venue_avatars.first.avatar.url
+        end
+        result << stadium_obj
+      end
+
+      # Festivals
+      festivals = Venue.festivals(latitude, longitude)
+      if !festivals.blank?
+        festival_obj = {
+          title: "FESTIVALS",
+          total: festivals.length
+        }
+        if  !festivals.first.venue_avatars.blank? and !festivals.first.venue_avatars.first.avatar.nil?  and !festivals.first.venue_avatars.first.avatar.url.nil?
+          festival_obj[:image] = festivals.first.venue_avatars.first.avatar.url
+        end
+        result << festival_obj
+      end
+
+      # Nightlife
+      nightlifes = Venue.nightlifes(latitude, longitude)
+      if !nightlifes.blank?
+        nightlife_obj = {
+          title: "NIGHTLIFE",
+          total: nightlifes.length
+        }
+        if  !nightlifes.first.venue_avatars.blank? and !nightlifes.first.venue_avatars.first.avatar.nil?  and !nightlifes.first.venue_avatars.first.avatar.url.nil?
+          nightlife_obj[:image] = nightlifes.first.venue_avatars.first.avatar.url
+        end
+        result << nightlife_obj
+      end
+
+      render json: success(result)
+    end
 
     # List of venues
-    # TODO Refactor out the JSON builder into venue.rb
     def list
       user = current_user
       if !params[:distance].nil? and params[:distance].to_i > 0

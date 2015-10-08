@@ -271,6 +271,7 @@ Rails.application.routes.draw do
 
       # venue APIs 1
       get    'api/venues',                               to: 'venues_version2#list'
+      get    'api/venue_types',                          to: 'venues_version2#list_types'
 
       # Enter Venue APIs 2
       post   'api/venues/:id',                           to: 'rooms#user_enter'

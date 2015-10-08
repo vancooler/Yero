@@ -45,6 +45,123 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  # collect nearby venus
+  def self.nearby_networks(latitude, longitude, distance)
+    types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    if latitude.nil? or longitude.nil?
+      # :nocov:
+      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
+    else
+      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    return venues
+  end
+
+  # collect colleges
+  def self.colleges(latitude, longitude)
+    types_array = VenueType.all.where("lower(name) like ?", "%campus%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    if latitude.nil? or longitude.nil?
+      # :nocov:
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
+    else
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    return venues
+  end
+
+  # collect nighlifes
+  def self.nightlifes(latitude, longitude)
+    types_array = VenueType.all.where("lower(name) not like ? AND lower(name) not like ? AND lower(name) not like ? AND lower(name) not like ?", "%test%", "%campus%", "%festival%", "%stadium%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    if latitude.nil? or longitude.nil?
+      # :nocov:
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
+    else
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    return venues
+  end
+
+  # collect stadiums
+  def self.stadiums(latitude, longitude)
+    types_array = VenueType.all.where("lower(name) like ?", "%stadium%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    if latitude.nil? or longitude.nil?
+      # :nocov:
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
+    else
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    return venues
+  end
+
+  # collect festivals
+  def self.festivals(latitude, longitude)
+    types_array = VenueType.all.where("lower(name) like ?", "%festival%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    if latitude.nil? or longitude.nil?
+      # :nocov:
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
+    else
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+    end
+
+    if !types_array_string.blank?
+      venues = venues.where(venue_type_id: types_array_string)
+    end
+
+    finished_festivals = venues.select{|x|  x.finished == true }
+    
+    if !finished_festivals.empty?
+      venues = venues - finished_festivals
+    end
+    venues = venues.sort_by{|e| e.start_time.to_i}
+
+    return venues
+  end
+
   def self.near_venues(latitude, longitude, distance, without_featured_venues)
     types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
     types_array_string = Array.new
@@ -52,7 +169,9 @@ class Venue < ActiveRecord::Base
       types_array_string << a.to_s
     end
     if latitude.nil? or longitude.nil?
+      # :nocov:
       venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      # :nocov:
     else
       venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
     end
@@ -101,13 +220,9 @@ class Venue < ActiveRecord::Base
   def finished
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
       now = Time.now
-      Time.zone = self.timezone
-
-      if now.to_i+Time.zone.now.utc_offset >=  self.end_time.to_i
-        Time.zone = "UTC"
+      if now.to_i >=  Venue.to_utc_timestamp(self.end_time, self.timezone)
         return true
       else
-        Time.zone = "UTC"
         return false
       end
     else
@@ -115,20 +230,20 @@ class Venue < ActiveRecord::Base
     end
   end
 
+  def self.to_utc_timestamp(time, timezone)
+    Time.zone = timezone
+    timestamp = (time.to_i - Time.zone.now.utc_offset)
+    Time.zone = "UTC"
+    return timestamp
+  end
+
 
   def happen_now
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
       now = Time.now
-      Time.zone = self.timezone
-      puts "A"
-      puts now.to_i+Time.zone.now.utc_offset
-      puts self.start_time.to_i
-      puts self.end_time.to_i
-      if now.to_i+Time.zone.now.utc_offset >= self.start_time.to_i and now.to_i+Time.zone.now.utc_offset < self.end_time.to_i
-        Time.zone = "UTC"
+      if now.to_i >= Venue.to_utc_timestamp(self.start_time, self.timezone) and now.to_i < Venue.to_utc_timestamp(self.end_time, self.timezone)
         return true
       else
-        Time.zone = "UTC"
         return false
       end
     else

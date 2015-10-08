@@ -448,6 +448,22 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 5
 		expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
 
+		# expect(Venue.nearby_networks(49, -123, 100).length).to eql 5
+		# expect(Venue.festivals(-49, 120).length).to eql 4
+		# expect(Venue.colleges(49, -10).length).to eql 0
+		# expect(Venue.nightlifes(49, -10).length).to eql 1
+		# expect(Venue.stadiums(49, -10).length).to eql 0
+		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 3
+		expect(JSON.parse(response.body)['data'][0]['title']).to eql "NEARBY"
+		expect(JSON.parse(response.body)['data'][1]['title']).to eql "FESTIVALS"
+		expect(JSON.parse(response.body)['data'][2]['title']).to eql "NIGHTLIFE"
+		expect(JSON.parse(response.body)['data'][0]['total']).to eql 5
+		expect(JSON.parse(response.body)['data'][1]['total']).to eql 4
+		expect(JSON.parse(response.body)['data'][2]['total']).to eql 1
+
+
 		TimeZonePlace.delete_all
 		VenueAvatar.delete_all
 		Venue.delete_all
