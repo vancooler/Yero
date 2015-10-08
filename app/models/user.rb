@@ -302,7 +302,7 @@ class User < ActiveRecord::Base
           json.array! avatars do |a|
             json.avatar a.origin_url
             json.thumbnail a.thumb_url
-            json.is_active a.is_active
+            json.default (!a.order.nil? and a.order == 0)
             json.avatar_id a.id
             json.order (a.order.nil? ? 100 : a.order)
           end
@@ -892,8 +892,8 @@ class User < ActiveRecord::Base
 
             json.avatar a.origin_url
             json.thumbnail a.thumb_url
-            # json.default (!a.order.nil? and a.order == 0)
-            json.is_active a.is_active
+            json.default (!a.order.nil? and a.order == 0)
+            # json.is_active a.is_active
             json.avatar_id a.id
             json.order (a.order.nil? ? 100 : a.order)
 
@@ -1419,8 +1419,8 @@ class User < ActiveRecord::Base
                   avatar: !oa.avatar.nil? ? oa.origin_url : '',
                   thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
                   avatar_id: oa.id,
-                  # default: oa.order.nil? ? true : (oa.order==0),
-                  is_active: true,
+                  default: oa.order.nil? ? true : (oa.order==0),
+                  # is_active: true,
                   order: oa.order.nil? ? '100' : oa.order
                 }
                 avatar_array << new_item
