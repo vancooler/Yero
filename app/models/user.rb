@@ -1277,12 +1277,12 @@ class User < ActiveRecord::Base
     all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
     all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_2 = Time.now
-    campus_id = VenueType.find_by_name("Campus")
-    if campus_id
-      campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
-    else
+    # campus_id = VenueType.find_by_name("Campus")
+    # if campus_id
+    #   campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
+    # else
       campus_venue_ids = [nil]
-    end
+    # end
     if self.current_venue.blank?
       same_venue_user_ids = Array.new
       different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
