@@ -132,7 +132,7 @@ class Shout < ActiveRecord::Base
 		# create activity 
 		current_time = Time.now
 		if Rails.env == 'production'
-			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "yero://shouts/"+self.id.to_s, 'You received ' + self.total_votes.to_s + ' votes on your shout "'+self.body.truncate(23, separator: /\s/)+'"')
+			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "shout", self.id, 'You received ' + self.total_votes.to_s + ' votes on your shout "'+self.body.truncate(23, separator: /\s/)+'"')
 			WhisperNotification.delay.send_notification_330_level(op_user_id, type, self.total_votes, self.id)
 		end	
 	end 
