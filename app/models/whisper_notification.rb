@@ -421,8 +421,8 @@ class WhisperNotification < AWS::Record::HashModel
           WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           if n and notification_type == "2"
             time = Time.now
-            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
-            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
+            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
 
             record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
             if record_found.count <= 0
@@ -464,8 +464,8 @@ class WhisperNotification < AWS::Record::HashModel
           WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => pending_whisper.id, :message => intro)
           if n and notification_type == "2"
             time = Time.now
-            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s)
-            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s)
+            RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
           end
           if Rails.env == 'production'
             n.send_push_notification_to_target_user(message, paper_owner_id)
