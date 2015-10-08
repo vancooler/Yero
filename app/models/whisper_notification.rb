@@ -561,6 +561,22 @@ class WhisperNotification < AWS::Record::HashModel
   end
   # :nocov:
 
+  # :nocov:
+  def self.send_notification_shout_remove(id, type)
+    data = { :alert => "A " + ((type==303) ? "shout" : "reply") + " you posted has been flagged as inappropriate and removed", :type => type}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result    
+  end
+  # :nocov:
+
 
   # :nocov:
   def self.send_notification_330_level(id, type, total_votes, shout_id)
