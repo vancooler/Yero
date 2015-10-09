@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151007172336) do
+ActiveRecord::Schema.define(version: 20151008164012) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -303,16 +303,16 @@ ActiveRecord::Schema.define(version: 20151007172336) do
   add_index "read_notifications", ["user_id"], name: "index_read_notifications_on_user_id", using: :btree
 
   create_table "recent_activities", force: true do |t|
-    t.integer  "target_user_id", null: false
+    t.integer  "target_user_id",   null: false
     t.integer  "origin_user_id"
     t.integer  "venue_id"
-    t.string   "activity_type",  null: false
+    t.string   "activity_type",    null: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "dynamo_id"
     t.text     "message"
-    t.string   "content_type"
-    t.integer  "content_id"
+    t.string   "contentable_type"
+    t.integer  "contentable_id"
   end
 
   add_index "recent_activities", ["target_user_id"], name: "index_recent_activities_on_target_user_id", using: :btree

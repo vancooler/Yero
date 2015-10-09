@@ -2,8 +2,8 @@ class ShoutComment < ActiveRecord::Base
   belongs_to :shout
   has_many :shout_comment_votes, dependent: :destroy
   belongs_to :user
-  has_many :shout_report_histories, dependent: :destroy, as: :reportable
-
+  has_many :shout_report_histories, as: :reportable, dependent: :destroy
+  has_many :recent_activities, as: :contentable, dependent: :destroy
 
 
   def total_votes
@@ -70,16 +70,20 @@ class ShoutComment < ActiveRecord::Base
   		}
   	end
   	current_upvotes = self.total_upvotes
-  	user_ids = self.shout.permitted_users_id
-  	shout_id = self.shout.id
-  	
-  	# pusher
-	# users in shout_id channel
-	channel = 'public-shout-' + shout_id.to_s
-	if Rails.env == 'production'
-		# :nocov:
-		Pusher.delay.trigger(channel, 'Shout comment upvotes changed', {total_upvotes: current_upvotes, shout_comment_id: self.id})
-		# :nocov:
+  	if current_upvotes <= -5
+  		self.destroy_single
+  	else
+	  	user_ids = self.shout.permitted_users_id
+	  	shout_id = self.shout.id
+	  	
+	  	# pusher
+		# users in shout_id channel
+		channel = 'public-shout-' + shout_id.to_s
+		if Rails.env == 'production'
+			# :nocov:
+			Pusher.delay.trigger(channel, 'Shout comment upvotes changed', {total_upvotes: current_upvotes, shout_comment_id: self.id})
+			# :nocov:
+		end
 	end
 	
   	return {result: result, event: event, data: data}
@@ -116,7 +120,7 @@ class ShoutComment < ActiveRecord::Base
 		# create activity 
 		current_time = Time.now
 		if Rails.env == 'production'
-			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-comment-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "shout_comment", self.id, 'You received ' + self.total_votes.to_s + ' votes on your reply "'+self.body.truncate(23, separator: /\s/)+'"')
+			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-comment-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", self.id, 'You received ' + self.total_votes.to_s + ' votes on your reply "'+self.body.truncate(23, separator: /\s/)+'"')
 			WhisperNotification.delay.send_notification_330_level(op_user_id, type, self.total_votes, self.shout.id)
 		end	
 	end 
@@ -182,7 +186,7 @@ class ShoutComment < ActiveRecord::Base
 		if !black_list.include? op_user_id
 			if Rails.env == 'production'
 				# :nocov:
-				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "shout_comment", shout_comment.id, current_user.username + ' replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
+				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", shout_comment.id, current_user.username + ' replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
 				WhisperNotification.delay.send_notification_301(op_user_id, current_user.username, shout_id)
 				# :nocov:
 			end	
@@ -212,7 +216,7 @@ class ShoutComment < ActiveRecord::Base
   # Function to create activities for a batch of users
   def create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
   	other_repliers_user_ids.each do |user_id|
-		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "shout_comment", self.id, current_user.username + ' replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
+		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", self.id, current_user.username + ' replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
 	end
   end
   # :nocov:
@@ -223,7 +227,7 @@ class ShoutComment < ActiveRecord::Base
   	result = Hash.new
   	time_0 = Time.now
   	black_list = BlockUser.blocked_user_ids(current_user.id)
-  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'shout_comment').map(&:reportable_id)
+  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'ShoutComment').map(&:reportable_id)
   	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at DESC")
   	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
         pagination = Hash.new
@@ -270,14 +274,14 @@ class ShoutComment < ActiveRecord::Base
 
   # report a comment
   def report(user, type)
-  	history = ShoutReportHistory.where(reportable_type: 'shout_comment', reportable_id: self.id, shout_report_type_id: type)
+  	history = ShoutReportHistory.where(reportable_type: 'ShoutComment', reportable_id: self.id, shout_report_type_id: type)
   	if history.blank?
   		frequency = 1
   	else
   		frequency = history.first.frequency + 1
   	end
 
-  	srh = ShoutReportHistory.create(reportable_type: 'shout_comment', reportable_id: self.id, reporter_id: user.id, shout_report_type_id: type, frequency: frequency)
+  	srh = ShoutReportHistory.create(reportable_type: 'ShoutComment', reportable_id: self.id, reporter_id: user.id, shout_report_type_id: type, frequency: frequency)
   	if srh
   		history.update_all(frequency: frequency)
   	end

@@ -1,7 +1,8 @@
 class Shout < ActiveRecord::Base
   has_many :shout_comments, dependent: :destroy
   has_many :shout_votes, dependent: :destroy
-  has_many :shout_report_histories, dependent: :destroy, as: :reportable
+  has_many :shout_report_histories, as: :reportable, dependent: :destroy
+  has_many :recent_activities, as: :contentable, dependent: :destroy
   belongs_to :user
   reverse_geocoded_by :latitude, :longitude
 
@@ -74,28 +75,32 @@ class Shout < ActiveRecord::Base
   		}
   	end
   	current_upvotes = self.total_upvotes
-  	user_ids = self.permitted_users_id
-  	shout_id = self.id
-  	
-  	# pusher
-	# users in shout_id channel
-	channel = 'public-shout-' + shout_id.to_s
-	if Rails.env == 'production'
-		# :nocov:
-		Pusher.delay.trigger(channel, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
-		# :nocov:
-	end
-	# users can access this shout
-	user_channels = Array.new
-	user_ids.each do |id|
-		channel = 'private-user-' + id.to_s
-		user_channels << channel
-	end
-	if !user_channels.empty?
+  	if current_upvotes <= -5
+  		self.destroy_single
+  	else
+	  	user_ids = self.permitted_users_id
+	  	shout_id = self.id
+	  	
+	  	# pusher
+		# users in shout_id channel
+		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.delay.trigger(user_channels, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+			Pusher.delay.trigger(channel, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
 			# :nocov:
+		end
+		# users can access this shout
+		user_channels = Array.new
+		user_ids.each do |id|
+			channel = 'private-user-' + id.to_s
+			user_channels << channel
+		end
+		if !user_channels.empty?
+			if Rails.env == 'production'
+				# :nocov:
+				Pusher.delay.trigger(user_channels, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+				# :nocov:
+			end
 		end
 	end
   	return {result: result, event: event, data: data}
@@ -132,7 +137,7 @@ class Shout < ActiveRecord::Base
 		# create activity 
 		current_time = Time.now
 		if Rails.env == 'production'
-			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "shout", self.id, 'You received ' + self.total_votes.to_s + ' votes on your shout "'+self.body.truncate(23, separator: /\s/)+'"')
+			RecentActivity.delay.add_activity(op_user_id, type.to_s, nil, nil, "shout-votes-"+self.total_votes.to_s+"-"+op_user_id.to_s+"-"+current_time.to_i.to_s, "Shout", self.id, 'You received ' + self.total_votes.to_s + ' votes on your shout "'+self.body.truncate(23, separator: /\s/)+'"')
 			WhisperNotification.delay.send_notification_330_level(op_user_id, type, self.total_votes, self.id)
 		end	
 	end 
@@ -197,7 +202,7 @@ class Shout < ActiveRecord::Base
   # collect shouts in a venue or near users
   def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
-  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'shout').map(&:reportable_id)
+  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and (my_comments.to_s == '1' or my_comments.to_s == 'true')
   		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
   		shouts = Shout.where(id: comments)
@@ -282,14 +287,14 @@ class Shout < ActiveRecord::Base
 
   # report a shout
   def report(user, type)
-  	history = ShoutReportHistory.where(reportable_type: 'shout', reportable_id: self.id, shout_report_type_id: type)
+  	history = ShoutReportHistory.where(reportable_type: 'Shout', reportable_id: self.id, shout_report_type_id: type)
   	if history.blank?
   		frequency = 1
   	else
   		frequency = history.first.frequency + 1
   	end
 
-  	srh = ShoutReportHistory.create(reportable_type: 'shout', reportable_id: self.id, reporter_id: user.id, shout_report_type_id: type, frequency: frequency)
+  	srh = ShoutReportHistory.create(reportable_type: 'Shout', reportable_id: self.id, reporter_id: user.id, shout_report_type_id: type, frequency: frequency)
   	if srh
   		history.update_all(frequency: frequency)
   	end
@@ -305,7 +310,7 @@ class Shout < ActiveRecord::Base
 		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 60, units: :km).map(&:id)
 	end
 	black_list = BlockUser.blocked_user_ids(self.user_id)
-  	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'shout').map(&:reporter_id)
+  	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'Shout').map(&:reporter_id)
   	return_user_ids = return_user_ids - black_list - content_black_list
 
   	return return_user_ids

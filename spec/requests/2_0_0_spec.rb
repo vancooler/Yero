@@ -1338,6 +1338,12 @@ describe 'V2.0.0' do
 	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
 
+	    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", username: "user_5", email: "test5@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_5 = UserAvatar.create!(id: 4, user: user_5, is_active: true, order: 0)
+
+	    user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", username: "user_6", email: "test6@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_6 = UserAvatar.create!(id: 5, user: user_6, is_active: true, order: 0)
+
 	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
       	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA", latitude: 49.534235, longitude: -123.063472)
       	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
@@ -1534,6 +1540,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
       	expect(ShoutReportHistory.first.all_reporter.count).to eql 2
+      	expect(shout_3.shout_report_histories.length).to eql 2
 
       	ShoutReportHistory.delete_all
       	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1667,6 +1674,86 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 2
       	expect(ShoutComment.count).to eql 0
+      	expect(ShoutVote.count).to eql 0
+
+      	post 'api/shouts', {:token => token, :body => "BBBsd", :allow_nearby => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(Shout.count).to eql 3
+      	shout_to_downvote = Shout.last
+
+      	RecentActivity.delete_all
+
+      	post 'api/shout_comments', {:token => token, :body => "BBBsd", :shout_id => shout_to_downvote.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	shout_comment_to_downvote = ShoutComment.last
+
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_3.generate_token
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_4.generate_token
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_5.generate_token
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	token = user_6.generate_token
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	
+      	RecentActivity.add_activity(user_2.id, 330, nil, nil, "shout-comment-votes-"+10.to_s+"-"+user_2.id.to_s+"-"+Time.now.to_i.to_s, "ShoutComment", shout_comment_to_downvote.id, 'You received ' + 10.to_s + ' votes on your reply "'+shout_comment_to_downvote.body.truncate(23, separator: /\s/)+'"')
+      	RecentActivity.add_activity(user_2.id, 310, nil, nil, "shout-votes-"+10.to_s+"-"+user_2.id.to_s+"-"+Time.now.to_i.to_s, "Shout", shout_to_downvote.id, 'You received ' + 10.to_s + ' votes on your shout "'+shout_to_downvote.body.truncate(23, separator: /\s/)+'"')
+
+      	token = user_2.generate_token
+      	get 'api/activities?per_page=48&page=0&token='+ token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 2
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 2
+
+      	expect(shout_to_downvote.recent_activities.length).to eql 1
+      	expect(shout_comment_to_downvote.recent_activities.length).to eql 1
+      	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	expect(ShoutCommentVote.count).to eql 0
+      	expect(ShoutComment.count).to eql 0
+      	expect(RecentActivity.count).to eql 1
+      	
+      	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	expect(RecentActivity.count).to eql 0
+      	expect(Shout.count).to eql 2
       	expect(ShoutVote.count).to eql 0
 
       	RecentActivity.delete_all

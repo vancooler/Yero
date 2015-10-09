@@ -1,4 +1,5 @@
 class RecentActivity < ActiveRecord::Base
+	belongs_to :contentable, polymorphic: true
 
 	def self.all_activities(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
@@ -14,12 +15,12 @@ class RecentActivity < ActiveRecord::Base
 	end
 
 
-	def self.add_activity(user_id, type, origin_user_id, venue_id, dynamo_id, content_type=nil, content_id=nil, message=nil)
+	def self.add_activity(user_id, type, origin_user_id, venue_id, dynamo_id, contentable_type=nil, contentable_id=nil, message=nil)
 		# if RecentActivity.can_add_more(user_id)
 		# else
 		# 	RecentActivity.all_activities(user_id).last.destroy	
 		# end
-		RecentActivity.create!(:target_user_id => user_id, :activity_type => type, :origin_user_id => origin_user_id, :venue_id => venue_id, :dynamo_id => dynamo_id, :content_type => content_type, :message => message, :content_id => content_id)
+		RecentActivity.create!(:target_user_id => user_id, :activity_type => type, :origin_user_id => origin_user_id, :venue_id => venue_id, :dynamo_id => dynamo_id, :contentable_type => contentable_type, :message => message, :contentable_id => contentable_id)
 	end
 
 
@@ -76,11 +77,11 @@ class RecentActivity < ActiveRecord::Base
 						json.object_type  'user'
 						json.object origin_user.user_object(target_user)
 					end
-				elsif !a.content_type.nil? and !a.content_id.nil?
-					json.object_type a.content_type
-					json.object_id a.content_id
-					if a.content_type == "shout_comment"
-						shout_comment = ShoutComment.find_by_id(a.content_id)
+				elsif !a.contentable_type.nil? and !a.contentable_id.nil?
+					json.object_type a.contentable_type
+					json.object_id a.contentable_id
+					if a.contentable_type == "shout_comment"
+						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
 							json.parent_type "shout"
 							json.parent_id shout_comment.shout_id
