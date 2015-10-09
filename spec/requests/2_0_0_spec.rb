@@ -157,6 +157,23 @@ describe 'V2.0.0' do
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 
+		get 'api/verify?username=sadf', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+
+		get 'api/verify?username=AAA', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+		get 'api/verify?username=AAA&email=asd@asdf.co', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+		get 'api/verify?email=test8@yero.co&username=ASDFAS', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+
+
 		post 'api/signup', {:email=>'test8@yero.co', :username => "AAA", :status => "ASSFD", :first_name => "", :birthday => birthday, :gender => "M", :password => "123456"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
@@ -179,7 +196,7 @@ describe 'V2.0.0' do
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 
-      	post 'api/signup', {:email=>'test8d5@yero.co', :username => "ssafdf", :first_name => "AAA", :birthday => birthday, :gender => "M", :password => "123456", :wechat_id => "wesf", :instagram_id => "SFDd", :snapchat_id => "DSSFD", :line_id => "SDsDF"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/signup', {:email=>'test8d5@yero.co', :username => "ss afdf", :first_name => "AAA", :birthday => birthday, :gender => "M", :password => "123456", :wechat_id => "wesf", :instagram_id => "SFDd", :snapchat_id => "DSSFD", :line_id => "SDsDF"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
 
@@ -325,6 +342,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(BlockUser.count).to eql 0
 
+      	delete 'api/logout', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
 
 		BlockUser.delete_all
 		TimeZonePlace.delete_all

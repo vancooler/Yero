@@ -191,24 +191,29 @@ module V20150930
     # API V2
     # check email address avalable to signup
     def check_email
-      if !params[:email].blank?
-        if User.exists? email: params[:email]
-          error_obj = {
-            code: 403,
-            message: "Email address exists"
-          }
-          render json: error(error_obj, 'error')
-        else
-          render json: success()
+      if !params[:email].blank? or !params[:username].blank?
+        result = true
+        if !params[:email].blank?
+          if User.exists? email: params[:email]
+            result = false
+            error_obj = {
+              code: 403,
+              message: "Email address exists"
+            }
+            render json: error(error_obj, 'error')
+          end
         end
-      elsif !params[:username].blank?
-        if User.exists? username: params[:username]
-          error_obj = {
-            code: 403,
-            message: "Username exists"
-          }
-          render json: error(error_obj, 'error')
-        else
+        if !params[:username].blank?
+          if User.exists? username: params[:username]
+            result = false
+            error_obj = {
+              code: 403,
+              message: "Username exists"
+            }
+            render json: error(error_obj, 'error')
+          end
+        end
+        if result
           render json: success()
         end
       else 
