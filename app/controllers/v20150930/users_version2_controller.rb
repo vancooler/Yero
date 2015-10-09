@@ -226,7 +226,7 @@ module V20150930
     # 
     ##########################################
     def signup
-      if params[:email].blank? or params[:password].blank? or params[:birthday].blank? or params[:first_name].blank? or params[:gender].blank?
+      if params[:email].blank? or params[:username].blank? or params[:password].blank? or params[:birthday].blank? or params[:first_name].blank? or params[:gender].blank?
         error_obj = {
           code: 400,
           message: "Required fields cannot be blank",
@@ -247,6 +247,12 @@ module V20150930
           gender = params[:gender].gsub!(/\s+/, "") 
         end
 
+        if params[:username].match(/\s/).blank?
+          username = params[:username]
+        else
+          username = params[:username].gsub!(/\s+/, "") 
+        end
+
         if params[:first_name].match(/\s/).blank?
           first_name = params[:first_name]
           first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
@@ -259,7 +265,8 @@ module V20150930
                          :password => params[:password],
                          :birthday => params[:birthday],
                          :first_name => first_name,
-                         :gender => gender)
+                         :gender => gender,
+                         :username => username)
                          
         if params[:instagram_id].present? 
           if params[:instagram_id].match(/\s/).blank?
@@ -302,7 +309,21 @@ module V20150930
 
         @user.account_status = 1
         @user.last_active = Time.now
-        if !(User.exists? email: params[:email])
+        if (User.exists? email: email)
+          error_obj = {
+            code: 400,
+            message: "This email has already been taken.",
+            external_message: 'Your email is token by another account'
+          }
+          render json: error(error_obj, 'error')
+        elsif (User.exists? username: username)
+          error_obj = {
+            code: 400,
+            message: "This username has already been taken.",
+            external_message: 'Your username is token by another account'
+          }
+          render json: error(error_obj, 'error')
+        else
           if @user.save
             response = @user.to_json(true)
             response['token'] = @user.generate_token(true)
@@ -320,13 +341,7 @@ module V20150930
       		  render json: error(error_obj, 'error')
             # :nocov:
           end
-        else
-        	  error_obj = {
-  	        code: 400,
-  	        message: "This email has already been taken.",
-            external_message: 'Your email is token by another account'
-  	      }
-            render json: error(error_obj, 'error')
+        	  
         end
       end
     end

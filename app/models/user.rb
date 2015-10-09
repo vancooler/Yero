@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
 
   validates :email, :birthday, :first_name, :gender, presence: true
   validates :email, :email => true
+  validates_uniqueness_of :username, :allow_blank => true, :allow_nil => true
 
   scope :sort_by_last_active, -> { 
     where.not(last_active: nil).
