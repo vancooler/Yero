@@ -24,7 +24,7 @@ class BlockUser < ActiveRecord::Base
 	end
 
 	def self.blocked_users_json(user_id, page = nil, per_page = nil)
-	    current_user = User.find_by_id(user_id)
+	    current_user = User.find_user_by_unique(user_id)
 	    if !current_user.nil?
 			first_friends_id_array = BlockUser.where(:target_user_id => user_id).map{ |b| {'user_id' => b.origin_user_id, 'blocked_at' => b.created_at.to_i } }
 			second_friends_id_array = BlockUser.where(:origin_user_id => user_id).map{ |b| {'user_id' => b.target_user_id, 'blocked_at' => b.created_at.to_i } }
@@ -40,7 +40,7 @@ class BlockUser < ActiveRecord::Base
 	        end
 		    result = Jbuilder.encode do |json|
 				json.array! return_users do |a|
-					user = User.find_by_id(a['user_id'])
+					user = User.find_user_by_unique(a['user_id'])
 					if !user.nil? and !user.user_avatars.where(is_active: true).blank?
 						json.blocked_at 	a['blocked_at']==0 ? 1440461834 : a['blocked_at']
 						user_obj = user.user_object(current_user)

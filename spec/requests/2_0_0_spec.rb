@@ -90,8 +90,18 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['code']).to eql 404
 
-      	
       	get 'api/users/2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['id']).to eql 2
+
+      	get 'api/users/ASDF?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['id']).to eql 2
+
+      	expect(User.find_user_by_unique("test2@yero.co").id).to eql 2
+      	get 'api/users/test2@yero.co?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['id']).to eql 2

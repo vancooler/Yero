@@ -18,7 +18,7 @@ ActiveAdmin.register User do
 
   controller do
     def join_network
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil? and !user.is_connected
         user.join_network
 
@@ -43,7 +43,7 @@ ActiveAdmin.register User do
 
 
     def leave_network
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil? and user.is_connected
         User.leave_activity([user.id])
         user.leave_network
@@ -52,7 +52,7 @@ ActiveAdmin.register User do
     end
 
     def refresh
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         user.last_active = Time.now
         user.save
@@ -61,7 +61,7 @@ ActiveAdmin.register User do
     end
 
     def send_whisper
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         origin_user = loop do
           offset = rand(User.count)

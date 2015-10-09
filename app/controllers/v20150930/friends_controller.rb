@@ -5,7 +5,7 @@ module V20150930
 
     def show
     	friend_id = params[:id]
-    	friend = User.find_by_id(friend_id)
+    	friend = User.find_user_by_unique(friend_id)
     	if friend.nil?
     	  error_obj = {
           code: 404,

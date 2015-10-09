@@ -10,7 +10,7 @@ module V20150930
     def show
       user_id = params[:id]
       
-      user = User.find_by_id(user_id)
+      user = User.find_user_by_unique(user_id)
       if user.nil?
         error_obj = {
           code: 404,
@@ -481,7 +481,7 @@ module V20150930
     #########################
     def report
       reporting_user = current_user
-      reported_user = User.find_by_id(params[:user_id])
+      reported_user = User.find_user_by_unique(params[:user_id])
       report_type = ReportType.find_by_id(params[:type_id])
       if !reporting_user.nil? and !reported_user.nil? and !report_type.nil?
         	record = ReportUserHistory.find_by_reporting_user_id_and_reported_user_id_and_report_type_id(reporting_user.id, reported_user.id, report_type.id)

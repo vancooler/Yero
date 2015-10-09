@@ -23,7 +23,7 @@ module V20150930
             if channel.include? "private-user-"
               channel_array = channel.split "private-user-"
               if channel_array.count > 1 and channel_array[1].to_i > 0
-                user = User.find_by_id(channel_array[1].to_i)
+                user = User.find_user_by_unique(channel_array[1].to_i)
                 if !user.nil?
                   user.pusher_private_online
                 end
@@ -35,7 +35,7 @@ module V20150930
             if channel.include? "private-user-"
               channel_array = channel.split "private-user-"
               if channel_array.count > 1 and channel_array[1].to_i > 0
-                user = User.find_by_id(channel_array[1].to_i)
+                user = User.find_user_by_unique(channel_array[1].to_i)
                 if !user.nil?
                   user.pusher_private_offline
                 end

@@ -14,9 +14,9 @@ class WhisperToday < ActiveRecord::Base
 
 	def photo_disabled(current_user_id)
 		if current_user_id == self.origin_user_id
-			user = User.find_by_id(target_user_id)
+			user = User.find_user_by_unique(target_user_id)
 		elsif current_user_id == self.target_user_id
-			user = User.find_by_id(origin_user_id)
+			user = User.find_user_by_unique(origin_user_id)
 		else
 			# :nocov:
 			return true
@@ -112,7 +112,7 @@ class WhisperToday < ActiveRecord::Base
 							# :nocov:
 						end
 						if !a.origin_user_id.nil?
-							origin_user = User.find_by_id(a.origin_user_id)
+							origin_user = User.find_user_by_unique(a.origin_user_id)
 							if !origin_user.nil? and !current_user.nil?
 								json.object_type  'user'
 								json.object origin_user.user_object(current_user)
@@ -122,7 +122,7 @@ class WhisperToday < ActiveRecord::Base
 						json.intro_message 				a.message_b.blank? ? '' : a.message_b
 						can_handle = false
 						if !a.target_user_id.nil?
-							origin_user = User.find_by_id(a.target_user_id)
+							origin_user = User.find_user_by_unique(a.target_user_id)
 							if !origin_user.nil? and !current_user.nil?
 								json.object_type  'user'
 								json.object origin_user.user_object(current_user)

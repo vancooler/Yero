@@ -71,8 +71,8 @@ class RecentActivity < ActiveRecord::Base
 				json.timestamp a.created_at.to_i
 				json.message (a.message.nil? ? '' : a.message)
 				if !a.origin_user_id.nil? and !a.target_user_id.nil?
-					origin_user = User.find_by_id(a.origin_user_id)
-					target_user = User.find_by_id(a.target_user_id)
+					origin_user = User.find_user_by_unique(a.origin_user_id)
+					target_user = User.find_user_by_unique(a.target_user_id)
 					if !origin_user.nil? and !target_user.nil?
 						json.object_type  'user'
 						json.object origin_user.user_object(target_user)

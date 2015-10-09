@@ -67,7 +67,7 @@ class ApplicationController < ActionController::Base
           if user_id.nil?
             render json: error("You must authenticate with a valid token")
           else
-            user = User.find_by_id(user_id.to_i)
+            user = User.find_user_by_unique(user_id.to_i)
             if user.nil?
               render json: error("You must authenticate with a valid token")
             else
@@ -129,7 +129,7 @@ class ApplicationController < ActionController::Base
       if user_id.nil?
         nil
       else
-        User.find_by_id(user_id.to_i)
+        User.find_user_by_unique(user_id.to_i)
       end
     end
 

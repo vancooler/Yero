@@ -249,7 +249,7 @@ Rails.application.routes.draw do
 
       # user APIs 11
       get     'api/users',                               to: 'users_version2#index'
-      get     'api/users/:id',                           to: 'users_version2#show'
+      get     'api/users/:id',                           to: 'users_version2#show', :constraints => { :id => /[^\/]+/ }
       put     'api/users',                               to: 'users_version2#update'
       get     'api/verify',                              to: 'users_version2#check_email'
       post    'api/signup',                              to: 'users_version2#signup'

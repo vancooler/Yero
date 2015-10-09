@@ -34,12 +34,26 @@ class User < ActiveRecord::Base
   validates_uniqueness_of :username, :allow_blank => true, :allow_nil => true
 
   scope :sort_by_last_active, -> { 
-    where.not(last_active: nil).
-    order("last_active desc") 
+    where.not(last_active: nil).order("last_active desc") 
   }
   has_secure_password
 
-
+  # find user by id, email or username
+  def self.find_user_by_unique(key)
+    user = nil
+    if !/\A\d+\z/.match(key.to_s)
+      puts "1111111111"
+      puts key
+      if key.to_s.include? "@"
+        user = User.find_by_email(key)
+      else
+        user = User.find_by_username(key)
+      end
+    else
+      user = User.find_by_id(key)
+    end
+    return user
+  end
 
   # user's profile photo
   def main_avatar
@@ -55,7 +69,7 @@ class User < ActiveRecord::Base
     if self.current_venue.nil?
       return false
     else 
-      fellow_participant = User.find_by_id(user_id)
+      fellow_participant = User.find_user_by_unique(user_id)
       if !fellow_participant.nil? 
 
         if fellow_participant.current_venue.nil? 
@@ -76,7 +90,7 @@ class User < ActiveRecord::Base
   #         - user_id -> the other person's user id
   def different_venue_as?(user_id)
     
-    fellow_participant = User.find_by_id(user_id)
+    fellow_participant = User.find_user_by_unique(user_id)
     if !fellow_participant.nil? 
       if fellow_participant.current_venue.nil? 
         return false
@@ -951,7 +965,7 @@ class User < ActiveRecord::Base
     
     current_timestamp = Time.now.to_i
     people_array.each do |user|
-      check_user = User.find_by_id(user.to_i)
+      check_user = User.find_user_by_unique(user.to_i)
       if check_user and check_user.is_connected
         RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
       end
@@ -1602,7 +1616,7 @@ class User < ActiveRecord::Base
             result = {'success' => false, 'error_data' => error_obj}
             return result
           else
-            user = User.find_by_id(user_id.to_i)
+            user = User.find_user_by_unique(user_id.to_i)
             if user.nil?
               error_obj = {
                 code: 497,

@@ -11,7 +11,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       if !ua.nil?
         ua.is_active = false
         if ua.save! and !ua.user_id.nil?
-          u = User.find_by_id(ua.user_id)
+          u = User.find_user_by_unique(ua.user_id)
           if !u.blank? 
             u.avatar_disabled_count = u.avatar_disabled_count.nil? ? 1 : u.avatar_disabled_count+1
             u.save
@@ -52,7 +52,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     end
 
     def remove_snapchat
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         if user.update(:snapchat_id => '')
           redirect_to :back, :notice => "Snapchat id of user " + user.name + " was successfully removed."
@@ -65,7 +65,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     end
 
     def remove_wechat
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         if user.update(:wechat_id => '')
           redirect_to :back, :notice => "Wechat id of user " + user.name + " was successfully removed."
@@ -78,7 +78,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     end
 
     def remove_line
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         if user.update(:line_id => '')
           redirect_to :back, :notice => "Line id of user " + user.name + " was successfully removed."
@@ -91,7 +91,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     end
 
     def remove_status
-      user = User.find_by_id(params[:id])
+      user = User.find_user_by_unique(params[:id])
       if !user.nil?
         if user.update(:introduction_2 => '')
           redirect_to :back, :notice => "Status of user " + user.name + " was successfully removed."
@@ -128,7 +128,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     UserAvatar.find(selection).each do |ua|
       ua.is_active = false
       if ua.save! and !ua.user_id.nil?
-        u = User.find_by_id(ua.user_id)
+        u = User.find_user_by_unique(ua.user_id)
         if !u.blank? 
           u.avatar_disabled_count = u.avatar_disabled_count.nil? ? 1 : u.avatar_disabled_count+1
           u.save
