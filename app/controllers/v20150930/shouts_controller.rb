@@ -15,15 +15,16 @@ module V20150930
         shout_downvoted = ShoutVote.where(user_id: current_user.id).where(upvote: false).where(shout_id: shout.id)
     
         shout_json = {
-          id: shout.id,
-          body: shout.body,
+          id:             shout.id,
+          body:           shout.body,
           latitude:       shout.latitude,
           longitude:      shout.longitude,
           timestamp:      shout.created_at.to_i,
           total_upvotes:  shout.total_upvotes,
-          upvoted:        (shout_upvoted.nil? ? false : true),
-          downvoted:      (shout_downvoted.nil? ? false : true),
+          upvoted:        (shout_upvoted.empty? ? false : true),
+          downvoted:      (shout_downvoted.empty? ? false : true),
           replies_count:  shout.shout_comments.length,
+          venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
           author_id:      shout.user_id
         }
         result = ShoutComment.list(current_user, shout.id, page, per_page)
@@ -47,7 +48,8 @@ module V20150930
 
     # create a shout
     def create
-      shout = Shout.create_shout(current_user, params[:body], params[:allow_nearby])
+      venue = (params[:venue].blank? ? nil : params[:venue])
+      shout = Shout.create_shout(current_user, params[:body], venue)
       if shout
         # Pusher later
         render json: success

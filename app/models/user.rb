@@ -41,16 +41,16 @@ class User < ActiveRecord::Base
   # find user by id, email or username
   def self.find_user_by_unique(key)
     user = nil
-    if !/\A\d+\z/.match(key.to_s)
-      puts "1111111111"
-      puts key
-      if key.to_s.include? "@"
-        user = User.find_by_email(key)
+    if !key.blank?
+      if !/\A\d+\z/.match(key.to_s)
+        if key.to_s.include? "@"
+          user = User.find_by_email(key)
+        else
+          user = User.find_by_username(key)
+        end
       else
-        user = User.find_by_username(key)
+        user = User.find_by_id(key)
       end
-    else
-      user = User.find_by_id(key)
     end
     return user
   end

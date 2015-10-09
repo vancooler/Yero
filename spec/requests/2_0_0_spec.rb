@@ -1395,13 +1395,13 @@ describe 'V2.0.0' do
       	expect(ActiveInVenueNetwork.count).to eql 1
 
       	# user_2 post shout
-      	post 'api/shouts', {:token => token, :body => "AAA", :allow_nearby => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "AAA", :venue => 'Vancouver_TestVenue_test'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 1
       	shout_1 = Shout.last
 
-      	post 'api/shouts', {:token => token, :body => "BBB", :allow_nearby => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "BBB"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 2
@@ -1432,7 +1432,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
-      	post 'api/shouts', {:token => token, :body => "CCC", :allow_nearby => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "CCC"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 3
@@ -1528,7 +1528,9 @@ describe 'V2.0.0' do
       	expect(User.find(3).point).to eql 5
       	expect(User.find(4).point).to eql 1
 
-
+      	expect((shout_2.id - shout_1.id)).to eql 1
+      	expect((shout_2.total_upvotes - shout_1.total_upvotes)).to eql 2
+      	expect(Shout.list(user_4, 'hot', nil, nil, nil, 1, 1)['shouts'][0]['id']).to eql shout_2.id
       	get 'api/shouts', {:token => token, :order_by => "hot", :page => 0, :per_page => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -1711,7 +1713,7 @@ describe 'V2.0.0' do
       	expect(ShoutComment.count).to eql 0
       	expect(ShoutVote.count).to eql 0
 
-      	post 'api/shouts', {:token => token, :body => "BBBsd", :allow_nearby => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "BBBsd", :venue => 'Vancouver_TestVenue_test'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 3

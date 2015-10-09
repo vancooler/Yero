@@ -4,6 +4,7 @@ class Shout < ActiveRecord::Base
   has_many :shout_report_histories, as: :reportable, dependent: :destroy
   has_many :recent_activities, as: :contentable, dependent: :destroy
   belongs_to :user
+  belongs_to :venue
   reverse_geocoded_by :latitude, :longitude
 
 
@@ -145,17 +146,25 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, allow_nearby)
+  def self.create_shout(current_user, body, venue_id)
   	shout = Shout.new
-  	if current_user.current_venue.nil?
-  		shout.latitude = current_user.latitude
-  		shout.longitude = current_user.longitude
-  		shout.allow_nearby = true
+  	venue = Venue.find_venue_by_unique(venue_id)
+  	if venue.nil?
+		if !current_user.current_venue.nil?
+	  		shout.latitude = current_user.current_venue.latitude
+	  		shout.longitude = current_user.current_venue.longitude
+	  		shout.venue_id = current_user.current_venue.id 
+	  		shout.allow_nearby = true
+	  	else
+	  		shout.latitude = current_user.latitude
+	  		shout.longitude = current_user.longitude
+	  		shout.allow_nearby = true
+	  	end
   	else
-  		shout.venue_id = current_user.current_venue.id 
-  		shout.latitude = current_user.current_venue.latitude
-  		shout.longitude = current_user.current_venue.longitude
-	  	shout.allow_nearby = allow_nearby
+  		shout.venue_id = venue.id 
+  		shout.latitude = venue.latitude
+  		shout.longitude = venue.longitude
+	  	shout.allow_nearby = false
   	end
   	shout.body = body
   	shout.user_id = current_user.id
@@ -182,6 +191,7 @@ class Shout < ActiveRecord::Base
 		        total_upvotes: 	0,
 		        upvoted: 		false,
 		        downvoted: 		false,
+		        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 		        replies_count: 	0,
 		        author_id: 		shout.user_id
 			}
@@ -233,6 +243,12 @@ class Shout < ActiveRecord::Base
   def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page)
   	result = Hash.new
   	time_0 = Time.now
+  	query_venue = Venue.find_venue_by_unique(venue)
+  	if query_venue.nil?
+  		venue = nil
+  	else
+  		venue = query_venue.id
+  	end
   	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
   	case order_by
   	when 'new'
@@ -279,6 +295,7 @@ class Shout < ActiveRecord::Base
         json.downvoted 		(shout_downvoted_ids.include? shout.id)
         json.replies_count 	shout.shout_comments.length
         json.author_id 		shout.user_id
+        json.venue_id       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
       end         
     end
     result = JSON.parse(result).delete_if(&:empty?)

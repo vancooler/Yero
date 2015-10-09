@@ -11,6 +11,7 @@ class Venue < ActiveRecord::Base
   belongs_to :web_user
   belongs_to :venue_network
   belongs_to :venue_type
+  has_many :shouts
   accepts_nested_attributes_for :beacons, allow_destroy: true
   accepts_nested_attributes_for :venue_avatars, allow_destroy: true
 
@@ -20,6 +21,22 @@ class Venue < ActiveRecord::Base
 
   has_many :venue_logos, dependent: :destroy
   accepts_nested_attributes_for :venue_logos, allow_destroy: true
+
+
+  def self.find_venue_by_unique(key)
+    venue = nil
+    if !key.blank?
+      if !/\A\d+\z/.match(key.to_s)
+        beacon = Beacon.find_by_key(key.to_s)
+        venue = beacon.venue
+      else
+        venue = Venue.find_by_id(key)
+      end
+    end
+    return venue
+  end
+
+
 
   def logo
     self.venue_logos.order(:pending).first
