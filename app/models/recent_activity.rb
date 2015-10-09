@@ -80,10 +80,10 @@ class RecentActivity < ActiveRecord::Base
 				elsif !a.contentable_type.nil? and !a.contentable_id.nil?
 					json.object_type a.contentable_type
 					json.object_id a.contentable_id
-					if a.contentable_type == "shout_comment"
+					if a.contentable_type == "ShoutComment"
 						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
-							json.parent_type "shout"
+							json.parent_type "Shout"
 							json.parent_id shout_comment.shout_id
 						end
 					end
