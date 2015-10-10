@@ -1395,6 +1395,7 @@ describe 'V2.0.0' do
       	expect(ActiveInVenueNetwork.count).to eql 1
 
       	# user_2 post shout
+      	expect(ActiveInVenueNetwork.count).to eql 1
       	post 'api/shouts', {:token => token, :body => "AAA", :venue => 'Vancouver_TestVenue_test'}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true

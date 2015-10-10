@@ -23,6 +23,7 @@ module V20150930
           total_upvotes:  shout.total_upvotes,
           upvoted:        (shout_upvoted.empty? ? false : true),
           downvoted:      (shout_downvoted.empty? ? false : true),
+          voted:          ((!shout_upvoted.empty?) ? "up" : ((!shout_downvoted.empty?) ? "down" : "")),
           replies_count:  shout.shout_comments.length,
           venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
           author_id:      shout.user_id
