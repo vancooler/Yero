@@ -19,23 +19,31 @@ class ShoutComment < ActiveRecord::Base
   	scv = ShoutCommentVote.find_by_shout_comment_id_and_user_id(self.id, current_user.id)
   	if !scv.nil?
   		old_upvote = scv.upvote
-  		result = scv.update(upvote: upvote)
-  		if result and old_upvote and !(upvote.to_s == "true" or upvote.to_s == '1') 
-  			if self.user_id != current_user.id
-				self.user.update(point: self.user.point-2)
-				if current_user.id == self.shout.user.id
-					self.user.update(point: self.user.point-2)
-				end
-			end
+  		result = scv.update(upvote: (upvote.to_i == 0 ? nil : (upvote.to_i>0)))
+  		offset = 0
+  		if old_upvote.nil?
+  			offset = upvote.to_i
+  		elsif old_upvote
+  			if upvote.to_i < 1
+	  			offset = -1
+	  		end
+	  	else
+	  		if upvote.to_i > -1
+	  			offset = 1
+	  		end
   		end
-  		if result and !old_upvote and (upvote.to_s == "true" or upvote.to_s == '1') 
-  			if self.user_id != current_user.id
-				self.user.update(point: self.user.point+2)
-				if current_user.id == self.shout.user.id
-					self.user.update(point: self.user.point+2)
-				end
+		if self.user_id != current_user.id
+			self.user.update(point: self.user.point + offset*2)
+			if current_user.id == self.shout.user.id
+				self.user.update(point: self.user.point + offset*2)
 			end
+		end
+		if old_upvote.nil? and upvote.to_i != 0
+			current_user.update(point: current_user.point+1)
+		elsif !old_upvote.nil? and upvote.to_i == 0
+  			current_user.update(point: current_user.point-1)
   		end
+
   		event = 'change_comment_vote'
   		data = {
   			user_id: current_user.id,
@@ -48,7 +56,7 @@ class ShoutComment < ActiveRecord::Base
   		result = scv.save
   		if result
   			# update points
-  			if (upvote.to_s == "true" or upvote.to_s == '1') 
+  			if (upvote.to_s == '1') 
   				if self.user_id != current_user.id
   					self.user.update(point: self.user.point+2)
   					if current_user.id == self.shout.user.id
