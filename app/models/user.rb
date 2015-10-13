@@ -1290,7 +1290,7 @@ class User < ActiveRecord::Base
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
     all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
-    all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone)
     time_2 = Time.now
     # campus_id = VenueType.find_by_name("Campus")
     # if campus_id
@@ -1308,11 +1308,11 @@ class User < ActiveRecord::Base
 
     end
     time_3 = Time.now
-    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-14.days)
-    same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-2.days)
+    same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone)
 
     different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
-    different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone)
     time_4  = Time.now
     if everyone
       all_users = same_venue_users + (all_users - same_venue_users)
