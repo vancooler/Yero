@@ -47,7 +47,7 @@ module V20150930
       else
         # :nocov:
         error_obj = {
-          code: 520,
+          code: 404,
           message: "Cannot find the shout."
         }
         render json: error(error_obj, 'error')

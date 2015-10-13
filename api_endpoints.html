@@ -80,6 +80,21 @@
     <li ><a href="#method-i-api_users_logout">DELETE api/logout</a></li>
     <li ><a href="#method-i-api_users_forgot_password">POST api/passwords</a></li>
     <li ><a href="#method-i-api_report">POST api/report_user_histories</a></li>
+
+    <li ><a href="#method-i-api_report_shout">POST api/report_shouts</a></li>
+    <li ><a href="#method-i-api_report_shout_comment">POST api/report_shout_comments</a></li>
+
+    <li ><a href="#method-i-api_shouts">GET api/shouts</a></li>
+    <li ><a href="#method-i-api_shout">GET api/shout/:id</a></li>
+    <li ><a href="#method-i-api_create_shout">POST api/shouts</a></li>
+    <li ><a href="#method-i-api_update_shout">PUT api/shouts/:id</a></li>
+    <li ><a href="#method-i-api_destroy_shout">DELETE api/shouts/:id</a></li>
+
+    <li ><a href="#method-i-api_shout_comments">GET api/shout_comments</a></li>
+    <li ><a href="#method-i-api_create_shout_comment">POST api/shout_comments</a></li>
+    <li ><a href="#method-i-api_update_shout_comment">PUT api/shout_comments/:id</a></li>
+    <li ><a href="#method-i-api_destroy_shout_comment">DELETE api/shout_comments/:id</a></li>
+
     <li ><a href="#method-i-api_users_signup_no_avatar">POST api/signup</a></li>
     <li ><a href="#method-i-api_users">GET api/users</a></li>
     <li ><a href="#method-i-api_user_update_profile">PUT api/users</a></li>
@@ -646,7 +661,339 @@
           </div>
         </div>
       </div>
+
+      <div id="method-i-api_report_shout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/report_shouts [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-report">Shout#report</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">shout_id: </span><span class="ruby-string">required shout id</span>
+  <span class="ruby-identifier">report_type_id: </span><span class="ruby-string">required report type id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE/FALSE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot report this shout."</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_report_shout_comment" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/report_shout_comments [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutCommentsController.html#method-i-report">ShoutComment#report</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">shout_comment_id: </span><span class="ruby-string">required shout comment id</span>
+  <span class="ruby-identifier">report_type_id: </span><span class="ruby-string">required report type id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE/FALSE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot report this comment."</span>
+  <span class="ruby-string">}</span>
+  
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_create_shout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shouts [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-create">Shout#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">body: </span><span class="ruby-string">required content</span>
+  <span class="ruby-identifier">venue: </span><span class="ruby-string">venue gimbal key</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot create the shout."</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
       
+
+     
+
+      <div id="method-i-api_shouts" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shouts [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-index">Shout#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional for pagination</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional for pagination</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">whispers: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-constant">StandardShoutObject</span>
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">pagination: </span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
+      <span class="ruby-string">}</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_shout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shouts/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-show">Shout#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">shout: </span><span class="ruby-string">{</span>
+      <span class="ruby-identifier">id: </span><span class="ruby-string">shout id</span>
+      <span class="ruby-identifier">body: </span><span class="ruby-string">shout content</span>
+      <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout latitude</span>
+      <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout longitude</span>
+      <span class="ruby-identifier">timestamp: </span><span class="ruby-string">shout created at</span>
+      <span class="ruby-identifier">total_upvotes: </span><span class="ruby-string">shout total_upvotes number</span>
+      <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote" or "downvote"</span>
+      <span class="ruby-identifier">replies_count: </span><span class="ruby-string">shout replies_count number</span>
+      <span class="ruby-identifier">venue_id: </span><span class="ruby-string">shout venue gimbal key</span>
+      <span class="ruby-identifier">author_id: </span><span class="ruby-string">shout author's user id</span>
+
+    <span class="ruby-string">}</span>
+    <span class="ruby-identifier">shout_comments: </span><span class="ruby-string">[</span>
+      <span class="ruby-constant">StandardShoutCommentObject</span>
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">pagination: </span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
+      <span class="ruby-string">}</span>
+  <span class="ruby-string">}</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the shout."</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+    
+      
+       <div id="method-i-api_update_shout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shouts/:id [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-update">Shout#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">upvote: </span><span class="ruby-string">1/0</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the shout."</span>
+  <span class="ruby-string">}</span>
+  
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update the shout."</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_destroy_shout" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shouts/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutsController.html#method-i-destroy">Shout#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"You are not the author of this shout"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot delete this shout"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+
+      <div id="method-i-api_create_shout_comment" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shout_comments [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutCommentsController.html#method-i-create">ShoutComment#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">body: </span><span class="ruby-string">required content</span>
+  <span class="ruby-identifier">shout_id: </span><span class="ruby-string">required shout id</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot create the comment."</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+
+     
+
+      <div id="method-i-api_shout_comments" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shout_comments [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutCommentsController.html#method-i-index">ShoutComment#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional for pagination</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional for pagination</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">whispers: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-constant">StandardShoutCommentObject</span>
+    <span class="ruby-string">]</span>
+    <span class="ruby-identifier">pagination: </span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
+      <span class="ruby-string">}</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+      
+       <div id="method-i-api_update_shout_comment" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shout_comments/:id [PUT]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutCommentsController.html#method-i-update">ShoutComment#update</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">upvote: </span><span class="ruby-string">1/0</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the comment."</span>
+  <span class="ruby-string">}</span>
+  
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot update the comment."</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_destroy_shout_comment" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/shout_comments/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ShoutCommentsController.html#method-i-destroy">ShoutComment#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"You are not the author of this comment"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">520</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot delete this comment"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
       <div id="method-i-api_users_signup_no_avatar" class="method-detail ">
         <div class="method-heading">
           <span class="method-name">api/signup [POST]</span>
