@@ -189,7 +189,7 @@ class Shout < ActiveRecord::Base
 		        longitude: 		shout.longitude,
 		        timestamp: 		shout.created_at.to_i,
 		        total_upvotes: 	0,
-		        voted:          "",
+		        actions:        ["upvote", "downvote"],
 		        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 		        replies_count: 	0,
 		        author_id: 		shout.user_id
@@ -282,6 +282,7 @@ class Shout < ActiveRecord::Base
   def self.shouts_json(current_user, shouts)
   	shout_upvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_id)
   	shout_downvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_id)
+
   	result = Jbuilder.encode do |json|
       json.array! shouts do |shout|
         json.id 			shout.id
@@ -290,9 +291,14 @@ class Shout < ActiveRecord::Base
         json.longitude 		shout.longitude
         json.timestamp 		shout.created_at.to_i
         json.total_upvotes 	shout.total_upvotes
-        # json.upvoted 		(shout_upvoted_ids.include? shout.id)
-        # json.downvoted 		(shout_downvoted_ids.include? shout.id)
-        json.voted			((shout_upvoted_ids.include? shout.id) ? "up" : ((shout_downvoted_ids.include? shout.id) ? "down" : ""))
+        actions = ["downvote", "upvote"]
+        if shout_upvoted_ids.include? shout.id
+            actions = actions - ["upvote"]
+        end
+        if shout_downvoted_ids.include? shout.id
+            actions = actions - ["downpvote"]
+        end
+	    json.actions		actions
         json.replies_count 	shout.shout_comments.length
         json.author_id 		shout.user_id
         json.venue_id       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)

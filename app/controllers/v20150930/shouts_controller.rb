@@ -11,9 +11,18 @@ module V20150930
         per_page = 24
         page = params[:page].to_i + 1 if !params[:page].blank?
         per_page = params[:per_page].to_i if !params[:per_page].blank?
-        shout_upvoted = ShoutVote.where(user_id: current_user.id).where(upvote: true).where(shout_id: shout.id)
-        shout_downvoted = ShoutVote.where(user_id: current_user.id).where(upvote: false).where(shout_id: shout.id)
-    
+        voted = ShoutVote.where(user_id: current_user.id).where(shout_id: shout.id)
+        actions = Array.new
+        if !voted.empty?
+          if voted.first.upvote
+            actions << "downvote"
+          else
+            actions << "upvote"
+          end
+        else
+          actions << "upvote"
+          actions << "downvote"
+        end
         shout_json = {
           id:             shout.id,
           body:           shout.body,
@@ -21,9 +30,9 @@ module V20150930
           longitude:      shout.longitude,
           timestamp:      shout.created_at.to_i,
           total_upvotes:  shout.total_upvotes,
-          upvoted:        (shout_upvoted.empty? ? false : true),
-          downvoted:      (shout_downvoted.empty? ? false : true),
-          voted:          ((!shout_upvoted.empty?) ? "up" : ((!shout_downvoted.empty?) ? "down" : "")),
+          # upvoted:        (shout_upvoted.empty? ? false : true),
+          # downvoted:      (shout_downvoted.empty? ? false : true),
+          actions:        actions,
           replies_count:  shout.shout_comments.length,
           venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
           author_id:      shout.user_id

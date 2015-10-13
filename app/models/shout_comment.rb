@@ -150,7 +150,7 @@ class ShoutComment < ActiveRecord::Base
 	        longitude: 		shout_comment.longitude,
 	        timestamp: 		shout_comment.created_at.to_i,
 	        total_upvotes: 	0,
-	        voted: 			'',
+	        actions: 		["upvote", "downvote"],
 	        shout_id: 		shout_comment.shout_id,
 	        author_id: 		shout_comment.user_id
 		}
@@ -262,8 +262,14 @@ class ShoutComment < ActiveRecord::Base
         json.longitude 		shout_comment.longitude
         json.timestamp 		shout_comment.created_at.to_i
         json.total_upvotes 	shout_comment.total_upvotes
-        json.upvoted 		(shout_comment_upvoted_ids.include? shout_comment.id)
-        json.downvoted 		(shout_comment_downvoted_ids.include? shout_comment.id)
+        actions = ["downvote", "upvote"]
+        if shout_comment_upvoted_ids.include? shout_comment.id
+            actions = actions - ["upvote"]
+        end
+        if shout_comment_downvoted_ids.include? shout_comment.id
+            actions = actions - ["downpvote"]
+        end
+	    json.actions		actions
         json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
         json.author_id 		shout_comment.user_id
       end         
