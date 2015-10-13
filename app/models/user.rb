@@ -1427,7 +1427,7 @@ class User < ActiveRecord::Base
             time_avatar_a = Time.now
             other_avatars = user.user_avatars.where(is_active:true).order(:order)
             avatar_array = Array.new
-            json.distance user.distance.round(2) if user.respond_to? :distance
+            json.distance user.distance_from(User.first, :km)
 
             if other_avatars.count > 0
               other_avatars.each do |oa|
