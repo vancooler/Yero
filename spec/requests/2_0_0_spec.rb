@@ -568,7 +568,7 @@ describe 'V2.0.0' do
       	expect(ActiveInVenueNetwork.count).to eql 0
 
 
-
+      	VenueEntry.delete_all
       	ActiveInVenue.delete_all
       	ActiveInVenueNetwork.delete_all
       	VenueEnteredToday.delete_all
@@ -1393,6 +1393,7 @@ describe 'V2.0.0' do
       	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
       	expect(ActiveInVenue.count).to eql 1
       	expect(ActiveInVenueNetwork.count).to eql 1
+      	expect(Venue.find(1).venue_entries.length).to eql 1
 
       	# user_2 post shout
       	expect(ActiveInVenueNetwork.count).to eql 1
@@ -1831,6 +1832,7 @@ describe 'V2.0.0' do
       	expect(Shout.count).to eql 2
       	expect(ShoutVote.count).to eql 0
 
+      	VenueEntry.delete_all
       	RecentActivity.delete_all
       	ShoutCommentVote.delete_all
       	ShoutComment.delete_all

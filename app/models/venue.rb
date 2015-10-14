@@ -4,6 +4,7 @@ class Venue < ActiveRecord::Base
   has_many :greeting_messages, dependent: :destroy
   has_many :nightlies
   has_many :beacons, dependent: :destroy
+  has_many :venue_entries, dependent: :destroy
   has_many :winners
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue"

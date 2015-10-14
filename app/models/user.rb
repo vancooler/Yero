@@ -9,6 +9,7 @@ class User < ActiveRecord::Base
   has_one  :participant
   has_many :activities, dependent: :destroy
   has_many :locations
+  has_many :venue_entries, dependent: :destroy
   has_one :read_notification, dependent: :destroy
   has_one :active_in_venue, dependent: :destroy
   has_one :active_in_venue_network, dependent: :destroy
