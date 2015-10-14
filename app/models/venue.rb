@@ -80,6 +80,11 @@ class Venue < ActiveRecord::Base
       if !types_array_string.blank?
         venues = venues.where(venue_type_id: types_array_string)
       end
+      finished_festivals = venues.select{|x|  x.finished == true }
+    
+      if !finished_festivals.empty?
+        venues = venues - finished_festivals
+      end
 
       return venues
     end
@@ -103,8 +108,11 @@ class Venue < ActiveRecord::Base
     if !types_array_string.blank?
       venues = venues.where(venue_type_id: types_array_string)
     end
-    finished_festivals = venues.select{|x|  x.finished != true }
-
+    finished_festivals = venues.select{|x|  x.finished == true }
+    
+    if !finished_festivals.empty?
+      venues = venues - finished_festivals
+    end
     return venues
   end
 
