@@ -276,6 +276,8 @@ Rails.application.routes.draw do
       # Enter Venue APIs 2
       post   'api/venues/:id',                           to: 'rooms#user_enter'
       delete 'api/venues',                               to: 'rooms#user_leave'
+      post   'api/venues/:id/users',                     to: 'venues_version2#add_favourite_venue'
+      delete 'api/venues/:id/users',                     to: 'venues_version2#remove_favourite_venue'
 
       # friend APIs 3
       get    'api/friends',                              to: 'friends#index'

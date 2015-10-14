@@ -64,7 +64,27 @@ class Venue < ActiveRecord::Base
     end
   end
 
-  # collect nearby venus
+  # collect favourite networks
+  def self.favourite_networks(user)
+    types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
+    types_array_string = [nil]
+    types_array.each do |a|
+      types_array_string << a.to_s
+    end
+    venue_ids = user.favourite_venues.map(&:venue_id)
+    if venue_ids.empty?
+      return []
+    else
+      venues = Venue.where(id: venue_ids)
+      if !types_array_string.blank?
+        venues = venues.where(venue_type_id: types_array_string)
+      end
+
+      return venues
+    end
+  end
+
+  # collect nearby networks
   def self.nearby_networks(latitude, longitude, distance)
     types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
     types_array_string = [nil]

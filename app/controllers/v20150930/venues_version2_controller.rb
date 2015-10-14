@@ -31,12 +31,21 @@ module V20150930
       end
       result = Array.new
 
+      # favourite venues
+      favourite_venues = Venue.favourite_networks(current_user)
+      if !favourite_venues.blank?
+        favourite_obj = {
+          title: "FAVOURITE",
+          total: favourite_venues.length
+        }
+        if !favourite_venues.first.venue_avatars.blank? and !favourite_venues.first.venue_avatars.first.avatar.nil?  and !favourite_venues.first.venue_avatars.first.avatar.url.nil?
+          favourite_obj[:image] = favourite_venues.first.venue_avatars.first.avatar.url
+        end
+        result << favourite_obj
+      end
+
       # venues nearby
       nearby_venues = Venue.nearby_networks(latitude, longitude, distance)
-      # puts latitude
-      # puts longitude
-      # puts distance
-      # puts nearby_venues.inspect
       if !nearby_venues.blank?
         nearby_obj = {
           title: "NEARBY",
@@ -155,6 +164,36 @@ module V20150930
       render json: success((JSON.parse data), 'data', pagination)
     end
 
+
+    def add_favourite_venue
+      venue = Venue.find_venue_by_unique(params[:id])
+      if venue.nil?
+        error_obj = {
+          code: 404,
+          message: "Cannot find the network"
+        }
+        render json: error(error_obj, 'error')
+
+      else
+        FavouriteVenue.add_record(venue, current_user)
+        render json: success
+      end
+    end
+
+    def remove_favourite_venue
+      venue = Venue.find_venue_by_unique(params[:id])
+      if venue.nil?
+        error_obj = {
+          code: 404,
+          message: "Cannot find the network"
+        }
+        render json: error(error_obj, 'error')
+
+      else
+        FavouriteVenue.remove_record(venue, current_user)
+        render json: success
+      end
+    end
    
 
     private

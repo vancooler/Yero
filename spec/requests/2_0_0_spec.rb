@@ -455,6 +455,8 @@ describe 'V2.0.0' do
 	    venue_network = VenueNetwork.create!(id:1, name: "V")
         venue_type = VenueType.create!(id:1, name:"Festivals")
         venue_type_2 = VenueType.create!(id:2, name:"Club")
+        venue_type_3 = VenueType.create!(id:3, name:"Campus")
+        venue_type_4 = VenueType.create!(id:4, name:"Stadium")
         TimeZonePlace.create(timezone: "America/Vancouver")
         venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.153, longitude: -123.436, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+13.hours)
         venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type, latitude: 49.423, longitude: -123.532, featured: false)
@@ -483,22 +485,63 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 5
 		expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
 
-		# expect(Venue.nearby_networks(49, -123, 100).length).to eql 5
-		# expect(Venue.festivals(-49, 120).length).to eql 4
-		# expect(Venue.colleges(49, -10).length).to eql 0
-		# expect(Venue.nightlifes(49, -10).length).to eql 1
-		# expect(Venue.stadiums(49, -10).length).to eql 0
+		venue_6 = Venue.create!(id:7, venue_network: venue_network, name: "DDD", venue_type:venue_type_4, latitude: 49.353, longitude: -123.424, featured: true)
+        venue_7 = Venue.create!(id:6, venue_network: venue_network, name: "CCC", venue_type:venue_type_3, latitude: 49.423, longitude: -123.532, featured: false, unlock_number: 3)
+        VenueAvatar.create!(id: 7, venue_id: 7, default: true)
+        VenueAvatar.create!(id: 8, venue_id: 6, default: true)
 		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['data'].count).to eql 3
+		expect(JSON.parse(response.body)['data'].count).to eql 5
 		expect(JSON.parse(response.body)['data'][0]['title']).to eql "NEARBY"
-		expect(JSON.parse(response.body)['data'][1]['title']).to eql "FESTIVALS"
-		expect(JSON.parse(response.body)['data'][2]['title']).to eql "NIGHTLIFE"
-		expect(JSON.parse(response.body)['data'][0]['total']).to eql 5
-		expect(JSON.parse(response.body)['data'][1]['total']).to eql 4
+		expect(JSON.parse(response.body)['data'][1]['title']).to eql "COLLEGES"
+		expect(JSON.parse(response.body)['data'][2]['title']).to eql "STADIUMS"
+		expect(JSON.parse(response.body)['data'][3]['title']).to eql "FESTIVALS"
+		expect(JSON.parse(response.body)['data'][4]['title']).to eql "NIGHTLIFE"
+		expect(JSON.parse(response.body)['data'][0]['total']).to eql 7
+		expect(JSON.parse(response.body)['data'][1]['total']).to eql 1
 		expect(JSON.parse(response.body)['data'][2]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][3]['total']).to eql 4
+		expect(JSON.parse(response.body)['data'][4]['total']).to eql 1
 
 
+		post 'api/venues/134/users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+		expect(FavouriteVenue.all.count).to eql 0
+		post 'api/venues/1/users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(FavouriteVenue.all.count).to eql 1
+
+
+        expect(Venue.favourite_networks(user_2).length).to eql 1
+		get 'api/venue_types?latitude=49.4563&longitude=-122.8787&distance=1000&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 6
+		expect(JSON.parse(response.body)['data'][0]['title']).to eql "FAVOURITE"
+		expect(JSON.parse(response.body)['data'][1]['title']).to eql "NEARBY"
+		expect(JSON.parse(response.body)['data'][2]['title']).to eql "COLLEGES"
+		expect(JSON.parse(response.body)['data'][3]['title']).to eql "STADIUMS"
+		expect(JSON.parse(response.body)['data'][4]['title']).to eql "FESTIVALS"
+		expect(JSON.parse(response.body)['data'][5]['title']).to eql "NIGHTLIFE"
+		expect(JSON.parse(response.body)['data'][0]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][1]['total']).to eql 7
+		expect(JSON.parse(response.body)['data'][2]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][3]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][4]['total']).to eql 4
+		expect(JSON.parse(response.body)['data'][5]['total']).to eql 1
+
+		delete 'api/venues/134/users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql false
+		expect(FavouriteVenue.all.count).to eql 1
+
+		delete 'api/venues/1/users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+		expect(FavouriteVenue.all.count).to eql 0
+
+		FavouriteVenue.delete_all
 		TimeZonePlace.delete_all
 		VenueAvatar.delete_all
 		Venue.delete_all
