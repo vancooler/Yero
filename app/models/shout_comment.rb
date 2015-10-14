@@ -2,6 +2,7 @@ class ShoutComment < ActiveRecord::Base
   belongs_to :shout
   has_many :shout_comment_votes, dependent: :destroy
   belongs_to :user
+  belongs_to :venue
   has_many :shout_report_histories, as: :reportable, dependent: :destroy
   has_many :recent_activities, as: :contentable, dependent: :destroy
 
@@ -144,6 +145,9 @@ class ShoutComment < ActiveRecord::Base
   	shout_comment.body = body
   	shout_comment.shout_id = shout_id.to_i
   	shout_comment.user_id = current_user.id
+  	if !current_user.current_venue.nil?
+  		shout_comment.venue_id = current_user.current_venue.id
+  	end
   	result = shout_comment.save
   	if result
   		current_user.update(point: current_user.point+2)
@@ -160,6 +164,7 @@ class ShoutComment < ActiveRecord::Base
 	        total_upvotes: 	0,
 	        actions: 		["upvote", "downvote"],
 	        shout_id: 		shout_comment.shout_id,
+	        venue_id:       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
 	        author_id: 		shout_comment.user_id
 		}
 		if Rails.env == "production"
@@ -270,15 +275,16 @@ class ShoutComment < ActiveRecord::Base
         json.longitude 		shout_comment.longitude
         json.timestamp 		shout_comment.created_at.to_i
         json.total_upvotes 	shout_comment.total_upvotes
+        json.venue_id       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
         actions = ["downvote", "upvote"]
         if shout_comment_upvoted_ids.include? shout_comment.id
-            actions = actions - ["upvote"]
+            actions = ["undo_upvote", "downvote"]
         end
         if shout_comment_downvoted_ids.include? shout_comment.id
-            actions = actions - ["downpvote"]
+            actions = ["undo_downpvote", "upvote"]
         end
 	    json.actions		actions
-        json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
+        # json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
         json.author_id 		shout_comment.user_id
       end         
     end

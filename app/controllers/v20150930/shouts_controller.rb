@@ -14,14 +14,15 @@ module V20150930
         voted = ShoutVote.where(user_id: current_user.id).where(shout_id: shout.id)
         actions = Array.new
         if !voted.empty?
-          if voted.first.upvote
-            actions << "downvote"
+          if voted.first.upvote.nil?
+            actions = ["upvote","downvote"]
+          elsif voted.first.upvote
+            actions = ["undo_upvote", "downvote"]
           else
-            actions << "upvote"
+            actions = ["upvote", "undo_downvote"]
           end
         else
-          actions << "upvote"
-          actions << "downvote"
+          actions = ["upvote", "downvote"]
         end
         shout_json = {
           id:             shout.id,
@@ -30,20 +31,18 @@ module V20150930
           longitude:      shout.longitude,
           timestamp:      shout.created_at.to_i,
           total_upvotes:  shout.total_upvotes,
-          # upvoted:        (shout_upvoted.empty? ? false : true),
-          # downvoted:      (shout_downvoted.empty? ? false : true),
           actions:        actions,
-          replies_count:  shout.shout_comments.length,
+          shout_comments: shout.shout_comments.length,
           venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
           author_id:      shout.user_id
         }
-        result = ShoutComment.list(current_user, shout.id, page, per_page)
-        response = {
-          shout:          shout_json,
-          shout_comments: result['shout_comments'],
-          pagination:     result['pagination']
-        }
-        render json: success(response)
+        # result = ShoutComment.list(current_user, shout.id, page, per_page)
+        # response = {
+        #   shout:          shout_json,
+        #   shout_comments: result['shout_comments'],
+        #   pagination:     result['pagination']
+        # }
+        render json: success(shout_json)
       else
         # :nocov:
         error_obj = {

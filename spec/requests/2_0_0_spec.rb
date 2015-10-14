@@ -1412,7 +1412,7 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1425,8 +1425,8 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_1.id
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1442,7 +1442,7 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "new", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1619,9 +1619,9 @@ describe 'V2.0.0' do
       	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
-      	expect(JSON.parse(response.body)['data']['shout']['id']).to eql shout_2.id
-      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_2.id
+      	expect(JSON.parse(response.body)['data']['shout_comments']).to eql 2
+      	expect(JSON.parse(response.body)['data']['id']).to eql shout_2.id
+
 
       	token = user_2.generate_token
       	post 'api/report_shout_comments', {:token => token, :report_type_id => 2, :shout_comment_id => shout_comment_1.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

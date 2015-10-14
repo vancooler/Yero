@@ -162,7 +162,7 @@ class Shout < ActiveRecord::Base
 		if !current_user.current_venue.nil?
 	  		shout.latitude = current_user.current_venue.latitude
 	  		shout.longitude = current_user.current_venue.longitude
-	  		shout.venue_id = current_user.current_venue.id 
+	  		# shout.venue_id = current_user.current_venue.id 
 	  		shout.allow_nearby = true
 	  	else
 	  		shout.latitude = current_user.latitude
@@ -200,7 +200,7 @@ class Shout < ActiveRecord::Base
 		        total_upvotes: 	0,
 		        actions:        ["upvote", "downvote"],
 		        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
-		        replies_count: 	0,
+		        shout_comments: 0,
 		        author_id: 		shout.user_id
 			}
 			if Rails.env == 'production'
@@ -302,13 +302,13 @@ class Shout < ActiveRecord::Base
         json.total_upvotes 	shout.total_upvotes
         actions = ["downvote", "upvote"]
         if shout_upvoted_ids.include? shout.id
-            actions = actions - ["upvote"]
+            actions = ["undo_upvote", "downvote"]
         end
         if shout_downvoted_ids.include? shout.id
-            actions = actions - ["downpvote"]
+            actions = ["undo_downpvote", "upvote"]
         end
 	    json.actions		actions
-        json.replies_count 	shout.shout_comments.length
+        json.shout_comments shout.shout_comments.length
         json.author_id 		shout.user_id
         json.venue_id       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
       end         

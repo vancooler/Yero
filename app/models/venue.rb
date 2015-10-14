@@ -12,6 +12,7 @@ class Venue < ActiveRecord::Base
   belongs_to :venue_network
   belongs_to :venue_type
   has_many :shouts
+  has_many :shout_comments
   accepts_nested_attributes_for :beacons, allow_destroy: true
   accepts_nested_attributes_for :venue_avatars, allow_destroy: true
 

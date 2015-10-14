@@ -786,28 +786,17 @@
 <span class="ruby-keyword">Parameters:</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-string">{</span>
-    <span class="ruby-identifier">shout: </span><span class="ruby-string">{</span>
-      <span class="ruby-identifier">id: </span><span class="ruby-string">shout id</span>
-      <span class="ruby-identifier">body: </span><span class="ruby-string">shout content</span>
-      <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout latitude</span>
-      <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout longitude</span>
-      <span class="ruby-identifier">timestamp: </span><span class="ruby-string">shout created at</span>
-      <span class="ruby-identifier">total_upvotes: </span><span class="ruby-string">shout total_upvotes number</span>
-      <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote" or "downvote"</span>
-      <span class="ruby-identifier">replies_count: </span><span class="ruby-string">shout replies_count number</span>
-      <span class="ruby-identifier">venue_id: </span><span class="ruby-string">shout venue gimbal key</span>
-      <span class="ruby-identifier">author_id: </span><span class="ruby-string">shout author's user id</span>
+    <span class="ruby-identifier">id: </span><span class="ruby-string">shout id</span>
+    <span class="ruby-identifier">body: </span><span class="ruby-string">shout content</span>
+    <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout latitude</span>
+    <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout longitude</span>
+    <span class="ruby-identifier">timestamp: </span><span class="ruby-string">shout created at</span>
+    <span class="ruby-identifier">total_upvotes: </span><span class="ruby-string">shout total_upvotes number</span>
+    <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote", "undo_upvote", "downvote", or "undo_downvote"</span>
+    <span class="ruby-identifier">replies_count: </span><span class="ruby-string">shout replies_count number</span>
+    <span class="ruby-identifier">venue_id: </span><span class="ruby-string">shout venue gimbal key</span>
+    <span class="ruby-identifier">author_id: </span><span class="ruby-string">shout author's user id</span>
 
-    <span class="ruby-string">}</span>
-    <span class="ruby-identifier">shout_comments: </span><span class="ruby-string">[</span>
-      <span class="ruby-constant">StandardShoutCommentObject</span>
-    <span class="ruby-string">]</span>
-    <span class="ruby-identifier">pagination: </span>
-      <span class="ruby-string">{</span>
-        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
-        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
-        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
-      <span class="ruby-string">}</span>
   <span class="ruby-string">}</span>
 <span class="ruby-keyword">Error Messages:</span>
   <span class="ruby-string">{</span>
@@ -923,7 +912,17 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">whispers: </span>
     <span class="ruby-string">[</span>
-      <span class="ruby-constant">StandardShoutCommentObject</span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">id: </span><span class="ruby-string">shout comment id</span>
+        <span class="ruby-identifier">body: </span><span class="ruby-string">shout comment content</span>
+        <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout comment latitude</span>
+        <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout comment longitude</span>
+        <span class="ruby-identifier">timestamp: </span><span class="ruby-string">shout comment created at</span>
+        <span class="ruby-identifier">total_upvotes: </span><span class="ruby-string">shout comment total_upvotes number</span>
+        <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote", "undo_upvote", "downvote", or "undo_downvote"</span>
+        <span class="ruby-identifier">venue_id: </span><span class="ruby-string">shout comment venue gimbal key</span>
+        <span class="ruby-identifier">author_id: </span><span class="ruby-string">shout comment author's user id</span>
+      <span class="ruby-string">}</span>
     <span class="ruby-string">]</span>
     <span class="ruby-identifier">pagination: </span>
       <span class="ruby-string">{</span>

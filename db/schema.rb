@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151008164012) do
+ActiveRecord::Schema.define(version: 20151013170000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -383,6 +383,7 @@ ActiveRecord::Schema.define(version: 20151008164012) do
     t.datetime "updated_at"
     t.float    "latitude"
     t.float    "longitude"
+    t.integer  "venue_id"
   end
 
   add_index "shout_comments", ["shout_id"], name: "index_shout_comments_on_shout_id", using: :btree
