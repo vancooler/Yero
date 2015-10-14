@@ -219,9 +219,7 @@ class Venue < ActiveRecord::Base
       types_array_string << a.to_s
     end
     if latitude.nil? or longitude.nil?
-      # :nocov:
       venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
-      # :nocov:
     else
       venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
     end
@@ -289,18 +287,18 @@ class Venue < ActiveRecord::Base
   end
 
 
-  def happen_now
-    if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
-      now = Time.now
-      if now.to_i >= Venue.to_utc_timestamp(self.start_time, self.timezone) and now.to_i < Venue.to_utc_timestamp(self.end_time, self.timezone)
-        return true
-      else
-        return false
-      end
-    else
-      return false
-    end
-  end
+  # def happen_now
+  #   if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
+  #     now = Time.now
+  #     if now.to_i >= Venue.to_utc_timestamp(self.start_time, self.timezone) and now.to_i < Venue.to_utc_timestamp(self.end_time, self.timezone)
+  #       return true
+  #     else
+  #       return false
+  #     end
+  #   else
+  #     return false
+  #   end
+  # end
 
   def default_avatar
     self.venue_avatars.where(default: true).first
@@ -359,6 +357,8 @@ class Venue < ActiveRecord::Base
         json.unlock_number (v.unlock_number.nil? ? 0 : v.unlock_number)
         json.shouts_number Shout.shouts_in_venue(current_user, v.id).length
         json.latitude v.latitude
+        json.start Venue.to_utc_timestamp(v.start_time, v.timezone)
+        json.end Venue.to_utc_timestamp(v.end_time, v.timezone)
         if !images.empty?
           avatars = Array.new
           images.each do |i|
