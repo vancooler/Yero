@@ -47,7 +47,10 @@ class User < ActiveRecord::Base
         if key.to_s.include? "@"
           user = User.find_by_email(key)
         else
-          user = User.find_by_username(key)
+          users = User.where('lower(username) = ?', key.downcase)
+          if !users.empty?
+            user = users.first
+          end
         end
       else
         user = User.find_by_id(key)

@@ -29,7 +29,7 @@ module V20150930
       user = current_user
       result = true
       if !params[:username].blank?
-        if User.exists? username: params[:username]
+        if !User.where('lower(username) = ?', params[:username].downcase).empty?
           result = false
           error_obj = {
             code: 403,
@@ -226,7 +226,7 @@ module V20150930
           end
         end
         if !params[:username].blank?
-          if User.exists? username: params[:username]
+          if !User.where('lower(username) = ?', params[:username].downcase).empty?
             result = false
             error_obj = {
               code: 403,
