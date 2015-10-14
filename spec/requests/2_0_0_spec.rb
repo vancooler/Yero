@@ -478,17 +478,36 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 2
 		expect(JSON.parse(response.body)['pagination']['page']).to eql 1
 		expect(JSON.parse(response.body)['pagination']['per_page']).to eql 2
-		expect(JSON.parse(response.body)['pagination']['total_count']).to eql 4
+		expect(JSON.parse(response.body)['pagination']['total_count']).to eql 5
 
 		get 'api/venues?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 5
 		expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
 
+		get 'api/venues?type=nightlife&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 1
+		expect(JSON.parse(response.body)['data'][0]['id']).to eql 4
+
+		get 'api/venues?type=festival&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 4
+
 		venue_6 = Venue.create!(id:7, venue_network: venue_network, name: "DDD", venue_type:venue_type_4, latitude: 49.353, longitude: -123.424, featured: true)
         venue_7 = Venue.create!(id:6, venue_network: venue_network, name: "CCC", venue_type:venue_type_3, latitude: 49.423, longitude: -123.532, featured: false, unlock_number: 3)
         VenueAvatar.create!(id: 7, venue_id: 7, default: true)
         VenueAvatar.create!(id: 8, venue_id: 6, default: true)
+
+        get 'api/venues?type=college&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 1
+
+
+		get 'api/venues?type=stadium&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 1
+
 		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 5
@@ -513,6 +532,9 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['success']).to eql true
 		expect(FavouriteVenue.all.count).to eql 1
 
+		get 'api/venues?type=favourite&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['data'].count).to eql 1
 
         expect(Venue.favourite_networks(user_2).length).to eql 1
 		get 'api/venue_types?latitude=49.4563&longitude=-122.8787&distance=1000&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

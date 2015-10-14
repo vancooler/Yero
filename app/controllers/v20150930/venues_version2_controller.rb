@@ -112,7 +112,70 @@ module V20150930
       render json: success(result)
     end
 
+    # retrieve networks
+    def index
+      if params[:type].blank? 
+        type = "nearby"
+      else
+        type = params[:type]
+      end
+      user = current_user
+      if !params[:distance].nil? and params[:distance].to_i > 0
+        distance = params[:distance].to_i
+      else
+        distance = 10000
+      end
+      if !params[:latitude].blank? 
+        latitude = params[:latitude].to_f
+      else
+        latitude = user.latitude
+      end
+      if !params[:longitude].blank? 
+        longitude = params[:longitude].to_f
+      else
+        longitude = user.longitude
+      end
+
+      if !params[:latitude].blank? and !params[:longitude].blank? 
+        user.latitude = latitude
+        user.longitude = longitude
+        user.save
+      end
+
+      case type
+      when 'favourite'
+        venues = Venue.favourite_networks(current_user)
+      when 'nearby'
+        venues = Venue.nearby_networks(latitude, longitude, distance)
+      when 'festival'
+        venues = Venue.festivals(latitude, longitude)
+      when 'college'
+        venues = Venue.colleges(latitude, longitude)
+      when 'stadium'
+        venues = Venue.stadiums(latitude, longitude)
+      when 'nightlife'
+        venues = Venue.nightlifes(latitude, longitude)
+      end
+
+      page_number = nil
+      venues_per_page = nil
+      page_number = params[:page].to_i + 1 if !params[:page].blank?
+      venues_per_page = params[:per_page].to_i if !params[:per_page].blank?
+      if !page_number.nil? and !venues_per_page.nil? and venues_per_page > 0 and page_number >= 0
+        pagination = Hash.new
+        pagination['page'] = page_number - 1
+        pagination['per_page'] = venues_per_page
+        pagination['total_count'] = venues.length
+        venues = Kaminari.paginate_array(venues).page(page_number).per(venues_per_page) if !venues.nil?
+      end
+
+      data = Venue.venues_object(current_user, venues)
+      
+      render json: success((JSON.parse data), 'data', pagination)
+    end
+
     # List of venues
+    # :nocov:
     def list
       user = current_user
       if !params[:distance].nil? and params[:distance].to_i > 0
@@ -159,10 +222,11 @@ module V20150930
         venues = Kaminari.paginate_array(venues).page(page_number).per(venues_per_page) if !venues.nil?
       end
 
-      data = Venue.venues_object(venues)
+      data = Venue.venues_object(current_user, venues)
       
       render json: success((JSON.parse data), 'data', pagination)
     end
+    # :nocov:
 
 
     def add_favourite_venue

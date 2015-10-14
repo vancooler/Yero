@@ -343,7 +343,7 @@ module V20150908
         venues = Kaminari.paginate_array(venues).page(page_number).per(venues_per_page) if !venues.nil?
       end
 
-      data = Venue.venues_object(venues)
+      data = Venue.venues_object(current_user, venues)
       
       render json: success(JSON.parse data)
     end

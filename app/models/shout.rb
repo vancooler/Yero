@@ -246,6 +246,14 @@ class Shout < ActiveRecord::Base
   	return shouts
   end
 
+  def self.shouts_in_venue(current_user, venue_id)
+  	black_list = BlockUser.blocked_user_ids(current_user.id)
+  	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
+	shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago)
+	shouts = shouts.sort_by{|s| s.created_at}.reverse
+	return shouts
+  end
+
 
   # return shouts list
   def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page)

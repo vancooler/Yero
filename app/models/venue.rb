@@ -9,6 +9,7 @@ class Venue < ActiveRecord::Base
   has_many :participants, through: :rooms
   has_many :favourited_users, class_name: "FavouriteVenue", dependent: :destroy
   has_many :venue_avatars, dependent: :destroy
+  has_many :active_in_venues, dependent: :destroy
   belongs_to :web_user
   belongs_to :venue_network
   belongs_to :venue_type
@@ -202,6 +203,7 @@ class Venue < ActiveRecord::Base
     return venues
   end
 
+  # :nocov:
   def self.near_venues(latitude, longitude, distance, without_featured_venues)
     types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
     types_array_string = Array.new
@@ -256,6 +258,7 @@ class Venue < ActiveRecord::Base
     end
     return venues
   end
+  # :nocov:
 
   def finished
     if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
@@ -331,12 +334,11 @@ class Venue < ActiveRecord::Base
   end
 
 
-  def self.venues_object(venues)
+  def self.venues_object(current_user, venues)
     # default_logo = ENV['DYNAMODB_PREFIX'] == 'Dev' ? 'https://s3-us-west-2.amazonaws.com/yero-development/static/avatar_venue_default.png?X-Amz-Date=20150709T223626Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=9362671e5feae095d12b06f732d8a8913da88d630c49359df3bbdbef90043d1a&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D' : 'https://s3-us-west-2.amazonaws.com/yero/static/avatar_venue_default.png?X-Amz-Date=20150709T223305Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=60bf8424d7242c66faee48bc0f4e2641a6fa2515cf65b7c9b81591bc0f074857&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D'
     
     data = Jbuilder.encode do |json|
       json.array! venues do |v|
-        # logo = VenueLogo.where(venue_id: v.id).where(pending: false)
         images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
         json.id v.id
         json.name (v.name.blank? ? '' : v.name.upcase)
@@ -345,9 +347,10 @@ class Venue < ActiveRecord::Base
         # json.city v.city
         # json.state v.state
         json.longitude v.longitude
+        json.users_number v.active_in_venues.length
+        json.unlock_number (v.unlock_number.nil? ? 0 : v.unlock_number)
+        json.shouts_number Shout.shouts_in_venue(current_user, v.id).length
         json.latitude v.latitude
-        # json.featured v.featured
-        # json.featured_order v.featured_order
         if !images.empty?
           avatars = Array.new
           images.each do |i|
@@ -358,15 +361,7 @@ class Venue < ActiveRecord::Base
           end
         end
         json.gimbal_name  (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
-        # json.logo         logo.empty? ? default_logo : logo.first.avatar.url
-
-        # json.nightly do
-        #   nightly = Nightly.today_or_create(v)
-        #   json.boy_count nightly.boy_count
-        #   json.girl_count nightly.girl_count
-        #   json.guest_wait_time nightly.guest_wait_time
-        #   json.regular_wait_time nightly.regular_wait_time
-        # end
+        
       end
     end
 
