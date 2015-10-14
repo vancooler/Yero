@@ -1311,7 +1311,8 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier">email: </span><span class="ruby-string">required string</span>
+  <span class="ruby-identifier">email: </span><span class="ruby-string">optional string</span>
+  <span class="ruby-identifier">username: </span><span class="ruby-string">optional string</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
 <span class="ruby-keyword">Error Messages:</span>
@@ -1322,6 +1323,10 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Email address exists"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Username address exists"</span>
   <span class="ruby-string">}</span>
  
     
