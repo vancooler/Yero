@@ -27,108 +27,130 @@ module V20150930
     # update current user with given fields and return user object
     def update
       user = current_user
-      if !params[:wechat_id].nil? 
-        if params[:wechat_id].match(/\s/).blank?
-          user.wechat_id = params[:wechat_id]
+      result = true
+      if !params[:username].blank?
+        if User.exists? username: params[:username]
+          result = false
+          error_obj = {
+            code: 403,
+            message: "Username exists"
+          }
+          render json: error(error_obj, 'error')
+        end
+      end
+
+      if result
+        if !params[:username].nil? 
+          if params[:username].match(/\s/).blank?
+            user.username = params[:username]
+          else
+            user.username = params[:username].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:wechat_id].nil? 
+          if params[:wechat_id].match(/\s/).blank?
+            user.wechat_id = params[:wechat_id]
+          else
+            user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:snapchat_id].nil? 
+          if params[:snapchat_id].match(/\s/).blank?
+            user.snapchat_id = params[:snapchat_id]
+          else
+            user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:line_id].nil? 
+          if params[:line_id].match(/\s/).blank?
+            user.line_id = params[:line_id]
+          else
+            user.line_id = params[:line_id].gsub!(/\s+/, "") 
+          end
+        end
+        
+        if !params[:instagram_id].nil? 
+          if params[:instagram_id].match(/\s/).blank?
+            user.instagram_id = params[:instagram_id]
+          else
+            user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:instagram_token].nil? 
+          if params[:instagram_token].match(/\s/).blank?
+            user.instagram_token = params[:instagram_token]
+          else
+            user.instagram_token = params[:instagram_token].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:spotify_id].nil? 
+          if params[:spotify_id].match(/\s/).blank?
+            user.spotify_id = params[:spotify_id]
+          else
+            user.spotify_id = params[:spotify_id].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:spotify_token].nil? 
+          if params[:spotify_token].match(/\s/).blank?
+            user.spotify_token = params[:spotify_token]
+          else
+            user.spotify_token = params[:spotify_token].gsub!(/\s+/, "") 
+          end
+        end
+
+        if !params[:introduction_1].nil? 
+          user.introduction_1 = params[:introduction_1]
+        end
+
+        # status
+        if !params[:status].nil? 
+          user.introduction_2 = params[:status]
+          user.last_status_active_time = Time.now
+        end
+
+        if !params[:exclusive].nil?
+          user.exclusive = params[:exclusive]
+        end
+
+        if !params[:discovery].nil?
+          user.discovery = params[:discovery]
+        end
+
+        if !params[:timezone].nil?
+          user.timezone_name = params[:timezone]
+          if TimeZonePlace.find_by_timezone(params[:timezone]).nil?
+            TimeZonePlace.create!(timezone: params[:timezone], time_no_active: 0)
+          end
+        end
+
+        if !params[:latitude].nil?
+          user.latitude = params[:latitude].to_f
+        end
+
+        if !params[:longitude].nil?
+          user.longitude = params[:longitude].to_f
+        end
+
+
+        avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
+
+        if user.save and user.avatar_reorder(avatar_ids)
+          render json: success(user.to_json(false))
         else
-          user.wechat_id = params[:wechat_id].gsub!(/\s+/, "") 
+       	  # :nocov:
+          error_obj = {
+      	    code: 520,
+      	    message: "Cannot update the user."
+      	  }
+      	  render json: error(error_obj, 'error')
+          # :nocov:
         end
-      end
-
-      if !params[:snapchat_id].nil? 
-        if params[:snapchat_id].match(/\s/).blank?
-          user.snapchat_id = params[:snapchat_id]
-        else
-          user.snapchat_id = params[:snapchat_id].gsub!(/\s+/, "") 
-        end
-      end
-
-      if !params[:line_id].nil? 
-        if params[:line_id].match(/\s/).blank?
-          user.line_id = params[:line_id]
-        else
-          user.line_id = params[:line_id].gsub!(/\s+/, "") 
-        end
-      end
-      
-      if !params[:instagram_id].nil? 
-        if params[:instagram_id].match(/\s/).blank?
-          user.instagram_id = params[:instagram_id]
-        else
-          user.instagram_id = params[:instagram_id].gsub!(/\s+/, "") 
-        end
-      end
-
-      if !params[:instagram_token].nil? 
-        if params[:instagram_token].match(/\s/).blank?
-          user.instagram_token = params[:instagram_token]
-        else
-          user.instagram_token = params[:instagram_token].gsub!(/\s+/, "") 
-        end
-      end
-
-      if !params[:spotify_id].nil? 
-        if params[:spotify_id].match(/\s/).blank?
-          user.spotify_id = params[:spotify_id]
-        else
-          user.spotify_id = params[:spotify_id].gsub!(/\s+/, "") 
-        end
-      end
-
-      if !params[:spotify_token].nil? 
-        if params[:spotify_token].match(/\s/).blank?
-          user.spotify_token = params[:spotify_token]
-        else
-          user.spotify_token = params[:spotify_token].gsub!(/\s+/, "") 
-        end
-      end
-
-      if !params[:introduction_1].nil? 
-        user.introduction_1 = params[:introduction_1]
-      end
-
-      # status
-      if !params[:status].nil? 
-        user.introduction_2 = params[:status]
-        user.last_status_active_time = Time.now
-      end
-
-      if !params[:exclusive].nil?
-        user.exclusive = params[:exclusive]
-      end
-
-      if !params[:discovery].nil?
-        user.discovery = params[:discovery]
-      end
-
-      if !params[:timezone].nil?
-        user.timezone_name = params[:timezone]
-        if TimeZonePlace.find_by_timezone(params[:timezone]).nil?
-          TimeZonePlace.create!(timezone: params[:timezone], time_no_active: 0)
-        end
-      end
-
-      if !params[:latitude].nil?
-        user.latitude = params[:latitude].to_f
-      end
-
-      if !params[:longitude].nil?
-        user.longitude = params[:longitude].to_f
-      end
-
-
-      avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
-
-      if user.save and user.avatar_reorder(avatar_ids)
-        render json: success(user.to_json(false))
-      else
-     	  # :nocov:
-        error_obj = {
-    	    code: 520,
-    	    message: "Cannot update the user."
-    	  }
-    	  render json: error(error_obj, 'error')
-        # :nocov:
       end
     end
 
