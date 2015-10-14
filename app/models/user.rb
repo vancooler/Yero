@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   has_many :traffics
   has_many :winners
   has_many :pokes, foreign_key: "pokee_id"
-  has_many :favourite_venues
+  has_many :favourite_venues, dependent: :destroy
   has_many :venues, through: :favourite_venues
   has_many :user_avatars, dependent: :destroy
   accepts_nested_attributes_for :user_avatars, allow_destroy: true

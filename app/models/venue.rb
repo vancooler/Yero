@@ -7,7 +7,7 @@ class Venue < ActiveRecord::Base
   has_many :venue_entries, dependent: :destroy
   has_many :winners
   has_many :participants, through: :rooms
-  has_many :favourited_users, class_name: "FavouriteVenue"
+  has_many :favourited_users, class_name: "FavouriteVenue", dependent: :destroy
   has_many :venue_avatars, dependent: :destroy
   belongs_to :web_user
   belongs_to :venue_network
