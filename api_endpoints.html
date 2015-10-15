@@ -103,6 +103,8 @@
     <li ><a href="#method-i-api_venues_list">GET api/venues</a></li>
     <li ><a href="#method-i-api_room_leave">DELETE api/venues</a></li>
     <li ><a href="#method-i-api_room_enter">POST api/venues/:id</a></li>
+    <li ><a href="#method-i-api_add_favourite">POST api/venues/:id/users</a></li>
+    <li ><a href="#method-i-api_remove_favourite">DELETE api/venues/:id/users</a></li>
     <li ><a href="#method-i-api_users_check_email">GET api/verify</a></li>
     <li ><a href="#method-i-api_whisper_create">POST api/whispers</a></li>
     <li ><a href="#method-i-api_whispers">GET api/whispers</a></li>
@@ -1307,6 +1309,50 @@
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
     <span class="ruby-identifier">message: </span><span class="ruby-string">"Venue cannot be found"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_add_favourite" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venues/:id/users [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/VenueVersion2Controller.html#method-i-add_favourite_venue">VenueVersion2#add_favourite_venue</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the network"</span>
+  <span class="ruby-string">}</span>
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_remove_favourite" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venues/:id/users [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/VenueVersion2Controller.html#method-i-remove_favourite_venue">VenueVersion2#remove_favourite_venue</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot find the network"</span>
   <span class="ruby-string">}</span>
             </pre>
           </div>
