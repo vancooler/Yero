@@ -61,7 +61,7 @@ module V20150930
       shout = Shout.create_shout(current_user, params[:body], venue)
       if shout
         # Pusher later
-        render json: success
+        render json: success(shout)
       else
         # :nocov:
         error_obj = {

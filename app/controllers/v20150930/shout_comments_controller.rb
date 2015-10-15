@@ -8,7 +8,7 @@ module V20150930
       shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id])
       if shout_comment
         # Pusher later
-        render json: success
+        render json: success(shout_comment)
       else
         # :nocov:
         error_obj = {
