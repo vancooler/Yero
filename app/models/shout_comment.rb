@@ -215,7 +215,7 @@ class ShoutComment < ActiveRecord::Base
 				# :nocov:
 			end	
 		end
-	  	return shout_comment
+	  	return shout_comment_json
     else
     	# :nocov:
     	return false

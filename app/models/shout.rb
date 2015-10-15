@@ -190,26 +190,26 @@ class Shout < ActiveRecord::Base
 			channel = 'private-user-' + id.to_s
 			user_channels << channel
 		end
+		shout_json = {
+			id: 			shout.id,
+	        body: 			shout.body,
+	        latitude: 		shout.latitude,
+	        longitude: 		shout.longitude,
+	        timestamp: 		shout.created_at.to_i,
+	        total_upvotes: 	0,
+	        actions:        ["upvote", "downvote"],
+	        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+	        shout_comments: 0,
+	        author_id: 		shout.user_id
+		}
 		if !user_channels.empty?
-			shout_json = {
-				id: 			shout.id,
-		        body: 			shout.body,
-		        latitude: 		shout.latitude,
-		        longitude: 		shout.longitude,
-		        timestamp: 		shout.created_at.to_i,
-		        total_upvotes: 	0,
-		        actions:        ["upvote", "downvote"],
-		        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
-		        shout_comments: 0,
-		        author_id: 		shout.user_id
-			}
 			if Rails.env == 'production'
 				# :nocov:
 				Pusher.delay.trigger(user_channels, 'Create shout', {shout: shout_json})
 				# :nocov:
 			end
 		end
-	  	return shout
+	  	return shout_json
     else
     	# :nocov:
     	return false
