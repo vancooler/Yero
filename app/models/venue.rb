@@ -352,11 +352,11 @@ class Venue < ActiveRecord::Base
         # json.address v.address_line_one
         # json.city v.city
         # json.state v.state
+        json.latitude v.latitude
         json.longitude v.longitude
         json.users_number v.active_in_venues.length
         json.unlock_number (v.unlock_number.nil? ? 0 : v.unlock_number)
         json.shouts_number Shout.shouts_in_venue(current_user, v.id).length
-        json.latitude v.latitude
         if !v.timezone.nil? and !v.start_time.nil?
           json.start Venue.to_utc_timestamp(v.start_time, v.timezone)
         end

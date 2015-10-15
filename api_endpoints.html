@@ -1233,12 +1233,24 @@
   <span class="ruby-identifier">distance: </span><span class="ruby-string">optional</span>
   <span class="ruby-identifier">latitude: </span><span class="ruby-string">optional</span>
   <span class="ruby-identifier">longitude: </span><span class="ruby-string">optional</span>
-  <span class="ruby-identifier">without_featured_venues: </span><span class="ruby-string">optional true/false</span>
+  <span class="ruby-identifier">type: </span><span class="ruby-string">optional [favourite, nearby, college, festival, sdatium, nightlife] default as nearby</span>
   <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
   <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-string">[</span>
-    <span class="ruby-constant">StandardVenueObject</span>
+    <span class="ruby-string">{</span>  
+      <span class="ruby-identifier">id: </span><span class="ruby-string">integer</span>
+      <span class="ruby-identifier">name: </span><span class="ruby-string">string</span>
+      <span class="ruby-identifier">type: </span><span class="ruby-string">type of network</span>
+      <span class="ruby-identifier">latitude: </span><span class="ruby-constant">float</span>
+      <span class="ruby-identifier">longitude: </span><span class="ruby-constant">float</span>
+      <span class="ruby-identifier">gimbal_name: </span><span class="ruby-string">string</span>
+      <span class="ruby-identifier">users_number: </span><span class="ruby-string">integer</span>
+      <span class="ruby-identifier">unlock_number: </span><span class="ruby-string">integer</span>
+      <span class="ruby-identifier">shouts_number: </span><span class="ruby-string">integer</span>
+      <span class="ruby-identifier">start: </span><span class="ruby-string">timestamp for festivals</span>
+      <span class="ruby-identifier">end: </span><span class="ruby-string">timestamp for festivals</span>
+    <span class="ruby-string">}</span>  
   <span class="ruby-string">],</span>
   <span class="ruby-identifier">pagination: </span>
     <span class="ruby-string">{</span>
