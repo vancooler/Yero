@@ -357,8 +357,12 @@ class Venue < ActiveRecord::Base
         json.unlock_number (v.unlock_number.nil? ? 0 : v.unlock_number)
         json.shouts_number Shout.shouts_in_venue(current_user, v.id).length
         json.latitude v.latitude
-        json.start Venue.to_utc_timestamp(v.start_time, v.timezone)
-        json.end Venue.to_utc_timestamp(v.end_time, v.timezone)
+        if !v.timezone.nil? and !v.start_time.nil?
+          json.start Venue.to_utc_timestamp(v.start_time, v.timezone)
+        end
+        if !v.timezone.nil? and !v.end_time.nil?
+          json.end Venue.to_utc_timestamp(v.end_time, v.timezone)
+        end
         if !images.empty?
           avatars = Array.new
           images.each do |i|
