@@ -313,7 +313,7 @@ class Shout < ActiveRecord::Base
             actions = ["undo_upvote", "downvote"]
         end
         if shout_downvoted_ids.include? shout.id
-            actions = ["undo_downpvote", "upvote"]
+            actions = ["undo_downvote", "upvote"]
         end
 	    json.actions		actions
         json.shout_comments shout.shout_comments.length
