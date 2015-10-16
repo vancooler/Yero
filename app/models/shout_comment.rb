@@ -166,6 +166,7 @@ class ShoutComment < ActiveRecord::Base
 	        actions: 		["upvote", "downvote"],
 	        shout_id: 		shout_comment.shout_id,
 	        venue_id:       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
+	        author_id: 		shout_comment.user_id,
 	        author_username: 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
 		}
 		if Rails.env == "production"
@@ -286,6 +287,7 @@ class ShoutComment < ActiveRecord::Base
         end
 	    json.actions		actions
         # json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
+        json.author_id		shout_comment.user_id
         json.author_username 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
       end         
     end

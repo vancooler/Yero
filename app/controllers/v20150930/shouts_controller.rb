@@ -34,6 +34,7 @@ module V20150930
           actions:        actions,
           shout_comments: shout.shout_comments.length,
           venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+          author_id:      shout.user_id,
           author_username:      (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
         }
         # result = ShoutComment.list(current_user, shout.id, page, per_page)
