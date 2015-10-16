@@ -166,7 +166,7 @@ class ShoutComment < ActiveRecord::Base
 	        actions: 		["upvote", "downvote"],
 	        shout_id: 		shout_comment.shout_id,
 	        venue_id:       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
-	        author_id: 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
+	        author_username: 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
 		}
 		if Rails.env == "production"
 			# :nocov:	
@@ -286,7 +286,7 @@ class ShoutComment < ActiveRecord::Base
         end
 	    json.actions		actions
         # json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
-        json.author_id 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
+        json.author_username 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
       end         
     end
     return_shout_comments = JSON.parse(return_shout_comments).delete_if(&:empty?)
