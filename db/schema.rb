@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151013180000) do
+ActiveRecord::Schema.define(version: 20151016133124) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -663,11 +663,12 @@ ActiveRecord::Schema.define(version: 20151013180000) do
   end
 
   create_table "whisper_replies", force: true do |t|
-    t.integer  "speaker_id", null: false
-    t.integer  "whisper_id", null: false
+    t.integer  "speaker_id",                 null: false
+    t.integer  "whisper_id",                 null: false
     t.text     "message"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "read",       default: false
   end
 
   add_index "whisper_replies", ["whisper_id"], name: "index_whisper_replies_on_whisper_id", using: :btree
@@ -680,19 +681,21 @@ ActiveRecord::Schema.define(version: 20151013180000) do
   end
 
   create_table "whisper_todays", force: true do |t|
-    t.integer  "target_user_id",                 null: false
+    t.integer  "target_user_id",                       null: false
     t.integer  "origin_user_id"
     t.integer  "venue_id"
-    t.integer  "whisper_type",                   null: false
-    t.boolean  "viewed",         default: false
-    t.boolean  "accepted",       default: false
-    t.boolean  "declined",       default: false
-    t.text     "message",        default: ""
+    t.integer  "whisper_type",                         null: false
+    t.boolean  "viewed",               default: false
+    t.boolean  "accepted",             default: false
+    t.boolean  "declined",             default: false
+    t.text     "message",              default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "dynamo_id"
     t.integer  "paper_owner_id"
     t.text     "message_b"
+    t.boolean  "target_user_archieve", default: false
+    t.boolean  "origin_user_archieve", default: false
   end
 
   add_index "whisper_todays", ["target_user_id"], name: "index_whisper_todays_on_target_user_id", using: :btree
