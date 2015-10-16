@@ -199,7 +199,7 @@ class ShoutComment < ActiveRecord::Base
 		if !black_list.include? op_user_id
 			if Rails.env == 'production'
 				# :nocov:
-				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", shout_comment.id, current_user.username + ' replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
+				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", shout_comment.id, '@username replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
 				WhisperNotification.delay.send_notification_301(op_user_id, current_user.username, shout_id)
 				# :nocov:
 			end	
@@ -229,7 +229,7 @@ class ShoutComment < ActiveRecord::Base
   # Function to create activities for a batch of users
   def create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
   	other_repliers_user_ids.each do |user_id|
-		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", self.id, current_user.username + ' replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
+		RecentActivity.add_activity(user_id, '302', current_user.id, nil, "same-shout-comment-"+user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", self.id, '@username replied to the shout "'+self.shout.body.truncate(23, separator: /\s/)+'"')
 	end
   end
   # :nocov:
