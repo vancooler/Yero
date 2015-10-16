@@ -197,7 +197,7 @@ class Shout < ActiveRecord::Base
 	        latitude: 		shout.latitude,
 	        longitude: 		shout.longitude,
 	        timestamp: 		shout.created_at.to_i,
-	        total_upvotes: 	0,
+	        total_upvotes: 	1,
 	        actions:        ["undo_upvote", "downvote"],
 	        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 	        shout_comments: 0,
