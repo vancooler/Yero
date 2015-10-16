@@ -151,6 +151,7 @@ class ShoutComment < ActiveRecord::Base
   	result = shout_comment.save
   	if result
   		current_user.update(point: current_user.point+2)
+  		shout_comment.change_vote(current_user, 1)
   		user_ids = shout_comment.shout.permitted_users_id
 	  	shout_id = shout_comment.shout.id
 	  	

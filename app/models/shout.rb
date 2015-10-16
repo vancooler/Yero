@@ -183,6 +183,7 @@ class Shout < ActiveRecord::Base
   		# pusher
   		user_ids = shout.permitted_users_id
 	  	shout_id = shout.id
+	  	shout.change_vote(current_user, 1)
 	  	
 		# users can access this shout
 		user_channels = Array.new
@@ -197,7 +198,7 @@ class Shout < ActiveRecord::Base
 	        longitude: 		shout.longitude,
 	        timestamp: 		shout.created_at.to_i,
 	        total_upvotes: 	0,
-	        actions:        ["upvote", "downvote"],
+	        actions:        ["undo_upvote", "downvote"],
 	        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 	        shout_comments: 0,
 	        author_id: 		shout.user_id
