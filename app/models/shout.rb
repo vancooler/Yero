@@ -201,7 +201,7 @@ class Shout < ActiveRecord::Base
 	        actions:        ["undo_upvote", "downvote"],
 	        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 	        shout_comments: 0,
-	        author_id: 		shout.user_id
+	        author_username: 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
 		}
 		if !user_channels.empty?
 			if Rails.env == 'production'
@@ -318,7 +318,7 @@ class Shout < ActiveRecord::Base
         end
 	    json.actions		actions
         json.shout_comments shout.shout_comments.length
-        json.author_id 		shout.user_id
+        json.author_username 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
         json.venue_id       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
       end         
     end
