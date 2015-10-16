@@ -100,6 +100,7 @@
     <li ><a href="#method-i-api_user_update_profile">PUT api/users</a></li>
     <li ><a href="#method-i-api_users_profile">GET api/users/:id</a></li>
     <li ><a href="#method-i-api_users_notification_preference">PUT api/user_notification_preferences</a></li>
+    <li ><a href="#method-i-api_venue_types_list">GET api/venue_types</a></li>
     <li ><a href="#method-i-api_venues_list">GET api/venues</a></li>
     <li ><a href="#method-i-api_room_leave">DELETE api/venues</a></li>
     <li ><a href="#method-i-api_room_enter">POST api/venues/:id</a></li>
@@ -1216,7 +1217,31 @@
 
       
 
-
+      <div id="method-i-api_venue_types_list" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/venue_types [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/VenuesVersion2Controller.html#method-i-list_types">VenuesVersion2#list_types</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">distance: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">latitude: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">longitude: </span><span class="ruby-string">optional</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>  
+      <span class="ruby-identifier">title: </span><span class="ruby-string">"FAVOURITE", "NEARBY", "FESTIVAL", "COLLEGE", "STADIUM", "NIGHTLIFE"</span>
+      <span class="ruby-identifier">total: </span><span class="ruby-string">number of networks of this type</span>
+      <span class="ruby-identifier">image: </span><span class="ruby-string">image url</span>
+    <span class="ruby-string">}</span>  
+  <span class="ruby-string">]</span>
+            </pre>
+          </div>
+        </div>
+      </div>
       
 
       
@@ -1229,7 +1254,7 @@
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
-          <a href="./V20150930/VenuesVersion2Controller.html#method-i-list">VenuesVersion2#list</a>
+          <a href="./V20150930/VenuesVersion2Controller.html#method-i-index">VenuesVersion2#index</a>
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
