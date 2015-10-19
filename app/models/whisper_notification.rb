@@ -652,7 +652,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   # :nocov:
   def self.send_notification_330_level(id, type, total_votes, shout_id)
-    deep_link = deep_link = "yero://shouts/" + shout_id
+    deep_link = "yero://shouts/" + shout_id
     data = { :alert => "You received " + total_votes.to_s + " votes on your" + ((type > 329) ? "reply!" : "shout!"), :type => type, :deep_link => deep_link}
   
     push = Parse::Push.new(data, "User_"+id.to_s)

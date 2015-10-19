@@ -256,10 +256,10 @@ class WhisperToday < ActiveRecord::Base
 					messages_array = Array.new
 					replies = WhisperReply.where(whisper_id: a.id).order("created_at DESC")
 					if replies.count > 0
-		              json.intro_message replies.first.message.blank? ? '' : replies.first.message
+		              json.last_message replies.first.message.blank? ? '' : replies.first.message
 		            else
 		              # :nocov:
-		              json.intro_message ''
+		              json.last_message ''
 		              # :nocov:
 		            end
 		            json.unread_message_count WhisperReply.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
@@ -272,10 +272,20 @@ class WhisperToday < ActiveRecord::Base
 	end
 
 
-	def chatting_replies(current_user)
+	def chatting_replies(current_user, page_number, per_page)
 		messages_array = Array.new
         WhisperReply.where(whisper_id: self.id).update_all(read: true)
 		replies = WhisperReply.where(whisper_id: self.id).order("created_at DESC")
+
+		result = Hash.new
+		if !page_number.nil? and !per_page.nil? and per_page > 0 and page_number >= 0
+	        pagination = Hash.new
+	        pagination['page'] = page_number - 1
+	        pagination['per_page'] = per_page
+	        pagination['total_count'] = replies.length
+	        result['pagination'] = pagination
+	        replies = Kaminari.paginate_array(replies).page(page_number).per(per_page) if !replies.nil?
+	    end
 		if replies.count > 0
           	replies.each do |r|
 	            new_item = {
@@ -286,11 +296,12 @@ class WhisperToday < ActiveRecord::Base
 	            }
 	            messages_array << new_item
           	end
-        else
         end
 
+        result['messages'] = messages_array
 
-        return messages_array
+
+        return result
 
 	end
 

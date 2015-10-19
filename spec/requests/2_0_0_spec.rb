@@ -1687,7 +1687,7 @@ describe 'V2.0.0' do
       	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shout_comments']).to eql 2
+      	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['id']).to eql shout_2.id
 
 
@@ -1934,8 +1934,9 @@ describe 'V2.0.0' do
 	    token = user_2.generate_token
 
       	# user_2 -> user_3 initial whisper
+      	# expect(WhisperNotification.send_message(3, user_2, nil, '2', "hi", user_2.first_name + " sent you a whisper")).to eql "true"
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(WhisperToday.count).to eql 1
@@ -1946,7 +1947,7 @@ describe 'V2.0.0' do
       	expect(WhisperSent.count).to eql 1
       	expect(RecentActivity.count).to eql 0
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql 'Cannot send more whispers'
@@ -1961,7 +1962,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi!'
 
       	token = user_4.generate_token
 
@@ -1975,7 +1976,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hii!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hii!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(WhisperToday.count).to eql 2
@@ -1988,15 +1989,15 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hi!'
 
       	BlockUser.create!(origin_user_id: 3, target_user_id: 2)
       	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
-      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['message']).to eql 'User blocked'
       	BlockUser.delete_all
@@ -2010,19 +2011,19 @@ describe 'V2.0.0' do
       	ua.save
       	ua_2.is_active = false
       	ua_2.save
-      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['message']).to eql 'Please upload a profile photo first'
       	ua_2.is_active = true
       	ua_2.save
 
 
-      	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get "api/conversations/2", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data'].count).to eql 1
       	expect(JSON.parse(response.body)['data'][0]['read']).to eql true
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	# expect(JSON.parse(response.body)['error']['message']).to eql true
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -2035,9 +2036,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 0
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hey!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hey!'
 
 
       	token = user_2.generate_token
@@ -2045,9 +2046,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hey!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hey!'
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(WhisperToday.count).to eql 2
       	expect(WhisperReply.count).to eql 4
@@ -2088,36 +2089,36 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi!'
 
       	token = user_2.generate_token
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi again!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(WhisperToday.count).to eql 2
       	expect(WhisperReply.count).to eql 5
       	expect(WhisperSent.count).to eql 2
       	expect(RecentActivity.count).to eql 0
 
-      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get "api/conversations", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi again!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi again!'
 
       	token = user_3.generate_token
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 2
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi again!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi again!'
 
 	    RecentActivity.delete_all
 	    WhisperReply.delete_all

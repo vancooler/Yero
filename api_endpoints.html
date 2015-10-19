@@ -496,7 +496,8 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
-  <span class="ruby-identifier"></span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">conversations: </span>
@@ -519,6 +520,12 @@
 
       <span class="ruby-string">}</span>
     <span class="ruby-string">]</span>
+    <span class="ruby-identifier">pagination: </span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+        <span class="ruby-identifier">total_count: </span><span class="ruby-string">34</span>
+      <span class="ruby-string">}</span>
   <span class="ruby-string">}</span>
 
             </pre>
@@ -537,6 +544,8 @@
           <div class="method-source-code" id="enter_venue-source">
             <pre>
 <span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">page: </span><span class="ruby-string">optional</span>
+  <span class="ruby-identifier">per_page: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-string">[</span>
     <span class="ruby-string">{</span>
@@ -547,6 +556,12 @@
 
     <span class="ruby-string">}</span>
   <span class="ruby-string">]</span>
+  <span class="ruby-identifier">pagination: </span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+      <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+      <span class="ruby-identifier">total_count: </span><span class="ruby-string">34</span>
+    <span class="ruby-string">}</span>
 <span class="ruby-keyword">Error Messages:</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
