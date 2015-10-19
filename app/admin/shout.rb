@@ -36,12 +36,15 @@ ActiveAdmin.register Shout do
     column "Author (ID)", :user
     
     column "Content", :body
-    column :allow_nearby
+    # column :allow_nearby
+    column "Exclusive", :allow_nearby do |s|
+      s.allow_nearby ? raw('<span class="status_tag no">No</span>') : raw('<span class="status_tag yes">Yes</span>')
+    end
     column :created_at
     column "Network", :venue
-    column "Location", :user do |s|
-      '[' + s.latitude.to_s + ', ' + s.longitude.to_s + ']'
-    end
+    # column "Location", :user do |s|
+    #   '[' + s.latitude.to_s + ', ' + s.longitude.to_s + ']'
+    # end
     column "Actions", :actions do |s|
       link_to("Delete", admin_remove_single_shout_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
     end
