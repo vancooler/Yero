@@ -279,7 +279,7 @@ class ShoutComment < ActiveRecord::Base
         json.longitude 		shout_comment.longitude
         json.timestamp 		shout_comment.created_at.to_i
         json.total_upvotes 	shout_comment.total_upvotes
-        json.venue_id       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
+        json.network_gimbal_key       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
         actions = ["downvote", "upvote"]
         if shout_comment_upvoted_ids.include? shout_comment.id
             actions = ["undo_upvote", "downvote"]
