@@ -172,7 +172,7 @@ class WhisperToday < ActiveRecord::Base
 
 	def self.conversations_related(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
-		whispers_1 = WhisperToday.where(:origin_user_id => user_id).where(origin_user_archieve: false).where.not(target_user_id: black_list).where.not(message_b: '').order("created_at DESC")
+		whispers_1 = WhisperToday.where(:origin_user_id => user_id).where(origin_user_archieve: false).where.not(target_user_id: black_list).order("created_at DESC")
 		whispers_2 = WhisperToday.where(:target_user_id => user_id).where(target_user_archieve: false).where.not(origin_user_id: black_list).order("created_at DESC")
 		return (whispers_1 | whispers_2).sort_by { |hsh| hsh.updated_at }.reverse
 	end
@@ -237,9 +237,9 @@ class WhisperToday < ActiveRecord::Base
 					actions = Array.new
 		            
 		            if can_reply
-		              actions << "reply"
-		              actions << "delete"
+		              actions << "chat"
 		            end
+	                actions << "delete"
 		            
 		            json.actions actions.uniq
 							

@@ -4,7 +4,7 @@ module V20150930
     before_action :authenticate_api_v2, only: [:create, :index, :update, :destroy, :show]
 
     def index
-      badge = WhisperNotification.unviewd_whisper_number(current_user.id)
+      # badge = WhisperNotification.unviewd_whisper_number(current_user.id)
       whispers = WhisperToday.conversations_related(current_user.id)
 
       page_number = nil
@@ -34,6 +34,55 @@ module V20150930
 
     def show
       whisper_id = params[:id]
+      if !/\A\d+\z/.match(whisper_id.to_s)
+        whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+      else
+        whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+      end
+      if whisper.blank?
+        error_obj = {
+          code: 404,
+          message: "Sorry, cannot find the whisper"
+        }
+        render json: error(error_obj, 'error')
+      else
+
+        if current_user.id != whisper.origin_user_id and current_user.id != whisper.target_user_id
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        elsif BlockUser.check_block(whisper.origin_user_id.to_i, whisper.target_user_id.to_i)
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        elsif whisper.photo_disabled(current_user.id)
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        else
+          page_number = 1
+          per_page = 10
+          per_page = params[:per_page].to_i if !params[:per_page].blank?
+          result = whisper.chatting_replies(current_user, page_number, per_page)
+          
+          whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
+          whisper_json = whispers_json.first
+
+          whisper_json[:messages] = result['messages']
+          render json: success(whisper_json, 'data', result['pagination'])
+        end
+      end
+    end
+
+
+    def show_messages
+      whisper_id = params[:conversation_id]
       if !/\A\d+\z/.match(whisper_id.to_s)
         whisper = WhisperToday.find_by_dynamo_id(whisper_id)
       else

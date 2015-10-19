@@ -291,10 +291,11 @@ Rails.application.routes.draw do
       put    'api/whispers/:id',                         to: 'whispers#update'
       delete 'api/whispers/:id',                         to: 'whispers#destroy'
 
-      get    'api/conversations',                             to: 'conversations#index'
-      get    'api/conversations/:id',                         to: 'conversations#show'
-      post   'api/conversations',                             to: 'conversations#create'
-      delete 'api/conversations/:id',                         to: 'conversations#destroy'
+      get    'api/conversations',                        to: 'conversations#index'
+      get    'api/conversations/:id',                    to: 'conversations#show'
+      get    'api/messages',                             to: 'conversations#show_messages'
+      post   'api/conversations',                        to: 'conversations#create'
+      delete 'api/conversations/:id',                    to: 'conversations#destroy'
 
       # Activity APIs 2
       get    'api/activities',                           to: 'activities#index'

@@ -1954,7 +1954,8 @@ describe 'V2.0.0' do
 
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
-      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['actions']).to eql ['delete']
 
       	token = user_3.generate_token
       	expect(WhisperToday.conversations_related(user_3.id).count).to eql 1
@@ -1972,7 +1973,15 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 404
 
+      	get "api/messages", {:token => token, :conversation_id => 2, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+
       	get "api/conversations/"+WhisperToday.first.dynamo_id, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	get "api/messages", {:token => token, :conversation_id => WhisperToday.first.dynamo_id, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
@@ -1997,6 +2006,11 @@ describe 'V2.0.0' do
       	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	get "api/messages", {:token => token, :conversation_id => 2, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
       	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['message']).to eql 'User blocked'
@@ -2007,6 +2021,11 @@ describe 'V2.0.0' do
       	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	get "api/messages", {:token => token, :conversation_id => 2, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
       	ua.is_active = true
       	ua.save
       	ua_2.is_active = false
@@ -2018,10 +2037,19 @@ describe 'V2.0.0' do
       	ua_2.save
 
 
-      	get "api/conversations/2", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get "api/conversations/2", {:token => token, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['unread_message_count']).to eql 0
+      	expect(JSON.parse(response.body)['data']['messages'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['messages'][0]['read']).to eql true
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 1
+
+
+      	get "api/messages", {:token => token, :conversation_id => 2, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data'].count).to eql 1
       	expect(JSON.parse(response.body)['data'][0]['read']).to eql true
+      	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 1
 
       	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200

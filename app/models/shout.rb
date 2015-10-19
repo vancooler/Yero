@@ -201,7 +201,7 @@ class Shout < ActiveRecord::Base
 	        timestamp: 		shout.created_at.to_i,
 	        total_upvotes: 	1,
 	        actions:        ["undo_upvote", "downvote"],
-	        venue_id:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+	        network_gimbal_key:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
 	        shout_comments: 0,
 	        author_id: shout.user_id,
 	        author_username: 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
@@ -325,7 +325,7 @@ class Shout < ActiveRecord::Base
         json.shout_comments ShoutComment.list(current_user, shout.id, nil, nil).length
         json.author_id		shout.user_id
         json.author_username 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
-        json.venue_id       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
+        json.network_gimbal_key       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
       end         
     end
     result = JSON.parse(result).delete_if(&:empty?)
