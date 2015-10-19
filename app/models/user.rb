@@ -307,6 +307,7 @@ class User < ActiveRecord::Base
       json.longitude (longitude.blank? ? 0 : longitude)
       json.discovery discovery
       json.exclusive exclusive
+      json.point point
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
       # json.joined_today is_connected
       # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
@@ -882,6 +883,7 @@ class User < ActiveRecord::Base
       updated_at:      self.updated_at,
       avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
       email:           self.email,
+      point:           self.point,
       instagram_id:    self.instagram_id.blank? ? '' : self.instagram_id,
       instagram_token: self.instagram_token.blank? ? '' : self.instagram_token,
       spotify_id:      self.spotify_id.blank? ? '' : self.spotify_id,
@@ -1499,6 +1501,7 @@ class User < ActiveRecord::Base
             json.username     user.username
             json.birthday       user.birthday
             json.gender         user.gender
+            json.point          user.point
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
             # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
             json.line_id      user.line_id.blank? ? '' : user.line_id
