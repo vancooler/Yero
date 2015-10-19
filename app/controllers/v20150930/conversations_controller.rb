@@ -70,7 +70,7 @@ module V20150930
           per_page = 10
           per_page = params[:per_page].to_i if !params[:per_page].blank?
           result = whisper.chatting_replies(current_user, page_number, per_page)
-          
+
           whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
 
@@ -135,21 +135,33 @@ module V20150930
       intro = params[:message].blank? ? "" : params[:message].to_s
       message = current_user.first_name + " sent you a whisper"   
       venue_id = nil
-      
-      result = WhisperNotification.send_message(target_id, current_user, venue_id, notification_type, intro, message)
 
-      if result == "true"
-        render json: success
+      target_user = User.find_user_by_unique(target_id)
+
+      if target_user
+        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, intro, message)
+
+        if result == "true"
+          render json: success
+        else
+          error_obj = {
+            code: 403,
+            message: result
+          }
+          if result != "User blocked" and result != "You are already friends"
+            error_obj[:external_message] = result 
+          end
+          render json: error(error_obj, 'error')
+        end  
       else
+        # :nocov:
         error_obj = {
-          code: 403,
-          message: result
+          code: 404,
+          message: 'Cannot find the user'
         }
-        if result != "User blocked" and result != "You are already friends"
-          error_obj[:external_message] = result 
-        end
         render json: error(error_obj, 'error')
-      end  
+        # :nocov:
+      end
     end
 
     def destroy

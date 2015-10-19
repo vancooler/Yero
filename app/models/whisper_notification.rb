@@ -515,7 +515,19 @@ class WhisperNotification < AWS::Record::HashModel
           end
           if chat_message and Rails.env == 'production'
             # :nocov:
-            chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            target_user = User.find_user_by_unique(target_id)
+            if target_user and target_user.pusher_private_online
+              channel = 'private-user-' + target_id.to_s
+              message_json = {
+                speaker_id: chat_message.speaker_id,
+                timestamp:  chat_message.created_at.to_i,
+                message:    chat_message.message.nil? ? '' : chat_message.message,
+                read:       chat_message.read
+              }
+              Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
+            else
+              chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            end
             # :nocov:
           end
 
@@ -539,7 +551,19 @@ class WhisperNotification < AWS::Record::HashModel
           
           if chat_message and Rails.env == 'production'
             # :nocov:
-            chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            target_user = User.find_user_by_unique(target_id)
+            if target_user and target_user.pusher_private_online
+              channel = 'private-user-' + target_id.to_s
+              message_json = {
+                speaker_id: chat_message.speaker_id,
+                timestamp:  chat_message.created_at.to_i,
+                message:    chat_message.message.nil? ? '' : chat_message.message,
+                read:       chat_message.read
+              }
+              Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
+            else
+              chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            end
             # :nocov:
           end
 
