@@ -478,6 +478,78 @@ class WhisperNotification < AWS::Record::HashModel
     end
   end
 
+
+
+  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message)
+    origin_id = current_user.id.to_s
+    # only users with active avatar can send whispers
+    if current_user.user_avatars.where(:is_active => true).count <= 0 
+      return "Please upload a profile photo first"
+    elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
+      return "User blocked"
+    else
+      conversation = WhisperToday.find_conversation(target_id.to_i, origin_id.to_i)
+      # check if whisper sent today
+      if conversation.nil?
+        whisper_just_sent = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => target_id.to_i)
+        if whisper_just_sent.blank?
+          if Rails.env == 'production'
+            # :nocov:
+            n = WhisperNotification.create_in_aws(target_id, origin_id, venue_id, notification_type, intro)
+            # :nocov:
+          else
+            n = WhisperNotification.new
+            n.id = 'aaa'+current_user.id.to_s
+          end
+          whisper = WhisperToday.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
+          chat_message = WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+          if n and notification_type == "2"
+            time = Time.now
+
+            record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
+            if record_found.count <= 0
+              WhisperSent.create_new_record(origin_id.to_i, target_id.to_i)
+            else
+              record_found.first.update(:whisper_time => time)
+            end
+          end
+          if chat_message and Rails.env == 'production'
+            # :nocov:
+            chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            # :nocov:
+          end
+
+          return "true"
+        else
+          return "Cannot send more whispers"
+        end
+      else
+        if conversation.message_b.blank? and current_user.id == conversation.origin_user_id
+          return "Cannot send more whispers"
+        else
+          if conversation.target_user_id == origin_id.to_i
+            conversation.message_b = intro
+          elsif conversation.origin_user_id == origin_id.to_i
+            conversation.message = intro
+          end
+          conversation.target_user_archieve = false
+          conversation.origin_user_archieve = false
+          conversation.save!
+          chat_message = WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
+          
+          if chat_message and Rails.env == 'production'
+            # :nocov:
+            chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+            # :nocov:
+          end
+
+          return "true"
+        end
+      end
+      
+    end
+  end
+
   # :nocov:
   def send_push_notification_to_target_user(message, paper_owner_id)
     # deep_link = (self.target_id.to_i == 3) ? 
@@ -524,7 +596,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   # :nocov:
   def self.send_notification_301(id, username, shout_id)
-    deep_link = deep_link = "yero://shouts/" + shout_id
+    deep_link = deep_link = "yero://shouts/" + shout_id.to_s
     data = { :alert => "@"+username+" replied to your shout", :type => 301, :deep_link => deep_link}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
@@ -541,7 +613,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   # :nocov:
   def self.send_notification_302(ids, username, shout_id)
-    deep_link = deep_link = "yero://shouts/" + shout_id
+    deep_link = deep_link = "yero://shouts/" + shout_id.to_s
     data = { :alert => "@"+username+" replied to the same shout", :type => 302, :deep_link => deep_link}
     channel_array = Array.new
     ids.each do |id|

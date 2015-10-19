@@ -1914,4 +1914,217 @@ describe 'V2.0.0' do
 	    User.delete_all
 	end
 
+	it "Chatting" do
+		birthday = (Time.now - 21.years)
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", username: "user_2", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+	    
+	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "user_3", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
+	    
+	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
+
+	    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", username: "user_5", email: "test5@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_5 = UserAvatar.create!(id: 4, user: user_5, is_active: true, order: 0)
+
+	    user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", username: "user_6", email: "test6@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_6 = UserAvatar.create!(id: 5, user: user_6, is_active: true, order: 0)
+
+	    token = user_2.generate_token
+
+      	# user_2 -> user_3 initial whisper
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(WhisperToday.count).to eql 1
+      	expect(WhisperToday.first.message).to eql 'Hi!'
+      	expect(WhisperToday.first.message_b).to eql ''
+      	expect(WhisperReply.count).to eql 1
+      	expect(WhisperReply.last.message).to eql 'Hi!'
+      	expect(WhisperSent.count).to eql 1
+      	expect(RecentActivity.count).to eql 0
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Cannot send more whispers'
+
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+
+      	token = user_3.generate_token
+      	expect(WhisperToday.conversations_related(user_3.id).count).to eql 1
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi!'
+
+      	token = user_4.generate_token
+
+      	# user_4 -> user_3 initial whisper
+
+      	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+
+      	get "api/conversations/"+WhisperToday.first.dynamo_id, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hii!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(WhisperToday.count).to eql 2
+      	expect(WhisperReply.count).to eql 2
+      	expect(WhisperSent.count).to eql 2
+      	expect(RecentActivity.count).to eql 0
+
+      	token = user_3.generate_token
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hii!'
+		expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hi!'
+
+      	BlockUser.create!(origin_user_id: 3, target_user_id: 2)
+      	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'User blocked'
+      	BlockUser.delete_all
+
+      	ua.is_active = false
+      	ua.save
+      	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	ua.is_active = true
+      	ua.save
+      	ua_2.is_active = false
+      	ua_2.save
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Please upload a profile photo first'
+      	ua_2.is_active = true
+      	ua_2.save
+
+
+      	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['read']).to eql true
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :intro => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	# expect(JSON.parse(response.body)['error']['message']).to eql true
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(WhisperToday.count).to eql 2
+      	expect(WhisperReply.count).to eql 3
+      	expect(WhisperSent.count).to eql 2
+      	expect(RecentActivity.count).to eql 0
+
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 0
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hey!'
+
+
+      	token = user_2.generate_token
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hey!'
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(WhisperToday.count).to eql 2
+      	expect(WhisperReply.count).to eql 4
+      	expect(WhisperSent.count).to eql 2
+      	expect(RecentActivity.count).to eql 0
+
+      	delete "api/conversations/33", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+
+      	delete "api/conversations/"+WhisperToday.find_conversation(3, 4).dynamo_id, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	ua_2.is_active = false
+      	ua_2.save
+      	delete "api/conversations/3", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	ua_2.is_active = true
+      	ua_2.save
+
+      	BlockUser.create!(origin_user_id: 2, target_user_id: 3)
+      	delete "api/conversations/3", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+      	BlockUser.delete_all
+
+
+      	delete "api/conversations/3", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+
+      	token = user_3.generate_token
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi!'
+
+      	token = user_2.generate_token
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :intro => "Hi again!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(WhisperToday.count).to eql 2
+      	expect(WhisperReply.count).to eql 5
+      	expect(WhisperSent.count).to eql 2
+      	expect(RecentActivity.count).to eql 0
+
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi again!'
+
+      	token = user_3.generate_token
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['intro_message']).to eql 'Hii!'
+		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 2
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['intro_message']).to eql 'Hi again!'
+
+	    RecentActivity.delete_all
+	    WhisperReply.delete_all
+	    WhisperToday.delete_all
+	    UserAvatar.delete_all
+	    User.delete_all
+
+
+	end
 end

@@ -39,6 +39,8 @@ class WhisperToday < ActiveRecord::Base
 		return (whispers_1 | whispers_2).sort_by { |hsh| hsh.updated_at }.reverse
 	end
 
+
+
 	def self.find_pending_whisper(target_user_id, origin_user_id)
 		whisper_a = WhisperToday.find_by_origin_user_id_and_target_user_id(origin_user_id, target_user_id)
 		whisper_b = WhisperToday.find_by_target_user_id_and_origin_user_id(origin_user_id, target_user_id)
@@ -62,19 +64,6 @@ class WhisperToday < ActiveRecord::Base
 			json.array! whispers do |a|
 		        if current_user 
 		        	if a.message_b.blank? # whispers without replies
-			        	# if !current_user.timezone_name.blank?
-				        #   hour = a.created_at.in_time_zone(current_user.timezone_name).hour
-				        #   if hour >= 5
-				        #     expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).tomorrow.beginning_of_day + 5.hours
-				        #   else
-				        #     expire_timestamp = a.created_at.in_time_zone(current_user.timezone_name).beginning_of_day + 5.hours            
-				        #   end
-
-				        #   json.expire_timestamp expire_timestamp.to_i
-				        # else
-
-				        #   json.expire_timestamp Time.now.to_i + 3600*24
-				        # end
 				        json.expire_timestamp (a.created_at + 12.hours).to_i
 				        json.initial_whisper true
 				    else # whispers with replies
@@ -129,26 +118,6 @@ class WhisperToday < ActiveRecord::Base
 							end
 						end
 					end
-					# sent = false
-					# if !origin_user.nil?
-					# 	array = WhisperSent.where(['whisper_time > ?', Time.now-48.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => origin_user.id)
-					# 	if !array.blank?
-					# 		sent = true
-					# 	end
-					# end
-					# if are_friends
-					# 	json.status 5
-					# elsif can_reply and can_handle
-					# 	json.status 4
-					# elsif can_handle
-					# 	json.status 3
-					# elsif can_reply
-					# 	json.status 2
-					# elsif sent
-					# 	json.status 1
-					# else
-					# 	json.status 0
-					# end
 
 					actions = Array.new
 		            if are_friends
@@ -198,6 +167,141 @@ class WhisperToday < ActiveRecord::Base
 
 		result = JSON.parse(result).delete_if(&:empty?)
 		return result
+	end
+
+
+	def self.conversations_related(user_id)
+		black_list = BlockUser.blocked_user_ids(user_id)
+		whispers_1 = WhisperToday.where(:origin_user_id => user_id).where(origin_user_archieve: false).where.not(target_user_id: black_list).where.not(message_b: '').order("created_at DESC")
+		whispers_2 = WhisperToday.where(:target_user_id => user_id).where(target_user_archieve: false).where.not(origin_user_id: black_list).order("created_at DESC")
+		return (whispers_1 | whispers_2).sort_by { |hsh| hsh.updated_at }.reverse
+	end
+
+	def self.find_conversation(target_user_id, origin_user_id)
+		whisper_a = WhisperToday.find_by_origin_user_id_and_target_user_id(origin_user_id, target_user_id)
+		whisper_b = WhisperToday.find_by_target_user_id_and_origin_user_id(origin_user_id, target_user_id)
+		if !whisper_a.nil?
+			return whisper_a
+		elsif !whisper_b.nil?
+			return whisper_b
+		else
+			return nil
+		end
+	end
+
+	def self.conversations_to_json(whispers, current_user)
+		result = Jbuilder.encode do |json|
+			json.array! whispers do |a|
+		        if current_user 
+		        	if a.message_b.blank? # whispers without replies
+				        json.expire_timestamp (a.created_at + 12.hours).to_i
+				        json.initial_whisper true
+				        if current_user.id == a.target_user_id
+				        	can_reply = true
+				        else
+							can_reply = false
+						end
+				    else # whispers with replies
+				    	json.initial_whisper false
+						can_reply = true
+				    end
+
+				    if FriendByWhisper.check_friends(a.target_user_id, a.origin_user_id) 
+				    	are_friends = true
+				    else
+				    	are_friends = false
+				    end
+					json.timestamp 					a.updated_at.to_i
+					json.notification_type  		a.whisper_type.to_i
+					json.whisper_id  				a.dynamo_id.blank? ? '' : a.dynamo_id
+
+
+					if a.target_user_id == current_user.id
+						if !a.origin_user_id.nil?
+							origin_user = User.find_user_by_unique(a.origin_user_id)
+							if !origin_user.nil? and !current_user.nil?
+								json.object_type  'user'
+								json.object origin_user.user_object(current_user)
+							end
+						end
+					else
+						if !a.target_user_id.nil?
+							origin_user = User.find_user_by_unique(a.target_user_id)
+							if !origin_user.nil? and !current_user.nil?
+								json.object_type  'user'
+								json.object origin_user.user_object(current_user)
+							end
+						end
+					end
+
+					actions = Array.new
+		            
+		            if can_reply
+		              actions << "reply"
+		              actions << "delete"
+		            end
+		            
+		            json.actions actions.uniq
+							
+					# if !a.venue_id.nil?
+					# 	venue = Venue.find_by_id(a.venue_id)
+					# 	if !venue.nil? 
+					# 		json.object_type  'venue'
+					# 		json.object venue.venue_object
+					# 	end
+					# end
+
+
+					# reply message array
+					messages_array = Array.new
+					replies = WhisperReply.where(whisper_id: a.id).order("created_at DESC")
+					if replies.count > 0
+		              json.intro_message replies.first.message.blank? ? '' : replies.first.message
+		            else
+		              # :nocov:
+		              json.intro_message ''
+		              # :nocov:
+		            end
+		            json.unread_message_count WhisperReply.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
+				end
+			end
+		end
+
+		result = JSON.parse(result).delete_if(&:empty?)
+		return result
+	end
+
+
+	def chatting_replies(current_user)
+		messages_array = Array.new
+        WhisperReply.where(whisper_id: self.id).update_all(read: true)
+		replies = WhisperReply.where(whisper_id: self.id).order("created_at DESC")
+		if replies.count > 0
+          	replies.each do |r|
+	            new_item = {
+	              speaker_id: r.speaker_id,
+	              timestamp: r.created_at.to_i,
+	              message: r.message.nil? ? '' : r.message,
+	              read: r.read
+	            }
+	            messages_array << new_item
+          	end
+        else
+        end
+
+
+        return messages_array
+
+	end
+
+	def archive_conversation(current_user)
+		WhisperToday.record_timestamps = false
+		if self.target_user_id == current_user.id
+			self.update(target_user_archieve: true)
+		elsif self.origin_user_id == current_user.id
+			self.update(origin_user_archieve: true)
+		end
+		WhisperToday.record_timestamps = true
 	end
 
 

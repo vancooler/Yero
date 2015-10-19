@@ -72,6 +72,11 @@
     <li ><a href="#method-i-api_users_block_user">POST api/block_users</a></li>
     <li ><a href="#method-i-api_users_delete_block_user">DELETE api/block_users/:id</a></li>
     <li ><a href="#method-i-api_users_delete_collection">DELETE api/collection</a></li>
+    <li ><a href="#method-i-api_conversation_create">POST api/conversations</a></li>
+    <li ><a href="#method-i-api_conversations">GET api/conversations</a></li>
+    <li ><a href="#method-i-api_conversations_id">GET api/conversations/:id</a></li>
+    <li ><a href="#method-i-api_conversation_delete">DELETE api/conversations/:id</a></li>
+
     <li ><a href="#method-i-api_users_generate_reset_email_verify">POST api/emails</a></li>
     <li ><a href="#method-i-api_friends">GET api/friends</a></li>
     <li ><a href="#method-i-api_friends_id">GET api/friends/:id</a></li>
@@ -439,6 +444,155 @@
           </div>
         </div>
       </div>
+
+
+
+      <div id="method-i-api_conversations_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/conversations [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ConversationsController.html#method-i-create">Conversations#create</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">message: </span><span class="ruby-string">required text</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"User blocked"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot send more whispers"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Cannot send more whispers"</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      
+
+     
+
+      <div id="method-i-api_conversations" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/conversations [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ConversationsController.html#method-i-index">Conversations#index</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier"></span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">conversations: </span>
+    <span class="ruby-string">[</span>
+      <span class="ruby-string">{</span>
+        <span class="ruby-identifier">initial_whisper: </span><span class="ruby-constant">TRUE</span>
+        <span class="ruby-identifier">expire_timestamp: </span><span class="ruby-string">145455947</span>
+        <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
+        <span class="ruby-identifier">whisper_id: </span><span class="ruby-string">"SsDF-34SFSF-SDFS3-SF"</span>
+        <span class="ruby-identifier">notification_type: </span><span class="ruby-string">2</span>
+        <span class="ruby-identifier">intro_message: </span><span class="ruby-string">"Hello"</span>
+        <span class="ruby-identifier">actions: </span>
+        <span class="ruby-string">[</span>
+          <span class="ruby-string">"reply"</span>   
+          <span class="ruby-string">"delete"</span>    
+        <span class="ruby-string">]</span>
+        <span class="ruby-identifier">object_type: </span><span class="ruby-string">"user"</span>
+        <span class="ruby-identifier">object: </span><span class="ruby-constant">StandardUserObject</span>
+        <span class="ruby-identifier">unread_message_count: </span><span class="ruby-string">Integer</span>
+
+      <span class="ruby-string">}</span>
+    <span class="ruby-string">]</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
+      <div id="method-i-api_conversations_id" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/conversations/:id [GET]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ConversationsController.html#method-i-show">Conversations#show</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-string">[</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">speaker_id: </span><span class="ruby-constant">Integer user id</span>
+      <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
+      <span class="ruby-identifier">message: </span><span class="ruby-string">"Hello"</span>
+      <span class="ruby-identifier">read: </span><span class="ruby-string">TRUE/FALSE</span>
+
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">]</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the whisper"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+    
+      
+       
+      <div id="method-i-api_conversations_delete" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/conversations/:id [DELETE]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ConversationsController.html#method-i-destroy">Conversations#destroy</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">TRUE</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">404</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, cannot find the whisper"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Sorry, you don't have access to it"</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+
 
       <div id="method-i-api_users_generate_reset_email_verify" class="method-detail ">
         <div class="method-heading">
@@ -1423,7 +1577,7 @@
 
       <div id="method-i-api_whispers_create" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/whispers [POST]</span>
+          <span class="method-name">api/whispers [POST] (Deprecated since 2015-Oct-18)</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
@@ -1468,7 +1622,7 @@
 
       <div id="method-i-api_whispers" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/whispers [GET]</span>
+          <span class="method-name">api/whispers [GET] (Deprecated since 2015-Oct-18)</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
@@ -1498,7 +1652,7 @@
 
       <div id="method-i-api_whispers_id" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/whispers/:id [GET]</span>
+          <span class="method-name">api/whispers/:id [GET] (Deprecated since 2015-Oct-18)</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
@@ -1554,7 +1708,7 @@
       
        <div id="method-i-api_whisper_whisper_request_state" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/whispers/:id [PUT]</span>
+          <span class="method-name">api/whispers/:id [PUT] (Deprecated since 2015-Oct-18)</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">
@@ -1592,7 +1746,7 @@
 
       <div id="method-i-api_whispers_decline_whisper_requests" class="method-detail ">
         <div class="method-heading">
-          <span class="method-name">api/whispers/:id [DELETE]</span>
+          <span class="method-name">api/whispers/:id [DELETE] (Deprecated since 2015-Oct-18)</span>
           <span class="method-click-advice">click to toggle details</span>
         </div>
         <div class="method-description">

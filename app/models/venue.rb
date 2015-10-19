@@ -31,7 +31,9 @@ class Venue < ActiveRecord::Base
     if !key.blank?
       if !/\A\d+\z/.match(key.to_s)
         beacon = Beacon.find_by_key(key.to_s)
-        venue = beacon.venue
+        if !beacon.nil?
+          venue = beacon.venue
+        end
       else
         venue = Venue.find_by_id(key)
       end
