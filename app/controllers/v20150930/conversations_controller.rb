@@ -200,11 +200,11 @@ module V20150930
         else
           if Rails.env == 'production'
             # :nocov:
-            WhisperNotification.delay.find_whisper(whisper.dynamo_id, 'declined')
+            # WhisperNotification.delay.find_whisper(whisper.dynamo_id, 'declined')
             whisper.archive_conversation(current_user)
             # :nocov:
           else
-            WhisperNotification.find_whisper(whisper.dynamo_id, 'declined')
+            # WhisperNotification.find_whisper(whisper.dynamo_id, 'declined')
             whisper.archive_conversation(current_user)
           end
           

@@ -295,6 +295,11 @@ describe 'V2.0.0' do
 		expect(ReportUserHistory.count).to eql 2
 		expect(ReportUserHistory.first.frequency).to eql 2
 
+		expect(ReportUserHistory.first.all_reporting_users.count).to eql 2
+		now = Time.now - 1.second
+		ReportUserHistory.mark_as_notified(4)
+		expect(ReportUserHistory.where("notified_at > ?", now).count).to eql 2
+
 		post 'api/report_user_histories', {:token => token, :user_id => 43, :type_id => 5, :reason => ''}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql false
@@ -2148,12 +2153,37 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi again!'
 
+      	delete 'api/collection', {:token => token, :object_type => "conversations", :ids => [WhisperToday.first.dynamo_id, WhisperToday.last.dynamo_id]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
+      	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+
+
 	    RecentActivity.delete_all
 	    WhisperReply.delete_all
 	    WhisperToday.delete_all
 	    UserAvatar.delete_all
 	    User.delete_all
 
+
+	end
+
+	it "Others" do
+		image = PresetGreetingImage.new
+		image.init
+		expect(image.is_active).to eql false
+
+		gm = GreetingMessage.new
+		gm.save!
+		gp = gm.greeting_posters.new
+		gp.save!
+		expect(gm.poster).to eql gp
+
+		GreetingPoster.delete_all
+		GreetingMessage.delete_all
 
 	end
 end

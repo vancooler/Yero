@@ -564,6 +564,14 @@ module V20150930
           whispers_delete = WhisperToday.where(dynamo_id: params[:ids].to_a).update_all(:declined => true)
           render json: success
 
+        when "conversations"
+          whispers = WhisperToday.where(dynamo_id: params[:ids].to_a)
+
+          whispers.each do |whisper|
+            whisper.archive_conversation(current_user)
+          end
+          render json: success
+
         when "block_users"
           block_users_delete = BlockUser.where(origin_user_id: current_user.id, target_user_id: params[:ids].to_a).delete_all
           render json: success
