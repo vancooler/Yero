@@ -96,7 +96,7 @@ class Shout < ActiveRecord::Base
 		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.delay.trigger(channel, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+			Pusher.delay.trigger(channel, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
 			# :nocov:
 		end
 		# users can access this shout
@@ -109,7 +109,7 @@ class Shout < ActiveRecord::Base
 			if Rails.env == 'production'
 				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels|
-					Pusher.delay.trigger(channels, 'Shout upvotes changed', {total_upvotes: current_upvotes, shout_id: self.id})
+					Pusher.delay.trigger(channels, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
 				end
 				# :nocov:
 			end
@@ -210,7 +210,7 @@ class Shout < ActiveRecord::Base
 			if Rails.env == 'production'
 				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels|
-					Pusher.delay.trigger(channels, 'Create shout', {shout: shout_json})
+					Pusher.delay.trigger(channels, 'create_shout_event', {shout: shout_json})
 				end
 				# :nocov:
 			end
@@ -380,7 +380,7 @@ class Shout < ActiveRecord::Base
 		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.delay.trigger(channel, 'Delete shout', {shout_id: shout_id})
+			Pusher.delay.trigger(channel, 'delete_shout_event', {shout_id: shout_id})
 			# :nocov:
 		end
 		# users can access this shout
@@ -393,7 +393,7 @@ class Shout < ActiveRecord::Base
 			if Rails.env == 'production'
 				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.delay.trigger(channels, 'Delete shout', {shout_id: shout_id})
+					Pusher.delay.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
 				end
 				# :nocov:
 			end
