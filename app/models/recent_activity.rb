@@ -74,7 +74,7 @@ class RecentActivity < ActiveRecord::Base
 					origin_user = User.find_user_by_unique(a.origin_user_id)
 					target_user = User.find_user_by_unique(a.target_user_id)
 					if !origin_user.nil? and !target_user.nil?
-						json.object_type  'user'
+						json.object_type  'User'
 						json.object origin_user.user_object(target_user)
 					end
 				elsif !a.contentable_type.nil? and !a.contentable_id.nil?
