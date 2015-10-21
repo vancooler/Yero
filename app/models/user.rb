@@ -1652,11 +1652,11 @@ class User < ActiveRecord::Base
     end
   end
 
-  def pusher_delete_photo_event
+  def pusher_delete_photo_event(avatar_id)
     channel = "private-user-"+self.id.to_s
-    data = self.user_avatar_object
-    event = "Delete photo"
-    Pusher.trigger(channel, event, {data: data})
+    # data = self.user_avatar_object
+    event = "delete_photo_event"
+    Pusher.trigger(channel, event, {avatar_id: avatar_id})
   end
 
 end

@@ -8,6 +8,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
   controller do
     def disable_single_image
       ua = UserAvatar.find_by_id(params[:id])
+      avatar_id = ua.id
       if !ua.nil?
         ua.is_active = false
         if ua.save! and !ua.user_id.nil?
@@ -27,7 +28,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
     
             if u.pusher_private_online
-              u.pusher_delete_photo_event
+              u.pusher_delete_photo_event(avatar_id)
             else
               WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
             end
