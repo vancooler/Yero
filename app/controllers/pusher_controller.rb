@@ -2,6 +2,7 @@ class PusherController < ApplicationController
   def webhook_channel_exist
     webhook = Pusher.webhook(request)
     if webhook.valid?
+      puts webhook.events.count.to_s + ' events'
       webhook.events.each do |event|
         case event["name"]
         when 'channel_occupied'
@@ -12,7 +13,8 @@ class PusherController < ApplicationController
             if channel_array.count > 1 and channel_array[1].to_i > 0
               user = User.find_user_by_unique(channel_array[1].to_i)
               if !user.nil?
-                user.pusher_private_online
+                user.pusher_private_online = true
+                user.save
               end
             end
           end
@@ -24,7 +26,8 @@ class PusherController < ApplicationController
             if channel_array.count > 1 and channel_array[1].to_i > 0
               user = User.find_user_by_unique(channel_array[1].to_i)
               if !user.nil?
-                user.pusher_private_offline
+                user.pusher_private_offline = false
+                user.save
               end
             end
           end
