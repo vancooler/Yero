@@ -148,7 +148,7 @@ module V20150930
             code: 403,
             message: result
           }
-          if result != "User blocked" and result != "You are already friends"
+          if result != "User blocked"
             error_obj[:external_message] = result 
           end
           render json: error(error_obj, 'error')
