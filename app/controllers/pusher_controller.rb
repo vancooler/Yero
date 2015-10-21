@@ -26,7 +26,7 @@ class PusherController < ApplicationController
             if channel_array.count > 1 and channel_array[1].to_i > 0
               user = User.find_user_by_unique(channel_array[1].to_i)
               if !user.nil?
-                user.pusher_private_offline = false
+                user.pusher_private_online = false
                 user.save
               end
             end
