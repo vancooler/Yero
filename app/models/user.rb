@@ -28,7 +28,6 @@ class User < ActiveRecord::Base
   reverse_geocoded_by :latitude, :longitude
 
   # mount_uploader :avatar, AvatarUploader
-  before_save   :update_activity
 
   validates :email, :birthday, :first_name, :gender, presence: true
   validates :email, :email => true
@@ -262,10 +261,6 @@ class User < ActiveRecord::Base
     return result_users
   end
 
-  # TODO: check if used anywhere, replaced by last_active
-  def last_activity
-    self.activities.last
-  end
 
   # user's profile photo
   def default_avatar
@@ -361,9 +356,7 @@ class User < ActiveRecord::Base
   # keeps track of the latest activity of a user 
   # 
   # TODO: Check if used anywhere replaced by last_active
-  def update_activity
-    self.last_activity = Time.now
-  end
+
 
   # def send_network_open_notification
   #   WhisperNotification.send_nightopen_notification(self.id) 
@@ -875,7 +868,6 @@ class User < ActiveRecord::Base
       username:        self.username,
       last_active:     self.last_active.nil? ? 0 : self.last_active.to_i,
       # last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
-      # last_activity:  self.last_activity,
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:          self.gender,
       birthday:        (self.id != 0 ? self.birthday : ''),
