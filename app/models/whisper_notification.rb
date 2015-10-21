@@ -536,7 +536,7 @@ class WhisperNotification < AWS::Record::HashModel
           return "Cannot send more whispers"
         end
       else
-        if conversation.message_b.blank? and current_user.id == conversation.origin_user_id
+        if conversation.whisper_replies.count < 2 and current_user.id == conversation.origin_user_id
           return "Cannot send more whispers"
         else
           if conversation.target_user_id == origin_id.to_i

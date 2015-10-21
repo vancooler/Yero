@@ -193,7 +193,7 @@ class WhisperToday < ActiveRecord::Base
 		result = Jbuilder.encode do |json|
 			json.array! whispers do |a|
 		        if current_user 
-		        	if a.message_b.blank? # whispers without replies
+		        	if a.whisper_replies.length < 2 # whispers without replies
 				        json.expire_timestamp (a.created_at + 12.hours).to_i
 				        json.initial_whisper true
 				        if current_user.id == a.target_user_id
@@ -318,14 +318,15 @@ class WhisperToday < ActiveRecord::Base
 
 	def self.expire
 		# introduction whispers
-		expire_array = WhisperToday.where(['created_at < ?', Time.now-12.hours]).where(:message_b => '')
+		expire_array = WhisperToday.where('whisper_todays.created_at < ?', Time.now-12.hours).joins(:whisper_replies).group("whisper_todays.id").having("count(whisper_replies.id) < ?",2)
+		# expire_array = WhisperToday.includes(:whisper_replies).where(['created_at < ?', Time.now-12.hours]).where.not(:whisper_replies => {:count.gte => 2})
 		whisper_ids = expire_array.map(&:id)
 		WhisperReply.where(whisper_id: whisper_ids).delete_all
-		expire_array.delete_all
+		WhisperToday.where(id: whisper_ids).delete_all
 		# replied whispers
-		expire_array = WhisperToday.where(['updated_at < ?', Time.now-48.hours]).where("message_b != ?", '')
-		whisper_ids = expire_array.map(&:id)
-		WhisperReply.where(whisper_id: whisper_ids).delete_all
-		expire_array.delete_all
+		# expire_array = WhisperToday.where(['updated_at < ?', Time.now-48.hours]).where("message_b != ?", '')
+		# whisper_ids = expire_array.map(&:id)
+		# WhisperReply.where(whisper_id: whisper_ids).delete_all
+		# expire_array.delete_all
 	end
 end

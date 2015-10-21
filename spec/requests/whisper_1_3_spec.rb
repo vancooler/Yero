@@ -675,14 +675,14 @@ describe 'Whisper' do
 	      	expect(response.status).to eql 200
 	      	expect(JSON.parse(response.body)['success']).to eql true
 
-	      	whisper = WhisperToday.first
-	      	whisper.created_at = Time.now - 48.hours - 1.second
-	      	whisper.updated_at = Time.now - 48.hours - 1.second
-	      	whisper.save!
+	      	# whisper = WhisperToday.first
+	      	# whisper.created_at = Time.now - 48.hours - 1.second
+	      	# whisper.updated_at = Time.now - 48.hours - 1.second
+	      	# whisper.save!
 
-	      	WhisperToday.expire
-	      	expect(WhisperToday.count).to eql 0
-	      	expect(WhisperReply.count).to eql 0
+	      	# WhisperToday.expire
+	      	# expect(WhisperToday.count).to eql 0
+	      	# expect(WhisperReply.count).to eql 0
 
 	      	WhisperReply.delete_all
 	      	WhisperToday.delete_all
