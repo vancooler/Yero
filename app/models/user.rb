@@ -1652,14 +1652,6 @@ class User < ActiveRecord::Base
     end
   end
 
-  def pusher_private_online
-    self.update(pusher_private_online: true)
-  end
-
-  def pusher_private_offline
-    self.update(pusher_private_online: false)
-  end
-
   def pusher_delete_photo_event
     channel = "private-user-"+self.id.to_s
     data = self.user_avatar_object
