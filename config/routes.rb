@@ -242,10 +242,8 @@ Rails.application.routes.draw do
 # 
 
   constraints DomainConstraint.new(['api.yero.co', 'localhost', 'devapi.yero.co', 'www.example.com', 'purpleoctopus-dev.herokuapp.com', 'dev.yero.co']) do
-    scope module "V20150930" do 
-      post    'api/pusher-channels',                       to: 'pusher#webhook_channel_exist'
-    end
     api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
+      post    'api/pusher-channels',                       to: 'pusher#webhook_channel_exist', module: "V20150930"
       # Pusher
       post    'api/pusher-auth',                         to: 'pusher#auth'
 
