@@ -289,6 +289,7 @@ class WhisperToday < ActiveRecord::Base
 		if replies.count > 0
           	replies.each do |r|
 	            new_item = {
+	              id: r.id,
 	              speaker_id: r.speaker_id,
 	              timestamp: r.created_at.to_i,
 	              message: r.message.nil? ? '' : r.message,

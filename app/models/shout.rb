@@ -360,7 +360,9 @@ class Shout < ActiveRecord::Base
   	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'Shout').map(&:reporter_id)
   	return_user_ids = return_user_ids - black_list - content_black_list
 
-  	return return_user_ids
+  	# only user pusher for online users
+  	online_users_ids = User.where(id: return_user_ids).where(pusher_private_online: true)
+  	return online_users_ids
   end
 
   def in_shout_users_id
