@@ -196,7 +196,7 @@ class WhisperToday < ActiveRecord::Base
 		        	if a.whisper_replies.length < 2 # whispers without replies
 				        json.expire_timestamp (a.created_at + 12.hours).to_i
 				        json.initial_whisper true
-				        if current_user.id == a.target_user_id
+				        if current_user.id == a.target_user_id and a.whisper_replies.length == 1
 				        	can_reply = true
 				        else
 							can_reply = false
@@ -213,7 +213,7 @@ class WhisperToday < ActiveRecord::Base
 				    end
 					json.timestamp 					a.updated_at.to_i
 					json.notification_type  		a.whisper_type.to_i
-					json.whisper_id  				a.dynamo_id.blank? ? '' : a.dynamo_id
+					json.conversation_id  				a.dynamo_id.blank? ? '' : a.dynamo_id
 
 
 					if a.target_user_id == current_user.id
@@ -290,6 +290,7 @@ class WhisperToday < ActiveRecord::Base
           	replies.each do |r|
 	            new_item = {
 	              id: r.id,
+	              conversation_id: r.whisper.dynamo_id.blank? ? '' : r.whisper.dynamo_id,
 	              speaker_id: r.speaker_id,
 	              timestamp: r.created_at.to_i,
 	              message: r.message.nil? ? '' : r.message,
