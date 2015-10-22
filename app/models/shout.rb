@@ -361,7 +361,7 @@ class Shout < ActiveRecord::Base
   	return_user_ids = return_user_ids - black_list - content_black_list
 
   	# only user pusher for online users
-  	online_users_ids = User.where(id: return_user_ids).where(pusher_private_online: true)
+  	online_users_ids = User.where(id: return_user_ids).where(pusher_private_online: true).map(&:id)
   	return online_users_ids
   end
 
