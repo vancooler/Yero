@@ -755,9 +755,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][1]['id']).to eql 4
-      	expect(JSON.parse(response.body)['data']['users'][1]['whisper_sent']).to eql false
-      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql ['whisper']
+      	expect(JSON.parse(response.body)['data']['users'][0]['id']).to eql 4
+      	expect(JSON.parse(response.body)['data']['users'][0]['whisper_sent']).to eql false
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['whisper']
 
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -782,7 +782,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql []
+      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql []
 
 
       	whisper_time = WhisperSent.first.whisper_time
@@ -1092,9 +1092,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][1]['id']).to eql 4
-      	expect(JSON.parse(response.body)['data']['users'][1]['whisper_sent']).to eql false
-      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql ['whisper']
+      	expect(JSON.parse(response.body)['data']['users'][0]['id']).to eql 4
+      	expect(JSON.parse(response.body)['data']['users'][0]['whisper_sent']).to eql false
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['whisper']
 
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1119,7 +1119,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql []
+      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql []
 
 
       	whisper_time = WhisperSent.first.whisper_time
