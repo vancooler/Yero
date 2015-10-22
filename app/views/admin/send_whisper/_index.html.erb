@@ -1,7 +1,7 @@
 <% content_for :title, "Yero" %>
 <%=notice%>
 <%=form_tag '/send-test-whisper', multipart: true do%>
-<h3>Please choose a csv file to import: </h3>
+<h3>Send whisper: </h3>
 <%#=file_field_tag :csv_file, accept: 'text/csv', required: true%>
 <%=text_field_tag :origin_user_id, nil, placeholder: "Origin User ID", required: true%><br><br>
 <%=text_field_tag :target_user_id, nil, placeholder: "Target User ID", required: true%><br><br>
