@@ -177,20 +177,19 @@ class ShoutComment < ActiveRecord::Base
 
 		# users can access this shout
 		user_channels = Array.new
+		# :nocov:
 		user_ids.each do |id|
 			channel = 'private-user-' + id.to_s
 			user_channels << channel
 		end
 		if !user_channels.empty?
 			if Rails.env == 'production'
-				
-				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels| 
 					Pusher.delay.trigger(channels, 'increase_shout_comment_event', {shout_id: shout_id})
 				end
-				# :nocov:
 			end
 		end
+		# :nocov:
 
 
 		# notification to OP and other repliers
@@ -330,19 +329,19 @@ class ShoutComment < ActiveRecord::Base
 		end
 		# users can access this shout
 		user_channels = Array.new
+		# :nocov:	
 		user_ids.each do |id|
 			channel = 'private-user-' + id.to_s
 			user_channels << channel
 		end
 		if !user_channels.empty?
 			if Rails.env == "production"
-				# :nocov:	
 				user_channels.in_groups_of(10, false) do |channels| 
 					Pusher.delay.trigger(channels, 'decrease_shout_comment_event', {shout_id: shout_id})
 				end
-				# :nocov:
 			end
 		end
+		# :nocov:
 		return true
 	else
 		# :nocov:

@@ -63,6 +63,11 @@ class User < ActiveRecord::Base
     user_avatars.find_by(order: 0)
   end
 
+  # default point as 100
+  def points_to_display
+    100+self.point
+  end
+
   # Boolean: Checks if you are in the same venue as the other person
   # 
   #     @params:
@@ -302,7 +307,7 @@ class User < ActiveRecord::Base
       json.longitude (longitude.blank? ? 0 : longitude)
       json.discovery discovery
       json.exclusive exclusive
-      json.point point
+      json.point self.points_to_display
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
       # json.joined_today is_connected
       # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
@@ -536,6 +541,23 @@ class User < ActiveRecord::Base
     if !whisper_sent and !are_friends and !can_accept_delete and !can_reply and !(pending_whispers.include? user.id)
       actions << "whisper"
     end
+
+    return actions.uniq
+  end
+
+  # gather actions
+  def collect_conversation_actions(can_reply_whispers, sent_whispers, user, pending_whispers)
+    actions = Array.new
+    if can_reply_whispers.include? user.id
+      actions << "chat"
+    end
+
+    if !(sent_whispers.include? user.id) and !(can_reply_whispers.include? user.id) and !(pending_whispers.include? user.id)
+      actions << "whisper"
+    end
+    # if (can_reply_whispers.include? user.id) or (pending_whispers.include? user.id)
+    #   actions << "delete"
+    # end
 
     return actions.uniq
   end
@@ -875,7 +897,7 @@ class User < ActiveRecord::Base
       updated_at:      self.updated_at,
       avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
       email:           self.email,
-      point:           self.point,
+      point:           self.points_to_display,
       instagram_id:    self.instagram_id.blank? ? '' : self.instagram_id,
       instagram_token: self.instagram_token.blank? ? '' : self.instagram_token,
       spotify_id:      self.spotify_id.blank? ? '' : self.spotify_id,
@@ -1368,8 +1390,7 @@ class User < ActiveRecord::Base
       # collect all whispers sent 
       # TODO: use model to do it
       whispers_sent = WhisperNotification.collect_whispers(self)
-      whispers_can_reply = WhisperNotification.collect_whispers_can_reply(self)
-      whispers_can_accept_delete = WhisperNotification.collect_whispers_can_accept_delete(self)
+      whispers_can_reply = WhisperNotification.collect_conversations_can_reply(self)
       pending_whispers = WhisperToday.pending_whispers(self.id)
       # colect all users with "like"
       # followees = self.followees(User)
@@ -1446,41 +1467,22 @@ class User < ActiveRecord::Base
 
             actions_time_a = Time.now
             json.whisper_sent whispers_sent.include? user.id.to_i
-            # are_friends = (friends.map(&:id).include? user.id)
-            whisper_sent = (whispers_sent.include? user.id.to_i)
-            can_reply = (whispers_can_reply.include?  user.id.to_i)
-            can_accept_delete = (whispers_can_accept_delete.include?  user.id.to_i)
-            actions = self.collect_whisper_actions(false, can_reply, can_accept_delete, whisper_sent, user, pending_whispers)
+            actions = self.collect_conversation_actions(whispers_can_reply, whispers_sent, user, pending_whispers)
             json.actions actions
             actions_time_b = Time.now
             actions_time += (actions_time_b - actions_time_a)
             
             whispers_time_a = Time.now
-            whisper_hash = self.collect_whisper_message_history(user, actions)
-            if !whisper_hash['whisper_id'].nil?
-                json.whisper_id whisper_hash['whisper_id']
-            end
-            if !whisper_hash['messages_array'].nil?
-                json.messages_array whisper_hash['messages_array']
-            end
+            # whisper_hash = self.collect_whisper_message_history(user, actions)
+            # if !whisper_hash['whisper_id'].nil?
+            #     json.whisper_id whisper_hash['whisper_id']
+            # end
+            # if !whisper_hash['messages_array'].nil?
+            #     json.messages_array whisper_hash['messages_array']
+            # end
             whispers_time_b = Time.now
             whispers_time += (whispers_time_b - whispers_time_a)
             
-
-            # if followees.blank?
-            #   json.like false
-            # else
-            #   json.like followees.map(&:id).include? user.id
-            # end
-
-            # if friends.blank?
-            #   json.friend false
-            # else
-            #   json.friend friends.map(&:id).include? user.id
-            # end
-
-            
-
             json.same_venue_badge          same_venue_user_ids.include? user.id
 
             json.different_venue_badge          different_venue_user_ids.include? user.id
@@ -1493,7 +1495,7 @@ class User < ActiveRecord::Base
             json.username     user.username
             json.birthday       user.birthday
             json.gender         user.gender
-            json.point          user.point
+            json.point          user.points_to_display
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
             # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
             json.line_id      user.line_id.blank? ? '' : user.line_id
@@ -1652,11 +1654,13 @@ class User < ActiveRecord::Base
     end
   end
 
+  # :nocov:
   def pusher_delete_photo_event(avatar_id)
     channel = "private-user-"+self.id.to_s
     # data = self.user_avatar_object
     event = "delete_photo_event"
     Pusher.trigger(channel, event, {avatar_id: avatar_id})
   end
+  # :nocov:
 
 end

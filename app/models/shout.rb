@@ -101,19 +101,19 @@ class Shout < ActiveRecord::Base
 		end
 		# users can access this shout
 		user_channels = Array.new
+		# :nocov:
 		user_ids.each do |id|
 			channel = 'private-user-' + id.to_s
 			user_channels << channel
 		end
 		if !user_channels.empty?
 			if Rails.env == 'production'
-				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels|
 					Pusher.delay.trigger(channels, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
 				end
-				# :nocov:
 			end
 		end
+		# :nocov:
 	end
   	return {result: result, event: event, data: data}
 
@@ -187,12 +187,6 @@ class Shout < ActiveRecord::Base
 	  	shout_id = shout.id
 	  	shout.change_vote(current_user, 1)
 	  	
-		# users can access this shout
-		user_channels = Array.new
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
 		shout_json = {
 			id: 			shout.id,
 	        body: 			shout.body,
@@ -206,15 +200,21 @@ class Shout < ActiveRecord::Base
 	        author_id: shout.user_id,
 	        author_username: 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
 		}
+		# users can access this shout
+		user_channels = Array.new
+		# :nocov:
+		user_ids.each do |id|
+			channel = 'private-user-' + id.to_s
+			user_channels << channel
+		end
 		if !user_channels.empty?
 			if Rails.env == 'production'
-				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels|
 					Pusher.delay.trigger(channels, 'create_shout_event', {shout: shout_json})
 				end
-				# :nocov:
 			end
 		end
+		# :nocov:
 	  	return shout_json
     else
     	# :nocov:
@@ -387,19 +387,19 @@ class Shout < ActiveRecord::Base
 		end
 		# users can access this shout
 		user_channels = Array.new
+		# :nocov:
 		user_ids.each do |id|
 			channel = 'private-user-' + id.to_s
 			user_channels << channel
 		end
 		if !user_channels.empty?
 			if Rails.env == 'production'
-				# :nocov:
 				user_channels.in_groups_of(10, false) do |channels| 
 					Pusher.delay.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
 				end
-				# :nocov:
 			end
 		end
+		# :nocov:
 		return true
 	else
 		# :nocov:

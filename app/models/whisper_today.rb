@@ -136,14 +136,6 @@ class WhisperToday < ActiveRecord::Base
 		            # end
 
 		            json.actions actions.uniq
-							
-					if !a.venue_id.nil?
-						venue = Venue.find_by_id(a.venue_id)
-						if !venue.nil? 
-							json.object_type  'venue'
-							json.object venue.venue_object
-						end
-					end
 
 
 					# reply message array
@@ -206,11 +198,6 @@ class WhisperToday < ActiveRecord::Base
 						can_reply = true
 				    end
 
-				    if FriendByWhisper.check_friends(a.target_user_id, a.origin_user_id) 
-				    	are_friends = true
-				    else
-				    	are_friends = false
-				    end
 					json.timestamp 					a.updated_at.to_i
 					json.notification_type  		a.whisper_type.to_i
 					json.conversation_id  				a.dynamo_id.blank? ? '' : a.dynamo_id

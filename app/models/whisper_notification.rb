@@ -301,6 +301,13 @@ class WhisperNotification < AWS::Record::HashModel
     return (array_a | array_b)
   end
 
+  def self.collect_conversations_can_reply(current_user)
+    conversation_ids = WhisperToday.where("whisper_todays.origin_user_id = ?", current_user.id).joins(:whisper_replies).group("whisper_todays.id").having("count(whisper_replies.id) > ?",1).map(&:id)
+    conversations_1 = WhisperToday.where(id: conversation_ids).map(&:target_user_id)
+    conversations_2 = WhisperToday.where("target_user_id = ?", current_user.id).map(&:origin_user_id)
+    return (conversations_1 | conversations_2)
+  end
+
   def self.collect_whispers_can_accept_delete(current_user)
     array = WhisperToday.where(target_user_id: current_user.id).where(accepted: false).where(declined: false).map(&:origin_user_id)
     

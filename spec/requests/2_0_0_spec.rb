@@ -757,7 +757,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['users'][1]['id']).to eql 4
       	expect(JSON.parse(response.body)['data']['users'][1]['whisper_sent']).to eql false
-      	expect(JSON.parse(response.body)['data']['users'][1]['actions'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql ['whisper']
 
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -782,7 +782,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 0
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql []
 
 
       	whisper_time = WhisperSent.first.whisper_time
@@ -798,7 +798,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['users'][0]['id']).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -815,7 +815,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['whispers'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'][0]['message']).to eql 'Hi!'
-      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions']).to eql ['reply', 'delete', 'accept']
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 1
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
@@ -846,7 +846,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['whispers'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'][0]['message']).to eql 'Hello!'
-      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions']).to eql ['accept', 'delete']
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 0
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
@@ -854,7 +854,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
 
       	# user_2 -> user_3 reply again
@@ -864,7 +864,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
 
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -882,7 +882,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['whispers'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'][0]['message']).to eql 'Hello!'
-      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions']).to eql ['reply', 'delete']
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 1
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
@@ -917,7 +917,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 0
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
       	get 'api/whispers/aaa2asdf?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -979,7 +979,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['whispers'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'].count).to eql 3
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'][0]['message']).to eql 'Hello Again!'
-      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions']).to eql ['reply', 'delete', 'accept']
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 1
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
@@ -987,9 +987,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 3
-      	expect(JSON.parse(response.body)['data']['users'][0]['messages_array'].count).to eql 3
-      	expect(JSON.parse(response.body)['data']['users'][0]['whisper_id']).to eql 'aaa2'
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
 
 
@@ -1023,7 +1021,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['whisper']
 
 
 
@@ -1040,7 +1038,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 0
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql []
 
       	puts "TEEEEEE"
       	puts user_2.people_list_2_0(-1, "A", 0, 54, nil, 0, 65, true, 0, 7).inspect
@@ -1096,7 +1094,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['users'][1]['id']).to eql 4
       	expect(JSON.parse(response.body)['data']['users'][1]['whisper_sent']).to eql false
-      	expect(JSON.parse(response.body)['data']['users'][1]['actions'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['users'][1]['actions']).to eql ['whisper']
 
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1121,7 +1119,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 0
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql []
 
 
       	whisper_time = WhisperSent.first.whisper_time
@@ -1133,14 +1131,14 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['chat']
 
       	get 'api/whispers/aaa2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['whisper_id']).to eql 'aaa2'
       	expect(JSON.parse(response.body)['data']['intro_message']).to eql "Hi!"
-      	expect(JSON.parse(response.body)['data']['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['actions']).to eql ['reply', 'delete', 'accept']
       	expect(JSON.parse(response.body)['data']['messages_array'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['messages_array'][0]['speaker_id']).to eql 2
       	expect(JSON.parse(response.body)['data']['messages_array'][0]['message']).to eql 'Hi!'
@@ -1151,7 +1149,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['whispers'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['whispers'][0]['messages_array'][0]['message']).to eql 'Hi!'
-      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions'].count).to eql 3
+      	expect(JSON.parse(response.body)['data']['whispers'][0]['actions']).to eql ['reply', 'delete', 'accept']
       	expect(JSON.parse(response.body)['data']['badge_number']['whisper_number']).to eql 1
       	expect(JSON.parse(response.body)['data']['badge_number']['friend_number']).to eql 0
 
@@ -1171,7 +1169,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['whisper']
 
       	get 'api/whispers?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1217,7 +1215,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 2
-      	expect(JSON.parse(response.body)['data']['users'][0]['actions'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['users'][0]['actions']).to eql ['whisper']
       	expect(WhisperToday.count).to eql 0
       	expect(WhisperReply.count).to eql 0
 
@@ -1968,7 +1966,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi!'
 
       	token = user_4.generate_token
 
@@ -2003,9 +2001,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hi!'
 
       	BlockUser.create!(origin_user_id: 3, target_user_id: 2)
       	get "api/conversations/2", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -2069,9 +2067,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 0
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hey!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hey!'
 
 
       	token = user_2.generate_token
@@ -2079,7 +2077,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hey!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hey!'
 
       	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -2122,9 +2120,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi!'
 
       	token = user_2.generate_token
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -2142,16 +2140,16 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi again!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi again!'
 
       	token = user_3.generate_token
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']).to eql 'Hii!'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 2
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']).to eql 'Hi again!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi again!'
 
       	delete 'api/collection', {:token => token, :object_type => "conversations", :ids => [WhisperToday.first.dynamo_id, WhisperToday.last.dynamo_id]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
