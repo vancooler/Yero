@@ -2050,8 +2050,8 @@ describe 'V2.0.0' do
 
       	get "api/messages", {:token => token, :conversation_id => 2, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
-      	expect(JSON.parse(response.body)['data'].count).to eql 1
-      	expect(JSON.parse(response.body)['data'][0]['read']).to eql true
+      	expect(JSON.parse(response.body)['data']['messages'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['messages'][0]['read']).to eql true
       	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 1
 
       	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}

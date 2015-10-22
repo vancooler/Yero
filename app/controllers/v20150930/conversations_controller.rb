@@ -121,7 +121,11 @@ module V20150930
           per_page = params[:per_page].to_i if !params[:per_page].blank?
 
           result = whisper.chatting_replies(current_user, page_number, per_page)
-          render json: success(result['messages'], 'messages', result['pagination'])
+          response_data = {
+            # badge_number: badge,
+            messages: result['messages']
+          }
+          render json: success(response_data, 'data', result['pagination'])
         end
       end
     end
