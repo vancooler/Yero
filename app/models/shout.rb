@@ -157,7 +157,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, venue_id)
+  def self.create_shout(current_user, body, venue_id, anonymous)
   	shout = Shout.new
   	venue = Venue.find_venue_by_unique(venue_id)
   	if venue.nil?
@@ -179,6 +179,7 @@ class Shout < ActiveRecord::Base
   	end
   	shout.body = body
   	shout.user_id = current_user.id
+  	shout.anonymous = anonymous
   	result = shout.save
   	if result
   		current_user.update(point: current_user.point+2)
@@ -190,6 +191,7 @@ class Shout < ActiveRecord::Base
 		shout_json = {
 			id: 			shout.id,
 	        body: 			shout.body,
+	        anonymous: 		shout.anonymous,
 	        latitude: 		shout.latitude,
 	        longitude: 		shout.longitude,
 	        timestamp: 		shout.created_at.to_i,
@@ -310,6 +312,7 @@ class Shout < ActiveRecord::Base
       json.array! shouts do |shout|
         json.id 			shout.id
         json.body 			shout.body
+        json.anonymous 		shout.anonymous
         json.latitude 		shout.latitude
         json.longitude 		shout.longitude
         json.timestamp 		shout.created_at.to_i

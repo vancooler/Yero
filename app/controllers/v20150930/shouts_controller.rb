@@ -28,6 +28,7 @@ module V20150930
         shout_json = {
           id:             shout.id,
           body:           shout.body,
+          anonymous:      shout.anonymous,
           latitude:       shout.latitude,
           longitude:      shout.longitude,
           timestamp:      shout.created_at.to_i,
@@ -60,7 +61,9 @@ module V20150930
     # create a shout
     def create
       venue = (params[:venue].blank? ? nil : params[:venue])
-      shout = Shout.create_shout(current_user, params[:body], venue)
+      anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
+      
+      shout = Shout.create_shout(current_user, params[:body], venue, anonymous)
       if shout
         # Pusher later
         render json: success(shout)

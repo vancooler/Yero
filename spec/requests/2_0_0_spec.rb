@@ -1472,12 +1472,14 @@ describe 'V2.0.0' do
       	expect(ShoutVote.count).to eql 1
       	expect(User.find(2).point).to eql 3
       	shout_1 = Shout.last
+      	expect(shout_1.anonymous).to eql true
 
-      	post 'api/shouts', {:token => token, :body => "BBB"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 2
       	shout_2 = Shout.last
+      	expect(shout_2.anonymous).to eql true
 
       	# expect(Shout.list(user_2, 'hot', 1).count).to eql 2
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1504,11 +1506,12 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
-      	post 'api/shouts', {:token => token, :body => "CCC"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 3
       	shout_3 = Shout.last
+      	expect(shout_3.anonymous).to eql false
 
       	get 'api/shouts', {:token => token, :order_by => "new", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
