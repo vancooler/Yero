@@ -256,11 +256,17 @@ class WhisperToday < ActiveRecord::Base
 					messages_array = Array.new
 					replies = WhisperReply.where(whisper_id: a.id).order("created_at DESC")
 					if replies.count > 0
-		              json.last_message replies.first.message.blank? ? '' : replies.first.message
-		            else
-		              # :nocov:
-		              json.last_message ''
-		              # :nocov:
+						last_message = replies.first
+					  	new_item = {
+			              id: last_message.id,
+			              conversation_id: last_message.whisper.dynamo_id.blank? ? '' : last_message.whisper.dynamo_id,
+			              speaker_id: last_message.speaker_id,
+			              timestamp: last_message.created_at.to_i,
+			              message: last_message.message.nil? ? '' : last_message.message,
+			              read: last_message.read
+			            }
+		              	json.last_message new_item
+		            
 		            end
 		            json.unread_message_count WhisperReply.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
 				end
