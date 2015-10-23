@@ -69,7 +69,8 @@ module V20150930
           page_number = 1
           per_page = 10
           per_page = params[:per_page].to_i if !params[:per_page].blank?
-          result = whisper.chatting_replies(current_user, page_number, per_page)
+          read_messages = true
+          result = whisper.chatting_replies(current_user, page_number, per_page, read_messages)
 
           whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
@@ -119,8 +120,8 @@ module V20150930
           per_page = nil
           page_number = params[:page].to_i + 1 if !params[:page].blank?
           per_page = params[:per_page].to_i if !params[:per_page].blank?
-
-          result = whisper.chatting_replies(current_user, page_number, per_page)
+          read_messages = true
+          result = whisper.chatting_replies(current_user, page_number, per_page, read_messages)
           response_data = {
             # badge_number: badge,
             messages: result['messages']
@@ -145,15 +146,23 @@ module V20150930
       if target_user
         result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, intro, message)
 
-        if result == "true"
-          render json: success
+        if result['message'] == "true"
+          whisper = result['whisper']
+          read_messages = false
+          result = whisper.chatting_replies(current_user, nil, nil, read_messages)
+
+          whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
+          whisper_json = whispers_json.first
+
+          whisper_json[:messages] = result['messages']
+          render json: success(whisper_json, 'data')
         else
           error_obj = {
             code: 403,
-            message: result
+            message: result['message']
           }
-          if result != "User blocked"
-            error_obj[:external_message] = result 
+          if result['message'] != "User blocked"
+            error_obj[:external_message] = result['message']
           end
           render json: error(error_obj, 'error')
         end  

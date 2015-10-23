@@ -265,9 +265,11 @@ class WhisperToday < ActiveRecord::Base
 	end
 
 
-	def chatting_replies(current_user, page_number, per_page)
+	def chatting_replies(current_user, page_number, per_page, read_messages)
 		messages_array = Array.new
-        WhisperReply.where(whisper_id: self.id).update_all(read: true)
+		if read_messages
+	        WhisperReply.where(whisper_id: self.id).where.not(speaker_id: current_user.id).update_all(read: true)
+	    end
 		replies = WhisperReply.where(whisper_id: self.id).order("created_at DESC")
 
 		result = Hash.new

@@ -10,6 +10,7 @@ SimpleCov.start 'rails' do
   add_filter "/app/mailers"
   add_filter "/app/validators"
   add_filter "/app/uploaders"
+  add_filter "/app/helpers"
 end if ENV["COVERAGE"]
 
 ENV["RAILS_ENV"] ||= 'test'

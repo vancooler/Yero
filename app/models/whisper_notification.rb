@@ -489,11 +489,12 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.send_message(target_id, current_user, venue_id, notification_type, intro, message)
     origin_id = current_user.id.to_s
+    final_result = Hash.new
     # only users with active avatar can send whispers
     if current_user.user_avatars.where(:is_active => true).count <= 0 
-      return "Please upload a profile photo first"
+      final_result['message'] = "Please upload a profile photo first"
     elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
-      return "User blocked"
+      final_result['message'] = "User blocked"
     else
       conversation = WhisperToday.find_conversation(target_id.to_i, origin_id.to_i)
       # check if whisper sent today
@@ -527,6 +528,8 @@ class WhisperNotification < AWS::Record::HashModel
               channel = 'private-user-' + target_id.to_s
               message_json = {
                 speaker_id: chat_message.speaker_id,
+                id:         chat_message.id,
+                conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,
                 read:       chat_message.read
@@ -538,13 +541,14 @@ class WhisperNotification < AWS::Record::HashModel
             # :nocov:
           end
 
-          return "true"
+          final_result['message'] = "true"
+          final_result['whisper'] = whisper
         else
-          return "Cannot send more whispers"
+          final_result['message'] = "Cannot send more whispers"
         end
       else
         if conversation.whisper_replies.count < 2 and current_user.id == conversation.origin_user_id
-          return "Cannot send more whispers"
+          final_result['message'] = "Cannot send more whispers"
         else
           if conversation.target_user_id == origin_id.to_i
             conversation.message_b = intro
@@ -563,6 +567,8 @@ class WhisperNotification < AWS::Record::HashModel
               channel = 'private-user-' + target_id.to_s
               message_json = {
                 speaker_id: chat_message.speaker_id,
+                id:         chat_message.id,
+                conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,
                 read:       chat_message.read
@@ -574,11 +580,13 @@ class WhisperNotification < AWS::Record::HashModel
             # :nocov:
           end
 
-          return "true"
+          final_result['message'] = "true"
+          final_result['whisper'] = conversation
         end
       end
       
     end
+    return final_result
   end
 
   # :nocov:
