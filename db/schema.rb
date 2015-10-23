@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151022164239) do
+ActiveRecord::Schema.define(version: 20151023145227) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -114,11 +114,42 @@ ActiveRecord::Schema.define(version: 20151022164239) do
     t.time    "close_time", null: false
   end
 
+  create_table "chatting_messages", force: true do |t|
+    t.integer  "speaker_id",                 null: false
+    t.integer  "whisper_id",                 null: false
+    t.text     "message"
+    t.boolean  "read",       default: false
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "chatting_messages", ["whisper_id"], name: "index_chatting_messages_on_whisper_id", using: :btree
+
   create_table "city_networks", force: true do |t|
     t.string   "name",       null: false
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "conversations", force: true do |t|
+    t.integer  "target_user_id",                       null: false
+    t.integer  "origin_user_id"
+    t.integer  "venue_id"
+    t.integer  "whisper_type",                         null: false
+    t.boolean  "viewed",               default: false
+    t.boolean  "accepted",             default: false
+    t.boolean  "declined",             default: false
+    t.text     "message",              default: ""
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "dynamo_id"
+    t.integer  "paper_owner_id"
+    t.text     "message_b",            default: ""
+    t.boolean  "target_user_archieve", default: false
+    t.boolean  "origin_user_archieve", default: false
+  end
+
+  add_index "conversations", ["target_user_id"], name: "index_conversations_on_target_user_id", using: :btree
 
   create_table "delayed_jobs", force: true do |t|
     t.integer  "priority",   default: 0, null: false
