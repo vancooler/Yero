@@ -487,7 +487,7 @@ class WhisperNotification < AWS::Record::HashModel
 
 
 
-  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message)
+  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message, timestamp)
     origin_id = current_user.id.to_s
     final_result = Hash.new
     # only users with active avatar can send whispers
@@ -511,6 +511,14 @@ class WhisperNotification < AWS::Record::HashModel
           end
           whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
           chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+          if !timestamp.nil?
+            whisper.created_at = Time.at(timestamp)
+            whisper.updated_at = Time.at(timestamp)
+            whisper.save
+            chat_message.created_at = Time.at(timestamp)
+            chat_message.updated_at = Time.at(timestamp)
+            chat_message.save
+          end
           if n and notification_type == "2"
             time = Time.now
 
@@ -535,6 +543,7 @@ class WhisperNotification < AWS::Record::HashModel
                 read:       chat_message.read
               }
               Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
+              # Pusher.delay.trigger(channel, 'new_conversation_event', {message: message_json})
             else
               chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
             end
@@ -559,7 +568,11 @@ class WhisperNotification < AWS::Record::HashModel
           conversation.origin_user_archieve = false
           conversation.save!
           chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
-          
+          if !timestamp.nil?
+            chat_message.created_at = Time.at(timestamp)
+            chat_message.updated_at = Time.at(timestamp)
+            chat_message.save
+          end
           if chat_message and Rails.env == 'production'
             # :nocov:
             target_user = User.find_user_by_unique(target_id)

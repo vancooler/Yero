@@ -1943,11 +1943,12 @@ describe 'V2.0.0' do
       	# user_2 -> user_3 initial whisper
       	# expect(WhisperNotification.send_message(3, user_2, nil, '2', "hi", user_2.first_name + " sent you a whisper")).to eql "true"
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => 1445710256, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Conversation.count).to eql 1
       	expect(Conversation.first.message).to eql 'Hi!'
+      	expect(Conversation.first.created_at.to_i).to eql 1445710256
       	expect(Conversation.first.message_b).to eql ''
       	expect(ChattingMessage.count).to eql 1
       	expect(ChattingMessage.last.message).to eql 'Hi!'
