@@ -1391,7 +1391,7 @@ class User < ActiveRecord::Base
       # TODO: use model to do it
       whispers_sent = WhisperNotification.collect_whispers(self)
       whispers_can_reply = WhisperNotification.collect_conversations_can_reply(self)
-      pending_whispers = WhisperToday.pending_whispers(self.id)
+      pending_whispers = Conversation.pending_whispers(self.id)
       # colect all users with "like"
       # followees = self.followees(User)
       # collect all friends with mutual like AND whisper accepted friends

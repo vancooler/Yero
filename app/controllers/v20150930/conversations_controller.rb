@@ -5,7 +5,7 @@ module V20150930
 
     def index
       # badge = WhisperNotification.unviewd_whisper_number(current_user.id)
-      whispers = WhisperToday.conversations_related(current_user.id)
+      whispers = Conversation.conversations_related(current_user.id)
 
       page_number = nil
       per_page = nil
@@ -21,7 +21,7 @@ module V20150930
       end
 
       if !whispers.blank?
-        whispers = WhisperToday.conversations_to_json(whispers, current_user)
+        whispers = Conversation.conversations_to_json(whispers, current_user)
       end
 
       response_data = {
@@ -35,9 +35,9 @@ module V20150930
     def show
       whisper_id = params[:id]
       if !/\A\d+\z/.match(whisper_id.to_s)
-        whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+        whisper = Conversation.find_by_dynamo_id(whisper_id)
       else
-        whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+        whisper = Conversation.find_pending_whisper(whisper_id.to_i, current_user.id)
       end
       if whisper.blank?
         error_obj = {
@@ -72,7 +72,7 @@ module V20150930
           read_messages = true
           result = whisper.chatting_replies(current_user, page_number, per_page, read_messages)
 
-          whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
+          whispers_json = Conversation.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
 
           whisper_json[:messages] = result['messages']
@@ -85,9 +85,9 @@ module V20150930
     def show_messages
       whisper_id = params[:conversation_id]
       if !/\A\d+\z/.match(whisper_id.to_s)
-        whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+        whisper = Conversation.find_by_dynamo_id(whisper_id)
       else
-        whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+        whisper = Conversation.find_pending_whisper(whisper_id.to_i, current_user.id)
       end
       if whisper.blank?
         error_obj = {
@@ -151,7 +151,7 @@ module V20150930
           read_messages = false
           result = whisper.chatting_replies(current_user, nil, nil, read_messages)
 
-          whispers_json = WhisperToday.conversations_to_json([whisper], current_user)
+          whispers_json = Conversation.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
 
           whisper_json[:messages] = result['messages']
@@ -180,9 +180,9 @@ module V20150930
     def destroy
       whisper_id = params[:id]
       if !/\A\d+\z/.match(whisper_id.to_s)
-        whisper = WhisperToday.find_by_dynamo_id(whisper_id)
+        whisper = Conversation.find_by_dynamo_id(whisper_id)
       else
-        whisper = WhisperToday.find_pending_whisper(whisper_id.to_i, current_user.id)
+        whisper = Conversation.find_pending_whisper(whisper_id.to_i, current_user.id)
       end
       if whisper.blank?
         error_obj = {

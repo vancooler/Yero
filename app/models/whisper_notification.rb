@@ -302,9 +302,9 @@ class WhisperNotification < AWS::Record::HashModel
   end
 
   def self.collect_conversations_can_reply(current_user)
-    conversation_ids = WhisperToday.where("whisper_todays.origin_user_id = ?", current_user.id).joins(:whisper_replies).group("whisper_todays.id").having("count(whisper_replies.id) > ?",1).map(&:id)
-    conversations_1 = WhisperToday.where(id: conversation_ids).map(&:target_user_id)
-    conversations_2 = WhisperToday.where("target_user_id = ?", current_user.id).map(&:origin_user_id)
+    conversation_ids = Conversation.where("conversations.origin_user_id = ?", current_user.id).joins(:chatting_messages).group("conversations.id").having("count(chatting_messages.id) > ?",1).map(&:id)
+    conversations_1 = Conversation.where(id: conversation_ids).map(&:target_user_id)
+    conversations_2 = Conversation.where("target_user_id = ?", current_user.id).map(&:origin_user_id)
     return (conversations_1 | conversations_2)
   end
 
@@ -496,7 +496,7 @@ class WhisperNotification < AWS::Record::HashModel
     elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
       final_result['message'] = "User blocked"
     else
-      conversation = WhisperToday.find_conversation(target_id.to_i, origin_id.to_i)
+      conversation = Conversation.find_conversation(target_id.to_i, origin_id.to_i)
       # check if whisper sent today
       if conversation.nil?
         whisper_just_sent = WhisperSent.where(['whisper_time > ?', Time.now-12.hours]).where(:origin_user_id => current_user.id).where(:target_user_id => target_id.to_i)
@@ -509,8 +509,8 @@ class WhisperNotification < AWS::Record::HashModel
             n = WhisperNotification.new
             n.id = 'aaa'+current_user.id.to_s
           end
-          whisper = WhisperToday.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
-          chat_message = WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+          whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
+          chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           if n and notification_type == "2"
             time = Time.now
 
@@ -547,7 +547,7 @@ class WhisperNotification < AWS::Record::HashModel
           final_result['message'] = "Cannot send more whispers"
         end
       else
-        if conversation.whisper_replies.count < 2 and current_user.id == conversation.origin_user_id
+        if conversation.chatting_messages.count < 2 and current_user.id == conversation.origin_user_id
           final_result['message'] = "Cannot send more whispers"
         else
           if conversation.target_user_id == origin_id.to_i
@@ -558,7 +558,7 @@ class WhisperNotification < AWS::Record::HashModel
           conversation.target_user_archieve = false
           conversation.origin_user_archieve = false
           conversation.save!
-          chat_message = WhisperReply.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
+          chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
           
           if chat_message and Rails.env == 'production'
             # :nocov:

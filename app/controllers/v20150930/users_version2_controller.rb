@@ -565,7 +565,7 @@ module V20150930
           render json: success
 
         when "conversations"
-          whispers = WhisperToday.where(dynamo_id: params[:ids].to_a)
+          whispers = Conversation.where(dynamo_id: params[:ids].to_a)
 
           whispers.each do |whisper|
             whisper.archive_conversation(current_user)
