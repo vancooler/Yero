@@ -404,6 +404,7 @@ class WhisperNotification < AWS::Record::HashModel
 
   def self.send_whisper(target_id, current_user, venue_id, notification_type, intro, message)
     origin_id = current_user.id.to_s
+    target_user = User.find_user_by_unique(target_id)
     # only users with active avatar can send whispers
     if current_user.user_avatars.where(:is_active => true).count <= 0 
       return "Please upload a profile photo first"
@@ -429,7 +430,9 @@ class WhisperNotification < AWS::Record::HashModel
           if n and notification_type == "2"
             time = Time.now
             RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
-            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            if (target_user.version.nil? or target_user.version.to_f < 2)
+              RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            end
 
             record_found = WhisperSent.where(:origin_user_id => origin_id.to_i).where(:target_user_id => target_id.to_i)
             if record_found.count <= 0
@@ -438,7 +441,7 @@ class WhisperNotification < AWS::Record::HashModel
               record_found.first.update(:whisper_time => time)
             end
           end
-          if Rails.env == 'production'
+          if Rails.env == 'production' and (target_user.version.nil? or target_user.version.to_f < 2)
             n.send_push_notification_to_target_user(message, origin_id.to_i)
           end
 
@@ -472,9 +475,11 @@ class WhisperNotification < AWS::Record::HashModel
           if n and notification_type == "2"
             time = Time.now
             RecentActivity.add_activity(origin_id.to_i, '2-sent', target_id.to_i, nil, "whisper-sent-"+target_id.to_s+"-"+origin_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
-            RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            if (target_user.version.nil? or target_user.version.to_f < 2)
+              RecentActivity.add_activity(target_id.to_i, '2-received', origin_id.to_i, nil, "whisper-received-"+origin_id.to_s+"-"+target_id.to_s+"-"+time.to_i.to_s, nil, nil, nil)
+            end
           end
-          if Rails.env == 'production'
+          if Rails.env == 'production' and (target_user.version.nil? or target_user.version.to_f < 2)
             n.send_push_notification_to_target_user(message, paper_owner_id)
           end
 
@@ -545,7 +550,9 @@ class WhisperNotification < AWS::Record::HashModel
               Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
               # Pusher.delay.trigger(channel, 'new_conversation_event', {message: message_json})
             else
-              chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+              if (!target_user.version.nil? and target_user.version.to_f >= 2)
+                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+              end
             end
             # :nocov:
           end
@@ -588,7 +595,9 @@ class WhisperNotification < AWS::Record::HashModel
               }
               Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
             else
-              chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+              if (!target_user.version.nil? and target_user.version.to_f >= 2)
+                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+              end
             end
             # :nocov:
           end

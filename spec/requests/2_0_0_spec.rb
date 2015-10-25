@@ -833,7 +833,7 @@ describe 'V2.0.0' do
       	expect(WhisperReply.last.message).to eql 'Hello!'
       	expect(WhisperSent.count).to eql 1
       	expect(WhisperSent.first.whisper_time).to eql whisper_time
-      	expect(RecentActivity.count).to eql 4
+      	expect(RecentActivity.count).to eql 3
 
       	post "api/whispers", {:notification_type => '2', :target_id => '2', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -899,7 +899,7 @@ describe 'V2.0.0' do
       	expect(WhisperReply.last.message).to eql 'Hello Again!'
       	expect(WhisperSent.count).to eql 1
       	expect(WhisperSent.first.whisper_time).to eql whisper_time
-      	expect(RecentActivity.count).to eql 6
+      	expect(RecentActivity.count).to eql 4
 
       	post "api/whispers", {:notification_type => '2', :target_id => '3', :intro => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1015,7 +1015,7 @@ describe 'V2.0.0' do
       	expect(WhisperSent.count).to eql 1
       	expect(WhisperSent.first.whisper_time).to eql whisper_time
       	expect(WhisperReply.count).to eql 0	      	
-      	expect(RecentActivity.count).to eql 8
+      	expect(RecentActivity.count).to eql 6
       	expect(FriendByWhisper.count).to eql 1
 
       	get 'api/users?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1192,7 +1192,7 @@ describe 'V2.0.0' do
       	expect(WhisperReply.count).to eql 1
       	expect(WhisperReply.last.message).to eql 'Hi!'
       	expect(WhisperSent.count).to eql 1
-      	expect(RecentActivity.count).to eql 4
+      	expect(RecentActivity.count).to eql 3
 
       	get 'api/activities?per_page=48&page=0&token='+ token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1240,7 +1240,7 @@ describe 'V2.0.0' do
       	expect(WhisperReply.count).to eql 1
       	expect(WhisperReply.last.message).to eql 'Hi!'
       	expect(WhisperSent.count).to eql 1
-      	expect(RecentActivity.count).to eql 6
+      	expect(RecentActivity.count).to eql 4
 
 
       	token = user_3.generate_token
@@ -1390,7 +1390,13 @@ describe 'V2.0.0' do
       	expect(WhisperReply.count).to eql 2
       	expect(WhisperReply.last.message).to eql 'Hi!'
       	expect(WhisperSent.count).to eql 1
-      	expect(RecentActivity.count).to eql 4
+      	expect(RecentActivity.count).to eql 3
+
+      	activity = RecentActivity.last
+      	delete 'api/activities/'+activity.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(RecentActivity.count).to eql 2
 
       	token = user_2.generate_token
       	put 'api/whispers/aaa2', {:declined => true, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1405,11 +1411,6 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
 
-      	activity = RecentActivity.last
-      	delete 'api/activities/'+activity.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
-      	expect(response.status).to eql 200
-      	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(RecentActivity.count).to eql 3
 
 
 
