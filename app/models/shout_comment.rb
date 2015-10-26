@@ -207,7 +207,7 @@ class ShoutComment < ActiveRecord::Base
 			end	
 		end
 		# other repliers
-		other_repliers_user_ids = ShoutComment.where(shout_id: shout_comment.shout_id).where.not(user_id: current_user.id).where.not(user_id: black_list).map(&:user_id).uniq
+		other_repliers_user_ids = ShoutComment.where(shout_id: shout_comment.shout_id).where.not(user_id: current_user.id).where.not(user_id: op_user_id).where.not(user_id: black_list).map(&:user_id).uniq
 		if !other_repliers_user_ids.empty?
 			# create activities
 			if Rails.env == 'production'
