@@ -4,7 +4,10 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
   config.per_page = 100
   actions :index, :show
   batch_action :destroy, false
-
+  config.action_items.delete_if { |item|
+    # item is an ActiveAdmin::ActionItem
+    item.display_on?(:index)
+  }
   controller do
     def disable_single_image
       ua = UserAvatar.find_by_id(params[:id])
@@ -94,7 +97,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     def remove_status
       user = User.find_user_by_unique(params[:id])
       if !user.nil?
-        if user.update(:introduction_2 => '')
+        if user.update(:introduction_2 => '', :status_disabled_count => user.status_disabled_count+1)
           redirect_to :back, :notice => "Status of user " + user.name + " was successfully removed."
         else
           redirect_to :back, :notice => "Failed to remove status of user " + user.name 
@@ -209,15 +212,21 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     column "Status", :user do |ua|
       (ua.user.blank? or ua.user.introduction_2.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_status_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.introduction_2)
     end
-    column "Snapchat", :user do |ua|
-      (ua.user.blank? or ua.user.snapchat_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_snapchat_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.snapchat_id)
+
+    column "Status Disabled Count", :user do |ua|
+      (ua.user.blank? or ua.user.status_disabled_count.blank?) ? 0 : ua.user.status_disabled_count
     end
-    column "Wechat", :user do |ua|
-      (ua.user.blank? or ua.user.wechat_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_wechat_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.wechat_id)
-    end
-    column "Line", :user do |ua|
-      (ua.user.blank? or ua.user.line_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_line_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.line_id)
-    end
+
+
+    # column "Snapchat", :user do |ua|
+    #   (ua.user.blank? or ua.user.snapchat_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_snapchat_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.snapchat_id)
+    # end
+    # column "Wechat", :user do |ua|
+    #   (ua.user.blank? or ua.user.wechat_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_wechat_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.wechat_id)
+    # end
+    # column "Line", :user do |ua|
+    #   (ua.user.blank? or ua.user.line_id.blank?) ? '' : raw(link_to(image_tag('delete.png', :style => "width:18px;height:18px;margin-right:6px;"), admin_remove_line_id_path(ua.user.id), :method => 'put', :data => {:confirm => "Are you sure?"}) + ua.user.line_id)
+    # end
     # column "Is default", :default
     column "Image Enabled", :user do |ua|
       ua.is_active.nil? ? '' : (ua.is_active == false ? raw('<span class="status_tag no">Disabled</span>') : raw('<span class="status_tag yes">Active</span>'))

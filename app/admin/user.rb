@@ -1,10 +1,10 @@
 ActiveAdmin.register User do
   menu :parent => "USERS"
-  permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id,
+  permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id, :introduction_2,
                 user_avatars_attributes: [:id, :avatar, :venue_id, :default, :is_active, :_destroy]
 
   config.per_page = 100
-  actions :index, :show, :edit, :update, :destroy
+  actions :index, :show, :update, :destroy, :edit
 
   action_item :only => :index, :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 } do 
     link_to('CSV IMPORT', admin_import_users_csv_url)
@@ -95,8 +95,9 @@ ActiveAdmin.register User do
     
   	# actions
     column "Actions", :actions do |user|
-      link_to("Edit", edit_admin_user_path(user), :class => "member_link button small", :method => "get") + link_to("Refresh User", admin_user_refresh_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to refresh this user?"})
-
+      if user.fake_user
+        link_to("Edit", edit_admin_user_path(user), :class => "member_link button small", :method => "get") + link_to("Refresh User", admin_user_refresh_path(user), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to refresh this user?"})
+      end
     end
   end
 
@@ -134,6 +135,7 @@ ActiveAdmin.register User do
   
 
   show do |ad|
+    
     attributes_table_for ad do
       row :email
       row :key
