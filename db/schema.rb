@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151025100018) do
+ActiveRecord::Schema.define(version: 20151026140922) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -545,14 +545,14 @@ ActiveRecord::Schema.define(version: 20151025100018) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
     t.string   "spotify_id"
     t.string   "spotify_token"
     t.string   "version"
     t.boolean  "pusher_private_online",                 default: false
     t.string   "username"
     t.integer  "point",                                 default: 0
-    t.float    "api_verstion",                          default: 1.0
+    t.integer  "status_disabled_count",                 default: 0
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
