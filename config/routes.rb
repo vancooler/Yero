@@ -246,6 +246,8 @@ Rails.application.routes.draw do
     api_version(:module => "V20150930", :header => {:name => "API-VERSION", :value => "V2_0"}, :defaults => {:format => :json}) do
       # Pusher
       post    'api/pusher-auth',                         to: 'pusher#auth'
+      post    'api/spotify-auth',                        to: 'spotify#auth'
+      post    'api/spotify-refresh',                     to: 'spotify#refresh'
 
       # user APIs 11
       get     'api/users',                               to: 'users_version2#index'

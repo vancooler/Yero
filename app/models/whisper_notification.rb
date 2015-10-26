@@ -16,6 +16,7 @@ class WhisperNotification < AWS::Record::HashModel
               # '100' => network open
               # '101' => avatar disable
               # '102' => enough users now
+              # '103' => status deleted
               # 200 level means system activity records
               # '200' => join network
               # '201' => leave network
@@ -786,6 +787,23 @@ class WhisperNotification < AWS::Record::HashModel
 
 
     data = { :alert => "One of your photos has been flagged as inappropriate and removed", :type => 101, :is_default => default}
+    push = Parse::Push.new(data, "User_" + id.to_s)
+    push.type = "ios"
+    begin  
+      push.save
+      result = true  
+    rescue  
+      p "Push notification error"
+      result = false 
+    end 
+    return result 
+  end
+  # :nocov:
+
+  # :nocov:
+  # Send notification when the avatar is disabled by admin
+  def self.send_avatar_disabled_notification(id)
+    data = { :alert => "Your status has been flagged as inappropriate and removed", :type => 103, :user_id => id}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
     begin  
