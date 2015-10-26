@@ -2135,7 +2135,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
-      	ts2 = Time.now.to_i+1
+      	ts2 = Time.now.to_i+10
       	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 2
@@ -2146,9 +2146,9 @@ describe 'V2.0.0' do
       	get "api/conversations", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['timestamp']).to eql ts2      	
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1      	
       	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi again!'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['timestamp']).to eql ts2
 
       	token = user_3.generate_token
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -2172,6 +2172,7 @@ describe 'V2.0.0' do
       	post "api/conversations", {:notification_type => '2', :target_id => '4', :message => "Hi!", :timestamp => ts3, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 3
+      	expect(Conversation.last.created_at.to_i).to eql ts3
 
       	Conversation.expire
       	expect(Conversation.count).to eql 2

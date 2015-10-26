@@ -514,15 +514,14 @@ class WhisperNotification < AWS::Record::HashModel
             n = WhisperNotification.new
             n.id = 'aaa'+current_user.id.to_s
           end
-          whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
-          chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+          # whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
+          # chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           if !timestamp.nil?
-            whisper.created_at = Time.at(timestamp)
-            whisper.updated_at = Time.at(timestamp)
-            whisper.save
-            chat_message.created_at = Time.at(timestamp)
-            chat_message.updated_at = Time.at(timestamp)
-            chat_message.save
+            whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+          else
+            whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
+            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           end
           if n and notification_type == "2"
             time = Time.now
@@ -588,11 +587,13 @@ class WhisperNotification < AWS::Record::HashModel
           conversation.target_user_archieve = false
           conversation.origin_user_archieve = false
           conversation.save!
-          chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
           if !timestamp.nil?
-            chat_message.created_at = Time.at(timestamp)
-            chat_message.updated_at = Time.at(timestamp)
-            chat_message.save
+            puts "TTTTT"
+            puts timestamp
+            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+            puts chat_message.updated_at.to_i
+          else
+            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
           end
           if chat_message and Rails.env == 'production'
             # :nocov:
