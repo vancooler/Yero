@@ -1943,13 +1943,13 @@ describe 'V2.0.0' do
 
       	# user_2 -> user_3 initial whisper
       	# expect(WhisperNotification.send_message(3, user_2, nil, '2', "hi", user_2.first_name + " sent you a whisper")).to eql "true"
-
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => 1445710256, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	ts = Time.now.to_i
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => ts, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Conversation.count).to eql 1
       	expect(Conversation.first.message).to eql 'Hi!'
-      	expect(Conversation.first.created_at.to_i).to eql 1445710256
+      	expect(Conversation.first.created_at.to_i).to eql ts
       	expect(Conversation.first.message_b).to eql ''
       	expect(ChattingMessage.count).to eql 1
       	expect(ChattingMessage.last.message).to eql 'Hi!'
@@ -2135,7 +2135,8 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	ts2 = Time.now.to_i+1
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 2
       	expect(ChattingMessage.count).to eql 5
@@ -2146,6 +2147,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['timestamp']).to eql ts2      	
       	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi again!'
 
       	token = user_3.generate_token
@@ -2164,6 +2166,15 @@ describe 'V2.0.0' do
       	get "api/conversations", {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
+
+      	token = user_2.generate_token
+      	ts3 = Time.now.to_i - 12*3603
+      	post "api/conversations", {:notification_type => '2', :target_id => '4', :message => "Hi!", :timestamp => ts3, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(Conversation.count).to eql 3
+
+      	Conversation.expire
+      	expect(Conversation.count).to eql 2
 
 
 	    RecentActivity.delete_all
@@ -2191,3 +2202,7 @@ describe 'V2.0.0' do
 
 	end
 end
+
+
+# expire timestamp in shout
+# remove alert of chatting notifications

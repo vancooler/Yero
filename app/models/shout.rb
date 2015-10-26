@@ -194,7 +194,8 @@ class Shout < ActiveRecord::Base
 	        anonymous: 		shout.anonymous,
 	        latitude: 		shout.latitude,
 	        longitude: 		shout.longitude,
-	        timestamp: 		shout.created_at.to_i,
+          timestamp:    shout.created_at.to_i,
+          expire_timestamp:    shout.created_at.to_i+7*24*3600,
 	        total_upvotes: 	1,
 	        actions:        ["undo_upvote", "downvote"],
 	        network_gimbal_key:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
@@ -315,7 +316,8 @@ class Shout < ActiveRecord::Base
         json.anonymous 		shout.anonymous
         json.latitude 		shout.latitude
         json.longitude 		shout.longitude
-        json.timestamp 		shout.created_at.to_i
+        json.timestamp    shout.created_at.to_i
+        json.expire_timestamp    shout.created_at.to_i+7*24*3600
         json.total_upvotes 	shout.total_upvotes
         actions = ["downvote", "upvote"]
         if shout_upvoted_ids.include? shout.id

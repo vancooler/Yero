@@ -32,6 +32,7 @@ module V20150930
           latitude:       shout.latitude,
           longitude:      shout.longitude,
           timestamp:      shout.created_at.to_i,
+          expire_timestamp:      shout.created_at.to_i+7*24*3600,
           total_upvotes:  shout.total_upvotes,
           actions:        actions,
           shout_comments: result['shout_comments'].length,

@@ -547,8 +547,20 @@ class WhisperNotification < AWS::Record::HashModel
                 message:    chat_message.message.nil? ? '' : chat_message.message,
                 read:       chat_message.read
               }
-              Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
-              # Pusher.delay.trigger(channel, 'new_conversation_event', {message: message_json})
+              # Pusher.trigger(channel, 'new_message_event', {message: message_json})
+              conversation_json = {
+                initial_whisper:      true,
+                expire_timestamp:     (whisper.created_at + 12.hours).to_i,
+                timestamp:            whisper.updated_at.to_i,
+                conversation_id:      (whisper.dynamo_id.blank? ? '' : whisper.dynamo_id),
+                notification_type:    2,
+                last_message:         message_json,
+                actions:              ["chat", "delete"],
+                object_type:          "user",
+                object:               current_user.user_object(target_user),  
+                unread_message_count: ChattingMessage.where(whisper_id: whisper.id).where.not(speaker_id: target_user.id).where(read: false).length
+              }
+              Pusher.trigger(channel, 'new_conversation_event', {conversation: conversation_json})
             else
               if (!target_user.version.nil? and target_user.version.to_f >= 2)
                 chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
@@ -567,8 +579,10 @@ class WhisperNotification < AWS::Record::HashModel
           final_result['message'] = "Cannot send more whispers"
         else
           if conversation.target_user_id == origin_id.to_i
+            pusher_to_archieved = conversation.origin_user_archieve
             conversation.message_b = intro
           elsif conversation.origin_user_id == origin_id.to_i
+            pusher_to_archieved = conversation.target_user_archieve
             conversation.message = intro
           end
           conversation.target_user_archieve = false
@@ -593,7 +607,22 @@ class WhisperNotification < AWS::Record::HashModel
                 message:    chat_message.message.nil? ? '' : chat_message.message,
                 read:       chat_message.read
               }
-              Pusher.delay.trigger(channel, 'send_message_event', {message: message_json})
+              if !pusher_to_archieved
+                Pusher.trigger(channel, 'new_message_event', {message: message_json})
+              else
+                conversation_json = {
+                  initial_whisper:      false,
+                  timestamp:            conversation.updated_at.to_i,
+                  conversation_id:      (conversation.dynamo_id.blank? ? '' : conversation.dynamo_id),
+                  notification_type:    2,
+                  last_message:         message_json,
+                  actions:              ["chat", "delete"],
+                  object_type:          "user",
+                  object:               current_user.user_object(target_user),  
+                  unread_message_count: ChattingMessage.where(whisper_id: conversation.id).where.not(speaker_id: target_user.id).where(read: false).length
+                }
+                Pusher.trigger(channel, 'new_conversation_event', {conversation: conversation_json})
+              end
             else
               if (!target_user.version.nil? and target_user.version.to_f >= 2)
                 chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
