@@ -1116,23 +1116,23 @@ class User < ActiveRecord::Base
           if !more_users.nil?
             fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').where("last_active < ?", Time.now-24.hours).sample
             if !fake_user.nil?
-              fake_user.update(last_active: Time.now)
+              fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
               if more_users > 0
                 fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
                 if !fake_users.blank?
                   fake_users.each do |u|
-                    u.update(last_active: Time.now)
+                    u.update(last_active: Time.now, point: u.point+[0, 1].sample)
                   end
                 end
               end
             else
               fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: 'F').sample
-              fake_user.update(last_active: Time.now)
+              fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
               if more_users > 0
                 fake_users = User.where(timezone_name: tz).where(fake_user: true).where.not(id: fake_user.id).sample(more_users)
                 if !fake_users.blank?
                   fake_users.each do |u|
-                    u.update(last_active: Time.now)
+                    u.update(last_active: Time.now, point: u.point+[0, 1].sample)
                   end
                 end
               end
@@ -1172,7 +1172,7 @@ class User < ActiveRecord::Base
 
         if posibility.sample
           fake_user = User.where(timezone_name: tz).where(fake_user: true).sample
-          fake_user.update(last_active: Time.now)
+          fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
           time_zone.update(time_no_active: 0)
         else
           time_zone.update(time_no_active: next_time)
