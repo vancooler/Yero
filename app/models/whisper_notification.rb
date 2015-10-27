@@ -519,10 +519,10 @@ class WhisperNotification < AWS::Record::HashModel
           # chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           if !timestamp.nil?
             whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
-            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
           else
             whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
-            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           end
           if n and notification_type == "2"
             time = Time.now
@@ -542,6 +542,7 @@ class WhisperNotification < AWS::Record::HashModel
               message_json = {
                 speaker_id: chat_message.speaker_id,
                 id:         chat_message.id,
+                grouping_id: chat_message.grouping_id,
                 conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,
@@ -588,13 +589,18 @@ class WhisperNotification < AWS::Record::HashModel
           conversation.target_user_archieve = false
           conversation.origin_user_archieve = false
           conversation.save!
+          last_messages = conversation.chatting_messages.where(speaker_id: current_user.id).order("created_at DESC")
+          grouping_id = Time.now.to_i
+          if !last_messages.blank?
+            last_grouping_id = last_messages.grouping_id
+            if grouping_id <= last_grouping_id + 15*60
+              grouping_id = last_grouping_id
+            end
+          end
           if !timestamp.nil?
-            puts "TTTTT"
-            puts timestamp
-            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
-            puts chat_message.updated_at.to_i
+            chat_message = ChattingMessage.create!(:grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
           else
-            chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
+            chat_message = ChattingMessage.create!(:grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
           end
           if chat_message and Rails.env == 'production'
             # :nocov:
@@ -604,6 +610,7 @@ class WhisperNotification < AWS::Record::HashModel
               message_json = {
                 speaker_id: chat_message.speaker_id,
                 id:         chat_message.id,
+                grouping_id: chat_message.grouping_id,
                 conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,

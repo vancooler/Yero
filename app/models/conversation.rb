@@ -123,6 +123,7 @@ class Conversation < ActiveRecord::Base
 						last_message = replies.first
 					  	new_item = {
 			              id: last_message.id,
+			              grouping_id: last_message.grouping_id,
 			              conversation_id: last_message.whisper.dynamo_id.blank? ? '' : last_message.whisper.dynamo_id,
 			              speaker_id: last_message.speaker_id,
 			              timestamp: last_message.created_at.to_i,
@@ -162,6 +163,7 @@ class Conversation < ActiveRecord::Base
           	replies.each do |r|
 	            new_item = {
 	              id: r.id,
+	              grouping_id: r.grouping_id,
 	              conversation_id: r.whisper.dynamo_id.blank? ? '' : r.whisper.dynamo_id,
 	              speaker_id: r.speaker_id,
 	              timestamp: r.created_at.to_i,
