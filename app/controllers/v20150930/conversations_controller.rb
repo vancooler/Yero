@@ -150,12 +150,12 @@ module V20150930
         if result['message'] == "true"
           whisper = result['whisper']
           read_messages = false
-          result = whisper.chatting_replies(current_user, nil, nil, read_messages)
+          # result = whisper.chatting_replies(current_user, nil, nil, read_messages)
 
           whispers_json = Conversation.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
 
-          whisper_json[:messages] = result['messages']
+          # whisper_json[:messages] = result['messages']
           render json: success(whisper_json, 'data')
         else
           error_obj = {
