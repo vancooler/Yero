@@ -31,6 +31,8 @@ module V20150930
           anonymous:      shout.anonymous,
           latitude:       shout.latitude,
           longitude:      shout.longitude,
+          city:           shout.city.nil? ? '' : shout.city,
+          neighbourhood:  shout.neighbourhood.nil? ? '' : shout.neighbourhood,
           timestamp:      shout.created_at.to_i,
           expire_timestamp:      shout.created_at.to_i+7*24*3600,
           total_upvotes:  shout.total_upvotes,
@@ -62,9 +64,11 @@ module V20150930
     # create a shout
     def create
       venue = (params[:venue].blank? ? nil : params[:venue])
+      city = (params[:city].blank? ? '' : params[:city])
+      neighbourhood = (params[:neighbourhood].blank? ? '' : params[:neighbourhood])
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       
-      shout = Shout.create_shout(current_user, params[:body], venue, anonymous)
+      shout = Shout.create_shout(current_user, params[:body], venue, anonymous, city, neighbourhood)
       if shout
         # Pusher later
         render json: success(shout)

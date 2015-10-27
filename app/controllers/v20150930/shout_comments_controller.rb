@@ -5,7 +5,10 @@ module V20150930
 
     # create a comment to a shout
     def create
-      shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id])
+      city = (params[:city].blank? ? '' : params[:city])
+      neighbourhood = (params[:neighbourhood].blank? ? '' : params[:neighbourhood])
+      
+      shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], city, neighbourhood)
       if shout_comment
         # Pusher later
         render json: success(shout_comment)

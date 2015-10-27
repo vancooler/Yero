@@ -157,7 +157,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, venue_id, anonymous)
+  def self.create_shout(current_user, body, venue_id, anonymous, city, neighbourhood)
   	shout = Shout.new
   	venue = Venue.find_venue_by_unique(venue_id)
   	if venue.nil?
@@ -177,6 +177,8 @@ class Shout < ActiveRecord::Base
   		shout.longitude = venue.longitude
 	  	shout.allow_nearby = false
   	end
+    shout.city = city
+    shout.neighbourhood = neighbourhood
   	shout.body = body
   	shout.user_id = current_user.id
   	shout.anonymous = anonymous
@@ -193,7 +195,9 @@ class Shout < ActiveRecord::Base
 	        body: 			shout.body,
 	        anonymous: 		shout.anonymous,
 	        latitude: 		shout.latitude,
-	        longitude: 		shout.longitude,
+          longitude:    shout.longitude,
+          city:         shout.city.nil? ? '' : shout.city,
+          neighbourhood:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
           timestamp:    shout.created_at.to_i,
           expire_timestamp:    shout.created_at.to_i+7*24*3600,
 	        total_upvotes: 	1,
@@ -311,11 +315,13 @@ class Shout < ActiveRecord::Base
 
   	result = Jbuilder.encode do |json|
       json.array! shouts do |shout|
-        json.id 			shout.id
-        json.body 			shout.body
+        json.id 			    shout.id
+        json.body 			  shout.body
         json.anonymous 		shout.anonymous
         json.latitude 		shout.latitude
-        json.longitude 		shout.longitude
+        json.longitude    shout.longitude
+        json.city         shout.city.nil? ? '' : shout.city
+        json.neighbourhood    shout.neighbourhood.nil? ? '' : shout.neighbourhood
         json.timestamp    shout.created_at.to_i
         json.expire_timestamp    shout.created_at.to_i+7*24*3600
         json.total_upvotes 	shout.total_upvotes

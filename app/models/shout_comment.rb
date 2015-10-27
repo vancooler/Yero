@@ -138,11 +138,13 @@ class ShoutComment < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout_comment(current_user, body, shout_id)
+  def self.create_shout_comment(current_user, body, shout_id, city, neighbourhood)
   	shout_comment = ShoutComment.new
-	shout_comment.latitude = current_user.latitude
-	shout_comment.longitude = current_user.longitude
-  	shout_comment.body = body
+	  shout_comment.latitude = current_user.latitude
+	  shout_comment.longitude = current_user.longitude
+    shout_comment.city = city
+    shout_comment.neighbourhood = neighbourhood
+    shout_comment.body = body
   	shout_comment.shout_id = shout_id.to_i
   	shout_comment.user_id = current_user.id
   	if !current_user.current_venue.nil?
@@ -156,11 +158,13 @@ class ShoutComment < ActiveRecord::Base
 	  	shout_id = shout_comment.shout.id
 	  	
 	  	channel = 'public-shout-' + shout_id.to_s
-		shout_comment_json = {
-			id: 			shout_comment.id,
+		  shout_comment_json = {
+			    id: 			shout_comment.id,
 	        body: 			shout_comment.body,
 	        latitude: 		shout_comment.latitude,
-	        longitude: 		shout_comment.longitude,
+          longitude:    shout_comment.longitude,
+          city:    shout_comment.city.nil? ? '' : shout_comment.city,
+          neighbourhood:    shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
 	        timestamp: 		shout_comment.created_at.to_i,
 	        total_upvotes: 	1,
 	        actions: 		["upvote", "downvote"],
@@ -168,7 +172,7 @@ class ShoutComment < ActiveRecord::Base
 	        venue_id:       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
 	        author_id: 		shout_comment.user_id,
 	        author_username: 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
-		}
+		  }
 		if Rails.env == "production"
 			# :nocov:	
 			Pusher.delay.trigger(channel, 'create_shout_comment_event', {shout_comment: shout_comment_json})
@@ -273,7 +277,9 @@ class ShoutComment < ActiveRecord::Base
       json.array! shout_comments do |shout_comment|
         json.id 			shout_comment.id
         json.shout_id 		shout_comment.shout_id
-        json.body 			shout_comment.body
+        json.body       shout_comment.body
+        json.city       shout_comment.city.nil? ? '' : shout_comment.city
+        json.neighbourhood       shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
         json.latitude 		shout_comment.latitude
         json.longitude 		shout_comment.longitude
         json.timestamp 		shout_comment.created_at.to_i
