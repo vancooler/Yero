@@ -589,11 +589,12 @@ class WhisperNotification < AWS::Record::HashModel
           conversation.target_user_archieve = false
           conversation.origin_user_archieve = false
           conversation.save!
-          last_messages = conversation.chatting_messages.where(speaker_id: current_user.id).order("created_at DESC")
+          last_messages = conversation.chatting_messages.order("created_at DESC")
           grouping_id = Time.now.to_i
           if !last_messages.blank?
+            last_speaker_id = last_messages.first.speaker_id
             last_grouping_id = last_messages.first.grouping_id
-            if !last_grouping_id.nil? and grouping_id <= last_grouping_id + 15*60
+            if !last_grouping_id.nil? and !last_speaker_id.nil? and grouping_id <= last_grouping_id + 15*60 and current_user.id == last_speaker_id
               grouping_id = last_grouping_id
             end
           end

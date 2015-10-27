@@ -1508,12 +1508,14 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
-      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false, :neighbourhood => "Kitsilano", :city => "Vancouver"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 3
       	shout_3 = Shout.last
       	expect(shout_3.anonymous).to eql false
+      	expect(shout_3.neighbourhood).to eql 'Kitsilano'
+      	expect(shout_3.city).to eql "Vancouver"
 
       	get 'api/shouts', {:token => token, :order_by => "new", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1551,11 +1553,13 @@ describe 'V2.0.0' do
       	expect(User.find(4).point).to eql 0
 
 
-      	post 'api/shout_comments', {:token => token, :body => "DDD", :shout_id => shout_2.id}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shout_comments', {:token => token, :body => "DDD", :shout_id => shout_2.id, :neighbourhood => "Downtown", :city => "Vancouver"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ShoutComment.count).to eql 1
       	shout_comment_1 = ShoutComment.last
+      	expect(shout_comment_1.city).to eql "Vancouver"
+      	expect(shout_comment_1.neighbourhood).to eql "Downtown"
 
 
 

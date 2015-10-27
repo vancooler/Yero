@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151027122817) do
+ActiveRecord::Schema.define(version: 20151027131229) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -122,6 +122,9 @@ ActiveRecord::Schema.define(version: 20151027122817) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "grouping_id"
+    t.string   "type"
+    t.text     "image_url"
+    t.text     "audio_url"
   end
 
   add_index "chatting_messages", ["whisper_id"], name: "index_chatting_messages_on_whisper_id", using: :btree
@@ -418,6 +421,9 @@ ActiveRecord::Schema.define(version: 20151027122817) do
     t.integer  "venue_id"
     t.string   "city"
     t.string   "neighbourhood"
+    t.string   "type"
+    t.text     "image_url"
+    t.text     "audio_url"
   end
 
   add_index "shout_comments", ["shout_id"], name: "index_shout_comments_on_shout_id", using: :btree
@@ -463,6 +469,9 @@ ActiveRecord::Schema.define(version: 20151027122817) do
     t.boolean  "anonymous",     default: true
     t.string   "city"
     t.string   "neighbourhood"
+    t.string   "type"
+    t.text     "image_url"
+    t.text     "audio_url"
   end
 
   add_index "shouts", ["user_id"], name: "index_shouts_on_user_id", using: :btree
@@ -550,7 +559,7 @@ ActiveRecord::Schema.define(version: 20151027122817) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
     t.string   "spotify_id"
     t.string   "spotify_token"
     t.string   "version"
