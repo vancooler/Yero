@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151026184529) do
+ActiveRecord::Schema.define(version: 20151027122817) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -416,6 +416,8 @@ ActiveRecord::Schema.define(version: 20151026184529) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "venue_id"
+    t.string   "city"
+    t.string   "neighbourhood"
   end
 
   add_index "shout_comments", ["shout_id"], name: "index_shout_comments_on_shout_id", using: :btree
@@ -458,7 +460,9 @@ ActiveRecord::Schema.define(version: 20151026184529) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "venue_id"
-    t.boolean  "anonymous",    default: true
+    t.boolean  "anonymous",     default: true
+    t.string   "city"
+    t.string   "neighbourhood"
   end
 
   add_index "shouts", ["user_id"], name: "index_shouts_on_user_id", using: :btree
