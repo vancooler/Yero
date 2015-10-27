@@ -11,6 +11,7 @@ class RoomsController < ApplicationController
     else
       beacon_key = [params[:id]]
     end
+    puts params[:id]
     beacons = Beacon.where(key: beacon_key)
 
     if beacons.blank? or beacons.length <= 0

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151026140922) do
+ActiveRecord::Schema.define(version: 20151026184529) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -115,12 +115,13 @@ ActiveRecord::Schema.define(version: 20151026140922) do
   end
 
   create_table "chatting_messages", force: true do |t|
-    t.integer  "speaker_id",                 null: false
-    t.integer  "whisper_id",                 null: false
+    t.integer  "speaker_id",                  null: false
+    t.integer  "whisper_id",                  null: false
     t.text     "message"
-    t.boolean  "read",       default: false
+    t.boolean  "read",        default: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "grouping_id"
   end
 
   add_index "chatting_messages", ["whisper_id"], name: "index_chatting_messages_on_whisper_id", using: :btree
@@ -545,7 +546,7 @@ ActiveRecord::Schema.define(version: 20151026140922) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
     t.string   "spotify_id"
     t.string   "spotify_token"
     t.string   "version"
