@@ -18,6 +18,22 @@ class ChattingMessage < ActiveRecord::Base
     end 
     return result 
   end
+
+
+
+
+  def self.migrate_grouping_timestamp
+  	ChattingMessage.all.order("created_at ASC").each do |cm|
+  		if cm.grouping_id.nil?
+  			previous_messages = cm.whisper.chatting_messages.where(speaker_id: cm.speaker_id).where("created_at < ?", cm.created_at).order("created_at DESC")
+  			if previous_messages.blank?
+  				cm.update(grouping_id: cm.created_at.to_i)
+  			else
+  				cm.update(grouping_id: previous_messages.first.grouping_id)
+  			end
+  		end
+  	end
+  end
   # :nocov:
 
 end
