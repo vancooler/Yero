@@ -215,7 +215,7 @@ describe User do
 	      	expect(RecentActivity.count).to eql 0
 	      	expect(User.where(is_connected: true).length).to eql 0
 	      	User.random_join_fake_users("America/Vancouver", 2, 3)
-	      	expect(RecentActivity.count).to eql 5
+	      	expect(RecentActivity.count).to eql 0
 	      	expect(User.where(is_connected: true).length).to eql 5
 	      	TimeZonePlace.create!(timezone: "America/Vancouver", time_no_active: 0)
 	      	User.fake_users_activate
