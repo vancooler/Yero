@@ -337,7 +337,6 @@ class WhisperNotification < AWS::Record::HashModel
             end
             item_info = i.attributes.to_h
           elsif state == 'declined'
-            puts "updating declined"
             i.attributes.update do |u|
                 u.set 'declined' => 1
                 u.set 'viewed' => 1
@@ -348,8 +347,6 @@ class WhisperNotification < AWS::Record::HashModel
       # :nocov:
     end
     whisper = WhisperToday.find_by_dynamo_id(whisper_id)
-    puts "WHISPER:"
-    puts whisper.inspect
     if !whisper.nil?
       whisper.viewed = true
       whisper.declined = (state == 'declined')
@@ -493,7 +490,7 @@ class WhisperNotification < AWS::Record::HashModel
 
 
 
-  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message, timestamp)
+  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message, timestamp, content_type, image_url, audio_url)
     origin_id = current_user.id.to_s
     final_result = Hash.new
     # only users with active avatar can send whispers
@@ -519,10 +516,10 @@ class WhisperNotification < AWS::Record::HashModel
           # chat_message = ChattingMessage.create!(:speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
           if !timestamp.nil?
             whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
-            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :content_type => content_type, :image_url => image_url, :audio_url => audio_url, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
           else
             whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
-            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro)
+            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :content_type => content_type, :image_url => image_url, :audio_url => audio_url)
           end
           if n and notification_type == "2"
             time = Time.now
@@ -543,6 +540,9 @@ class WhisperNotification < AWS::Record::HashModel
                 speaker_id: chat_message.speaker_id,
                 id:         chat_message.id,
                 grouping_id: chat_message.grouping_id,
+                content_type:       chat_message.content_type.nil? ? 'text' : chat_message.content_type,
+                image_url:  chat_message.image_url.nil? ? '' : chat_message.image_url,
+                audio_url:  chat_message.audio_url.nil? ? '' : chat_message.audio_url,
                 conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,
@@ -599,9 +599,9 @@ class WhisperNotification < AWS::Record::HashModel
             end
           end
           if !timestamp.nil?
-            chat_message = ChattingMessage.create!(:grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
+            chat_message = ChattingMessage.create!(:content_type => content_type, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => Time.at(timestamp), :updated_at => Time.at(timestamp))
           else
-            chat_message = ChattingMessage.create!(:grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
+            chat_message = ChattingMessage.create!(:content_type => content_type, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro)
           end
           if chat_message and Rails.env == 'production'
             # :nocov:
@@ -612,6 +612,9 @@ class WhisperNotification < AWS::Record::HashModel
                 speaker_id: chat_message.speaker_id,
                 id:         chat_message.id,
                 grouping_id: chat_message.grouping_id,
+                content_type:       chat_message.content_type.nil? ? 'text' : chat_message.content_type,
+                image_url:  chat_message.image_url.nil? ? '' : chat_message.image_url,
+                audio_url:  chat_message.audio_url.nil? ? '' : chat_message.audio_url,
                 conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
                 timestamp:  chat_message.created_at.to_i,
                 message:    chat_message.message.nil? ? '' : chat_message.message,
@@ -848,8 +851,6 @@ class WhisperNotification < AWS::Record::HashModel
       friend_number: accept_number
     }
 
-    puts "BADGEEEEEE"
-    puts badge.inspect
     return badge
   end
 end

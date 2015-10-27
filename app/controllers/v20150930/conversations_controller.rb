@@ -138,6 +138,9 @@ module V20150930
       target_id = params[:target_id]
       notification_type = '2'
       intro = params[:message].blank? ? "" : params[:message].to_s
+      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      image_url = params[:image_url].blank? ? "" : params[:image_url]
+      audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       timestamp = params[:timestamp].blank? ? nil : params[:timestamp].to_i
       message = current_user.first_name + " sent you a whisper"   
       venue_id = nil
@@ -145,7 +148,7 @@ module V20150930
       target_user = User.find_user_by_unique(target_id)
 
       if target_user
-        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, intro, message, timestamp)
+        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, intro, message, timestamp, content_type, image_url, audio_url)
 
         if result['message'] == "true"
           whisper = result['whisper']
