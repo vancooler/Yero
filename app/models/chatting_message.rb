@@ -25,7 +25,7 @@ class ChattingMessage < ActiveRecord::Base
   def self.migrate_grouping_timestamp
   	ChattingMessage.all.order("created_at ASC").each do |cm|
   		if cm.grouping_id.nil? or true
-  			previous_messages = cm.whisper.chatting_messages.where(speaker_id: cm.speaker_id).where("created_at < ?", cm.created_at).order("created_at DESC")
+  			previous_messages = cm.whisper.chatting_messages.where("created_at < ?", cm.created_at).order("created_at DESC")
   			if previous_messages.blank?
   				cm.update(grouping_id: cm.created_at.to_i)
   			else
