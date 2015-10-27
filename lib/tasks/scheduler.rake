@@ -44,6 +44,7 @@ end
 task :whisper_expire => :environment do
   puts "Expire whispers without replies older than 12 hours"
   WhisperToday.expire
+  Conversation.expire
   puts "Done."
 end
 
