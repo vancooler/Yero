@@ -21,15 +21,20 @@ class ChattingMessage < ActiveRecord::Base
 
 
 
-
+  # migrate grouping id for legacy chatting messages
   def self.migrate_grouping_timestamp
   	ChattingMessage.all.order("created_at ASC").each do |cm|
-  		if cm.grouping_id.nil?
+  		if cm.grouping_id.nil? or true
   			previous_messages = cm.whisper.chatting_messages.where(speaker_id: cm.speaker_id).where("created_at < ?", cm.created_at).order("created_at DESC")
   			if previous_messages.blank?
   				cm.update(grouping_id: cm.created_at.to_i)
   			else
-  				cm.update(grouping_id: previous_messages.first.grouping_id)
+  				last_grouping_id = previous_messages.first.grouping_id
+  				if !last_grouping_id.nil? and cm.created_at.to_i <= last_grouping_id + 15*60
+	  				cm.update(grouping_id: last_grouping_id)
+	  			else
+	  				cm.update(grouping_id: cm.created_at.to_i)
+	  			end
   			end
   		end
   	end
