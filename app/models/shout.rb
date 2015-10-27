@@ -157,7 +157,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, venue_id, anonymous, city, neighbourhood)
+  def self.create_shout(current_user, body, venue_id, anonymous, city, neighbourhood, content_type, image_url, audio_url)
   	shout = Shout.new
   	venue = Venue.find_venue_by_unique(venue_id)
   	if venue.nil?
@@ -178,6 +178,9 @@ class Shout < ActiveRecord::Base
 	  	shout.allow_nearby = false
   	end
     shout.city = city
+    shout.content_type = content_type
+    shout.image_url = image_url
+    shout.audio_url = audio_url
     shout.neighbourhood = neighbourhood
   	shout.body = body
   	shout.user_id = current_user.id
@@ -190,38 +193,41 @@ class Shout < ActiveRecord::Base
 	  	shout_id = shout.id
 	  	shout.change_vote(current_user, 1)
 	  	
-		shout_json = {
-			id: 			shout.id,
-	        body: 			shout.body,
-	        anonymous: 		shout.anonymous,
-	        latitude: 		shout.latitude,
-          longitude:    shout.longitude,
-          city:         shout.city.nil? ? '' : shout.city,
-          neighbourhood:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
-          timestamp:    shout.created_at.to_i,
-          expire_timestamp:    shout.created_at.to_i+7*24*3600,
-	        total_upvotes: 	1,
-	        actions:        ["undo_upvote", "downvote"],
-	        network_gimbal_key:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
-	        shout_comments: 0,
-	        author_id: shout.user_id,
-	        author_username: 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
-		}
-		# users can access this shout
-		user_channels = Array.new
-		# :nocov:
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
-		if !user_channels.empty?
-			if Rails.env == 'production'
-				user_channels.in_groups_of(10, false) do |channels|
-					Pusher.delay.trigger(channels, 'create_shout_event', {shout: shout_json})
-				end
-			end
-		end
-		# :nocov:
+  		shout_json = {
+  			id: 			           shout.id,
+        body: 			         shout.body,
+        anonymous: 		       shout.anonymous,
+        latitude: 		       shout.latitude,
+        longitude:           shout.longitude,
+        city:                shout.city.nil? ? '' : shout.city,
+        content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
+        audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
+        image_url:           shout.image_url.nil? ? '' : shout.image_url,
+        neighbourhood:       shout.neighbourhood.nil? ? '' : shout.neighbourhood,
+        timestamp:           shout.created_at.to_i,
+        expire_timestamp:    shout.created_at.to_i+7*24*3600,
+        total_upvotes: 	     1,
+        actions:             ["undo_upvote", "downvote"],
+        network_gimbal_key:  ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+        shout_comments:      0,
+        author_id:           shout.user_id,
+        author_username: 		 (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
+		  }
+  		# users can access this shout
+  		user_channels = Array.new
+  		# :nocov:
+  		user_ids.each do |id|
+  			channel = 'private-user-' + id.to_s
+  			user_channels << channel
+  		end
+  		if !user_channels.empty?
+  			if Rails.env == 'production'
+  				user_channels.in_groups_of(10, false) do |channels|
+  					Pusher.delay.trigger(channels, 'create_shout_event', {shout: shout_json})
+  				end
+  			end
+  		end
+  		# :nocov:
 	  	return shout_json
     else
     	# :nocov:
@@ -315,16 +321,19 @@ class Shout < ActiveRecord::Base
 
   	result = Jbuilder.encode do |json|
       json.array! shouts do |shout|
-        json.id 			    shout.id
-        json.body 			  shout.body
-        json.anonymous 		shout.anonymous
-        json.latitude 		shout.latitude
-        json.longitude    shout.longitude
-        json.city         shout.city.nil? ? '' : shout.city
-        json.neighbourhood    shout.neighbourhood.nil? ? '' : shout.neighbourhood
-        json.timestamp    shout.created_at.to_i
-        json.expire_timestamp    shout.created_at.to_i+7*24*3600
-        json.total_upvotes 	shout.total_upvotes
+        json.id 			          shout.id
+        json.body 			        shout.body
+        json.anonymous 		      shout.anonymous
+        json.latitude 		      shout.latitude
+        json.longitude          shout.longitude
+        json.city               shout.city.nil? ? '' : shout.city
+        json.content_type       shout.content_type.nil? ? 'text' : shout.content_type
+        json.audio_url          shout.audio_url.nil? ? '' : shout.audio_url
+        json.image_url          shout.image_url.nil? ? '' : shout.image_url
+        json.neighbourhood      shout.neighbourhood.nil? ? '' : shout.neighbourhood
+        json.timestamp          shout.created_at.to_i
+        json.expire_timestamp   shout.created_at.to_i+7*24*3600
+        json.total_upvotes 	    shout.total_upvotes
         actions = ["downvote", "upvote"]
         if shout_upvoted_ids.include? shout.id
             actions = ["undo_upvote", "downvote"]
@@ -332,11 +341,11 @@ class Shout < ActiveRecord::Base
         if shout_downvoted_ids.include? shout.id
             actions = ["undo_downvote", "upvote"]
         end
-	    json.actions		actions
-        json.shout_comments ShoutComment.list(current_user, shout.id, nil, nil)['shout_comments'].length
-        json.author_id		shout.user_id
-        json.author_username 		(User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
-        json.network_gimbal_key       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
+	      json.actions		        actions
+        json.shout_comments     ShoutComment.list(current_user, shout.id, nil, nil)['shout_comments'].length
+        json.author_id		      shout.user_id
+        json.author_username 	  (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
+        json.network_gimbal_key ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
       end         
     end
     result = JSON.parse(result).delete_if(&:empty?)

@@ -138,11 +138,14 @@ class ShoutComment < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout_comment(current_user, body, shout_id, city, neighbourhood)
+  def self.create_shout_comment(current_user, body, shout_id, city, neighbourhood, content_type, image_url, audio_url)
   	shout_comment = ShoutComment.new
 	  shout_comment.latitude = current_user.latitude
 	  shout_comment.longitude = current_user.longitude
     shout_comment.city = city
+    shout_comment.content_type = content_type
+    shout_comment.image_url = image_url
+    shout_comment.audio_url = audio_url
     shout_comment.neighbourhood = neighbourhood
     shout_comment.body = body
   	shout_comment.shout_id = shout_id.to_i
@@ -159,19 +162,23 @@ class ShoutComment < ActiveRecord::Base
 	  	
 	  	channel = 'public-shout-' + shout_id.to_s
 		  shout_comment_json = {
-			    id: 			shout_comment.id,
-	        body: 			shout_comment.body,
-	        latitude: 		shout_comment.latitude,
-          longitude:    shout_comment.longitude,
-          city:    shout_comment.city.nil? ? '' : shout_comment.city,
-          neighbourhood:    shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
-	        timestamp: 		shout_comment.created_at.to_i,
-	        total_upvotes: 	1,
-	        actions: 		["upvote", "downvote"],
-	        shout_id: 		shout_comment.shout_id,
-	        venue_id:       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
-	        author_id: 		shout_comment.user_id,
-	        author_username: 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
+		    id: 			       shout_comment.id,
+        body: 			     shout_comment.body,
+        latitude: 		   shout_comment.latitude,
+        longitude:       shout_comment.longitude,
+        city:            shout_comment.city.nil? ? '' : shout_comment.city,
+        content_type:    shout_comment.content_type.nil? ? 'text' : shout_comment.content_type,
+        image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
+        audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.city,
+        neighbourhood:   shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
+        timestamp: 		   shout_comment.created_at.to_i,
+        total_upvotes:   1,
+        actions: 	       ["upvote", "downvote"],
+        shout_id: 	     shout_comment.shout_id,
+        venue_id:        ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
+        author_id: 	     shout_comment.user_id,
+        author_username: (User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username),
+        network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
 		  }
 		if Rails.env == "production"
 			# :nocov:	
@@ -275,16 +282,19 @@ class ShoutComment < ActiveRecord::Base
   	shout_comment_downvoted_ids = ShoutCommentVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_comment_id)
   	return_shout_comments = Jbuilder.encode do |json|
       json.array! shout_comments do |shout_comment|
-        json.id 			shout_comment.id
-        json.shout_id 		shout_comment.shout_id
-        json.body       shout_comment.body
-        json.city       shout_comment.city.nil? ? '' : shout_comment.city
-        json.neighbourhood       shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
-        json.latitude 		shout_comment.latitude
-        json.longitude 		shout_comment.longitude
-        json.timestamp 		shout_comment.created_at.to_i
-        json.total_upvotes 	shout_comment.total_upvotes
-        json.network_gimbal_key       ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
+        json.id 			     shout_comment.id
+        json.shout_id 		 shout_comment.shout_id
+        json.body          shout_comment.body
+        json.city          shout_comment.city.nil? ? '' : shout_comment.city
+        json.content_type  shout_comment.content_type.nil? ? 'text' : shout_comment.content_type
+        json.audio_url     shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
+        json.image_url     shout_comment.image_url.nil? ? '' : shout_comment.image_url
+        json.neighbourhood shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
+        json.latitude 		 shout_comment.latitude
+        json.longitude 		 shout_comment.longitude
+        json.timestamp 		 shout_comment.created_at.to_i
+        json.total_upvotes shout_comment.total_upvotes
+        json.network_gimbal_key ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
         actions = ["downvote", "upvote"]
         if shout_comment_upvoted_ids.include? shout_comment.id
             actions = ["undo_upvote", "downvote"]
@@ -292,10 +302,10 @@ class ShoutComment < ActiveRecord::Base
         if shout_comment_downvoted_ids.include? shout_comment.id
             actions = ["undo_downvote", "upvote"]
         end
-	    json.actions		actions
+	      json.actions		   actions
         # json.voted			((shout_comment_upvoted_ids.include? shout_comment.id) ? "up" : ((shout_comment_downvoted_ids.include? shout_comment.id) ? "down" : ""))
-        json.author_id		shout_comment.user_id
-        json.author_username 		(User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
+        json.author_id		 shout_comment.user_id
+        json.author_username (User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username)
       end         
     end
     return_shout_comments = JSON.parse(return_shout_comments).delete_if(&:empty?)

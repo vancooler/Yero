@@ -26,21 +26,24 @@ module V20150930
         end
         result = ShoutComment.list(current_user, shout.id, nil, nil)
         shout_json = {
-          id:             shout.id,
-          body:           shout.body,
-          anonymous:      shout.anonymous,
-          latitude:       shout.latitude,
-          longitude:      shout.longitude,
-          city:           shout.city.nil? ? '' : shout.city,
-          neighbourhood:  shout.neighbourhood.nil? ? '' : shout.neighbourhood,
-          timestamp:      shout.created_at.to_i,
-          expire_timestamp:      shout.created_at.to_i+7*24*3600,
-          total_upvotes:  shout.total_upvotes,
-          actions:        actions,
-          shout_comments: result['shout_comments'].length,
+          id:                   shout.id,
+          body:                 shout.body,
+          anonymous:            shout.anonymous,
+          latitude:             shout.latitude,
+          longitude:            shout.longitude,
+          city:                 shout.city.nil? ? '' : shout.city,
+          content_type:         shout.content_type.nil? ? 'text' : shout.content_type,
+          audio_url:            shout.audio_url.nil? ? '' : shout.audio_url,
+          image_url:            shout.image_url.nil? ? '' : shout.image_url,
+          neighbourhood:        shout.neighbourhood.nil? ? '' : shout.neighbourhood,
+          timestamp:            shout.created_at.to_i,
+          expire_timestamp:     shout.created_at.to_i+7*24*3600,
+          total_upvotes:        shout.total_upvotes,
+          actions:              actions,
+          shout_comments:       result['shout_comments'].length,
           shout_comments_array: result['shout_comments'],
-          network_gimbal_key:       ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
-          author_id:      shout.user_id,
+          network_gimbal_key:   ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+          author_id:            shout.user_id,
           author_username:      (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
         }
         # response = {
@@ -66,9 +69,12 @@ module V20150930
       venue = (params[:venue].blank? ? nil : params[:venue])
       city = (params[:city].blank? ? '' : params[:city])
       neighbourhood = (params[:neighbourhood].blank? ? '' : params[:neighbourhood])
+      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      image_url = params[:image_url].blank? ? "" : params[:image_url]
+      audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       
-      shout = Shout.create_shout(current_user, params[:body], venue, anonymous, city, neighbourhood)
+      shout = Shout.create_shout(current_user, params[:body], venue, anonymous, city, neighbourhood, content_type, image_url, audio_url)
       if shout
         # Pusher later
         render json: success(shout)
