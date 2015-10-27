@@ -966,7 +966,9 @@ class User < ActiveRecord::Base
     if self.is_connected == false
       self.is_connected = true
       self.save
-      RecentActivity.add_activity(self.id, '200', nil, nil, "online-"+self.id.to_s+"-"+Time.now.to_i.to_s)
+      if !self.fake_user
+        RecentActivity.add_activity(self.id, '200', nil, nil, "online-"+self.id.to_s+"-"+Time.now.to_i.to_s)
+      end
     end
   end
 
@@ -986,7 +988,7 @@ class User < ActiveRecord::Base
     current_timestamp = Time.now.to_i
     people_array.each do |user|
       check_user = User.find_user_by_unique(user.to_i)
-      if check_user and check_user.is_connected
+      if check_user and check_user.is_connected and !check_user.fake_user
         RecentActivity.add_activity(user, '201', nil, nil, "offline-"+user.to_s+"-"+current_timestamp.to_s)
       end
     end
