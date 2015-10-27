@@ -6,10 +6,10 @@ class RoomsController < ApplicationController
   # When a user enters a room, we need to create a new participant.
   # Participants tell us who is in what Venue/Venue Network
   def user_enter
-    if params[:beacon_key].kind_of?(Array)
-      beacon_key = params[:beacon_key].to_a
+    if params[:id].kind_of?(Array)
+      beacon_key = params[:id].to_a
     else
-      beacon_key = [params[:beacon_key]]
+      beacon_key = [params[:id]]
     end
     beacons = Beacon.where(key: beacon_key)
 
