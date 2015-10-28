@@ -2160,6 +2160,8 @@ describe 'V2.0.0' do
       	expect(WhisperSent.count).to eql 2
       	expect(RecentActivity.count).to eql 0
 
+      	chat_message = ChattingMessage.last
+
       	get "api/conversations", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 1
@@ -2175,6 +2177,30 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hii!'
 		expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hi again!'
+
+      	get 'api/messages/'+chat_message.id.to_s, {:read => 0, :token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['read']).to eql false
+
+      	token = user_4.generate_token
+      	get 'api/messages/'+chat_message.id.to_s, {:read => 0, :token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 403
+
+      	token = user_3.generate_token
+      	get 'api/messages/0?read=0', {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['code']).to eql 404
+
+
+      	get 'api/conversations/'+chat_message.whisper.dynamo_id, {:read => 0, :token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['unread_message_count']).to eql 2
+
+      	get 'api/messages/'+chat_message.id.to_s, {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['read']).to eql true
+
 
       	delete 'api/collection', {:token => token, :object_type => "conversations", :ids => [Conversation.first.dynamo_id, Conversation.last.dynamo_id]}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -2225,4 +2251,7 @@ end
 # chatting message with group id  -> done
 # Shout-venue link & exclusive in params
 # neighbourhood and city in shouts -> done
-# type and url for shouts and chatting messages
+# type and url for shouts and chatting messages -> done
+
+# new endpoint for single message
+# Notification with new sturcture

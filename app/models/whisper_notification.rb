@@ -536,18 +536,7 @@ class WhisperNotification < AWS::Record::HashModel
             target_user = User.find_user_by_unique(target_id)
             if target_user and target_user.pusher_private_online
               channel = 'private-user-' + target_id.to_s
-              message_json = {
-                speaker_id: chat_message.speaker_id,
-                id:         chat_message.id,
-                grouping_id: chat_message.grouping_id,
-                content_type:       chat_message.content_type.nil? ? 'text' : chat_message.content_type,
-                image_url:  chat_message.image_url.nil? ? '' : chat_message.image_url,
-                audio_url:  chat_message.audio_url.nil? ? '' : chat_message.audio_url,
-                conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
-                timestamp:  chat_message.created_at.to_i,
-                message:    chat_message.message.nil? ? '' : chat_message.message,
-                read:       chat_message.read
-              }
+              message_json = chat_message.to_json(target_user)
               # Pusher.trigger(channel, 'new_message_event', {message: message_json})
               conversation_json = {
                 initial_whisper:      true,
@@ -564,7 +553,8 @@ class WhisperNotification < AWS::Record::HashModel
               Pusher.trigger(channel, 'new_conversation_event', {conversation: conversation_json})
             else
               if (!target_user.version.nil? and target_user.version.to_f >= 2)
-                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+                content_path = "api/conversations/"+origin_id.to_s+"?read=0"
+                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i, content_path)
               end
             end
             # :nocov:
@@ -608,21 +598,10 @@ class WhisperNotification < AWS::Record::HashModel
             target_user = User.find_user_by_unique(target_id)
             if target_user and target_user.pusher_private_online
               channel = 'private-user-' + target_id.to_s
-              message_json = {
-                speaker_id: chat_message.speaker_id,
-                id:         chat_message.id,
-                grouping_id: chat_message.grouping_id,
-                content_type:       chat_message.content_type.nil? ? 'text' : chat_message.content_type,
-                image_url:  chat_message.image_url.nil? ? '' : chat_message.image_url,
-                audio_url:  chat_message.audio_url.nil? ? '' : chat_message.audio_url,
-                conversation_id: (chat_message.whisper.dynamo_id.nil? ? '' : chat_message.whisper.dynamo_id), 
-                timestamp:  chat_message.created_at.to_i,
-                message:    chat_message.message.nil? ? '' : chat_message.message,
-                read:       chat_message.read
-              }
+              message_json = chat_message.to_json(target_user)
               if !pusher_to_archieved
-                chatting_message.read = true
-                chatting_message.save
+                chat_message.read = true
+                chat_message.save
                 message_json[:read] = true
                 Pusher.trigger(channel, 'new_message_event', {message: message_json})
               else
@@ -641,7 +620,12 @@ class WhisperNotification < AWS::Record::HashModel
               end
             else
               if (!target_user.version.nil? and target_user.version.to_f >= 2)
-                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i)
+                if pusher_to_archieved
+                  content_path = "api/conversations/"+origin_id.to_s+"?read=0"
+                else
+                  content_path = 'api/messages/'+chat_message.id.to_s+"?read=0"
+                end
+                chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i, content_path)
               end
             end
             # :nocov:

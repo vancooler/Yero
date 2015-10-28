@@ -121,18 +121,7 @@ class Conversation < ActiveRecord::Base
 					replies = ChattingMessage.where(whisper_id: a.id).order("created_at DESC")
 					if replies.count > 0
 						last_message = replies.first
-					  	new_item = {
-			              id: last_message.id,
-			              grouping_id: last_message.grouping_id,
-			              content_type: last_message.content_type.nil? ? 'text' : last_message.content_type,
-			              image_url: last_message.image_url.nil? ? '' : last_message.image_url,
-			              audio_url: last_message.audio_url.nil? ? '' : last_message.audio_url,
-			              conversation_id: last_message.whisper.dynamo_id.blank? ? '' : last_message.whisper.dynamo_id,
-			              speaker_id: last_message.speaker_id,
-			              timestamp: last_message.created_at.to_i,
-			              message: last_message.message.nil? ? '' : last_message.message,
-			              read: (last_message.speaker_id == current_user.id) ? true : last_message.read
-			            }
+					  	new_item = last_message.to_json(current_user)
 		              	json.last_message new_item
 		            
 		            end
@@ -164,18 +153,7 @@ class Conversation < ActiveRecord::Base
 	    end
 		if replies.count > 0
           	replies.each do |r|
-	            new_item = {
-	              id: r.id,
-	              grouping_id: r.grouping_id,
-	              content_type: r.content_type.nil? ? 'text' : r.content_type,
-	              audio_url: r.audio_url.nil? ? '' : r.audio_url,
-	              image_url: r.image_url.nil? ? '' : r.image_url,
-	              conversation_id: r.whisper.dynamo_id.blank? ? '' : r.whisper.dynamo_id,
-	              speaker_id: r.speaker_id,
-	              timestamp: r.created_at.to_i,
-	              message: r.message.nil? ? '' : r.message,
-	              read: (r.speaker_id == current_user.id) ? true : r.read
-	            }
+	            new_item = r.to_json(current_user)
 	            messages_array << new_item
           	end
         end

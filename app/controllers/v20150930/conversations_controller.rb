@@ -1,7 +1,7 @@
 module V20150930
   class ConversationsController < ApplicationController
-    prepend_before_filter :get_api_token, only: [:create, :index, :update, :destroy, :show, :show_messages]
-    before_action :authenticate_api_v2, only: [:create, :index, :update, :destroy, :show, :show_messages]
+    prepend_before_filter :get_api_token, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message]
+    before_action :authenticate_api_v2, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message]
 
     def index
       # badge = WhisperNotification.unviewd_whisper_number(current_user.id)
@@ -34,6 +34,8 @@ module V20150930
 
     def show
       whisper_id = params[:id]
+      read_messages = (!params['read'].nil? ? (params['read'].to_s == '1' or params['read'].to_s == 'true') : true)
+      
       if !/\A\d+\z/.match(whisper_id.to_s)
         whisper = Conversation.find_by_dynamo_id(whisper_id)
       else
@@ -69,7 +71,7 @@ module V20150930
           page_number = 1
           per_page = 10
           per_page = params[:per_page].to_i if !params[:per_page].blank?
-          read_messages = true
+          # read_messages = true
           result = whisper.chatting_replies(current_user, page_number, per_page, read_messages)
 
           whispers_json = Conversation.conversations_to_json([whisper], current_user)
@@ -78,6 +80,38 @@ module V20150930
           whisper_json[:messages] = result['messages']
           render json: success(whisper_json, 'data', result['pagination'])
         end
+      end
+    end
+
+
+    def show_single_message
+      message_id = params[:id]
+      read = (!params['read'].nil? ? (params['read'].to_s == '1' or params['read'].to_s == 'true') : true)
+      
+      message = ChattingMessage.find_by_id(message_id)
+      if !message.nil?
+        if message.whisper.target_user_id != current_user.id and message.whisper.origin_user_id != current_user.id
+          error_obj = {
+            code: 403,
+            message: "Sorry, you don't have access to it"
+          }
+          render json: error(error_obj, 'error')
+        else
+          if read
+            message.read = true
+            message.save
+          end
+          message_json = message.to_json(current_user)
+
+          render json: success(message_json, 'data')
+        end
+
+      else
+        error_obj = {
+          code: 404,
+          message: "Sorry, cannot find the message"
+        }
+        render json: error(error_obj, 'error')
       end
     end
 

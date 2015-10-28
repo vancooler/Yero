@@ -2,11 +2,28 @@ class ChattingMessage < ActiveRecord::Base
   belongs_to :whisper, class_name: "Conversation", :foreign_key => 'whisper_id'
 
 
+
+  def to_json(current_user)
+  	message_json = {
+  		id: self.id,
+		grouping_id: self.grouping_id,
+		content_type: self.content_type.nil? ? 'text' : self.content_type,
+		image_url: self.image_url.nil? ? '' : self.image_url,
+		audio_url: self.audio_url.nil? ? '' : self.audio_url,
+		conversation_id: self.whisper.dynamo_id.blank? ? '' : self.whisper.dynamo_id,
+		speaker_id: self.speaker_id,
+		timestamp: self.created_at.to_i,
+		message: self.message.nil? ? '' : self.message,
+		read: (self.speaker_id == current_user.id) ? true : self.read			            
+  	}
+  	return message_json
+  end
+
   # :nocov:
-  def send_push_notification_to_target_user(message, sender_id, receiver_id)
+  def send_push_notification_to_target_user(message, sender_id, receiver_id, content_path)
 	deep_link = "yero://whispers/" + sender_id.to_s
 
-    data = { :alert_message => message, :type => 2, :badge => "Increment", :deep_link => deep_link}
+    data = { :alert_message => message, :type => 2, :content_path => content_path, :'content-available' => 1, :deep_link => deep_link}
     push = Parse::Push.new(data, "User_" + receiver_id.to_s)
     push.type = "ios"
     begin  
