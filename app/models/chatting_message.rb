@@ -21,9 +21,34 @@ class ChattingMessage < ActiveRecord::Base
 
   # :nocov:
   def send_push_notification_to_target_user(message, sender_id, receiver_id, content_path)
-	deep_link = "yero://whispers/" + sender_id.to_s
+  	conversation = self.whisper
+  	receiver = User.find_user_by_unique(receiver_id)
 
+	deep_link = "yero://whispers/" + sender_id.to_s
     data = { :alert_message => message, :type => 2, :content_path => content_path, :'content-available' => 1, :deep_link => deep_link}
+
+    if receiver.id == conversation.target_user_id
+    	last_alert_time = conversation.last_target_user_push_time
+    elsif receiver.id == conversation.origin_user_id
+    	last_alert_time = conversation.last_origin_user_push_time
+    end
+  	current_push = Time.now.to_i
+  	# initial or 1 hour later or message has been read
+  	if conversation.chatting_messages.where.not(speaker_id: receiver.id).blank?
+  		data[:alert] = message
+  		data[:badge] = "Increment"
+  	elsif last_alert_time.nil?
+  		data[:alert] = message
+  		data[:badge] = "Increment"
+  	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i > last_alert_time)
+  		data[:alert] = message
+  		data[:badge] = "Increment"
+  	elsif last_alert_time + 3600 > current_push
+  		data[:alert] = message
+  		data[:badge] = "Increment"
+  	end
+
+
     push = Parse::Push.new(data, "User_" + receiver_id.to_s)
     push.type = "ios"
     begin  
@@ -33,6 +58,16 @@ class ChattingMessage < ActiveRecord::Base
       p "Push notification error"
       result = false 
     end 
+
+    # update last push alert time
+    if result and !data[:badge].nil? and data[:badge] == "Increment"
+    	if receiver.id == conversation.target_user_id
+	    	conversation.last_target_user_push_time = Time.now.to_i
+	    elsif receiver.id == conversation.origin_user_id
+	    	conversation.last_origin_user_push_time = Time.now.to_i
+	    end
+	    conversation.save
+    end
     return result 
   end
 
