@@ -254,7 +254,7 @@ class Shout < ActiveRecord::Base
 	  		else
 	  			same_venue_shouts = []
 	  		end
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 60, units: :km)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 5, units: :km)
 	  		shouts = shouts | same_venue_shouts
 	  		
 	  	else
@@ -374,7 +374,7 @@ class Shout < ActiveRecord::Base
 	  return_user_ids = ActiveInVenue.where(venue_id: self.venue_id).where.not(user_id: self.user_id).map(&:user_id)
     end
 	if self.allow_nearby
-		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 60, units: :km).map(&:id)
+		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 5, units: :km).map(&:id)
 	end
 	black_list = BlockUser.blocked_user_ids(self.user_id)
   	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'Shout').map(&:reporter_id)
