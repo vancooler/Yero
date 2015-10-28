@@ -33,20 +33,37 @@ class ChattingMessage < ActiveRecord::Base
     	last_alert_time = conversation.last_origin_user_push_time
     end
   	current_push = Time.now.to_i
+  	puts "PUSH ALERT"
   	# initial or 1 hour later or message has been read
   	if conversation.chatting_messages.where.not(speaker_id: receiver.id).blank?
+  		puts "Scenario1"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif last_alert_time.nil?
+  		puts "Scenario2"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i > last_alert_time)
+  		puts "Scenario3"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif last_alert_time + 3600 > current_push
+  		puts "Scenario4"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	end
+  	puts "last_active:"
+  	puts receiver.last_active.to_i.to_s
+  	puts "last_alert_time"
+  	puts (last_alert_time.nil? ? 'nil' : last_alert_time.to_s)
+  	puts "current_push_time"
+  	puts current_push.to_s
+
+
+  	# Scenarios getting alert and increment:
+  	# 1. initial whisper
+  	# 2. last alert notification was cleared
+  	# 3. last alert notification was 1 hour ago
 
 
     push = Parse::Push.new(data, "User_" + receiver_id.to_s)

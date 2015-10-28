@@ -602,7 +602,6 @@ class WhisperNotification < AWS::Record::HashModel
               if !pusher_to_archieved
                 chat_message.read = true
                 chat_message.save
-                message_json[:read] = true
                 Pusher.trigger(channel, 'new_message_event', {message: message_json})
               else
                 conversation_json = {
