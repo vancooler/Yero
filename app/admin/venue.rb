@@ -1,5 +1,13 @@
 ActiveAdmin.register Venue do
-  menu :parent => "VENUE"
+  menu :parent => "VENUE", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+  before_filter :check_super
+
+  controller do
+    def check_super
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
+  
   permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, 
                 :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, 
                 :age_requirement, :latitude, :longitude, :web_user, :web_user_id, :draft_pending,

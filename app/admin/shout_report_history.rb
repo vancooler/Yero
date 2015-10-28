@@ -25,7 +25,6 @@ ActiveAdmin.register ShoutReportHistory do
     end
     column :reporter, sortable: "reporter_id"
     column "Type", :reportable_type
-    column :shout_report_type
     column "Reported Count",:frequency, sortable: "frequency"
     column "Recent Report Time", :updated_at, sortable: "updated_at"
     column "Recent Solved Time", :solved_at, sortable: "solved_at"

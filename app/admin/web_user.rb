@@ -1,5 +1,13 @@
 ActiveAdmin.register WebUser, :as => "Venue Owner" do
-  menu :parent => "USERS"
+  menu :parent => "USERS", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+  before_filter :check_super
+
+  controller do
+    def check_super
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
+  
   permit_params :email, :web_user_name, :first_name, :last_name, :business_name, :business_phone, :address_line_1, :address_line_2, :city, :state, :country, :zipcode, :password, :password_confirmation, venue_ids: []
   #               beacons_attributes: [:id, :key, :venue_id, :_destroy],
   #               venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
