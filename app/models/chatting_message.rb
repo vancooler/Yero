@@ -47,7 +47,7 @@ class ChattingMessage < ActiveRecord::Base
   		puts "Scenario3"
   		data[:alert] = message
   		data[:badge] = "Increment"
-  	elsif last_alert_time + 3600 > current_push
+  	elsif last_alert_time + 3600 < current_push
   		puts "Scenario4"
   		data[:alert] = message
   		data[:badge] = "Increment"
