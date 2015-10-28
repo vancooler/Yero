@@ -161,10 +161,10 @@ class Shout < ActiveRecord::Base
   	shout = Shout.new
   	venue = Venue.find_venue_by_unique(venue_id)
   	if venue.nil?
-		if !current_user.current_venue.nil?
+		  if !current_user.current_venue.nil?
 	  		shout.latitude = current_user.current_venue.latitude
 	  		shout.longitude = current_user.current_venue.longitude
-	  		# shout.venue_id = current_user.current_venue.id 
+	  		shout.venue_id = current_user.current_venue.id 
 	  		shout.allow_nearby = true
 	  	else
 	  		shout.latitude = current_user.latitude

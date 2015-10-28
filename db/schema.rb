@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151027141711) do
+ActiveRecord::Schema.define(version: 20151028113000) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,21 +136,23 @@ ActiveRecord::Schema.define(version: 20151027141711) do
   end
 
   create_table "conversations", force: true do |t|
-    t.integer  "target_user_id",                       null: false
+    t.integer  "target_user_id",                             null: false
     t.integer  "origin_user_id"
     t.integer  "venue_id"
-    t.integer  "whisper_type",                         null: false
-    t.boolean  "viewed",               default: false
-    t.boolean  "accepted",             default: false
-    t.boolean  "declined",             default: false
-    t.text     "message",              default: ""
+    t.integer  "whisper_type",                               null: false
+    t.boolean  "viewed",                     default: false
+    t.boolean  "accepted",                   default: false
+    t.boolean  "declined",                   default: false
+    t.text     "message",                    default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "dynamo_id"
     t.integer  "paper_owner_id"
-    t.text     "message_b",            default: ""
-    t.boolean  "target_user_archieve", default: false
-    t.boolean  "origin_user_archieve", default: false
+    t.text     "message_b",                  default: ""
+    t.boolean  "target_user_archieve",       default: false
+    t.boolean  "origin_user_archieve",       default: false
+    t.integer  "last_target_user_push_time"
+    t.integer  "last_origin_user_push_time"
   end
 
   add_index "conversations", ["target_user_id"], name: "index_conversations_on_target_user_id", using: :btree
@@ -559,7 +561,7 @@ ActiveRecord::Schema.define(version: 20151027141711) do
     t.string   "current_city"
     t.boolean  "fake_user",                             default: false
     t.string   "instagram_token"
-    t.datetime "last_status_active_time",               default: '2015-09-03 21:26:18'
+    t.datetime "last_status_active_time",               default: '2015-09-03 21:18:25'
     t.string   "spotify_id"
     t.string   "spotify_token"
     t.string   "version"

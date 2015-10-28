@@ -1490,7 +1490,7 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1505,8 +1505,8 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_1.id
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1525,7 +1525,7 @@ describe 'V2.0.0' do
       	get 'api/shouts', {:token => token, :order_by => "new", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -2249,9 +2249,13 @@ end
 
 
 # chatting message with group id  -> done
-# Shout-venue link & exclusive in params
+# ***Shout-venue link & exclusive in params
 # neighbourhood and city in shouts -> done
 # type and url for shouts and chatting messages -> done
 
-# new endpoint for single message
-# Notification with new sturcture
+# new endpoint for single message -> done
+# Notification with new sturcture -> done
+
+# last active time compare to alert
+# alert -> increment
+# alert time update
