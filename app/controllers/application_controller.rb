@@ -31,7 +31,15 @@ class ApplicationController < ActionController::Base
     # else
     #   super
     # end
-    new_web_user_session_path
+    # puts "AAAAAA"
+    # puts resource.inspect
+    # puts (resource.is_a?(AdminUser) or resource == "admin_user" or resource == :admin_user).to_s
+    if resource.is_a?(WebUser) or resource == "web_user" or resource == :web_user
+      new_web_user_session_path
+    else
+      super
+    end
+    
   end
   # :nocov:
 

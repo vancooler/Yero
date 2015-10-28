@@ -942,7 +942,7 @@ class User < ActiveRecord::Base
 
   # Generate auth token
   def generate_token(with_expire_time = nil)
-    expire_time = (Time.now.to_i + 3600*24)
+    expire_time = (Time.now.to_i + 7*3600*24)
     user = {:id => self.id, :exp => expire_time } # expire in 24 hours
     if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
