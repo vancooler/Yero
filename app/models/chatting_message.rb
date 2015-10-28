@@ -43,7 +43,7 @@ class ChattingMessage < ActiveRecord::Base
   		puts "Scenario2"
   		data[:alert] = message
   		data[:badge] = "Increment"
-  	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i > last_alert_time)
+  	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i <= last_alert_time)
   		puts "Scenario3"
   		data[:alert] = message
   		data[:badge] = "Increment"
