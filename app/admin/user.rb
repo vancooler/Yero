@@ -152,7 +152,7 @@ ActiveAdmin.register User do
       row("Default Avatar ID") { |ad| ad.default_avatar.id if !ad.default_avatar.nil?}
       row("Default Avatar") { |ad| image_tag(ad.default_avatar.thumb_url, {:style => "height:100px;width:100px;"}) if !ad.default_avatar.nil?}
 
-      table_for ad.secondary_avatars.order('id ASC') do
+      table_for ad.secondary_avatars.where(is_active: true).order(:order) do
         column "Secondary Avatars ID" do |a|
           a.id
         end
