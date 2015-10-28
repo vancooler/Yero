@@ -47,14 +47,14 @@ class Shout < ActiveRecord::Base
 	  			offset = 1
 	  		end
   		end
-		if self.user_id != current_user.id
-			self.user.update(point: self.user.point + offset*2)
-		end
+  		if self.user_id != current_user.id
+  			self.user.update(point: self.user.point + offset*2)
+  		end
 
-		if old_upvote.nil? and upvote.to_i != 0
-			current_user.update(point: current_user.point+1)
-		elsif !old_upvote.nil? and upvote.to_i == 0
-  			current_user.update(point: current_user.point-1)
+  		if old_upvote.nil? and upvote.to_i != 0
+  			current_user.update(point: current_user.point+1)
+  		elsif !old_upvote.nil? and upvote.to_i == 0
+    			current_user.update(point: current_user.point-1)
   		end
   		event = 'change_shout_vote'
   		data = {
@@ -92,29 +92,43 @@ class Shout < ActiveRecord::Base
 	  	shout_id = self.id
 	  	
 	  	# pusher
-		# users in shout_id channel
-		channel = 'public-shout-' + shout_id.to_s
-		if Rails.env == 'production'
-			# :nocov:
-			Pusher.delay.trigger(channel, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
-			# :nocov:
-		end
-		# users can access this shout
-		user_channels = Array.new
-		# :nocov:
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
-		if !user_channels.empty?
-			if Rails.env == 'production'
-				user_channels.in_groups_of(10, false) do |channels|
-					Pusher.delay.trigger(channels, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
-				end
-			end
-		end
-		# :nocov:
-	end
+  		# users in shout_id channel
+  		channel = 'public-shout-' + shout_id.to_s
+  		if Rails.env == 'production'
+  			# :nocov:
+  			Pusher.trigger(channel, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
+  			# :nocov:
+  		end
+  		# users can access this shout
+  		user_channels = Array.new
+  		# :nocov:
+  		user_ids.each do |id|
+  			channel = 'private-user-' + id.to_s
+  			user_channels << channel
+  		end
+  		if !user_channels.empty?
+  			if Rails.env == 'production'
+  				user_channels.in_groups_of(10, false) do |channels|
+  					Pusher.trigger(channels, 'vote_shout_event', {total_upvotes: current_upvotes, shout_id: self.id})
+  				end
+  			end
+  		end
+  		# :nocov:
+  	end
+
+    # pusher to update votes
+    if Rails.env == 'production' 
+      # :nocov:
+      if current_user.pusher_private_online
+        channel = 'private-user-' + current_user.id.to_s
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+      end
+      if self.user.pusher_private_online
+        channel = 'private-user-' + self.user.id.to_s
+        Pusher.trigger(channel, 'update_point_event', {point: self.user.point})
+      end
+      # :nocov:
+    end
   	return {result: result, event: event, data: data}
 
   end
@@ -188,6 +202,12 @@ class Shout < ActiveRecord::Base
   	result = shout.save
   	if result
   		current_user.update(point: current_user.point+2)
+      channel = 'private-user-' + current_user.id.to_s
+      if Rails.env == 'production' and current_user.pusher_private_online
+        # :nocov:
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+        # :nocov:
+      end
   		# pusher
   		user_ids = shout.permitted_users_id
 	  	shout_id = shout.id
@@ -223,7 +243,7 @@ class Shout < ActiveRecord::Base
   		if !user_channels.empty?
   			if Rails.env == 'production'
   				user_channels.in_groups_of(10, false) do |channels|
-  					Pusher.delay.trigger(channels, 'create_shout_event', {shout: shout_json})
+  					Pusher.trigger(channels, 'create_shout_event', {shout: shout_json})
   				end
   			end
   		end
@@ -402,7 +422,7 @@ class Shout < ActiveRecord::Base
 		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == 'production'
 			# :nocov:
-			Pusher.delay.trigger(channel, 'delete_shout_event', {shout_id: shout_id})
+			Pusher.trigger(channel, 'delete_shout_event', {shout_id: shout_id})
 			# :nocov:
 		end
 		# users can access this shout
@@ -415,7 +435,7 @@ class Shout < ActiveRecord::Base
 		if !user_channels.empty?
 			if Rails.env == 'production'
 				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.delay.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
+					Pusher.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
 				end
 			end
 		end

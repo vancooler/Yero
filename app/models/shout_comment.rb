@@ -33,15 +33,15 @@ class ShoutComment < ActiveRecord::Base
 	  			offset = 1
 	  		end
   		end
-		if self.user_id != current_user.id
-			self.user.update(point: self.user.point + offset*2)
-			if current_user.id == self.shout.user.id
-				self.user.update(point: self.user.point + offset*2)
-			end
-		end
-		if old_upvote.nil? and upvote.to_i != 0
-			current_user.update(point: current_user.point+1)
-		elsif !old_upvote.nil? and upvote.to_i == 0
+  		if self.user_id != current_user.id
+  			self.user.update(point: self.user.point + offset*2)
+  			if current_user.id == self.shout.user.id
+  				self.user.update(point: self.user.point + offset*2)
+  			end
+  		end
+  		if old_upvote.nil? and upvote.to_i != 0
+  			current_user.update(point: current_user.point+1)
+  		elsif !old_upvote.nil? and upvote.to_i == 0
   			current_user.update(point: current_user.point-1)
   		end
 
@@ -51,7 +51,7 @@ class ShoutComment < ActiveRecord::Base
   			vote:    (upvote ? "up" : "down")
   		}
 
-  	else
+    else
   		scv = ShoutCommentVote.new(user_id: current_user.id, shout_comment_id: self.id)
   		scv.upvote = upvote
   		result = scv.save
@@ -65,11 +65,11 @@ class ShoutComment < ActiveRecord::Base
   					end
   				end
   			end
-			current_user.update(point: current_user.point+1)
+  			current_user.update(point: current_user.point+1)
 
 
-			# push notification to author
-			self.votes_notification
+  			# push notification to author
+  			self.votes_notification
   		end
 
   		event = 'add_comment_vote'
@@ -86,15 +86,27 @@ class ShoutComment < ActiveRecord::Base
 	  	shout_id = self.shout.id
 	  	
 	  	# pusher
-		# users in shout_id channel
-		channel = 'public-shout-' + shout_id.to_s
-		if Rails.env == 'production'
-			# :nocov:
-			Pusher.delay.trigger(channel, 'vote_shout_comment_event', {total_upvotes: current_upvotes, shout_comment_id: self.id})
-			# :nocov:
-		end
-	end
-	
+  		# users in shout_id channel
+  		channel = 'public-shout-' + shout_id.to_s
+  		if Rails.env == 'production'
+  			# :nocov:
+  			Pusher.trigger(channel, 'vote_shout_comment_event', {total_upvotes: current_upvotes, shout_comment_id: self.id})
+  			# :nocov:
+  		end
+  	end
+	  # pusher to update votes
+    if Rails.env == 'production' 
+      # :nocov:
+      if current_user.pusher_private_online
+        channel = 'private-user-' + current_user.id.to_s
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+      end
+      if self.user.pusher_private_online
+        channel = 'private-user-' + self.user.id.to_s
+        Pusher.trigger(channel, 'update_point_event', {point: self.user.point})
+      end
+      # :nocov:
+    end
   	return {result: result, event: event, data: data}
 
   end
@@ -180,55 +192,68 @@ class ShoutComment < ActiveRecord::Base
         author_username: (User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username),
         network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
 		  }
-		if Rails.env == "production"
-			# :nocov:	
-			Pusher.delay.trigger(channel, 'create_shout_comment_event', {shout_comment: shout_comment_json})
-			# :nocov:
-		end
+  		if Rails.env == "production"
+  			# :nocov:	
+  			Pusher.trigger(channel, 'create_shout_comment_event', {shout_comment: shout_comment_json})
+  			# :nocov:
+  		end
 
-		# users can access this shout
-		user_channels = Array.new
-		# :nocov:
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
-		if !user_channels.empty?
-			if Rails.env == 'production'
-				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.delay.trigger(channels, 'increase_shout_comment_event', {shout_id: shout_id})
-				end
-			end
-		end
-		# :nocov:
+  		# users can access this shout
+  		user_channels = Array.new
+  		# :nocov:
+  		user_ids.each do |id|
+  			channel = 'private-user-' + id.to_s
+  			user_channels << channel
+  		end
+  		if !user_channels.empty?
+  			if Rails.env == 'production'
+  				user_channels.in_groups_of(10, false) do |channels| 
+  					Pusher.trigger(channels, 'increase_shout_comment_event', {shout_id: shout_id})
+  				end
+  			end
+  		end
+		  # :nocov:
 
 
-		# notification to OP and other repliers
-		# OP
-		op_user_id = shout_comment.shout.user_id
-		black_list = BlockUser.blocked_user_ids(current_user.id)
-		# create activity 
-		current_time = Time.now
-		if !black_list.include? op_user_id and current_user.id != op_user_id
-			if Rails.env == 'production'
-				# :nocov:
-				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", shout_comment.id, '@username replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
-				WhisperNotification.delay.send_notification_301(op_user_id, current_user.username, shout_id)
-				# :nocov:
-			end	
-		end
-		# other repliers
-		other_repliers_user_ids = ShoutComment.where(shout_id: shout_comment.shout_id).where.not(user_id: current_user.id).where.not(user_id: op_user_id).where.not(user_id: black_list).map(&:user_id).uniq
-		if !other_repliers_user_ids.empty?
-			# create activities
-			if Rails.env == 'production'
-				# :nocov:
-				shout_comment.delay.create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
+  		# notification to OP and other repliers
+  		# OP
+  		op_user_id = shout_comment.shout.user_id
+  		black_list = BlockUser.blocked_user_ids(current_user.id)
+  		# create activity 
+  		current_time = Time.now
+  		if !black_list.include? op_user_id and current_user.id != op_user_id
+  			if Rails.env == 'production'
+  				# :nocov:
+  				RecentActivity.delay.add_activity(op_user_id, '301', current_user.id, nil, "your-shout-comment-"+op_user_id.to_s+"-"+current_user.id.to_s+"-"+current_time.to_i.to_s, "ShoutComment", shout_comment.id, '@username replied to your shout "'+shout_comment.shout.body.truncate(23, separator: /\s/)+'"')
+  				WhisperNotification.delay.send_notification_301(op_user_id, current_user.username, shout_id)
+  				# :nocov:
+  			end	
+  		end
+  		# other repliers
+  		other_repliers_user_ids = ShoutComment.where(shout_id: shout_comment.shout_id).where.not(user_id: current_user.id).where.not(user_id: op_user_id).where.not(user_id: black_list).map(&:user_id).uniq
+  		if !other_repliers_user_ids.empty?
+  			# create activities
+  			if Rails.env == 'production'
+  				# :nocov:
+  				shout_comment.delay.create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
 
-				WhisperNotification.delay.send_notification_302(other_repliers_user_ids, current_user.username, shout_id)
-				# :nocov:
-			end	
-		end
+  				WhisperNotification.delay.send_notification_302(other_repliers_user_ids, current_user.username, shout_id)
+  				# :nocov:
+  			end	
+  		end
+      # pusher to update votes
+      if Rails.env == 'production' 
+        # :nocov:
+        if current_user.pusher_private_online
+          channel = 'private-user-' + current_user.id.to_s
+          Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+        end
+        if shout_comment.shout.user.pusher_private_online
+          channel = 'private-user-' + shout_comment.shout.user.id.to_s
+          Pusher.trigger(channel, 'update_point_event', {point: shout_comment.shout.user.point})
+        end
+        # :nocov:
+      end
 	  	return shout_comment_json
     else
     	# :nocov:
@@ -340,7 +365,7 @@ class ShoutComment < ActiveRecord::Base
 		channel = 'public-shout-' + shout_id.to_s
 		if Rails.env == "production"
 			# :nocov:	
-			Pusher.delay.trigger(channel, 'delete_shout_comment_event', {shout_comment_id: shout_comment_id})
+			Pusher.trigger(channel, 'delete_shout_comment_event', {shout_comment_id: shout_comment_id})
 			# :nocov:
 		end
 		# users can access this shout
@@ -353,7 +378,7 @@ class ShoutComment < ActiveRecord::Base
 		if !user_channels.empty?
 			if Rails.env == "production"
 				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.delay.trigger(channels, 'decrease_shout_comment_event', {shout_id: shout_id})
+					Pusher.trigger(channels, 'decrease_shout_comment_event', {shout_id: shout_id})
 				end
 			end
 		end
