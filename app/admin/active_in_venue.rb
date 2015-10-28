@@ -1,6 +1,15 @@
 ActiveAdmin.register ActiveInVenue do
-  menu :parent => "Activity"
+  menu :parent => "Activity", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
+
   permit_params :user_id, :user, :venue_id, :venue, :beacon_id, :beacon, :enter_time, :last_activity
+
+  before_filter :check_super
+
+  controller do
+    def check_super
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
+  end
 
   actions :index, :create, :new, :show, :update, :edit
   index do

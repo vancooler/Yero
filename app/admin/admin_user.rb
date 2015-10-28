@@ -7,9 +7,6 @@ ActiveAdmin.register AdminUser do
 
     controller do
       def check_super
-        puts "DEBUG"
-        # puts self
-        puts current_admin_user.level
         redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
       end
       def update_resource(object, attributes)

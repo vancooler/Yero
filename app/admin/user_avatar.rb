@@ -263,7 +263,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
   show do |user|
     attributes_table_for user do
       row :user
-      row "Image" do image_tag user.avatar.thumb.url, {:style => "height:100px;width:100px;"} end
+      row "Image" do image_tag user.thumb_url, {:style => "height:100px;width:100px;"} end
           
       row :default
       row "Enabled" do user.is_active end
