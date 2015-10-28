@@ -796,7 +796,9 @@ module V20150908
         params[:token] = api_token
       end
       if Rails.env != 'test' && api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+        # :nocov:
         params[:token] = api_token
+        # :nocov:
       end
     end
 

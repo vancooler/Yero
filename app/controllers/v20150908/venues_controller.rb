@@ -426,7 +426,9 @@ module V20150908
     private
     def get_api_token
       if api_token = params[:token].blank? && request.headers["X-API-TOKEN"]
+        # :nocov:
         params[:token] = api_token
+        # :nocov:
       end
     end
 
