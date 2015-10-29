@@ -391,6 +391,7 @@ module V20150930
             
             user.last_active = Time.now
             user.save!
+            ActiveInVenue.leave_venue(nil, user)
             user_info = user.to_json(true)
             user_info['token'] = user.generate_token(true)
             render json: success(user_info)
