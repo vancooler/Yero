@@ -41,8 +41,8 @@ module V20150930
           expire_timestamp:     shout.created_at.to_i+7*24*3600,
           total_upvotes:        shout.total_upvotes,
           actions:              actions,
-          shout_comments:       result['shout_comments'].length,
-          shout_comments_array: result['shout_comments'],
+          count:                result['shout_comments'].length,
+          shout_comments:       result['shout_comments'],
           network_gimbal_key:   ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
           author_id:            shout.user_id,
           author_username:      (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)

@@ -1716,7 +1716,7 @@ describe 'V2.0.0' do
       	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data']['shout_comments']).to eql 1
+      	expect(JSON.parse(response.body)['data']['count']).to eql 1
       	expect(JSON.parse(response.body)['data']['id']).to eql shout_2.id
 
 
