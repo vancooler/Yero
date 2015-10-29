@@ -314,7 +314,8 @@ class User < ActiveRecord::Base
       # json.joined_today is_connected
       # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
       # json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
-      # json.current_city current_city.blank? ? '' : current_city
+      json.locality current_city.blank? ? '' : current_city
+      json.subLocality current_sublocality.blank? ? '' : current_sublocality
 
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
@@ -900,6 +901,8 @@ class User < ActiveRecord::Base
       avatars:         self.user_avatar_object.blank? ? Array.new : self.user_avatar_object,
       email:           self.email,
       point:           self.points_to_display,
+      locality:        self.current_city.nil? ? '' : self.current_city,
+      subLocality:     self.current_sublocality.nil? ? '' : self.current_sublocality,
       instagram_id:    self.instagram_id.blank? ? '' : self.instagram_id,
       instagram_token: self.instagram_token.blank? ? '' : self.instagram_token,
       spotify_id:      self.spotify_id.blank? ? '' : self.spotify_id,
@@ -1497,10 +1500,12 @@ class User < ActiveRecord::Base
 
             json.id             user.id
             json.first_name     user.first_name
-            json.username     user.username
+            json.username       user.username
             json.birthday       user.birthday
             json.gender         user.gender
             json.point          user.points_to_display
+            json.locality       user.current_city
+            json.subLocality    user.current_sublocality
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
             # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
             if !(!user.version.nil? and user.version.to_f >= 2)
