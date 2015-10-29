@@ -96,8 +96,5 @@ class RecentActivity < ActiveRecord::Base
 		return result
 	end
 
-	# migrate messages and deep_links to exist activities
-	def self.migrate_message_and_deep_link
-
-	end
+	
 end

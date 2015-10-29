@@ -169,6 +169,7 @@ module V20150930
 
     # Create a whisper
     def create
+      time_0 = Time.now
       target_id = params[:target_id]
       notification_type = '2'
       intro = params[:message].blank? ? "" : params[:message].to_s
@@ -182,8 +183,9 @@ module V20150930
       target_user = User.find_user_by_unique(target_id)
 
       if target_user
+        time_1 = Time.now
         result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, intro, message, timestamp, content_type, image_url, audio_url)
-
+        time_2 = Time.now
         if result['message'] == "true"
           whisper = result['whisper']
           read_messages = false
@@ -191,7 +193,13 @@ module V20150930
 
           whispers_json = Conversation.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
-
+          time_3 = Time.now
+          puts "Preparing Time: "
+          puts (time_1 - time_0).inspect
+          puts "Sending Time: "
+          puts (time_2 - time_1).inspect
+          puts "Json Time: "
+          puts (time_3 - time_2).inspect
           # whisper_json[:messages] = result['messages']
           render json: success(whisper_json, 'data')
         else

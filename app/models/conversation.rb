@@ -106,15 +106,6 @@ class Conversation < ActiveRecord::Base
 	                actions << "delete"
 		            
 		            json.actions actions.uniq
-							
-					# if !a.venue_id.nil?
-					# 	venue = Venue.find_by_id(a.venue_id)
-					# 	if !venue.nil? 
-					# 		json.object_type  'venue'
-					# 		json.object venue.venue_object
-					# 	end
-					# end
-
 
 					# reply message array
 					messages_array = Array.new
