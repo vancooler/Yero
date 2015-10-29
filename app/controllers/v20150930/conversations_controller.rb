@@ -194,12 +194,9 @@ module V20150930
           whispers_json = Conversation.conversations_to_json([whisper], current_user)
           whisper_json = whispers_json.first
           time_3 = Time.now
-          puts "Preparing Time: "
-          puts (time_1 - time_0).inspect
-          puts "Sending Time: "
-          puts (time_2 - time_1).inspect
-          puts "Json Time: "
-          puts (time_3 - time_2).inspect
+          puts "Preparing Time: " + (time_1 - time_0).inspect
+          puts "Sending Time: " + (time_2 - time_1).inspect
+          puts "Json Time: " + (time_3 - time_2).inspect
           # whisper_json[:messages] = result['messages']
           render json: success(whisper_json, 'data')
         else
