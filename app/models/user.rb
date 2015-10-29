@@ -294,13 +294,15 @@ class User < ActiveRecord::Base
       json.username username
       json.gender gender
       json.email email
-      json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
       json.instagram_id (instagram_id.blank? ? '' : instagram_id)
       json.instagram_token (instagram_token.blank? ? '' : instagram_token)
       json.spotify_id (spotify_id.blank? ? '' : spotify_id)
       json.spotify_token (spotify_token.blank? ? '' : spotify_token)
-      json.wechat_id (wechat_id.blank? ? '' : wechat_id)
-      json.line_id (line_id.blank? ? '' : line_id)
+      if !(!self.version.nil? and self.version.to_f >= 2)
+        json.wechat_id (wechat_id.blank? ? '' : wechat_id)
+        json.line_id (line_id.blank? ? '' : line_id)
+        json.snapchat_id (snapchat_id.blank? ? '' : snapchat_id)
+      end
       json.introduction_1 (introduction_1.blank? ? '' : introduction_1)
       json.status (introduction_2.blank? ? '' : introduction_2)
       json.latitude (latitude.blank? ? 0 : latitude)
@@ -473,7 +475,7 @@ class User < ActiveRecord::Base
     # disconnect all users
     people_array = Array.new 
     if !times_array.empty?    
-      people_array = User.where(:timezone_name => times_array).where("version <> ? OR version is ?", '2.0', nil).map(&:id)
+      people_array = User.where(:timezone_name => times_array).where("version = ? OR version is ?", '1.0', nil).map(&:id)
       # people_array = UserLocation.find_by_dynamodb_timezone(times_array, true) #Find users of that timezone
     end
     if !people_array.empty? 
@@ -902,15 +904,16 @@ class User < ActiveRecord::Base
       instagram_token: self.instagram_token.blank? ? '' : self.instagram_token,
       spotify_id:      self.spotify_id.blank? ? '' : self.spotify_id,
       spotify_token:   self.spotify_token.blank? ? '' : self.spotify_token,
-      snapchat_id:     self.snapchat_id.blank? ? '' : self.snapchat_id,
-      wechat_id:       self.wechat_id.blank? ? '' : self.wechat_id,
-      line_id:         self.line_id.blank? ? '' : self.line_id,
       latitude:        self.latitude,
       longitude:       self.longitude,
       introduction_1:  self.introduction_1.blank? ? '' : self.introduction_1,
       status:  self.introduction_2.blank? ? '' : self.introduction_2
     }
-
+    if !(!self.version.nil? and self.version.to_f >= 2)
+      user_object[:snapchat_id] = self.snapchat_id.blank? ? '' : self.snapchat_id
+      user_object[:wechat_id] = self.wechat_id.blank? ? '' : self.wechat_id
+      user_object[:line_id] = self.line_id.blank? ? '' : self.line_id
+    end
     return user_object
   end
 
@@ -1500,9 +1503,11 @@ class User < ActiveRecord::Base
             json.point          user.points_to_display
             json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
             # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
-            json.line_id      user.line_id.blank? ? '' : user.line_id
-            json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
-            json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
+            if !(!user.version.nil? and user.version.to_f >= 2)
+              json.line_id      user.line_id.blank? ? '' : user.line_id
+              json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
+              json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
+            end
             json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
             json.spotify_id   user.spotify_id.blank? ? '' : user.spotify_id
 

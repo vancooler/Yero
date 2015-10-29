@@ -150,15 +150,15 @@ class ShoutComment < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout_comment(current_user, body, shout_id, city, neighbourhood, content_type, image_url, audio_url)
+  def self.create_shout_comment(current_user, body, shout_id, content_type, image_url, audio_url)
   	shout_comment = ShoutComment.new
 	  shout_comment.latitude = current_user.latitude
 	  shout_comment.longitude = current_user.longitude
-    shout_comment.city = city
+    shout_comment.city = current_user.current_city
     shout_comment.content_type = content_type
     shout_comment.image_url = image_url
     shout_comment.audio_url = audio_url
-    shout_comment.neighbourhood = neighbourhood
+    shout_comment.neighbourhood = current_user.current_sublocality
     shout_comment.body = body
   	shout_comment.shout_id = shout_id.to_i
   	shout_comment.user_id = current_user.id
@@ -178,11 +178,11 @@ class ShoutComment < ActiveRecord::Base
         body: 			     shout_comment.body,
         latitude: 		   shout_comment.latitude,
         longitude:       shout_comment.longitude,
-        city:            shout_comment.city.nil? ? '' : shout_comment.city,
+        locality:        shout_comment.city.nil? ? '' : shout_comment.city,
         content_type:    shout_comment.content_type.nil? ? 'text' : shout_comment.content_type,
         image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
         audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.city,
-        neighbourhood:   shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
+        subLocality:     shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
         timestamp: 		   shout_comment.created_at.to_i,
         total_upvotes:   1,
         actions: 	       ["upvote", "downvote"],
@@ -310,11 +310,11 @@ class ShoutComment < ActiveRecord::Base
         json.id 			     shout_comment.id
         json.shout_id 		 shout_comment.shout_id
         json.body          shout_comment.body
-        json.city          shout_comment.city.nil? ? '' : shout_comment.city
+        json.locality      shout_comment.city.nil? ? '' : shout_comment.city
         json.content_type  shout_comment.content_type.nil? ? 'text' : shout_comment.content_type
         json.audio_url     shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
         json.image_url     shout_comment.image_url.nil? ? '' : shout_comment.image_url
-        json.neighbourhood shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
+        json.subLocality   shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
         json.latitude 		 shout_comment.latitude
         json.longitude 		 shout_comment.longitude
         json.timestamp 		 shout_comment.created_at.to_i

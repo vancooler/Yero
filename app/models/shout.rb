@@ -171,7 +171,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, venue_id, anonymous, city, neighbourhood, content_type, image_url, audio_url)
+  def self.create_shout(current_user, body, venue_id, anonymous, content_type, image_url, audio_url)
   	shout = Shout.new
   	venue = Venue.find_venue_by_unique(venue_id)
   	if venue.nil?
@@ -191,11 +191,11 @@ class Shout < ActiveRecord::Base
   		shout.longitude = venue.longitude
 	  	shout.allow_nearby = false
   	end
-    shout.city = city
+    shout.city = current_user.current_city
+    shout.neighbourhood = current_user.current_sublocality
     shout.content_type = content_type
     shout.image_url = image_url
     shout.audio_url = audio_url
-    shout.neighbourhood = neighbourhood
   	shout.body = body
   	shout.user_id = current_user.id
   	shout.anonymous = anonymous
@@ -219,11 +219,11 @@ class Shout < ActiveRecord::Base
         anonymous: 		       shout.anonymous,
         latitude: 		       shout.latitude,
         longitude:           shout.longitude,
-        city:                shout.city.nil? ? '' : shout.city,
+        locality:            shout.city.nil? ? '' : shout.city,
         content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
         audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
         image_url:           shout.image_url.nil? ? '' : shout.image_url,
-        neighbourhood:       shout.neighbourhood.nil? ? '' : shout.neighbourhood,
+        subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
         timestamp:           shout.created_at.to_i,
         expire_timestamp:    shout.created_at.to_i+7*24*3600,
         total_upvotes: 	     1,
@@ -346,11 +346,11 @@ class Shout < ActiveRecord::Base
         json.anonymous 		      shout.anonymous
         json.latitude 		      shout.latitude
         json.longitude          shout.longitude
-        json.city               shout.city.nil? ? '' : shout.city
+        json.locality           shout.city.nil? ? '' : shout.city
         json.content_type       shout.content_type.nil? ? 'text' : shout.content_type
         json.audio_url          shout.audio_url.nil? ? '' : shout.audio_url
         json.image_url          shout.image_url.nil? ? '' : shout.image_url
-        json.neighbourhood      shout.neighbourhood.nil? ? '' : shout.neighbourhood
+        json.subLocality        shout.neighbourhood.nil? ? '' : shout.neighbourhood
         json.timestamp          shout.created_at.to_i
         json.expire_timestamp   shout.created_at.to_i+7*24*3600
         json.total_upvotes 	    shout.total_upvotes

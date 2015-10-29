@@ -137,6 +137,14 @@ module V20150930
           user.longitude = params[:longitude].to_f
         end
 
+        if !params[:locality].nil?
+          user.current_city = params[:locality]
+        end
+
+        if !params[:subLocality].nil?
+          user.current_sublocality = params[:subLocality]
+        end
+
 
         avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
 

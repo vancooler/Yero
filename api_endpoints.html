@@ -1057,6 +1057,8 @@
     <span class="ruby-identifier">anonymous: </span><span class="ruby-string">TRUE/FALSE</span>
     <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout latitude</span>
     <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout longitude</span>
+    <span class="ruby-identifier">locality: </span><span class="ruby-string">Vancouver</span>
+    <span class="ruby-identifier">subLocality: </span><span class="ruby-string">coal harbour</span>
     <span class="ruby-identifier">timestamp: </span><span class="ruby-string">shout created at</span>
     <span class="ruby-identifier">total_upvotes: </span><span class="ruby-string">shout total_upvotes number</span>
     <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote", "undo_upvote", "downvote", or "undo_downvote"</span>
@@ -1278,9 +1280,6 @@
   <span class="ruby-identifier">gender: </span><span class="ruby-string">required string "M"/"F"</span>
   <span class="ruby-identifier">first_name: </span><span class="ruby-string">required string</span>
   <span class="ruby-identifier">exclusive: </span><span class="ruby-string">optional</span>
-  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">optional</span>
-  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">optional</span>
-  <span class="ruby-identifier">line_id: </span><span class="ruby-string">optional</span>
   <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardCurrentUserObject</span>
@@ -1364,10 +1363,7 @@
         <span class="ruby-identifier">birthday: </span><span class="ruby-string">"June 3, 1990"</span>
         <span class="ruby-identifier">gender: </span><span class="ruby-string">"F"</span>
         <span class="ruby-identifier">point: </span><span class="ruby-string">23</span>
-        <span class="ruby-identifier">line_id: </span><span class="ruby-string">""</span>
-        <span class="ruby-identifier">wechat_id: </span><span class="ruby-string">""</span>
         <span class="ruby-identifier">instagram_id: </span><span class="ruby-string">""</span>
-        <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string">"snap"</span>
         <span class="ruby-identifier">introduction_1: </span><span class="ruby-string">"Hi"</span>
         <span class="ruby-identifier">status: </span><span class="ruby-string">"Hi"</span>
         <span class="ruby-identifier">last_active: </span><span class="ruby-string">144535334</span>
@@ -1405,9 +1401,6 @@
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">introduction_1: </span><span class="ruby-string"> bio text</span>
   <span class="ruby-identifier">status: </span><span class="ruby-string"> status text</span>
-  <span class="ruby-identifier">wechat_id: </span><span class="ruby-string"> string</span>
-  <span class="ruby-identifier">snapchat_id: </span><span class="ruby-string"> string</span>
-  <span class="ruby-identifier">line_id: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">instagram_id: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">instagram_token: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">spotify_id: </span><span class="ruby-string"> string</span>
@@ -1415,6 +1408,8 @@
   <span class="ruby-identifier">timezone: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">latitude: </span><span class="ruby-string"> float</span>
   <span class="ruby-identifier">longitude: </span><span class="ruby-string"> float</span>
+  <span class="ruby-identifier">locality: </span><span class="ruby-string"> string</span>
+  <span class="ruby-identifier">subLocality: </span><span class="ruby-string"> string</span>
   <span class="ruby-identifier">exclusive: </span><span class="ruby-string"> bool</span>
   <span class="ruby-identifier">discovery: </span><span class="ruby-string"> bool</span>
   <span class="ruby-identifier">avatars: </span><span class="ruby-string"> array of photo ids</span>
