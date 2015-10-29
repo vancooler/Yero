@@ -29,6 +29,7 @@ module V20150930
           id:                   shout.id,
           body:                 shout.body,
           anonymous:            shout.anonymous,
+          exclusive:            !shout.allow_nearby,
           latitude:             shout.latitude,
           longitude:            shout.longitude,
           locality:             shout.city.nil? ? '' : shout.city,
@@ -71,8 +72,9 @@ module V20150930
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
+      exclusive = (!params['exclusive'].nil? ? (params['exclusive'].to_s == '1' or params['exclusive'].to_s == 'true') : false)
       
-      shout = Shout.create_shout(current_user, params[:body], venue, anonymous, content_type, image_url, audio_url)
+      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, content_type, image_url, audio_url)
       if shout
         # Pusher later
         render json: success(shout)

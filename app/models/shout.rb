@@ -171,24 +171,20 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, venue_id, anonymous, content_type, image_url, audio_url)
+  def self.create_shout(current_user, body, exclusive, anonymous, content_type, image_url, audio_url)
   	shout = Shout.new
-  	venue = Venue.find_venue_by_unique(venue_id)
-  	if venue.nil?
-		  if !current_user.current_venue.nil?
-	  		shout.latitude = current_user.current_venue.latitude
-	  		shout.longitude = current_user.current_venue.longitude
-	  		shout.venue_id = current_user.current_venue.id 
-	  		shout.allow_nearby = true
-	  	else
-	  		shout.latitude = current_user.latitude
-	  		shout.longitude = current_user.longitude
-	  		shout.allow_nearby = true
-	  	end
+  	# venue = Venue.find_venue_by_unique(venue_id)
+    if !current_user.current_venue.nil?
+      shout.latitude = current_user.current_venue.latitude
+      shout.longitude = current_user.current_venue.longitude
+      shout.venue_id = current_user.current_venue.id 
+    else
+      shout.latitude = current_user.latitude
+      shout.longitude = current_user.longitude
+    end
+    if !exclusive
+      shout.allow_nearby = true
   	else
-  		shout.venue_id = venue.id 
-  		shout.latitude = venue.latitude
-  		shout.longitude = venue.longitude
 	  	shout.allow_nearby = false
   	end
     shout.city = current_user.current_city
@@ -216,7 +212,8 @@ class Shout < ActiveRecord::Base
   		shout_json = {
   			id: 			           shout.id,
         body: 			         shout.body,
-        anonymous: 		       shout.anonymous,
+        anonymous:           shout.anonymous,
+        exclusive:           !shout.allow_nearby,
         latitude: 		       shout.latitude,
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
@@ -343,7 +340,8 @@ class Shout < ActiveRecord::Base
       json.array! shouts do |shout|
         json.id 			          shout.id
         json.body 			        shout.body
-        json.anonymous 		      shout.anonymous
+        json.anonymous          shout.anonymous
+        json.exclusive          !shout.allow_nearby
         json.latitude 		      shout.latitude
         json.longitude          shout.longitude
         json.locality           shout.city.nil? ? '' : shout.city
