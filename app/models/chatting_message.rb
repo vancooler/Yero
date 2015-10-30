@@ -5,7 +5,7 @@ class ChattingMessage < ActiveRecord::Base
 
   def to_json(current_user)
   	message_json = {
-  		id: self.id,
+  		id: self.client_side_id,
 		grouping_id: self.grouping_id,
 		content_type: self.content_type.nil? ? 'text' : self.content_type,
 		image_url: self.image_url.nil? ? '' : self.image_url,
