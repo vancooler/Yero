@@ -1,7 +1,7 @@
 module V20150930
   class ConversationsController < ApplicationController
-    prepend_before_filter :get_api_token, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message]
-    before_action :authenticate_api_v2, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message]
+    prepend_before_filter :get_api_token, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message, :create_single_message]
+    before_action :authenticate_api_v2, only: [:create, :index, :update, :destroy, :show, :show_messages, :show_single_message, :create_single_message]
 
     def index
       # badge = WhisperNotification.unviewd_whisper_number(current_user.id)

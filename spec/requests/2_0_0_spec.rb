@@ -2289,8 +2289,8 @@ end
 
 # has = 0
 # ChattingMessage.all.each do |c|
-# time = c.created_at
-# sames = ChattingMessage.where(created_at: time).where.not(id: c.id)
+# id = c.client_side_id
+# sames = ChattingMessage.where(client_side_id: id).where.not(id: c.id)
 # if !sames.empty?
 # has = 1
 # puts sames.length.to_s + ":"
