@@ -12,7 +12,7 @@ class ChattingMessage < ActiveRecord::Base
 		audio_url: self.audio_url.nil? ? '' : self.audio_url,
 		conversation_id: self.whisper.dynamo_id.blank? ? '' : self.whisper.dynamo_id,
 		speaker_id: self.speaker_id,
-		timestamp: self.created_at.to_i,
+		timestamp: self.createdTimestamp,
 		message: self.message.nil? ? '' : self.message,
 		read: (self.speaker_id == current_user.id) ? true : self.read			            
   	}
@@ -108,6 +108,11 @@ class ChattingMessage < ActiveRecord::Base
   		end
   	end
   end
+
+  def createdTimestamp
+  	return self.created_at.strftime('%N').to_i/1000000000.0 + self.created_at.to_i
+  end
+
   # :nocov:
 
 end

@@ -77,8 +77,8 @@ class Conversation < ActiveRecord::Base
 
 					json.timestamp 					a.updated_at.to_i
 					json.notification_type  		a.whisper_type.to_i
-					json.conversation_id  				a.dynamo_id.blank? ? '' : a.dynamo_id
-
+					json.conversation_id  			a.dynamo_id.blank? ? '' : a.dynamo_id
+					json.initial_whisper_sender_id  a.origin_user_id
 
 					if a.target_user_id == current_user.id
 						if !a.origin_user_id.nil?
