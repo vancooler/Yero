@@ -451,43 +451,43 @@ class Shout < ActiveRecord::Base
 
   	(1..100).each do |i|
   		offset = rand(User.count)
-		rand_user = User.offset(offset).first
-		shout = Shout.create_shout(rand_user, (0...8).map { (65 + rand(26)).chr }.join, true)
-		(1..i%8).each do |k|
-			upvote = [true, true, false]
-			offset_3 = rand(User.count)
-			rand_user_3 = User.offset(offset_3).first
-			shout.change_vote(rand_user_3, upvote.sample)
-		end
-		comments_count = i/100*100 + 1
-		(1..comments_count).each do |j|
-			offset_2 = rand(User.count)
-			rand_user_2 = User.offset(offset_2).first
-			shout_comment = ShoutComment.create_shout_comment(rand_user_2, (0...8).map { (65 + rand(26)).chr }.join, shout.id)
-			# upvotes
-			(1..i%8).each do |k|
-				upvote = [true, true, false]
-				offset_3 = rand(User.count)
-				rand_user_3 = User.offset(offset_3).first
-				shout_comment.change_vote(rand_user_3, upvote.sample)
+  		rand_user = User.offset(offset).first
+  		shout = Shout.create_shout(rand_user, (0...8).map { (65 + rand(26)).chr }.join, true)
+  		(1..i%8).each do |k|
+  			upvote = [true, true, false]
+  			offset_3 = rand(User.count)
+  			rand_user_3 = User.offset(offset_3).first
+  			shout.change_vote(rand_user_3, upvote.sample)
+  		end
+  		comments_count = i/100*100 + 1
+  		(1..comments_count).each do |j|
+  			offset_2 = rand(User.count)
+  			rand_user_2 = User.offset(offset_2).first
+  			shout_comment = ShoutComment.create_shout_comment(rand_user_2, (0...8).map { (65 + rand(26)).chr }.join, shout.id)
+  			# upvotes
+  			(1..i%8).each do |k|
+  				upvote = [true, true, false]
+  				offset_3 = rand(User.count)
+  				rand_user_3 = User.offset(offset_3).first
+  				shout_comment.change_vote(rand_user_3, upvote.sample)
 
-			end
-		end
-	end
+  			end
+  		end
+  	end
   end
 
   def self.random_report
-	(1..100).each do |i|
-		if (i%30 == 5)
-	  		offset = rand(User.count)
-			rand_user = User.offset(offset).first
-			rand_type = ShoutReportType.all.map(&:id).sample
-			shout = Shout.find(i)
-			shout.report(rand_user, rand_type)
-			shout_comment = ShoutComment.find(i+4)
-			shout_comment.report(rand_user, rand_type)
-		end
-	end
+  	(1..100).each do |i|
+  		if (i%30 == 5)
+  	  		offset = rand(User.count)
+  			rand_user = User.offset(offset).first
+  			rand_type = ShoutReportType.all.map(&:id).sample
+  			shout = Shout.find(i)
+  			shout.report(rand_user, rand_type)
+  			shout_comment = ShoutComment.find(i+4)
+  			shout_comment.report(rand_user, rand_type)
+  		end
+  	end
   end
   # :nocov:
 

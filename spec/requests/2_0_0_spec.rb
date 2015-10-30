@@ -1964,13 +1964,13 @@ describe 'V2.0.0' do
 
       	# user_2 -> user_3 initial whisper
       	# expect(WhisperNotification.send_message(3, user_2, nil, '2', "hi", user_2.first_name + " sent you a whisper")).to eql "true"
-      	ts = Time.now.to_i
+      	ts = ChattingMessage.createdTimestamp(Time.now)
       	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => ts, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Conversation.count).to eql 1
       	expect(Conversation.first.message).to eql 'Hi!'
-      	expect(Conversation.first.created_at.to_i).to eql ts
+      	expect(ChattingMessage.createdTimestamp(Conversation.first.created_at)).to eql ts
       	expect(Conversation.first.message_b).to eql ''
       	expect(ChattingMessage.count).to eql 1
       	expect(ChattingMessage.last.message).to eql 'Hi!'
@@ -1981,6 +1981,11 @@ describe 'V2.0.0' do
       	expect(RecentActivity.count).to eql 0
 
       	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql false
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'Cannot send more whispers'
+
+      	post "api/messages", {:notification_type => '2', :target_id => '3', :message => "Hi!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql false
       	expect(JSON.parse(response.body)['error']['message']).to eql 'Cannot send more whispers'
@@ -2049,6 +2054,11 @@ describe 'V2.0.0' do
       	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['message']).to eql 'User blocked'
+
+      	post "api/messages", {:notification_type => '2', :target_id => '2', :message => "Hey!", :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['error']['message']).to eql 'User blocked'
+
       	BlockUser.delete_all
 
       	ua.is_active = false
@@ -2161,7 +2171,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
-      	ts2 = Time.now.to_i+10
+      	ts2 = ChattingMessage.createdTimestamp(Time.now+10)
       	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 2
@@ -2220,11 +2230,15 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
       	token = user_2.generate_token
-      	ts3 = Time.now.to_i - 12*3603
+      	ts3 = ChattingMessage.createdTimestamp(Time.now - 12*3603)
       	post "api/conversations", {:notification_type => '2', :target_id => '4', :message => "Hi!", :timestamp => ts3, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 3
-      	expect(Conversation.last.created_at.to_i).to eql ts3
+      	expect(ChattingMessage.createdTimestamp(Conversation.last.created_at)).to eql ts3
+
+      	ts3 = ChattingMessage.createdTimestamp(Time.now)
+      	post "api/messages", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => ts3, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
 
       	Conversation.expire
       	expect(Conversation.count).to eql 2
@@ -2269,3 +2283,21 @@ end
 # alert -> increment -> done
 # alert time update -> done
 # admin actions tracking
+
+
+
+
+# has = 0
+# ChattingMessage.all.each do |c|
+# time = c.created_at
+# sames = ChattingMessage.where(created_at: time).where.not(id: c.id)
+# if !sames.empty?
+# has = 1
+# puts sames.length.to_s + ":"
+# puts "Main " + c.id.to_s
+# sames.each do |s|
+# puts s.id.to_s
+# end
+# end
+# end
+# puts has.to_s

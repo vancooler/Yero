@@ -12,7 +12,7 @@ class ChattingMessage < ActiveRecord::Base
 		audio_url: self.audio_url.nil? ? '' : self.audio_url,
 		conversation_id: self.whisper.dynamo_id.blank? ? '' : self.whisper.dynamo_id,
 		speaker_id: self.speaker_id,
-		timestamp: self.createdTimestamp,
+		timestamp: ChattingMessage.createdTimestamp(self.created_at),
 		message: self.message.nil? ? '' : self.message,
 		read: (self.speaker_id == current_user.id) ? true : self.read			            
   	}
@@ -33,31 +33,20 @@ class ChattingMessage < ActiveRecord::Base
     	last_alert_time = conversation.last_origin_user_push_time
     end
   	current_push = Time.now.to_i
-  	puts "PUSH ALERT"
   	# initial or 1 hour later or message has been read
   	if conversation.chatting_messages.where.not(speaker_id: receiver.id).blank?
-  		puts "Scenario1"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif last_alert_time.nil?
-  		puts "Scenario2"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i <= last_alert_time)
-  		puts "Scenario3"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	elsif last_alert_time + 3600 < current_push
-  		puts "Scenario4"
   		data[:alert] = message
   		data[:badge] = "Increment"
   	end
-  	puts "last_active:"
-  	puts receiver.last_active.to_i.to_s
-  	puts "last_alert_time"
-  	puts (last_alert_time.nil? ? 'nil' : last_alert_time.to_s)
-  	puts "current_push_time"
-  	puts current_push.to_s
 
 
   	# Scenarios getting alert and increment:
@@ -109,10 +98,39 @@ class ChattingMessage < ActiveRecord::Base
   	end
   end
 
-  def createdTimestamp
-  	return self.created_at.strftime('%N').to_i/1000000000.0 + self.created_at.to_i
+  def self.createdTimestamp(datetime)
+  	ns = datetime.strftime('%N')
+  	if ns.length < 9
+  	    ns += (0...(9-ns.length)).map {'0'}.join
+  	end
+  	return ns.to_i/1000000000.0 + datetime.to_i
   end
 
+  def self.float_to_timestamp(timestamp)
+  	time_array = timestamp.to_s.split(".")
+    if time_array.count > 1
+      ns = time_array[1]
+      if ns.length < 6
+  	    ns += (0...(6-ns.length)).map {'0'}.join
+	  end
+      timestamp_with_ns = Time.at(timestamp.to_i, ns.to_i)
+    else
+      timestamp_with_ns = Time.at(timestamp)
+    end
+    return timestamp_with_ns
+  end
+
+  def self.migrate_client_side_id
+  	ChattingMessage.all.order("created_at ASC").each do |cm|
+  		if cm.client_side_id.nil? 
+  			client_side_id = ChattingMessage.generate_client_side_id(cm.whisper.dynamo_id, cm.speaker_id, cm.created_at)
+			cm.update(client_side_id: client_side_id)
+  		end
+  	end
+  end
   # :nocov:
 
+  def self.generate_client_side_id(whisper_id, speaker_id, timestamp)
+  	return whisper_id.to_s + '_' + speaker_id.to_s + '_' + ChattingMessage.createdTimestamp(timestamp).to_s
+  end
 end

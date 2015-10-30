@@ -297,6 +297,7 @@ Rails.application.routes.draw do
       get    'api/conversations/:id',                    to: 'conversations#show'
       get    'api/messages',                             to: 'conversations#show_messages'
       get    'api/messages/:id',                         to: 'conversations#show_single_message'
+      post   'api/messages',                             to: 'conversations#create_single_message'
       post   'api/conversations',                        to: 'conversations#create'
       delete 'api/conversations/:id',                    to: 'conversations#destroy'
 
