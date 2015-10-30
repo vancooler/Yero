@@ -171,7 +171,7 @@ module V20150930
       target_id = params[:target_id]
       notification_type = '2'
       intro = params[:message].blank? ? "" : params[:message].to_s
-      client_side_id = params[:id].blank? ? nil : params[:id].to_s
+      client_side_id = params[:message_id].blank? ? nil : params[:message_id].to_s
       content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
@@ -226,7 +226,7 @@ module V20150930
       target_id = params[:target_id]
       notification_type = '2'
       intro = params[:message].blank? ? "" : params[:message].to_s
-      client_side_id = params[:id].blank? ? nil : params[:id].to_s
+      client_side_id = params[:message_id].blank? ? nil : params[:message_id].to_s
       content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
