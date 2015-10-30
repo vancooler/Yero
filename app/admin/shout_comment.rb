@@ -10,8 +10,10 @@ ActiveAdmin.register ShoutComment do
       sc = ShoutComment.find_by_id(params[:id])
       shout_comment_author_id = sc.user_id
       if !sc.nil?
-        sc.destroy_single
+        action_type = "Delete shout reply"
+        details = sc.body
         if sc.destroy_single
+          current_admin_user.add_action(action_type, details, '')
           # notify author
           if Rails.env == "production"
             RecentActivity.delay.add_activity(shout_comment_author_id, '304', nil, nil, "your-shout-comment-deleted-"+shout_comment_author_id.to_s+"-"+current_time.to_i.to_s, nil, nil, 'A reply you posted has been flagged as inappropriate and removed')

@@ -2258,13 +2258,14 @@ end
 
 
 # chatting message with group id  -> done
-# ***Shout-venue link & exclusive in params
+# ***Shout-venue link & exclusive in params -> done
 # neighbourhood and city in shouts -> done
 # type and url for shouts and chatting messages -> done
 
 # new endpoint for single message -> done
 # Notification with new sturcture -> done
 
-# last active time compare to alert
-# alert -> increment
-# alert time update
+# last active time compare to alert -> done
+# alert -> increment -> done
+# alert time update -> done
+# admin actions tracking

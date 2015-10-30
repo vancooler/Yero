@@ -27,13 +27,19 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
               default = 1
 
             end
+            action_type = "Disable user's photo"
+            details = "Photo with id: " + ua.id.to_s
+            current_admin_user.add_action(action_type, details, '')
+
             # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
             RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
     
             if u.pusher_private_online
               u.pusher_delete_photo_event(avatar_id)
             else
-              WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+              if Rails.env == "production"
+                WhisperNotification.delay.send_avatar_disabled_notification(ua.user_id, default)
+              end
             end
             # notification
             ReportUserHistory.mark_as_notified(ua.user_id)
@@ -51,6 +57,9 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       next_order = current_order.nil? ? 0 : current_order+1
       ua.order = next_order
         ua.save!
+        action_type = "Enable user's photo"
+        details = "Photo with id: " + ua.id.to_s
+        current_admin_user.add_action(action_type, details, '')
       end
       redirect_to :back, :notice => "Image is enabled"
     end
@@ -97,7 +106,11 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     def remove_status
       user = User.find_user_by_unique(params[:id])
       if !user.nil?
+        details = user.introduction_2
         if user.update(:introduction_2 => '', :status_disabled_count => user.status_disabled_count+1)
+          action_type = "Delete user's status"
+          current_admin_user.add_action(action_type, details, '')
+
           redirect_to :back, :notice => "Status of user " + user.name + " was successfully removed."
         else
           redirect_to :back, :notice => "Failed to remove status of user " + user.name 
@@ -144,12 +157,17 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             default = 1
 
           end
+          action_type = "Disable user's photo"
+          details = "Photo with id: " + ua.id.to_s
+          current_admin_user.add_action(action_type, details, '')
           # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
           RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
           if u.pusher_private_online
             u.pusher_delete_photo_event
           else
-            WhisperNotification.send_avatar_disabled_notification(ua.user_id, default)
+            if Rails.env == "production"
+              WhisperNotification.delay.send_avatar_disabled_notification(ua.user_id, default)
+            end
           end
           ReportUserHistory.mark_as_notified(ua.user_id)
         end
@@ -164,6 +182,9 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       next_order = current_order.nil? ? 0 : current_order+1
       ua.order = next_order
       ua.save!
+      action_type = "Enable user's photo"
+      details = "Photo with id: " + ua.id.to_s
+      current_admin_user.add_action(action_type, details, '')
     end
     redirect_to :back, :notice => "Selected images are enabled"
   end
