@@ -71,10 +71,18 @@ module V20150930
       content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
+      latitude = nil
+      longitude = nil
+      if !params[:latitude].blank? 
+        latitude = params[:latitude].to_f
+      end
+      if !params[:longitude].blank? 
+        longitude = params[:longitude].to_f
+      end
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       exclusive = (!params['exclusive'].nil? ? (params['exclusive'].to_s == '1' or params['exclusive'].to_s == 'true') : false)
       
-      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, content_type, image_url, audio_url)
+      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, content_type, image_url, audio_url, latitude, longitude)
       if shout
         # Pusher later
         render json: success(shout)

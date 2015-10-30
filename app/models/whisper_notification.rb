@@ -594,18 +594,20 @@ class WhisperNotification < AWS::Record::HashModel
             
             grouping_id = timestamp_with_ns.to_i
             if !last_messages.blank?
-              last_grouping_id = last_messages.first.created_at.to_i
+              previous_message = last_messages.first
+              last_grouping_id = previous_message.created_at.to_i
               if !last_grouping_id.nil? and grouping_id <= last_grouping_id + 15*60
-                grouping_id = last_grouping_id
+                grouping_id = previous_message.grouping_id
               end
             end
             chat_message = ChattingMessage.create!(:content_type => content_type, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => timestamp_with_ns, :updated_at => timestamp_with_ns, :client_side_id => client_side_id)
           else
             grouping_id = Time.now.to_i
             if !last_messages.blank?
-              last_grouping_id = last_messages.first.created_at.to_i
+              previous_message = last_messages.first
+              last_grouping_id = previous_message.created_at.to_i
               if !last_grouping_id.nil? and grouping_id <= last_grouping_id + 15*60
-                grouping_id = last_grouping_id
+                grouping_id = previous_message.grouping_id
               end
             end
             if client_side_id.nil?

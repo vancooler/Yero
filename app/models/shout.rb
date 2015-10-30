@@ -171,7 +171,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, exclusive, anonymous, content_type, image_url, audio_url)
+  def self.create_shout(current_user, body, exclusive, anonymous, content_type, image_url, audio_url, latitude, longitude)
   	shout = Shout.new
   	# venue = Venue.find_venue_by_unique(venue_id)
     if !current_user.current_venue.nil?
@@ -179,8 +179,16 @@ class Shout < ActiveRecord::Base
       shout.longitude = current_user.current_venue.longitude
       shout.venue_id = current_user.current_venue.id 
     else
-      shout.latitude = current_user.latitude
-      shout.longitude = current_user.longitude
+      if !latitude.nil?
+        shout.latitude = latitude
+      else
+        shout.latitude = current_user.latitude
+      end
+      if !longitude.nil?
+        shout.longitude = longitude
+      else
+        shout.longitude = current_user.longitude
+      end
     end
     if !exclusive
       shout.allow_nearby = true

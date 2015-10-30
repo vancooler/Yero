@@ -1455,6 +1455,8 @@ describe 'V2.0.0' do
 	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
       	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
 	    
+	    expect(Venue.find_venue_by_unique(Vancouver_TestVenue_test).id).to eql 1
+
       	token = user_2.generate_token
       	# user_2 enter venue 
       	post 'api/venues/Vancouver_TestVenue_test', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1517,7 +1519,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
-      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false, :latitude => user_3.latitude, :longitude => user_3.longitude}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 3
@@ -1928,6 +1930,11 @@ describe 'V2.0.0' do
       	expect(Shout.count).to eql 2
       	expect(ShoutVote.count).to eql 2
 
+      	token = user_3.generate_token
+      	post 'api/shouts', {:token => token, :body => "CCC", :anonymous => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+
       	VenueEntry.delete_all
       	RecentActivity.delete_all
       	ShoutCommentVote.delete_all
@@ -2266,6 +2273,14 @@ describe 'V2.0.0' do
 
 		GreetingPoster.delete_all
 		GreetingMessage.delete_all
+
+		au = AdminUser.create!(level: 0, email: "admin1@example.com", password: "password", id: 2)
+		expect(au.name).to eql "admin1@example.com (2)"
+
+		au.add_action("Delete shout", "fuck!!!", "Inappropriate content")
+		expect(AdminAction.count).to eql 1
+		AdminAction.delete_all
+		au.delete
 
 	end
 end

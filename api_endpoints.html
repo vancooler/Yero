@@ -463,10 +463,48 @@
             <pre>
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">message_id: </span><span class="ruby-string">required client side id</span>
   <span class="ruby-identifier">message: </span><span class="ruby-string">required text</span>
   <span class="ruby-identifier">timestamp: </span><span class="ruby-string">optional integer 1442343746</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">StandardConversationObject</span>
+<span class="ruby-keyword">Error Messages:</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Please upload a profile photo first"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"User blocked"</span>
+  <span class="ruby-string">}</span>
+  <span class="ruby-string">{</span>
+    <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
+    <span class="ruby-identifier">message: </span><span class="ruby-string">"Cannot send more whispers"</span>
+    <span class="ruby-identifier">external_message: </span><span class="ruby-string">"Cannot send more whispers"</span>
+  <span class="ruby-string">}</span>
+
+            </pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-i-api_message_create" class="method-detail ">
+        <div class="method-heading">
+          <span class="method-name">api/messages [POST]</span>
+          <span class="method-click-advice">click to toggle details</span>
+        </div>
+        <div class="method-description">
+          <a href="./V20150930/ConversationsController.html#method-i-create">Conversations#create_single_message</a>
+          <div class="method-source-code" id="enter_venue-source">
+            <pre>
+<span class="ruby-keyword">Parameters:</span>
+  <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
+  <span class="ruby-identifier">message_id: </span><span class="ruby-string">required client side id</span>
+  <span class="ruby-identifier">message: </span><span class="ruby-string">required text</span>
+  <span class="ruby-identifier">timestamp: </span><span class="ruby-string">optional integer 1442343746</span>
+<span class="ruby-keyword">Response:</span>
+  <span class="ruby-constant">StandardMessageObject</span>
 <span class="ruby-keyword">Error Messages:</span>
   <span class="ruby-string">{</span>
     <span class="ruby-identifier">code: </span><span class="ruby-string">403</span>
