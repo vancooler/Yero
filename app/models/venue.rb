@@ -416,16 +416,19 @@ class Venue < ActiveRecord::Base
     downcase_res = Net::HTTP.get_response(URI.parse(downcase_img_url))
     if res.code == '200'
       # current_order = UserAvatar.where(:user_id => user.id).where(:is_active => true).maximum(:order)
-      
+      # :nocov:
       avatar = VenueAvatar.new(venue: self, default: true)
 
       avatar.remote_avatar_url = origin_img_url
       avatar.save
+      # :nocov:
     elsif downcase_res.code == '200'
+      # :nocov:
       avatar = VenueAvatar.new(venue: self, default: true)
 
       avatar.remote_avatar_url = downcase_img_url
       avatar.save
+      # :nocov:
     end
   end
 
@@ -462,9 +465,11 @@ class Venue < ActiveRecord::Base
             end
           else
             # create
+            # :nocov:
             venue = Venue.create!(:name => venue_name, :timezone => timezone, :start_time => start_time, :end_time => end_time, :pending_name => venue_name, :pending_address => venue_address, :pending_city => venue_city, :pending_state => venue_state, :pending_country => venue_country, :pending_zipcode => venue_zipcode, :pending_venue_type_id => type.id, :venue_network_id => city_network.id, :draft_pending => true, :pending_latitude => latitude, :pending_longitude => longitude)
             venue.upload_img(name)
             b.update(:venue_id => venue.id)
+            # :nocov:
           end
         else
           # create both

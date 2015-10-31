@@ -1455,7 +1455,7 @@ describe 'V2.0.0' do
 	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
       	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
 	    
-	    expect(Venue.find_venue_by_unique(Vancouver_TestVenue_test).id).to eql 1
+	    expect(Venue.find_venue_by_unique('Vancouver_TestVenue_test').id).to eql 1
 
       	token = user_2.generate_token
       	# user_2 enter venue 
@@ -2259,6 +2259,62 @@ describe 'V2.0.0' do
 
 
 	end
+
+
+	it "Chatting grouping id" do
+		birthday = (Time.now - 21.years)
+		user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", username: "user_2", email: "test2@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua = UserAvatar.create!(id: 1, user: user_2, is_active: true, order: 0)
+	    
+	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "user_3", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
+	    
+	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
+
+	    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", username: "user_5", email: "test5@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_5 = UserAvatar.create!(id: 4, user: user_5, is_active: true, order: 0)
+
+	    user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", username: "user_6", email: "test6@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_6 = UserAvatar.create!(id: 5, user: user_6, is_active: true, order: 0)
+
+	    token = user_2.generate_token
+
+      	# user_2 -> user_3 initial whisper
+      	# expect(WhisperNotification.send_message(3, user_2, nil, '2', "hi", user_2.first_name + " sent you a whisper")).to eql "true"
+      	ts = ChattingMessage.createdTimestamp(Time.now)
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi!", :timestamp => ts, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	cm1 = ChattingMessage.last
+
+
+      	token = user_3.generate_token
+      	ts2 = ChattingMessage.createdTimestamp(Time.now+16.minutes)
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hi!", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	cm2 = ChattingMessage.last
+
+      	ts3 = ChattingMessage.createdTimestamp(Time.now+17.minutes)
+      	post "api/conversations", {:notification_type => '2', :target_id => '2', :message => "Hi!", :timestamp => ts3, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	cm3 = ChattingMessage.last
+
+      	expect(cm1.grouping_id).to eql ts.to_i
+      	expect(cm2.grouping_id).to eql ts2.to_i
+      	expect(cm3.grouping_id).to eql ts2.to_i
+      	expect(cm3.grouping_id).to eql cm2.grouping_id
+      	expect(cm3.grouping_id).to be > cm1.grouping_id
+
+      	ChattingMessage.delete_all
+      	Conversation.delete_all
+      	RecentActivity.delete_all
+      	UserAvatar.delete_all
+	    User.delete_all
+
+    end
 
 	it "Others" do
 		image = PresetGreetingImage.new
