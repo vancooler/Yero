@@ -464,8 +464,8 @@
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
   <span class="ruby-identifier">message_id: </span><span class="ruby-string">required client side id</span>
-  <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
   <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+  <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">message: </span><span class="ruby-string">optional text</span>
   <span class="ruby-identifier">timestamp: </span><span class="ruby-string">optional integer 1442343746</span>
@@ -504,8 +504,8 @@
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">target_id: </span><span class="ruby-string">required user id</span>
   <span class="ruby-identifier">message_id: </span><span class="ruby-string">required client side id</span>
-  <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
   <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+  <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">message: </span><span class="ruby-string">optional text</span>
   <span class="ruby-identifier">timestamp: </span><span class="ruby-string">optional integer 1442343746</span>
@@ -568,9 +568,18 @@
           <span class="ruby-identifier">timestamp: </span>
           <span class="ruby-identifier">message: </span>
           <span class="ruby-identifier">read: </span>
-          <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
-          <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
-          <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">attachments: </span>
+          <span class="ruby-identifier">[</span>
+            <span class="ruby-identifier">{</span>
+              <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+              <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+              <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+            <span class="ruby-identifier">}</span>
+            <span class="ruby-identifier">{</span>
+              <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+              <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+            <span class="ruby-identifier">}</span>
+          <span class="ruby-identifier">]</span>
         <span class="ruby-string">}</span>
         <span class="ruby-identifier">actions: </span>
         <span class="ruby-string">[</span>
@@ -623,9 +632,18 @@
       <span class="ruby-identifier">id: </span>
       <span class="ruby-identifier">grouping_id: </span>
       <span class="ruby-identifier">conversation_id: </span>
-      <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
-      <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
-      <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+      <span class="ruby-identifier">attachments: </span>
+      <span class="ruby-identifier">[</span>
+        <span class="ruby-identifier">{</span>
+          <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+          <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">}</span>
+        <span class="ruby-identifier">{</span>
+          <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+          <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">}</span>
+      <span class="ruby-identifier">]</span>
       <span class="ruby-identifier">timestamp: </span>
       <span class="ruby-identifier">message: </span>
       <span class="ruby-identifier">read: </span>
@@ -645,9 +663,18 @@
         <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
         <span class="ruby-identifier">grouping_id: </span><span class="ruby-string">1345252523</span>
         <span class="ruby-identifier">conversation_id: </span><span class="ruby-string">"SsDF-34SFSF-SDFS3-SF"</span>
-        <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
-        <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
-        <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">attachments: </span>
+        <span class="ruby-identifier">[</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+            <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+            <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+            <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+        <span class="ruby-identifier">]</span>
         <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
         <span class="ruby-identifier">message: </span><span class="ruby-string">"Hello"</span>
         <span class="ruby-identifier">read: </span><span class="ruby-string">TRUE/FALSE</span>
@@ -698,9 +725,18 @@
         <span class="ruby-identifier">id: </span><span class="ruby-string">1</span>
         <span class="ruby-identifier">grouping_id: </span><span class="ruby-string">14434423345</span>
         <span class="ruby-identifier">conversation_id: </span><span class="ruby-string">"SsDF-34SFSF-SDFS3-SF"</span>
-        <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
-        <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
-        <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">attachments: </span>
+        <span class="ruby-identifier">[</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+            <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+            <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+            <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+        <span class="ruby-identifier">]</span>
         <span class="ruby-identifier">timestamp: </span><span class="ruby-string">142455947</span>
         <span class="ruby-identifier">message: </span><span class="ruby-string">"Hello"</span>
         <span class="ruby-identifier">read: </span><span class="ruby-string">TRUE/FALSE</span>
@@ -1049,8 +1085,8 @@
   <span class="ruby-identifier">body: </span><span class="ruby-string">required content</span>
   <span class="ruby-identifier">exclusive: </span><span class="ruby-string">TRUE/FALSE</span>
   <span class="ruby-identifier">anonymous: </span><span class="ruby-string">TRUE/FALSE</span>
-  <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
   <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+  <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
@@ -1116,9 +1152,18 @@
     <span class="ruby-identifier">id: </span><span class="ruby-string">shout id</span>
     <span class="ruby-identifier">body: </span><span class="ruby-string">shout content</span>
     <span class="ruby-identifier">anonymous: </span><span class="ruby-string">TRUE/FALSE</span>
-    <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio"</span>
-    <span class="ruby-identifier">image_url: </span><span class="ruby-string">string</span>
-    <span class="ruby-identifier">audio_url: </span><span class="ruby-string">string</span>
+    <span class="ruby-identifier">attachments: </span>
+    <span class="ruby-identifier">[</span>
+      <span class="ruby-identifier">{</span>
+        <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+        <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+      <span class="ruby-identifier">}</span>
+      <span class="ruby-identifier">{</span>
+        <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+        <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+      <span class="ruby-identifier">}</span>
+    <span class="ruby-identifier">]</span>
     <span class="ruby-identifier">latitude: </span><span class="ruby-string">shout latitude</span>
     <span class="ruby-identifier">longitude: </span><span class="ruby-string">shout longitude</span>
     <span class="ruby-identifier">locality: </span><span class="ruby-string">Vancouver</span>
@@ -1213,8 +1258,8 @@
 <span class="ruby-keyword">Parameters:</span>
   <span class="ruby-identifier">body: </span><span class="ruby-string">required content</span>
   <span class="ruby-identifier">shout_id: </span><span class="ruby-string">required shout id</span>
-  <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
   <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+  <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
   <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
 <span class="ruby-keyword">Response:</span>
   <span class="ruby-constant">TRUE</span>
@@ -1260,9 +1305,18 @@
         <span class="ruby-identifier">actions: </span><span class="ruby-string">array of "upvote", "undo_upvote", "downvote", or "undo_downvote"</span>
         <span class="ruby-identifier">venue_id: </span><span class="ruby-string">shout comment venue gimbal key</span>
         <span class="ruby-identifier">author_id: </span><span class="ruby-string">shout comment author's user id</span>
-        <span class="ruby-identifier">content_type: </span><span class="ruby-string">"text/image/audio" (default as text)</span>
-        <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
-        <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+        <span class="ruby-identifier">attachments: </span>
+        <span class="ruby-identifier">[</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"image"</span>
+            <span class="ruby-identifier">image_url: </span><span class="ruby-string">optional string</span>
+            <span class="ruby-identifier">image_thumb_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+          <span class="ruby-identifier">{</span>
+            <span class="ruby-identifier">attachment_type: </span><span class="ruby-string">"audio"</span>
+            <span class="ruby-identifier">audio_url: </span><span class="ruby-string">optional string</span>
+          <span class="ruby-identifier">}</span>
+        <span class="ruby-identifier">]</span>
       <span class="ruby-string">}</span>
     <span class="ruby-string">]</span>
     <span class="ruby-identifier">pagination: </span>

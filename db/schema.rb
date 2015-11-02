@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151102124322) do
+ActiveRecord::Schema.define(version: 20151102132621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -126,10 +126,10 @@ ActiveRecord::Schema.define(version: 20151102124322) do
   end
 
   create_table "chatting_messages", force: true do |t|
-    t.integer  "speaker_id",                     null: false
-    t.integer  "whisper_id",                     null: false
+    t.integer  "speaker_id",                      null: false
+    t.integer  "whisper_id",                      null: false
     t.text     "message"
-    t.boolean  "read",           default: false
+    t.boolean  "read",            default: false
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "grouping_id"
@@ -137,6 +137,7 @@ ActiveRecord::Schema.define(version: 20151102124322) do
     t.text     "image_url"
     t.text     "audio_url"
     t.string   "client_side_id"
+    t.text     "image_thumb_url"
   end
 
   add_index "chatting_messages", ["whisper_id"], name: "index_chatting_messages_on_whisper_id", using: :btree
