@@ -1477,7 +1477,6 @@ describe 'V2.0.0' do
       	expect(User.find(2).point).to eql 3
       	shout_1 = Shout.last
       	expect(shout_1.anonymous).to eql true
-      	expect(shout_1.content_type).to eql 'text'
 
       	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true, :content_type => "audio", :audio_url => "http://b"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1485,7 +1484,6 @@ describe 'V2.0.0' do
       	expect(Shout.count).to eql 2
       	shout_2 = Shout.last
       	expect(shout_2.anonymous).to eql true
-      	expect(shout_2.content_type).to eql "audio"
       	expect(shout_2.audio_url).to eql "http://b"
 
       	# expect(Shout.list(user_2, 'hot', 1).count).to eql 2
@@ -1499,8 +1497,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['content_type']).to eql 'audio'
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['audio_url']).to eql "http://b"
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['attachment_type']).to eql 'audio'
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['audio_url']).to eql "http://b"
 
       	# user_3
       	token = user_3.generate_token
@@ -1574,7 +1572,6 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ShoutComment.count).to eql 1
       	shout_comment_1 = ShoutComment.last
-      	expect(shout_comment_1.content_type).to eql "text"
       	expect(shout_comment_1.city).to eql "Vancouver"
       	expect(shout_comment_1.neighbourhood).to eql "Downtown"
 
@@ -1695,7 +1692,7 @@ describe 'V2.0.0' do
       	expect(shout_3.shout_report_histories.length).to eql 2
 
       	ShoutReportHistory.delete_all
-      	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id, :content_type => 'image', :image_url => "http://c"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id, :content_type => 'image', :image_url => "http://c", :image_thumb_url => "http://cc"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ShoutComment.count).to eql 2
@@ -1712,8 +1709,9 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
       	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_2.id
-      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['content_type']).to eql 'image'
-      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['image_url']).to eql 'http://c'
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['attachment_type']).to eql 'image'
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['image_url']).to eql 'http://c'
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['image_thumb_url']).to eql 'http://cc'
 
       	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1819,7 +1817,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shout_comments'].count).to eql 1
-      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_2.id
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['id']).to eql shout_comment_1.id
       	expect(JSON.parse(response.body)['pagination']['total_count']).to eql 2
       	expect(JSON.parse(response.body)['pagination']['page']).to eql 0
       	expect(JSON.parse(response.body)['pagination']['per_page']).to eql 1
@@ -1981,7 +1979,6 @@ describe 'V2.0.0' do
       	expect(Conversation.first.message_b).to eql ''
       	expect(ChattingMessage.count).to eql 1
       	expect(ChattingMessage.last.message).to eql 'Hi!'
-      	expect(ChattingMessage.last.content_type).to eql 'text'
       	expect(ChattingMessage.last.image_url).to eql ''
       	expect(ChattingMessage.last.audio_url).to eql ''
       	expect(WhisperSent.count).to eql 1

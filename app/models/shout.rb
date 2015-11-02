@@ -171,7 +171,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, exclusive, anonymous, content_type, image_url, audio_url, latitude, longitude)
+  def self.create_shout(current_user, body, exclusive, anonymous, image_url, image_thumb_url, audio_url, latitude, longitude)
   	shout = Shout.new
   	# venue = Venue.find_venue_by_unique(venue_id)
     if !current_user.current_venue.nil?
@@ -197,8 +197,9 @@ class Shout < ActiveRecord::Base
   	end
     shout.city = current_user.current_city
     shout.neighbourhood = current_user.current_sublocality
-    shout.content_type = content_type
+    # shout.content_type = content_type
     shout.image_url = image_url
+    shout.image_thumb_url = image_thumb_url
     shout.audio_url = audio_url
   	shout.body = body
   	shout.user_id = current_user.id
@@ -216,7 +217,22 @@ class Shout < ActiveRecord::Base
   		user_ids = shout.permitted_users_id
 	  	shout_id = shout.id
 	  	shout.change_vote(current_user, 1)
-	  	
+	  	attachments = Array.new
+      if !shout.image_url.blank?
+        image = {
+          attachment_type: "image",
+          image_url:       shout.image_url.nil? ? '' : shout.image_url,
+          image_thumb_url: shout.image_thumb_url.nil? ? '' : shout.image_thumb_url,
+        }
+        attachments << image
+      end
+      if !shout.audio_url.blank?
+        audio = {
+          attachment_type: "audio",
+          audio_url:       shout.audio_url.nil? ? '' : shout.audio_url
+        }
+        attachments << audio
+      end
   		shout_json = {
   			id: 			           shout.id,
         body: 			         shout.body,
@@ -225,9 +241,10 @@ class Shout < ActiveRecord::Base
         latitude: 		       shout.latitude,
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
-        content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
-        audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
-        image_url:           shout.image_url.nil? ? '' : shout.image_url,
+        # content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
+        # audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
+        # image_url:           shout.image_url.nil? ? '' : shout.image_url,
+        attachments:         attachments,
         subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
         timestamp:           shout.created_at.to_i,
         expire_timestamp:    shout.created_at.to_i+7*24*3600,
@@ -353,9 +370,26 @@ class Shout < ActiveRecord::Base
         json.latitude 		      shout.latitude
         json.longitude          shout.longitude
         json.locality           shout.city.nil? ? '' : shout.city
-        json.content_type       shout.content_type.nil? ? 'text' : shout.content_type
-        json.audio_url          shout.audio_url.nil? ? '' : shout.audio_url
-        json.image_url          shout.image_url.nil? ? '' : shout.image_url
+        # json.content_type       shout.content_type.nil? ? 'text' : shout.content_type
+        # json.audio_url          shout.audio_url.nil? ? '' : shout.audio_url
+        # json.image_url          shout.image_url.nil? ? '' : shout.image_url
+        attachments = Array.new
+        if !shout.image_url.blank?
+          image = {
+            attachment_type: "image",
+            image_url:       shout.image_url.nil? ? '' : shout.image_url,
+            image_thumb_url: shout.image_thumb_url.nil? ? '' : shout.image_thumb_url
+          }
+          attachments << image
+        end
+        if !shout.audio_url.blank?
+          audio = {
+            attachment_type: "audio",
+            audio_url:       shout.audio_url.nil? ? '' : shout.audio_url
+          }
+          attachments << audio
+        end
+        json.attachments        attachments
         json.subLocality        shout.neighbourhood.nil? ? '' : shout.neighbourhood
         json.timestamp          shout.created_at.to_i
         json.expire_timestamp   shout.created_at.to_i+7*24*3600

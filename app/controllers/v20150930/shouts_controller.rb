@@ -25,6 +25,22 @@ module V20150930
           actions = ["upvote", "downvote"]
         end
         result = ShoutComment.list(current_user, shout.id, nil, nil)
+        attachments = Array.new
+        if !shout.image_url.blank?
+          image = {
+            attachment_type: "image",
+            image_url:       shout.image_url.nil? ? '' : shout.image_url,
+            image_thumb_url: shout.image_thumb_url.nil? ? '' : shout.image_thumb_url,
+          }
+          attachments << image
+        end
+        if !shout.audio_url.blank?
+          audio = {
+            attachment_type: "audio",
+            audio_url:       shout.audio_url.nil? ? '' : shout.audio_url
+          }
+          attachments << audio
+        end
         shout_json = {
           id:                   shout.id,
           body:                 shout.body,
@@ -33,9 +49,10 @@ module V20150930
           latitude:             shout.latitude,
           longitude:            shout.longitude,
           locality:             shout.city.nil? ? '' : shout.city,
-          content_type:         shout.content_type.nil? ? 'text' : shout.content_type,
-          audio_url:            shout.audio_url.nil? ? '' : shout.audio_url,
-          image_url:            shout.image_url.nil? ? '' : shout.image_url,
+          # content_type:         shout.content_type.nil? ? 'text' : shout.content_type,
+          # audio_url:            shout.audio_url.nil? ? '' : shout.audio_url,
+          # image_url:            shout.image_url.nil? ? '' : shout.image_url,
+          attachments:          attachments,
           subLocality:          shout.neighbourhood.nil? ? '' : shout.neighbourhood,
           timestamp:            shout.created_at.to_i,
           expire_timestamp:     shout.created_at.to_i+7*24*3600,
@@ -68,8 +85,9 @@ module V20150930
     # create a shout
     def create
       venue = (params[:venue].blank? ? nil : params[:venue])
-      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      # content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
+      image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       latitude = nil
       longitude = nil
@@ -82,7 +100,7 @@ module V20150930
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       exclusive = (!params['exclusive'].nil? ? (params['exclusive'].to_s == '1' or params['exclusive'].to_s == 'true') : false)
       
-      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, content_type, image_url, audio_url, latitude, longitude)
+      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, image_url, image_thumb_url, audio_url, latitude, longitude)
       if shout
         # Pusher later
         render json: success(shout)

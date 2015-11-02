@@ -150,13 +150,14 @@ class ShoutComment < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout_comment(current_user, body, shout_id, content_type, image_url, audio_url)
+  def self.create_shout_comment(current_user, body, shout_id, image_url, image_thumb_url, audio_url)
   	shout_comment = ShoutComment.new
 	  shout_comment.latitude = current_user.latitude
 	  shout_comment.longitude = current_user.longitude
     shout_comment.city = current_user.current_city
-    shout_comment.content_type = content_type
+    # shout_comment.content_type = content_type
     shout_comment.image_url = image_url
+    shout_comment.image_thumb_url = image_thumb_url
     shout_comment.audio_url = audio_url
     shout_comment.neighbourhood = current_user.current_sublocality
     shout_comment.body = body
@@ -173,15 +174,33 @@ class ShoutComment < ActiveRecord::Base
 	  	shout_id = shout_comment.shout.id
 	  	
 	  	channel = 'public-shout-' + shout_id.to_s
+      attachments = Array.new
+      if !shout_comment.image_url.blank?
+        image = {
+          attachment_type: "image",
+          image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
+          image_thumb_url: shout_comment.image_thumb_url.nil? ? '' : shout_comment.image_thumb_url
+        }
+        attachments << image
+      end
+      if !shout_comment.audio_url.blank?
+        audio = {
+          attachment_type: "audio",
+          audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
+        }
+        attachments << audio
+      end
+
 		  shout_comment_json = {
 		    id: 			       shout_comment.id,
         body: 			     shout_comment.body,
         latitude: 		   shout_comment.latitude,
         longitude:       shout_comment.longitude,
         locality:        shout_comment.city.nil? ? '' : shout_comment.city,
-        content_type:    shout_comment.content_type.nil? ? 'text' : shout_comment.content_type,
-        image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
-        audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.city,
+        # content_type:    shout_comment.content_type.nil? ? 'text' : shout_comment.content_type,
+        # image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
+        # audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.city,
+        attachments:     attachments,
         subLocality:     shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
         timestamp: 		   shout_comment.created_at.to_i,
         total_upvotes:   1,
@@ -279,7 +298,7 @@ class ShoutComment < ActiveRecord::Base
   	time_0 = Time.now
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'ShoutComment').map(&:reportable_id)
-  	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at DESC")
+  	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at ASC")
   	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
         pagination = Hash.new
         pagination['page'] = page - 1
@@ -311,9 +330,26 @@ class ShoutComment < ActiveRecord::Base
         json.shout_id 		 shout_comment.shout_id
         json.body          shout_comment.body
         json.locality      shout_comment.city.nil? ? '' : shout_comment.city
-        json.content_type  shout_comment.content_type.nil? ? 'text' : shout_comment.content_type
-        json.audio_url     shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
-        json.image_url     shout_comment.image_url.nil? ? '' : shout_comment.image_url
+        # json.content_type  shout_comment.content_type.nil? ? 'text' : shout_comment.content_type
+        # json.audio_url     shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
+        # json.image_url     shout_comment.image_url.nil? ? '' : shout_comment.image_url
+        attachments = Array.new
+        if !shout_comment.image_url.blank?
+          image = {
+            attachment_type: "image",
+            image_url:       shout_comment.image_url.nil? ? '' : shout_comment.image_url,
+            image_thumb_url: shout_comment.image_thumb_url.nil? ? '' : shout_comment.image_thumb_url
+          }
+          attachments << image
+        end
+        if !shout_comment.audio_url.blank?
+          audio = {
+            attachment_type: "audio",
+            audio_url:       shout_comment.audio_url.nil? ? '' : shout_comment.audio_url
+          }
+          attachments << audio
+        end
+        json.attachments   attachments
         json.subLocality   shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood
         json.latitude 		 shout_comment.latitude
         json.longitude 		 shout_comment.longitude

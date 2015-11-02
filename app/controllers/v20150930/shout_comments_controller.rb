@@ -5,11 +5,12 @@ module V20150930
 
     # create a comment to a shout
     def create
-      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      # content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
+      image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
 
-      shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], content_type, image_url, audio_url)
+      shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], image_url, image_thumb_url, audio_url)
       if shout_comment
         # Pusher later
         render json: success(shout_comment)
