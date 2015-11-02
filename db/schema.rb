@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151029175821) do
+ActiveRecord::Schema.define(version: 20151102124322) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -438,6 +438,7 @@ ActiveRecord::Schema.define(version: 20151029175821) do
     t.string   "content_type"
     t.text     "image_url"
     t.text     "audio_url"
+    t.text     "image_thumb_url"
   end
 
   add_index "shout_comments", ["shout_id"], name: "index_shout_comments_on_shout_id", using: :btree
@@ -480,12 +481,13 @@ ActiveRecord::Schema.define(version: 20151029175821) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "venue_id"
-    t.boolean  "anonymous",     default: true
+    t.boolean  "anonymous",       default: true
     t.string   "city"
     t.string   "neighbourhood"
     t.string   "content_type"
     t.text     "image_url"
     t.text     "audio_url"
+    t.text     "image_thumb_url"
   end
 
   add_index "shouts", ["user_id"], name: "index_shouts_on_user_id", using: :btree
