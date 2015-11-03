@@ -121,8 +121,16 @@ module V20150930
       per_page = nil
       page = params[:page].to_i + 1 if !params[:page].blank?
       per_page = params[:per_page].to_i if !params[:per_page].blank?
+      latitude = current_user.latitude
+      longitude = current_user.longitude
+      if !params[:latitude].blank? 
+        latitude = params[:latitude].to_f
+      end
+      if !params[:longitude].blank? 
+        longitude = params[:longitude].to_f
+      end
 
-      result = Shout.list(current_user, params[:order_by], params[:venue], params[:my_shouts], params[:my_comments], page, per_page)
+      result = Shout.list(current_user, params[:order_by], params[:venue], params[:my_shouts], params[:my_comments], page, per_page, latitude, longitude)
       response = {
         shouts: result['shouts']
       }

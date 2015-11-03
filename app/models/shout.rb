@@ -279,7 +279,7 @@ class Shout < ActiveRecord::Base
   end
 
   # collect shouts in a venue or near users
-  def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
+  def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and (my_comments.to_s == '1' or my_comments.to_s == 'true')
@@ -296,7 +296,7 @@ class Shout < ActiveRecord::Base
 	  		else
 	  			same_venue_shouts = []
 	  		end
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([current_user.latitude, current_user.longitude], 5, units: :km)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 5, units: :km)
 	  		shouts = shouts | same_venue_shouts
 	  		
 	  	else
@@ -317,7 +317,7 @@ class Shout < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page)
+  def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page, latitude, longitude)
   	result = Hash.new
   	time_0 = Time.now
   	query_venue = Venue.find_venue_by_unique(venue)
@@ -326,7 +326,7 @@ class Shout < ActiveRecord::Base
   	else
   		venue = query_venue.id
   	end
-  	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments)
+  	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
   	case order_by
   	when 'new'
   		# shouts order by created_at

@@ -1492,7 +1492,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
 
-      	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/shouts', {:token => token, :order_by => "new", :latitude => 49.5251234, :longitude => -123.0146173}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
@@ -2373,7 +2373,7 @@ end
 # alert time update -> done
 # admin actions tracking
 
-
+# shout latitude and longitude
 
 
 # has = 0
