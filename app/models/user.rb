@@ -1423,12 +1423,6 @@ class User < ActiveRecord::Base
         same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
       end
 
-      campus_id = VenueType.find_by_name("Campus")
-      # if campus_id
-      #   campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
-      # else
-      #   campus_venue_ids = [nil]
-      # end
       campus_venue_ids = [nil]
       if self.current_venue.blank?
         different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
@@ -1462,7 +1456,6 @@ class User < ActiveRecord::Base
                   thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
                   avatar_id: oa.id,
                   default: oa.order.nil? ? true : (oa.order==0),
-                  # is_active: true,
                   order: oa.order.nil? ? '100' : oa.order
                 }
                 avatar_array << new_item
@@ -1481,13 +1474,7 @@ class User < ActiveRecord::Base
             actions_time += (actions_time_b - actions_time_a)
             
             whispers_time_a = Time.now
-            # whisper_hash = self.collect_whisper_message_history(user, actions)
-            # if !whisper_hash['whisper_id'].nil?
-            #     json.whisper_id whisper_hash['whisper_id']
-            # end
-            # if !whisper_hash['messages_array'].nil?
-            #     json.messages_array whisper_hash['messages_array']
-            # end
+
             whispers_time_b = Time.now
             whispers_time += (whispers_time_b - whispers_time_a)
             
@@ -1532,40 +1519,9 @@ class User < ActiveRecord::Base
         puts "The whisper time is: "
         puts whispers_time.inspect
       end
-
       users = JSON.parse(users).delete_if(&:empty?)
-      time_j_e = Time.now
-      # TODO: Move to db level to improve performance
-        # different_venue_users = [] # Make a empty array for users in the different venue
-        # same_venue_users = [] #Make a empty array for users in the same venue
-        # no_badge_users = [] # Make an empty array for no badge users
-        # users.each do |u| # Go through the users
-        #   if !!u['exclusive'] == true
-        #     if u['same_venue_badge'].to_s == "true"
-        #        same_venue_users << u # Throw the user into the array
-        #     end
-        #   else
-        #     if !!u['exclusive'] == false
-        #       if u['different_venue_badge'].to_s == "true" #If the users' same beacon field is true
-        #         different_venue_users << u # Throw the user into the array
-        #       elsif u['same_venue_badge'].to_s == "true" #If the users' same venue field is true
-        #         same_venue_users << u # Throw the user into the array
-        #       elsif everyone
-        #         different_venue_users << u # Users who are not in a venue also thrown into here.
-        #       end
-        #     end
-        #   end
-        # end
-        
-        # # users = users - same_beacon_users - same_venue_users # Split out the users such that users only contain those that are not in the same venue or same beacon
-        # puts "count A"
-        # puts users.count
-        # users = (same_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse) + (different_venue_users.sort_by{ |hsh| hsh['last_active'] }.reverse)  #Sort users by activity
-        # puts "count B"
-        # puts users.count
-      # ADD Pagination
-      
 
+      time_j_e = Time.now
       
 
 

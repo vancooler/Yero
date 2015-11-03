@@ -344,40 +344,36 @@ class Venue < ActiveRecord::Base
 
   def self.venues_object(current_user, venues)
     # default_logo = ENV['DYNAMODB_PREFIX'] == 'Dev' ? 'https://s3-us-west-2.amazonaws.com/yero-development/static/avatar_venue_default.png?X-Amz-Date=20150709T223626Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=9362671e5feae095d12b06f732d8a8913da88d630c49359df3bbdbef90043d1a&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D' : 'https://s3-us-west-2.amazonaws.com/yero/static/avatar_venue_default.png?X-Amz-Date=20150709T223305Z&X-Amz-Expires=300&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Signature=60bf8424d7242c66faee48bc0f4e2641a6fa2515cf65b7c9b81591bc0f074857&X-Amz-Credential=ASIAJ7GYIAH2JUPHPCIA/20150709/us-west-2/s3/aws4_request&X-Amz-SignedHeaders=Host&x-amz-security-token=AQoDYXdzEGYakAL0EvQYrk9q5y0ZB2V%2BcdgPB88okptP4HYESiaazyMebzHkt1DChrrNXW/Hc/J3dg3lVHco5isUf5F6ecCAfulM8oG2ExUGTOVEOSxLlzWlyHF9jL8RyYYGTpMsZbG%2B6jMAI1oTXxNDwP790Za3HuFqC12OWsIghkUuQJ9cHuHg1wHCFl/isxQn8ZOQiI64fan4dKKKMvv12w6y1IOit1pKEKOl3N5mf/WYyD15eWLk3jR%2BdATS9Uan1wRDB5gBA6OG9r65ouRietn2sUO7FMvHsagF2RvL1HXM%2BKW9hXmy9fL1NXN9KireHlWXoAJXd9jSEcTNMX1Xd4oGj9eTa%2BS5f6s2Q23IcTbIzvU7/5psASC1yPusBQ%3D%3D'
-    
-    data = Jbuilder.encode do |json|
-      json.array! venues do |v|
-        images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
-        json.id v.id
-        json.name (v.name.blank? ? '' : v.name.upcase)
-        json.type  (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : ''
-        # json.address v.address_line_one
-        # json.city v.city
-        # json.state v.state
-        json.latitude v.latitude
-        json.longitude v.longitude
-        json.users_number v.active_in_venues.length
-        json.unlock_number (v.unlock_number.nil? ? 0 : v.unlock_number)
-        json.shouts_number Shout.shouts_in_venue(current_user, v.id).length
-        if !v.timezone.nil? and !v.start_time.nil?
-          json.start Venue.to_utc_timestamp(v.start_time, v.timezone)
+    data = Array.new
+    venues.each do |v|
+      venue = {
+        id:             v.id,
+        name:           (v.name.blank? ? '' : v.name.upcase),
+        type:           (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : '',
+        latitude:       v.latitude,
+        longitude:      v.longitude,
+        users_number:   v.active_in_venues.length,
+        unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
+        shouts_number:  Shout.shouts_in_venue(current_user, v.id).length,
+        gimbal_name:    (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
+      }
+      images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
+      if !images.empty?
+        avatars = Array.new
+        images.each do |i|
+          avatars << (i.avatar.url.nil? ? '' : i.avatar.url)
         end
-        if !v.timezone.nil? and !v.end_time.nil?
-          json.end Venue.to_utc_timestamp(v.end_time, v.timezone)
-        end
-        if !images.empty?
-          avatars = Array.new
-          images.each do |i|
-            avatars << i.avatar.url
-          end
-          json.images do
-            json.array! avatars
-          end
-        end
-        json.gimbal_name  (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
-        
+        venue[:images] = avatars
       end
+      if !v.timezone.nil? and !v.start_time.nil?
+        venue[:start] = Venue.to_utc_timestamp(v.start_time, v.timezone)
+      end
+      if !v.timezone.nil? and !v.end_time.nil?
+        venue[:end] = Venue.to_utc_timestamp(v.end_time, v.timezone)
+      end
+      data << venue
     end
+
 
     return data
   end

@@ -1947,7 +1947,7 @@ describe 'V2.0.0' do
       	Shout.delete_all
 
 
-      	Shout.pressure_test(user_4)
+      	# Shout.pressure_test(user_4)
       	
       	
       	ActiveInVenueNetwork.delete_all

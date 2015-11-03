@@ -345,7 +345,7 @@ module V20150908
 
       data = Venue.venues_object(current_user, venues)
       
-      render json: success(JSON.parse data)
+      render json: success(data)
     end
 
     # Returns all the current people in the venue which the curent user is in

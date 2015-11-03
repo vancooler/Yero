@@ -171,7 +171,7 @@ module V20150930
 
       data = Venue.venues_object(current_user, venues)
       
-      render json: success((JSON.parse data), 'data', pagination)
+      render json: success(data, 'data', pagination)
     end
 
     # List of venues
