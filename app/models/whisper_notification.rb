@@ -644,7 +644,7 @@ class WhisperNotification < AWS::Record::HashModel
                 if pusher_to_archieved
                   content_path = "api/conversations/"+origin_id.to_s+"?read=0"
                 else
-                  content_path = 'api/messages/'+chat_message.client_side_id.to_s+"?read=0"
+                  content_path = 'api/messages/'+chat_message.id.to_s+"?read=0"
                 end
                 chat_message.send_push_notification_to_target_user(message, origin_id.to_i, target_id.to_i, content_path)
               end
