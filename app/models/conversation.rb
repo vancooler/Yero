@@ -59,69 +59,129 @@ class Conversation < ActiveRecord::Base
 	end
 
 	def self.conversations_to_json(whispers, current_user)
-		result = Jbuilder.encode do |json|
-			json.array! whispers do |a|
-		        if current_user 
-		        	if a.chatting_messages.length < 2 # whispers without replies
-				        json.expire_timestamp (a.created_at + 12.hours).to_i
-				        json.initial_whisper true
-				        if current_user.id == a.target_user_id and a.chatting_messages.length == 1
-				        	can_reply = true
-				        else
-							can_reply = false
-						end
-				    else # whispers with replies
-				    	json.initial_whisper false
-						can_reply = true
-				    end
 
-					json.timestamp 					a.updated_at.to_i
-					json.notification_type  		a.whisper_type.to_i
-					json.conversation_id  			a.dynamo_id.blank? ? '' : a.dynamo_id
-					json.initial_whisper_sender_id  a.origin_user_id
+		result = Array.new 
+		whispers.each do |a|
+			whisper_json = {
+				timestamp: 						a.updated_at.to_i,
+				notification_type:  			a.whisper_type.to_i,
+				conversation_id:  				a.dynamo_id.blank? ? '' : a.dynamo_id,
+				initial_whisper_sender_id:  	a.origin_user_id,
+	            unread_message_count: 			ChattingMessage.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
+			}
 
-					if a.target_user_id == current_user.id
-						if !a.origin_user_id.nil?
-							origin_user = User.find_user_by_unique(a.origin_user_id)
-							if !origin_user.nil? and !current_user.nil?
-								json.object_type  'user'
-								json.object origin_user.user_object(current_user)
-							end
-						end
-					else
-						if !a.target_user_id.nil?
-							origin_user = User.find_user_by_unique(a.target_user_id)
-							if !origin_user.nil? and !current_user.nil?
-								json.object_type  'user'
-								json.object origin_user.user_object(current_user)
-							end
-						end
+			if a.chatting_messages.length < 2 # whispers without replies
+		        whisper_json[:expire_timestamp] = (a.created_at + 12.hours).to_i
+		        whisper_json[:initial_whisper] = true
+		        if current_user.id == a.target_user_id and a.chatting_messages.length == 1
+		        	can_reply = true
+		        else
+					can_reply = false
+				end
+		    else # whispers with replies
+		    	whisper_json[:initial_whisper] = false
+				can_reply = true
+		    end
+			actions = Array.new
+            
+            if can_reply
+              actions << "chat"
+            end
+            actions << "delete"
+            
+            whisper_json[:actions] = actions.uniq
+
+			messages_array = Array.new
+			replies = ChattingMessage.where(whisper_id: a.id).order("created_at DESC")
+			if replies.count > 0
+				last_message = replies.first
+			  	new_item = last_message.to_json(current_user)
+              	whisper_json[:last_message] = new_item
+            end
+            if a.target_user_id == current_user.id
+				if !a.origin_user_id.nil?
+					origin_user = User.find_user_by_unique(a.origin_user_id)
+					if !origin_user.nil? and !current_user.nil?
+						whisper_json[:object_type] =  'user'
+						whisper_json[:object] = origin_user.user_object(current_user)
 					end
-
-					actions = Array.new
-		            
-		            if can_reply
-		              actions << "chat"
-		            end
-	                actions << "delete"
-		            
-		            json.actions actions.uniq
-
-					# reply message array
-					messages_array = Array.new
-					replies = ChattingMessage.where(whisper_id: a.id).order("created_at DESC")
-					if replies.count > 0
-						last_message = replies.first
-					  	new_item = last_message.to_json(current_user)
-		              	json.last_message new_item
-		            
-		            end
-		            json.unread_message_count ChattingMessage.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
+				end
+			else
+				if !a.target_user_id.nil?
+					origin_user = User.find_user_by_unique(a.target_user_id)
+					if !origin_user.nil? and !current_user.nil?
+						whisper_json[:object_type] =  'user'
+						whisper_json[:object] = origin_user.user_object(current_user)
+					end
 				end
 			end
+			result << whisper_json
 		end
 
-		result = JSON.parse(result).delete_if(&:empty?)
+
+		# result = Jbuilder.encode do |json|
+		# 	json.array! whispers do |a|
+		#         if current_user 
+		   #      	if a.chatting_messages.length < 2 # whispers without replies
+				 #        json.expire_timestamp (a.created_at + 12.hours).to_i
+				 #        json.initial_whisper true
+				 #        if current_user.id == a.target_user_id and a.chatting_messages.length == 1
+				 #        	can_reply = true
+				 #        else
+					# 		can_reply = false
+					# 	end
+				 #    else # whispers with replies
+				 #    	json.initial_whisper false
+					# 	can_reply = true
+				 #    end
+					# actions = Array.new
+		            
+		   #          if can_reply
+		   #            actions << "chat"
+		   #          end
+	    #             actions << "delete"
+		            
+		   #          json.actions actions.uniq
+
+					# json.timestamp 					a.updated_at.to_i
+					# json.notification_type  		a.whisper_type.to_i
+					# json.conversation_id  			a.dynamo_id.blank? ? '' : a.dynamo_id
+					# json.initial_whisper_sender_id  a.origin_user_id
+
+					# if a.target_user_id == current_user.id
+					# 	if !a.origin_user_id.nil?
+					# 		origin_user = User.find_user_by_unique(a.origin_user_id)
+					# 		if !origin_user.nil? and !current_user.nil?
+					# 			json.object_type  'user'
+					# 			json.object origin_user.user_object(current_user)
+					# 		end
+					# 	end
+					# else
+					# 	if !a.target_user_id.nil?
+					# 		origin_user = User.find_user_by_unique(a.target_user_id)
+					# 		if !origin_user.nil? and !current_user.nil?
+					# 			json.object_type  'user'
+					# 			json.object origin_user.user_object(current_user)
+					# 		end
+					# 	end
+					# end
+
+
+					# reply message array
+					# messages_array = Array.new
+					# replies = ChattingMessage.where(whisper_id: a.id).order("created_at DESC")
+					# if replies.count > 0
+					# 	last_message = replies.first
+					#   	new_item = last_message.to_json(current_user)
+		   #            	json.last_message new_item
+		            
+		   #          end
+		   #          json.unread_message_count ChattingMessage.where(whisper_id: a.id).where.not(speaker_id: current_user.id).where(read: false).length
+		# 		end
+		# 	end
+		# end
+
+		# result = JSON.parse(result).delete_if(&:empty?)
 		return result
 	end
 

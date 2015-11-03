@@ -38,19 +38,37 @@ class BlockUser < ActiveRecord::Base
 	          pagination['total_count'] = return_users.length
 	          return_users = Kaminari.paginate_array(return_users).page(page).per(per_page) 
 	        end
-		    result = Jbuilder.encode do |json|
-				json.array! return_users do |a|
-					user = User.find_user_by_unique(a['user_id'])
-					if !user.nil? and !user.user_avatars.where(is_active: true).blank?
-						json.blocked_at 	a['blocked_at']==0 ? 1440461834 : a['blocked_at']
-						user_obj = user.user_object(current_user)
-						user_obj[:actions] = ["unblock"]
-						json.user 			user_obj
-					end
-				end
-			end
 
-			result = JSON.parse(result).delete_if(&:empty?)
+	        result = Array.new
+
+	        return_users.each do |a|
+	        	blocked_user_json = {
+	        		blocked_at: (a['blocked_at']==0 ? 1440461834 : a['blocked_at'])
+	        	}
+
+	        	user = User.find_user_by_unique(a['user_id'])
+				if !user.nil? and !user.user_avatars.where(is_active: true).blank?
+					user_obj = user.user_object(current_user)
+					user_obj[:actions] = ["unblock"]
+					blocked_user_json[:user] = user_obj
+				end
+				
+				result << blocked_user_json
+	        end
+
+		 #    result = Jbuilder.encode do |json|
+			# 	json.array! return_users do |a|
+			# 		user = User.find_user_by_unique(a['user_id'])
+			# 		if !user.nil? and !user.user_avatars.where(is_active: true).blank?
+			# 			json.blocked_at 	a['blocked_at']==0 ? 1440461834 : a['blocked_at']
+			# 			user_obj = user.user_object(current_user)
+			# 			user_obj[:actions] = ["unblock"]
+			# 			json.user 			user_obj
+			# 		end
+			# 	end
+			# end
+
+			# result = JSON.parse(result).delete_if(&:empty?)
 			return result
 		end
 	end

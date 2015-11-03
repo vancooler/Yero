@@ -922,28 +922,19 @@ class User < ActiveRecord::Base
 
   # Serialize user's avatars in JSON
   def user_avatar_object
-    
-    data = Jbuilder.encode do |json|
-      json.avatars do
-        avatars = self.user_avatars.where(is_active: true).order(:order)
-        if avatars.empty?
-          Array.new
-        else
-          json.array! avatars do |a|
-
-            json.avatar a.origin_url
-            json.thumbnail a.thumb_url
-            json.default (!a.order.nil? and a.order == 0)
-            # json.is_active a.is_active
-            json.avatar_id a.id
-            json.order (a.order.nil? ? 100 : a.order)
-
-          end
-        end
-      end
+    avatars = self.user_avatars.where(is_active: true).order(:order)
+    result = Array.new 
+    avatars.each do |a|
+      avatar_json = {
+        avatar:      a.origin_url,
+        thumbnail:   a.thumb_url,
+        default:     (!a.order.nil? and a.order == 0),
+        avatar_id:   a.id,
+        order:       (a.order.nil? ? 100 : a.order)
+      }
+      result << avatar_json
     end
-    data = JSON.parse(data)
-    return data["avatars"]
+    return result
   end
 
   # Generate auth token
