@@ -316,7 +316,7 @@ class User < ActiveRecord::Base
       # json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
       json.locality current_city.blank? ? '' : current_city
       json.subLocality current_sublocality.blank? ? '' : current_sublocality
-
+      json.last_status_active_time (self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i)
       json.avatars do
         avatars = self.user_avatars.where(is_active: true).order(:order)
         if avatars.blank?
@@ -892,7 +892,7 @@ class User < ActiveRecord::Base
       first_name:      self.first_name,
       username:        self.username,
       last_active:     self.last_active.nil? ? 0 : self.last_active.to_i,
-      # last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
+      last_status_active_time: self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i,
       # since_1970:     (self.last_active - Time.new('1970')).seconds.to_i,
       gender:          self.gender,
       birthday:        (self.id != 0 ? self.birthday : ''),
@@ -1396,16 +1396,10 @@ class User < ActiveRecord::Base
       # ADD Pagination
       s_time = Time.now
       # collect all whispers sent 
-      # TODO: use model to do it
       whispers_sent = WhisperNotification.collect_whispers(self)
       whispers_can_reply = WhisperNotification.collect_conversations_can_reply(self)
       pending_whispers = Conversation.pending_whispers(self.id)
-      # colect all users with "like"
-      # followees = self.followees(User)
-      # collect all friends with mutual like AND whisper accepted friends
-      # mutual_follow = self.friends_by_like
-      # whisper_friends = FriendByWhisper.friends(self.id)
-      # friends = mutual_follow | whisper_friends
+
 
       # get all users with filter params
       return_users = self.collect_users(gender, min_age, max_age, venue_id, min_distance, max_distance, everyone)
@@ -1434,92 +1428,162 @@ class User < ActiveRecord::Base
       # build json format
       time_j_s = Time.now
 
-      users = Jbuilder.encode do |json|
-        same_venue_time = 0
-        different_venue_time = 0
-        check_badge_time = 0
-        time_avatar = 0
-        actions_time = 0
-        whispers_time = 0
-        json.array! return_users do |user|
-          if user.id != self.id
-            next unless user.user_avatars.present?
-            next unless user.main_avatar.present?
-            time_avatar_a = Time.now
-            other_avatars = user.user_avatars.where(is_active:true).order(:order)
-            avatar_array = Array.new
-
-            if other_avatars.count > 0
-              other_avatars.each do |oa|
-                new_item = {
-                  avatar: !oa.avatar.nil? ? oa.origin_url : '',
-                  thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
-                  avatar_id: oa.id,
-                  default: oa.order.nil? ? true : (oa.order==0),
-                  order: oa.order.nil? ? '100' : oa.order
-                }
-                avatar_array << new_item
-              end
-            end
-
-            json.avatars avatar_array
-            time_avatar_b = Time.now
-            time_avatar += (time_avatar_b - time_avatar_a)
-
-            actions_time_a = Time.now
-            json.whisper_sent whispers_sent.include? user.id.to_i
-            actions = self.collect_conversation_actions(whispers_can_reply, whispers_sent, user, pending_whispers)
-            json.actions actions
-            actions_time_b = Time.now
-            actions_time += (actions_time_b - actions_time_a)
-            
-            whispers_time_a = Time.now
-
-            whispers_time_b = Time.now
-            whispers_time += (whispers_time_b - whispers_time_a)
-            
-            json.same_venue_badge          same_venue_user_ids.include? user.id
-
-            json.different_venue_badge          different_venue_user_ids.include? user.id
-
-            json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
-            
-
-            json.id             user.id
-            json.first_name     user.first_name
-            json.username       user.username
-            json.birthday       user.birthday
-            json.gender         user.gender
-            json.point          user.points_to_display
-            json.locality       user.current_city
-            json.subLocality    user.current_sublocality
-            json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
-            # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
-            if !(!user.version.nil? and user.version.to_f >= 2)
-              json.line_id      user.line_id.blank? ? '' : user.line_id
-              json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
-              json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
-            end
-            json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
-            json.spotify_id   user.spotify_id.blank? ? '' : user.spotify_id
-
-            json.latitude       user.latitude  
-            json.longitude      user.longitude 
-            json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
-            json.status user.introduction_2.blank? ? '' : user.introduction_2
-            json.exclusive      user.exclusive
+      # without Jbuilder
+      users = Array.new
+      same_venue_time = 0
+      different_venue_time = 0
+      check_badge_time = 0
+      time_avatar = 0
+      actions_time = 0
+      whispers_time = 0
+      return_users.each do |user|
+        if user.id != self.id and user.user_avatars.present? and user.main_avatar.present?
+          user_json = {
+            whisper_sent:             (whispers_sent.include? user.id),
+            same_venue_badge:         (same_venue_user_ids.include? user.id),
+            different_venue_badge:    (different_venue_user_ids.include? user.id),
+            venue_type:               (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name,
+            id:                       user.id,
+            first_name:               user.first_name,
+            username:                 user.username,
+            birthday:                 user.birthday,
+            gender:                   user.gender,
+            point:                    user.points_to_display,
+            locality:                 user.current_city,
+            subLocality:              user.current_sublocality,
+            last_active:              user.last_active.nil? ? 0 : user.last_active.to_i,
+            last_status_active_time:  user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i,
+            instagram_id:             user.instagram_id.blank? ? '' : user.instagram_id,
+            spotify_id:               user.spotify_id.blank? ? '' : user.spotify_id,
+            latitude:                 user.latitude,
+            longitude:                user.longitude,
+            introduction_1:           user.introduction_1.blank? ? '' : user.introduction_1,
+            status:                   user.introduction_2.blank? ? '' : user.introduction_2,
+            exclusive:                user.exclusive
+          }
+          if !(!user.version.nil? and user.version.to_f >= 2)
+              user_json[:line_id] = (user.line_id.blank? ? '' : user.line_id)
+              user_json[:wechat_id] = (user.wechat_id.blank? ? '' : user.wechat_id)
+              user_json[:snapchat_id] = (user.snapchat_id.blank? ? '' : user.snapchat_id)
           end
+          time_avatar_a = Time.now
+          other_avatars = user.user_avatars.where(is_active:true).order(:order)
+          avatar_array = Array.new
+
+          if other_avatars.count > 0
+            other_avatars.each do |oa|
+              new_item = {
+                avatar: !oa.avatar.nil? ? oa.origin_url : '',
+                thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
+                avatar_id: oa.id,
+                default: oa.order.nil? ? true : (oa.order==0),
+                order: oa.order.nil? ? '100' : oa.order
+              }
+              avatar_array << new_item
+            end
+          end
+
+          user_json[:avatars] = avatar_array
+          time_avatar_b = Time.now
+          time_avatar += (time_avatar_b - time_avatar_a)
+
+          actions_time_a = Time.now
+          actions = self.collect_conversation_actions(whispers_can_reply, whispers_sent, user, pending_whispers)
+          user_json[:actions] = actions
+          actions_time_b = Time.now
+          actions_time += (actions_time_b - actions_time_a)
+
+          users << user_json
         end
-        puts "The avatar time is: "
-        puts time_avatar.inspect
-
-        puts "The actions time is: "
-        puts actions_time.inspect
-
-        puts "The whisper time is: "
-        puts whispers_time.inspect
       end
-      users = JSON.parse(users).delete_if(&:empty?)
+
+      # with Jbuilder
+      # users = Jbuilder.encode do |json|
+      #   same_venue_time = 0
+      #   different_venue_time = 0
+      #   check_badge_time = 0
+      #   time_avatar = 0
+      #   actions_time = 0
+      #   whispers_time = 0
+      #   json.array! return_users do |user|
+      #     if user.id != self.id
+      #       next unless user.user_avatars.present?
+      #       next unless user.main_avatar.present?
+      #       time_avatar_a = Time.now
+      #       other_avatars = user.user_avatars.where(is_active:true).order(:order)
+      #       avatar_array = Array.new
+
+      #       if other_avatars.count > 0
+      #         other_avatars.each do |oa|
+      #           new_item = {
+      #             avatar: !oa.avatar.nil? ? oa.origin_url : '',
+      #             thumbnail: !oa.avatar.nil? ? oa.thumb_url : '',
+      #             avatar_id: oa.id,
+      #             default: oa.order.nil? ? true : (oa.order==0),
+      #             order: oa.order.nil? ? '100' : oa.order
+      #           }
+      #           avatar_array << new_item
+      #         end
+      #       end
+
+      #       json.avatars avatar_array
+      #       time_avatar_b = Time.now
+      #       time_avatar += (time_avatar_b - time_avatar_a)
+
+      #       actions_time_a = Time.now
+      #       json.whisper_sent whispers_sent.include? user.id.to_i
+      #       actions = self.collect_conversation_actions(whispers_can_reply, whispers_sent, user, pending_whispers)
+      #       json.actions actions
+      #       actions_time_b = Time.now
+      #       actions_time += (actions_time_b - actions_time_a)
+            
+      #       whispers_time_a = Time.now
+
+      #       whispers_time_b = Time.now
+      #       whispers_time += (whispers_time_b - whispers_time_a)
+            
+      #       json.same_venue_badge          same_venue_user_ids.include? user.id
+
+      #       json.different_venue_badge          different_venue_user_ids.include? user.id
+
+      #       json.venue_type          (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name
+            
+
+      #       json.id             user.id
+      #       json.first_name     user.first_name
+      #       json.username       user.username
+      #       json.birthday       user.birthday
+      #       json.gender         user.gender
+      #       json.point          user.points_to_display
+      #       json.locality       user.current_city
+      #       json.subLocality    user.current_sublocality
+      #       json.last_active    user.last_active.nil? ? 0 : user.last_active.to_i 
+      #       # json.last_status_active_time    user.last_status_active_time.nil? ? 0 : user.last_status_active_time.to_i 
+      #       if !(!user.version.nil? and user.version.to_f >= 2)
+      #         json.line_id      user.line_id.blank? ? '' : user.line_id
+      #         json.wechat_id      user.wechat_id.blank? ? '' : user.wechat_id
+      #         json.snapchat_id    user.snapchat_id.blank? ? '' : user.snapchat_id
+      #       end
+      #       json.instagram_id   user.instagram_id.blank? ? '' : user.instagram_id
+      #       json.spotify_id   user.spotify_id.blank? ? '' : user.spotify_id
+
+      #       json.latitude       user.latitude  
+      #       json.longitude      user.longitude 
+      #       json.introduction_1 user.introduction_1.blank? ? '' : user.introduction_1
+      #       json.status user.introduction_2.blank? ? '' : user.introduction_2
+      #       json.exclusive      user.exclusive
+      #     end
+      #   end
+      #   puts "The avatar time is: "
+      #   puts time_avatar.inspect
+
+      #   puts "The actions time is: "
+      #   puts actions_time.inspect
+
+      #   puts "The whisper time is: "
+      #   puts whispers_time.inspect
+      # end
+      # users = JSON.parse(users).delete_if(&:empty?)
 
       time_j_e = Time.now
       

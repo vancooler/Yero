@@ -221,7 +221,7 @@ describe User do
 	      	User.fake_users_activate
 	      	users = User.last.people_list_2_0(1, 'A', 0, 50, nil, 0, 60, true, 0, 10)['users']
 	      	user = users[0]
-	      	id = user['id']
+	      	id = user[:id]
 	      	expect(User.find(id).fake_user).to eql true
 	      	TimeZonePlace.delete_all
 	      	RecentActivity.delete_all
