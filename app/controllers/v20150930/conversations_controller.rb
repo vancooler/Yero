@@ -88,7 +88,7 @@ module V20150930
       message_id = params[:id]
       read = (!params['read'].nil? ? (params['read'].to_s == '1' or params['read'].to_s == 'true') : true)
       
-      message = ChattingMessage.find_by_id(message_id)
+      message = ChattingMessage.find_by_unique_id(message_id)
       if !message.nil?
         if message.whisper.target_user_id != current_user.id and message.whisper.origin_user_id != current_user.id
           error_obj = {

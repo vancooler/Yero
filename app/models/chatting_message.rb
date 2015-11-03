@@ -1,7 +1,18 @@
 class ChattingMessage < ActiveRecord::Base
   belongs_to :whisper, class_name: "Conversation", :foreign_key => 'whisper_id'
 
+  def self.find_by_unique_id(message_id)
+  	chat = nil
+    if !message_id.blank?
+      if !/\A\d+\z/.match(message_id.to_s)
+        chat = ChattingMessage.find_by_client_side_id(message_id)
+      else
+        chat = ChattingMessage.find_by_id(message_id)
+      end
+    end
+    return chat
 
+  end
 
   def to_json(current_user)
   	message_json = {

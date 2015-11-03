@@ -1949,7 +1949,7 @@ describe 'V2.0.0' do
 
       	# Shout.pressure_test(user_4)
       	
-      	
+
       	ActiveInVenueNetwork.delete_all
       	ActiveInVenue.delete_all
       	Beacon.delete_all
@@ -2187,7 +2187,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 0
 
       	ts2 = ChattingMessage.createdTimestamp(Time.now+10)
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hi again!", :message_id => "aieuyiew", :timestamp => ts2, :token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(Conversation.count).to eql 2
       	expect(ChattingMessage.count).to eql 5
@@ -2195,6 +2195,7 @@ describe 'V2.0.0' do
       	expect(RecentActivity.count).to eql 0
 
       	chat_message = ChattingMessage.last
+      	expect(chat_message.client_side_id).to eql "aieuyiew"
 
       	get "api/conversations", {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -2230,6 +2231,10 @@ describe 'V2.0.0' do
       	get 'api/conversations/'+chat_message.whisper.dynamo_id, {:read => 0, :token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['data']['unread_message_count']).to eql 2
+
+      	get 'api/messages/aieuyiew?read=0', {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['data']['read']).to eql false
 
       	get 'api/messages/'+chat_message.id.to_s, {:token => token, :page => 0, :per_page => 30}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
