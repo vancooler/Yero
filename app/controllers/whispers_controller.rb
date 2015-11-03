@@ -71,8 +71,8 @@ class WhispersController < ApplicationController
       @message = "Cannot find origin user!"
     else
       message = origin_user.first_name + " just sent you a whisper"   
-      result = WhisperNotification.send_message(target_id, origin_user, venue_id, notification_type, intro, message)
-
+      result = WhisperNotification.send_message(target_id, origin_user, venue_id, notification_type, intro, message, nil, 'text', '', '', nil)
+    
       if result == "true"
         @message = "Whisper sent!"
       else
