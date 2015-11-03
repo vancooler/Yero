@@ -129,8 +129,10 @@ module V20150930
       if !params[:longitude].blank? 
         longitude = params[:longitude].to_f
       end
-
-      result = Shout.list(current_user, params[:order_by], params[:venue], params[:my_shouts], params[:my_comments], page, per_page, latitude, longitude)
+      my_shouts = (!params['my_shouts'].nil? ? (params['my_shouts'].to_s == '1' or params['my_shouts'].to_s == 'true') : false)
+      my_comments = (!params['my_comments'].nil? ? (params['my_comments'].to_s == '1' or params['my_comments'].to_s == 'true') : false)
+      
+      result = Shout.list(current_user, params[:order_by], params[:venue], my_shouts, my_comments, page, per_page, latitude, longitude)
       response = {
         shouts: result['shouts']
       }

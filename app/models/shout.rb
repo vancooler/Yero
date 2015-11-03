@@ -282,11 +282,11 @@ class Shout < ActiveRecord::Base
   def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
-  	if !my_comments.nil? and (my_comments.to_s == '1' or my_comments.to_s == 'true')
+  	if !my_comments.nil? and my_comments
   		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
   		shouts = Shout.where(id: comments)
   		
-  	elsif !my_shouts.nil? and (my_shouts.to_s == '1' or my_shouts.to_s == 'true')
+  	elsif !my_shouts.nil? and my_shouts
   		shouts = Shout.where(user_id: current_user.id)
   	else
 	  	if venue.nil?
