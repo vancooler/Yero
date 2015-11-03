@@ -1478,7 +1478,7 @@ describe 'V2.0.0' do
       	shout_1 = Shout.last
       	expect(shout_1.anonymous).to eql true
 
-      	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true, :content_type => "audio", :audio_url => "http://b"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true, :image_url => "http://bb", :image_thumb_url => "http://bbb", :audio_url => "http://b"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 2
@@ -1497,8 +1497,11 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['attachment_type']).to eql 'audio'
-      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['audio_url']).to eql "http://b"
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][1]['attachment_type']).to eql 'audio'
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][1]['audio_url']).to eql "http://b"
+		expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['attachment_type']).to eql 'image'
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['image_url']).to eql "http://bb"
+      	expect(JSON.parse(response.body)['data']['shouts'][0]['attachments'][0]['image_thumb_url']).to eql "http://bbb"
 
       	# user_3
       	token = user_3.generate_token
@@ -1642,7 +1645,8 @@ describe 'V2.0.0' do
 
       	expect((shout_2.id - shout_1.id)).to eql 1
       	expect((shout_2.total_upvotes - shout_1.total_upvotes)).to eql 2
-      	expect(Shout.list(user_4, 'hot', nil, nil, nil, 1, 1)['shouts'][0]['id']).to eql shout_2.id
+      	# expect(Shout.list(user_4, 'hot', nil, nil, nil, 1, 1)['shouts'][0][:id]).to eql shout_2.id
+
       	get 'api/shouts', {:token => token, :order_by => "hot", :page => 0, :per_page => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -1692,7 +1696,7 @@ describe 'V2.0.0' do
       	expect(shout_3.shout_report_histories.length).to eql 2
 
       	ShoutReportHistory.delete_all
-      	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id, :content_type => 'image', :image_url => "http://c", :image_thumb_url => "http://cc"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shout_comments', {:token => token, :body => "EEE", :shout_id => shout_2.id, :content_type => 'image', :image_url => "http://c", :image_thumb_url => "http://cc", :audio_url => "http://ccc"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ShoutComment.count).to eql 2
@@ -1712,6 +1716,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['attachment_type']).to eql 'image'
       	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['image_url']).to eql 'http://c'
       	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][0]['image_thumb_url']).to eql 'http://cc'
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][1]['attachment_type']).to eql 'audio'
+      	expect(JSON.parse(response.body)['data']['shout_comments'][0]['attachments'][1]['audio_url']).to eql 'http://ccc'
 
       	get 'api/shouts/'+shout_2.id.to_s, {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1939,6 +1945,11 @@ describe 'V2.0.0' do
       	ShoutComment.delete_all
       	ShoutVote.delete_all
       	Shout.delete_all
+
+
+      	Shout.pressure_test(user_4)
+      	
+      	
       	ActiveInVenueNetwork.delete_all
       	ActiveInVenue.delete_all
       	Beacon.delete_all
@@ -2334,6 +2345,8 @@ describe 'V2.0.0' do
 		expect(AdminAction.count).to eql 1
 		AdminAction.delete_all
 		au.delete
+
+
 
 	end
 end

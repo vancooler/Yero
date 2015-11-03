@@ -361,55 +361,56 @@ class Shout < ActiveRecord::Base
   	shout_upvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_id)
   	shout_downvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_id)
 
-  	result = Jbuilder.encode do |json|
-      json.array! shouts do |shout|
-        json.id 			          shout.id
-        json.body 			        shout.body
-        json.anonymous          shout.anonymous
-        json.exclusive          !shout.allow_nearby
-        json.latitude 		      shout.latitude
-        json.longitude          shout.longitude
-        json.locality           shout.city.nil? ? '' : shout.city
-        # json.content_type       shout.content_type.nil? ? 'text' : shout.content_type
-        # json.audio_url          shout.audio_url.nil? ? '' : shout.audio_url
-        # json.image_url          shout.image_url.nil? ? '' : shout.image_url
-        attachments = Array.new
-        if !shout.image_url.blank?
-          image = {
-            attachment_type: "image",
-            image_url:       shout.image_url.nil? ? '' : shout.image_url,
-            image_thumb_url: shout.image_thumb_url.nil? ? '' : shout.image_thumb_url
-          }
-          attachments << image
-        end
-        if !shout.audio_url.blank?
-          audio = {
-            attachment_type: "audio",
-            audio_url:       shout.audio_url.nil? ? '' : shout.audio_url
-          }
-          attachments << audio
-        end
-        json.attachments        attachments
-        json.subLocality        shout.neighbourhood.nil? ? '' : shout.neighbourhood
-        json.timestamp          shout.created_at.to_i
-        json.expire_timestamp   shout.created_at.to_i+7*24*3600
-        json.total_upvotes 	    shout.total_upvotes
-        actions = ["downvote", "upvote"]
-        if shout_upvoted_ids.include? shout.id
-            actions = ["undo_upvote", "downvote"]
-        end
-        if shout_downvoted_ids.include? shout.id
-            actions = ["undo_downvote", "upvote"]
-        end
-	      json.actions		        actions
-        json.count              ShoutComment.list(current_user, shout.id, nil, nil)['shout_comments'].length
-        json.author_id		      shout.user_id
-        json.author_username 	  (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
-        json.network_gimbal_key ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key)
-      end         
+    # # not using Jbuilder
+    result = Array.new
+    shouts.each do |shout|
+      attachments = Array.new
+      if !shout.image_url.blank?
+        image = {
+          attachment_type: "image",
+          image_url:       shout.image_url.nil? ? '' : shout.image_url,
+          image_thumb_url: shout.image_thumb_url.nil? ? '' : shout.image_thumb_url
+        }
+        attachments << image
+      end
+      if !shout.audio_url.blank?
+        audio = {
+          attachment_type: "audio",
+          audio_url:       shout.audio_url.nil? ? '' : shout.audio_url
+        }
+        attachments << audio
+      end
+      actions = ["downvote", "upvote"]
+      if shout_upvoted_ids.include? shout.id
+          actions = ["undo_upvote", "downvote"]
+      end
+      if shout_downvoted_ids.include? shout.id
+          actions = ["undo_downvote", "upvote"]
+      end
+
+      shout_json = {
+        id:                  shout.id,
+        body:                shout.body,
+        anonymous:           shout.anonymous,
+        exclusive:           !shout.allow_nearby,
+        latitude:            shout.latitude,
+        longitude:           shout.longitude,
+        locality:            shout.city.nil? ? '' : shout.city,
+        attachments:         attachments,
+        subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
+        timestamp:           shout.created_at.to_i,
+        expire_timestamp:    shout.created_at.to_i+7*24*3600,
+        total_upvotes:       shout.total_upvotes,
+        actions:             actions,
+        network_gimbal_key:  ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+        count:               ShoutComment.list(current_user, shout.id, nil, nil)['shout_comments'].length,
+        author_id:           shout.user_id,
+        author_username:     (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
+      }
+      result << shout_json
     end
-    result = JSON.parse(result).delete_if(&:empty?)
-    return result 
+
+    return result     
   end
 
   # report a shout
@@ -494,21 +495,23 @@ class Shout < ActiveRecord::Base
   	(1..100).each do |i|
   		offset = rand(User.count)
   		rand_user = User.offset(offset).first
-  		shout = Shout.create_shout(rand_user, (0...8).map { (65 + rand(26)).chr }.join, true)
-  		(1..i%8).each do |k|
-  			upvote = [true, true, false]
-  			offset_3 = rand(User.count)
-  			rand_user_3 = User.offset(offset_3).first
+  		shout = Shout.create_shout(rand_user, (0...8).map { (65 + rand(26)).chr }.join, false, false, nil, nil, nil, nil, nil)
+      shout = Shout.find(shout[:id])
+      (1..i%8).each do |k|
+        upvote = [1, 1, -1]
+        offset_3 = rand(User.count)
+        rand_user_3 = User.offset(offset_3).first
   			shout.change_vote(rand_user_3, upvote.sample)
   		end
   		comments_count = i/100*100 + 1
   		(1..comments_count).each do |j|
   			offset_2 = rand(User.count)
   			rand_user_2 = User.offset(offset_2).first
-  			shout_comment = ShoutComment.create_shout_comment(rand_user_2, (0...8).map { (65 + rand(26)).chr }.join, shout.id)
+  			shout_comment = ShoutComment.create_shout_comment(rand_user_2, (0...8).map { (65 + rand(26)).chr }.join, shout.id, nil, nil, nil)
+        shout_comment = ShoutComment.find(shout_comment[:id])
   			# upvotes
   			(1..i%8).each do |k|
-  				upvote = [true, true, false]
+  				upvote = [1, 1, -1]
   				offset_3 = rand(User.count)
   				rand_user_3 = User.offset(offset_3).first
   				shout_comment.change_vote(rand_user_3, upvote.sample)
@@ -530,6 +533,22 @@ class Shout < ActiveRecord::Base
   			shout_comment.report(rand_user, rand_type)
   		end
   	end
+  end
+
+  def self.pressure_test(user)
+    Shout.random_generate
+    time_1 = Time.now
+    (1..10).each do |i|
+      Shout.list(user, 'hot', nil, nil, nil, 1, 1000)
+    end
+    time_2 = Time.now
+    puts "pressure_test: " + (time_2 - time_1).inspect
+
+    ShoutCommentVote.delete_all
+    ShoutComment.delete_all
+    ShoutVote.delete_all
+    Shout.delete_all
+    RecentActivity.delete_all
   end
   # :nocov:
 
