@@ -172,7 +172,7 @@ module V20150930
       notification_type = '2'
       text_message = params[:message].blank? ? "" : params[:message].to_s
       client_side_id = params[:message_id].blank? ? nil : params[:message_id].to_s
-      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       timestamp = params[:timestamp].blank? ? nil : params[:timestamp].to_f
@@ -183,7 +183,7 @@ module V20150930
 
       if target_user
         time_1 = Time.now
-        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, text_message, message, timestamp, content_type, image_url, audio_url, client_side_id)
+        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, text_message, message, timestamp, image_thumb_url, image_url, audio_url, client_side_id)
         time_2 = Time.now
         if result['message'] == "true"
           chat_message = result['chat_message']
@@ -227,7 +227,7 @@ module V20150930
       notification_type = '2'
       text_message = params[:message].blank? ? "" : params[:message].to_s
       client_side_id = params[:message_id].blank? ? nil : params[:message_id].to_s
-      content_type = params[:content_type].blank? ? "text" : params[:content_type]
+      image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
       audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
       timestamp = params[:timestamp].blank? ? nil : params[:timestamp].to_f
@@ -238,7 +238,7 @@ module V20150930
 
       if target_user
         time_1 = Time.now
-        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, text_message, message, timestamp, content_type, image_url, audio_url, client_side_id)
+        result = WhisperNotification.send_message(target_user.id, current_user, venue_id, notification_type, text_message, message, timestamp, image_thumb_url, image_url, audio_url, client_side_id)
         time_2 = Time.now
         if result['message'] == "true"
           whisper = result['whisper']

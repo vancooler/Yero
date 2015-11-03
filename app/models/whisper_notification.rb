@@ -490,7 +490,7 @@ class WhisperNotification < AWS::Record::HashModel
 
 
 
-  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message, timestamp, content_type, image_url, audio_url, client_side_id)
+  def self.send_message(target_id, current_user, venue_id, notification_type, intro, message, timestamp, image_thumb_url, image_url, audio_url, client_side_id)
     origin_id = current_user.id.to_s
     final_result = Hash.new
     # only users with active avatar can send whispers
@@ -518,13 +518,13 @@ class WhisperNotification < AWS::Record::HashModel
             if client_side_id.nil?
               client_side_id = ChattingMessage.generate_client_side_id(whisper.dynamo_id, current_user.id, timestamp_with_ns)
             end
-            chat_message = ChattingMessage.create!(:grouping_id => timestamp_with_ns.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :content_type => content_type, :image_url => image_url, :audio_url => audio_url, :created_at => timestamp_with_ns, :updated_at => timestamp_with_ns, :client_side_id => client_side_id)
+            chat_message = ChattingMessage.create!(:grouping_id => timestamp_with_ns.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :image_thumb_url => image_thumb_url, :image_url => image_url, :audio_url => audio_url, :created_at => timestamp_with_ns, :updated_at => timestamp_with_ns, :client_side_id => client_side_id)
           else
             whisper = Conversation.create!(:paper_owner_id => target_id.to_i, :dynamo_id => n.id, :target_user_id => target_id.to_i, :origin_user_id => origin_id.to_i, :whisper_type => notification_type, :message => intro, :message_b => '', :venue_id => venue_id.to_i)
             if client_side_id.nil?
               client_side_id = ChattingMessage.generate_client_side_id(whisper.dynamo_id, current_user.id, Time.now)
             end
-            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :content_type => content_type, :image_url => image_url, :audio_url => audio_url, :client_side_id => client_side_id)
+            chat_message = ChattingMessage.create!(:grouping_id => Time.now.to_i, :speaker_id => current_user.id, :whisper_id => whisper.id, :message => intro, :image_thumb_url => image_thumb_url, :image_url => image_url, :audio_url => audio_url, :client_side_id => client_side_id)
           end
           if n and notification_type == "2"
             time = Time.now
@@ -600,7 +600,7 @@ class WhisperNotification < AWS::Record::HashModel
                 grouping_id = previous_message.grouping_id
               end
             end
-            chat_message = ChattingMessage.create!(:content_type => content_type, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => timestamp_with_ns, :updated_at => timestamp_with_ns, :client_side_id => client_side_id)
+            chat_message = ChattingMessage.create!(:image_thumb_url => image_thumb_url, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :created_at => timestamp_with_ns, :updated_at => timestamp_with_ns, :client_side_id => client_side_id)
           else
             grouping_id = Time.now.to_i
             if !last_messages.blank?
@@ -613,7 +613,7 @@ class WhisperNotification < AWS::Record::HashModel
             if client_side_id.nil?
               client_side_id = ChattingMessage.generate_client_side_id(conversation.dynamo_id, current_user.id, Time.now)
             end
-            chat_message = ChattingMessage.create!(:content_type => content_type, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :client_side_id => client_side_id)
+            chat_message = ChattingMessage.create!(:image_thumb_url => image_thumb_url, :image_url => image_url, :audio_url => audio_url, :grouping_id => grouping_id, :speaker_id => current_user.id, :whisper_id => conversation.id, :message => intro, :client_side_id => client_side_id)
           end
           if chat_message and Rails.env == 'production'
             # :nocov:

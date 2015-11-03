@@ -15,19 +15,33 @@ class ChattingMessage < ActiveRecord::Base
   end
 
   def to_json(current_user)
-  	message_json = {
+  	  attachments = Array.new
+	  if !self.image_url.blank?
+	    image = {
+	      attachment_type: "image",
+	      image_url:       self.image_url.nil? ? '' : self.image_url,
+	      image_thumb_url: self.image_thumb_url.nil? ? '' : self.image_thumb_url
+	    }
+	    attachments << image
+	  end
+	  if !self.audio_url.blank?
+	    audio = {
+	      attachment_type: "audio",
+	      audio_url:       self.audio_url.nil? ? '' : self.audio_url
+	    }
+	    attachments << audio
+	  end
+  	  message_json = {
   		id: self.client_side_id,
 		grouping_id: self.grouping_id,
-		content_type: self.content_type.nil? ? 'text' : self.content_type,
-		image_url: self.image_url.nil? ? '' : self.image_url,
-		audio_url: self.audio_url.nil? ? '' : self.audio_url,
+		attachments: attachments,
 		conversation_id: self.whisper.dynamo_id.blank? ? '' : self.whisper.dynamo_id,
 		speaker_id: self.speaker_id,
 		timestamp: ChattingMessage.createdTimestamp(self.created_at),
 		message: self.message.nil? ? '' : self.message,
 		read: (self.speaker_id == current_user.id) ? true : self.read			            
-  	}
-  	return message_json
+  	  }
+  	  return message_json
   end
 
   # :nocov:

@@ -2038,7 +2038,7 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['error']['code']).to eql 403
 
-      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hii!", :token => token, :content_type => "image", :image_url => "http://a"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post "api/conversations", {:notification_type => '2', :target_id => '3', :message => "Hii!", :token => token, :image_thumb_url => "http://aa", :image_url => "http://a", :audio_url => "http://aaa"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Conversation.count).to eql 2
@@ -2052,9 +2052,12 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['conversations'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['conversations'][0]['unread_message_count']).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['message']).to eql 'Hii!'
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['content_type']).to eql 'image'
-      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['image_url']).to eql 'http://a'
-		expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['attachments'][0]['attachment_type']).to eql 'image'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['attachments'][0]['image_thumb_url']).to eql 'http://aa'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['attachments'][0]['image_url']).to eql 'http://a'
+		expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['attachments'][1]['attachment_type']).to eql 'audio'
+      	expect(JSON.parse(response.body)['data']['conversations'][0]['last_message']['attachments'][1]['audio_url']).to eql 'http://aaa'
+      	expect(JSON.parse(response.body)['data']['conversations'][1]['unread_message_count']).to eql 1
       	expect(JSON.parse(response.body)['data']['conversations'][1]['last_message']['message']).to eql 'Hi!'
 
       	BlockUser.create!(origin_user_id: 3, target_user_id: 2)

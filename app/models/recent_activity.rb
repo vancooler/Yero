@@ -33,6 +33,7 @@ class RecentActivity < ActiveRecord::Base
 				message:     (a.message.nil? ? '' : a.message)
 			}
 			case a.activity_type.to_s
+			# :nocov:
 			when '200'
 				activity_json[:activity_type] = 'Joined Network'
 			when '301'
@@ -71,7 +72,7 @@ class RecentActivity < ActiveRecord::Base
 			when '2-received'
 				activity_json[:activity_type] = 'Received Whisper'
 			end
-
+			# :nocov:
 			if !a.origin_user_id.nil? and !a.target_user_id.nil?
 				origin_user = User.find_user_by_unique(a.origin_user_id)
 				target_user = User.find_user_by_unique(a.target_user_id)
