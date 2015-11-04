@@ -86,12 +86,13 @@ class RecentActivity < ActiveRecord::Base
 					end
 				end
 
-				if !op or true 
-					# activity_json[:message] = activity_json[:message].sub! '@username', 'OP'
-					if !origin_user.nil? and !target_user.nil?
-						activity_json[:object_type] =  'User'
-						activity_json[:object] = origin_user.user_object(target_user)
-					end
+				activity_json[:object_type] =  'User'
+				if !origin_user.nil? and !target_user.nil?
+					activity_json[:object] = origin_user.user_object(target_user)
+				end
+				if op
+					activity_json[:message] = activity_json[:message].sub! '@username', 'OP'
+					activity_json[:object][:avatars] = Array.new
 				end
 			elsif !a.contentable_type.nil? and !a.contentable_id.nil?
 				activity_json[:object_type] = a.contentable_type

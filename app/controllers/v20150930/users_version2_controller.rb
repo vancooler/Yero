@@ -261,7 +261,7 @@ module V20150930
     # 
     ##########################################
     def signup
-      if params[:email].blank? or params[:username].blank? or params[:password].blank? or params[:birthday].blank? or params[:first_name].blank? or params[:gender].blank?
+      if params[:email].blank? or params[:username].blank? or params[:password].blank? or params[:birthday].blank? or params[:gender].blank?
         error_obj = {
           code: 400,
           message: "Required fields cannot be blank",
@@ -288,12 +288,14 @@ module V20150930
           username = params[:username].gsub!(/\s+/, "") 
         end
 
-        if params[:first_name].match(/\s/).blank?
-          first_name = params[:first_name]
-          first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
-        else
-          first_name = params[:first_name].gsub!(/\s+/, "") 
-          first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+        if params[:first_name].present? 
+          if params[:first_name].match(/\s/).blank?
+            first_name = params[:first_name]
+            first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+          else
+            first_name = params[:first_name].gsub!(/\s+/, "") 
+            first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
+          end
         end
 
         @user = User.new(:email => email,
