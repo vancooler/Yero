@@ -1897,7 +1897,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data'][0]['object_type']).to eql nil
       	expect(JSON.parse(response.body)['data'][0]['object']).to eql nil
       	RecentActivity.delete_all
-      	
+      	ShoutCommentVote.last.delete
+
       	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true

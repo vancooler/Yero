@@ -86,7 +86,7 @@ class RecentActivity < ActiveRecord::Base
 					end
 				end
 
-				if !op 
+				if !op or true 
 					activity_json[:message] = activity_json[:message].sub! '@username', 'OP'
 					if !origin_user.nil? and !target_user.nil?
 						activity_json[:object_type] =  'User'
