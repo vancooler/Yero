@@ -91,7 +91,7 @@ class RecentActivity < ActiveRecord::Base
 					activity_json[:object] = origin_user.user_object(target_user)
 				end
 				if op
-					activity_json[:message] = activity_json[:message].sub! '@username', 'OP'
+					activity_json[:message] = (activity_json[:message].sub! '@username', 'OP')
 					activity_json[:object][:avatars] = Array.new
 				end
 			elsif !a.contentable_type.nil? and !a.contentable_id.nil?

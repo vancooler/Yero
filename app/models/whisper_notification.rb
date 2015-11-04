@@ -727,7 +727,13 @@ class WhisperNotification < AWS::Record::HashModel
   # :nocov:
   def self.send_notification_302(ids, username, shout_id)
     deep_link = deep_link = "yero://shouts/" + shout_id.to_s
-    data = { :alert => "@"+username+" replied to the same shout", :type => 302, :deep_link => deep_link}
+    shout = Shout.find_by_id(shout_id)
+    if !shout.nil? and shout.user.username == username
+      username = "OP"
+    else
+      username = "@"+username
+    end
+    data = { :alert => username+" replied to the same shout", :type => 302, :deep_link => deep_link}
     channel_array = Array.new
     ids.each do |id|
       channel_array << "User_" + id.to_s

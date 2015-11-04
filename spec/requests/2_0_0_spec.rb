@@ -1873,6 +1873,19 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	shout_comment_to_downvote = ShoutComment.last
 
+      	token = user_4.generate_token
+
+      	get 'api/activities?per_page=48&page=0&token='+ token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data'].count).to eql 1
+      	expect(JSON.parse(response.body)['data'][0]['object_type']).to eql 'User'
+      	expect(JSON.parse(response.body)['data'][0]['message'][0, 2]).to eql 'OP'
+      	expect(JSON.parse(response.body)['data'][0]['object']['avatars']).to eql []
+      	RecentActivity.delete_all
+      	ShoutCommentVote.last.delete
+
+      	token = user_2.generate_token
       	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
@@ -1889,15 +1902,6 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
 
       	token = user_4.generate_token
-
-      	get 'api/activities?per_page=48&page=0&token='+ token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
-      	expect(response.status).to eql 200
-      	expect(JSON.parse(response.body)['success']).to eql true
-      	expect(JSON.parse(response.body)['data'].count).to eql 1
-      	expect(JSON.parse(response.body)['data'][0]['object_type']).to eql 'User'
-      	expect(JSON.parse(response.body)['data'][0]['object']['avatars']).to eql []
-      	RecentActivity.delete_all
-      	ShoutCommentVote.last.delete
 
       	put 'api/shout_comments/'+shout_comment_to_downvote.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1938,9 +1942,9 @@ describe 'V2.0.0' do
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
 
-      	expect(ShoutCommentVote.count).to eql 5
-      	expect(ShoutComment.count).to eql 0
-      	expect(RecentActivity.count).to eql 1
+      	expect(ShoutCommentVote.count).to eql 1
+      	expect(ShoutComment.count).to eql 1
+      	expect(RecentActivity.count).to eql 0
       	
       	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
