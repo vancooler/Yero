@@ -12,6 +12,7 @@ class WhisperNotification < AWS::Record::HashModel
               # '1' => enter venue greeting
               # '2' => chat whisper request
               # '3' => accept whisper request
+              # '4' => whisper request expired
               # 100 level means system notifications
               # '100' => network open
               # '101' => avatar disable

@@ -71,6 +71,8 @@ class RecentActivity < ActiveRecord::Base
 				activity_json[:activity_type] = 'Sent Whisper'
 			when '2-received'
 				activity_json[:activity_type] = 'Received Whisper'
+			when '4'
+				activity_json[:activity_type] = "Whisper Expired"
 			end
 			# :nocov:
 			if !a.origin_user_id.nil? and !a.target_user_id.nil?

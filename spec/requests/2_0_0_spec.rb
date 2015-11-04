@@ -2266,7 +2266,6 @@ describe 'V2.0.0' do
       	Conversation.expire
       	expect(Conversation.count).to eql 2
 
-
 	    RecentActivity.delete_all
 	    ChattingMessage.delete_all
 	    Conversation.delete_all

@@ -231,6 +231,15 @@ class Conversation < ActiveRecord::Base
 		# introduction whispers
 		expire_array = Conversation.where('conversations.created_at < ?', Time.now-12.hours).joins(:chatting_messages).group("conversations.id").having("count(chatting_messages.id) < ?",2)
 		whisper_ids = expire_array.map(&:id)
+
+		# TODO: add activities
+		current_time = Time.now
+		whispers = Conversation.where(id: whisper_ids)
+		whispers.each do |whisper|
+			if Rails.env == 'production'
+				RecentActivity.delay.add_activity(whisper.target_user_id, '4', whisper.origin_user_id, nil, whisper.dynamo_id, "User", whisper.id, '@username has whispered you but expired')
+			end	
+		end
 		ChattingMessage.where(whisper_id: whisper_ids).delete_all
 		Conversation.where(id: whisper_ids).delete_all
 		
