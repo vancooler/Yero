@@ -73,7 +73,7 @@ class WhispersController < ApplicationController
       message = origin_user.first_name + " just sent you a whisper"   
       result = WhisperNotification.send_message(target_id, origin_user, venue_id, notification_type, intro, message, nil, '', '', '', nil)
     
-      if result == "true"
+      if result['message'] == "true"
         @message = "Whisper sent!"
       else
         @message = result
