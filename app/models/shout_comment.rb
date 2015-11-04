@@ -258,6 +258,8 @@ class ShoutComment < ActiveRecord::Base
 
   				WhisperNotification.delay.send_notification_302(other_repliers_user_ids, current_user.username, shout_id)
   				# :nocov:
+        else
+          shout_comment.create_activities_to_other_repliers(current_user, current_time, other_repliers_user_ids)
   			end	
   		end
       # pusher to update votes

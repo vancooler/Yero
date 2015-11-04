@@ -237,7 +237,9 @@ class Conversation < ActiveRecord::Base
 		whispers = Conversation.where(id: whisper_ids)
 		whispers.each do |whisper|
 			if Rails.env == 'production'
+				# :nocov:
 				RecentActivity.delay.add_activity(whisper.target_user_id, '4', whisper.origin_user_id, nil, whisper.dynamo_id, "User", whisper.id, '@username has whispered you but expired')
+				# :nocov:
 			end	
 		end
 		ChattingMessage.where(whisper_id: whisper_ids).delete_all

@@ -78,9 +78,20 @@ class RecentActivity < ActiveRecord::Base
 			if !a.origin_user_id.nil? and !a.target_user_id.nil?
 				origin_user = User.find_user_by_unique(a.origin_user_id)
 				target_user = User.find_user_by_unique(a.target_user_id)
-				if !origin_user.nil? and !target_user.nil?
-					activity_json[:object_type] =  'User'
-					activity_json[:object] = origin_user.user_object(target_user)
+				op = false
+				if a.contentable_type == "ShoutComment"
+					shout_comment = ShoutComment.find_by_id(a.contentable_id)
+					if !shout_comment.nil? and !shout_comment.shout.nil? and origin_user.id == shout_comment.shout.user_id
+						op = true
+					end
+				end
+
+				if !op 
+					activity_json[:message] = activity_json[:message].sub! '@username', 'OP'
+					if !origin_user.nil? and !target_user.nil?
+						activity_json[:object_type] =  'User'
+						activity_json[:object] = origin_user.user_object(target_user)
+					end
 				end
 			elsif !a.contentable_type.nil? and !a.contentable_id.nil?
 				activity_json[:object_type] = a.contentable_type
