@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
 
   # Every user must be authenticated when accessing the API from the iOS client
   def authenticate_api_v2
-    result = User.authenticate_v2(params[:token])
+    result = User.authenticate_v2(params[:token], params[:read])
     if result['success'] == true
 
     else

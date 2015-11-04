@@ -204,7 +204,7 @@ class ShoutComment < ActiveRecord::Base
         subLocality:     shout_comment.neighbourhood.nil? ? '' : shout_comment.neighbourhood,
         timestamp: 		   shout_comment.created_at.to_i,
         total_upvotes:   1,
-        actions: 	       ["upvote", "downvote"],
+        actions: 	       ["undo_upvote", "downvote"],
         shout_id: 	     shout_comment.shout_id,
         venue_id:        ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
         author_id: 	     shout_comment.user_id,

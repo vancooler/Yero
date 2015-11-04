@@ -1605,7 +1605,7 @@ class User < ActiveRecord::Base
   end
 
 
-  def self.authenticate_v2(token)
+  def self.authenticate_v2(token, update_activity)
     if Rails.env == 'development' or Rails.env == 'test'
       secret = 'secret'
     else
@@ -1649,7 +1649,9 @@ class User < ActiveRecord::Base
               result = {'success' => false, 'error_data' => error_obj}
               return result
             else
-              user.last_active = Time.now + 1.second
+              if update_activity.nil? or update_activity.to_s == '1' or update_activity.to_s == 'true'
+                user.last_active = Time.now + 1.second
+              end
               user.version = "2.0"
               user.save!
               # user.update(last_active: Time.now+1.second)
