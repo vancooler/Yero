@@ -1944,7 +1944,7 @@ describe 'V2.0.0' do
 
       	expect(ShoutCommentVote.count).to eql 1
       	expect(ShoutComment.count).to eql 1
-      	expect(RecentActivity.count).to eql 0
+      	expect(RecentActivity.count).to eql 1
       	
       	put 'api/shouts/'+shout_to_downvote.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
