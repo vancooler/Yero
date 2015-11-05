@@ -296,6 +296,8 @@ module V20150930
             first_name = params[:first_name].gsub!(/\s+/, "") 
             first_name = first_name.slice(0,1).capitalize + first_name.slice(1..-1)
           end
+        else
+          first_name = username
         end
 
         @user = User.new(:email => email,
