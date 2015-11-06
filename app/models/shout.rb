@@ -446,8 +446,11 @@ class Shout < ActiveRecord::Base
   	return online_users_ids
   end
 
-  def in_shout_users_id
-  	
+  def self.deleted_ids
+    puts "wwww"
+  	array = DeletedObject.where(deleted_object_type: "Shout").where("created_at >= ?", 7.days.ago).map(&:deleted_object_id)
+    puts "wwwww"
+    return array
   end
 
   # destroy a single shout
@@ -457,36 +460,37 @@ class Shout < ActiveRecord::Base
   	# delete
 	
     if self.destroy
+      DeletedObject.create!(deleted_object_id: shout_id, deleted_object_type: "Shout")
 
 	  	# pusher
-		# users in shout_id channel
-		channel = 'public-shout-' + shout_id.to_s
-		if Rails.env == 'production'
-			# :nocov:
-			Pusher.trigger(channel, 'delete_shout_event', {shout_id: shout_id})
-			# :nocov:
-		end
-		# users can access this shout
-		user_channels = Array.new
-		# :nocov:
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
-		if !user_channels.empty?
-			if Rails.env == 'production'
-				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
-				end
-			end
-		end
-		# :nocov:
-		return true
-	else
-		# :nocov:
-		return false
-		# :nocov:
-	end
+  		# users in shout_id channel
+  		channel = 'public-shout-' + shout_id.to_s
+  		if Rails.env == 'production'
+  			# :nocov:
+  			Pusher.trigger(channel, 'delete_shout_event', {shout_id: shout_id})
+  			# :nocov:
+  		end
+  		# users can access this shout
+  		user_channels = Array.new
+  		# :nocov:
+  		user_ids.each do |id|
+  			channel = 'private-user-' + id.to_s
+  			user_channels << channel
+  		end
+  		if !user_channels.empty?
+  			if Rails.env == 'production'
+  				user_channels.in_groups_of(10, false) do |channels| 
+  					Pusher.trigger(channels, 'delete_shout_event', {shout_id: shout_id})
+  				end
+  			end
+  		end
+  		# :nocov:
+  		return true
+  	else
+  		# :nocov:
+  		return false
+  		# :nocov:
+  	end
   end
 
   # :nocov:

@@ -396,6 +396,10 @@ class ShoutComment < ActiveRecord::Base
   	end
   end
 
+  def self.deleted_ids
+    return DeletedObject.where(deleted_object_type: "ShoutComment").where("created_at >= ?", 7.days.ago).map(&:deleted_object_id)
+  end
+
   # destroy a single shout comment
   def destroy_single
   	user_ids = self.shout.permitted_users_id
@@ -403,36 +407,37 @@ class ShoutComment < ActiveRecord::Base
   	shout_id = self.shout.id
   	# delete
     if self.destroy
+      DeletedObject.create!(deleted_object_id: shout_comment_id, deleted_object_type: "ShoutComment")
 
 	  	# pusher
-		# users in shout_id channel
-		channel = 'public-shout-' + shout_id.to_s
-		if Rails.env == "production"
-			# :nocov:	
-			Pusher.trigger(channel, 'delete_shout_comment_event', {shout_comment_id: shout_comment_id})
-			# :nocov:
-		end
-		# users can access this shout
-		user_channels = Array.new
-		# :nocov:	
-		user_ids.each do |id|
-			channel = 'private-user-' + id.to_s
-			user_channels << channel
-		end
-		if !user_channels.empty?
-			if Rails.env == "production"
-				user_channels.in_groups_of(10, false) do |channels| 
-					Pusher.trigger(channels, 'decrease_shout_comment_event', {shout_id: shout_id})
-				end
-			end
-		end
-		# :nocov:
-		return true
-	else
-		# :nocov:
-		return false
-		# :nocov:
-	end
+  		# users in shout_id channel
+  		channel = 'public-shout-' + shout_id.to_s
+  		if Rails.env == "production"
+  			# :nocov:	
+  			Pusher.trigger(channel, 'delete_shout_comment_event', {shout_comment_id: shout_comment_id})
+  			# :nocov:
+  		end
+  		# users can access this shout
+  		user_channels = Array.new
+  		# :nocov:	
+  		user_ids.each do |id|
+  			channel = 'private-user-' + id.to_s
+  			user_channels << channel
+  		end
+  		if !user_channels.empty?
+  			if Rails.env == "production"
+  				user_channels.in_groups_of(10, false) do |channels| 
+  					Pusher.trigger(channels, 'decrease_shout_comment_event', {shout_id: shout_id})
+  				end
+  			end
+  		end
+  		# :nocov:
+  		return true
+  	else
+  		# :nocov:
+  		return false
+  		# :nocov:
+  	end
   end
 
 end

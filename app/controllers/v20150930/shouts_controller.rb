@@ -136,25 +136,38 @@ module V20150930
       response = {
         shouts: result['shouts']
       }
-      render json: success(response, "data", result['pagination'])
+      deleted_ids = Shout.deleted_ids
+      render json: success(response, "data", result['pagination'], deleted_ids, "Shout")
     end
 
     # upvote or downvote
     def update
       shout = Shout.find_by_id(params[:id])
-      result = shout.change_vote(current_user, params[:upvote])
+      if !shout.nil?
+        result = shout.change_vote(current_user, params[:upvote])
 
-      if result[:result]
-        # Pusher later
-        render json: success
+        if result[:result]
+          # Pusher later
+          render json: success
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot update the shout."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       else
-        # :nocov:
-        error_obj = {
-          code: 520,
-          message: "Cannot update the shout."
-        }
-        render json: error(error_obj, 'error')
-        # :nocov:
+        if !DeletedObject.where(deleted_object_id: params[:id].to_i).where(deleted_object_type: "Shout").empty?
+          # :nocov:
+          error_obj = {
+            code: 409,
+            message: "Shout was deleted."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       end
     end
 

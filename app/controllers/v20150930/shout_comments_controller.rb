@@ -6,22 +6,35 @@ module V20150930
     # create a comment to a shout
     def create
       # content_type = params[:content_type].blank? ? "text" : params[:content_type]
-      image_url = params[:image_url].blank? ? "" : params[:image_url]
-      image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
-      audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
+      shout = Shout.find_by_id(params[:shout_id])
+      if !shout.nil?
+        image_url = params[:image_url].blank? ? "" : params[:image_url]
+        image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
+        audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
 
-      shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], image_url, image_thumb_url, audio_url)
-      if shout_comment
-        # Pusher later
-        render json: success(shout_comment)
+        shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], image_url, image_thumb_url, audio_url)
+        if shout_comment
+          # Pusher later
+          render json: success(shout_comment)
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot create the comment."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       else
-        # :nocov:
-        error_obj = {
-          code: 520,
-          message: "Cannot create the comment."
-        }
-        render json: error(error_obj, 'error')
-        # :nocov:
+        if !DeletedObject.where(deleted_object_id: params[:id].to_i).where(deleted_object_type: "Shout").empty?
+          # :nocov:
+          error_obj = {
+            code: 409,
+            message: "Shout was deleted."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       end
     end
 
@@ -37,25 +50,38 @@ module V20150930
       response = {
         shout_comments: result['shout_comments']
       }
-      render json: success(response, "data", result['pagination'])
+      deleted_ids = ShoutComment.deleted_ids
+      render json: success(response, "data", result['pagination'],deleted_ids, "Shout")
     end
 
     # upvote or downvote
     def update
       shout_comment = ShoutComment.find_by_id(params[:id])
-      result = shout_comment.change_vote(current_user, params[:upvote])
+      if !shout_comment.nil?
+        result = shout_comment.change_vote(current_user, params[:upvote])
 
-      if result[:result]
-        # Pusher later
-        render json: success
+        if result[:result]
+          # Pusher later
+          render json: success
+        else
+          # :nocov:
+          error_obj = {
+            code: 520,
+            message: "Cannot update the comment."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       else
-        # :nocov:
-        error_obj = {
-          code: 520,
-          message: "Cannot update the comment."
-        }
-        render json: error(error_obj, 'error')
-        # :nocov:
+        if !DeletedObject.where(deleted_object_id: params[:id].to_i).where(deleted_object_type: "ShoutComment").empty?
+          # :nocov:
+          error_obj = {
+            code: 409,
+            message: "Reply was deleted."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
       end
     end
 

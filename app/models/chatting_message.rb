@@ -68,7 +68,7 @@ class ChattingMessage < ActiveRecord::Base
   	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i <= last_alert_time)
   		data[:alert] = message
   		data[:badge] = "Increment"
-  	elsif last_alert_time + 3600 < current_push
+  	elsif last_alert_time + 60*15 < current_push
   		data[:alert] = message
   		data[:badge] = "Increment"
   	end

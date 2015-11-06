@@ -157,7 +157,7 @@ class ApplicationController < ActionController::Base
 
   # Easy way to send back success/failed API calls
 
-  def success(data = nil, data_symbol_name="data", pagination_dictionary = nil)
+  def success(data = nil, data_symbol_name="data", pagination_dictionary = nil, deleted_object_ids = nil, deleted_object_type = nil)
     if pagination_dictionary.nil?
       response = {
         success: true,
@@ -170,6 +170,20 @@ class ApplicationController < ActionController::Base
         data_symbol_name.to_sym => data
       }
     end
+
+    if deleted_object_type.nil? or deleted_object_ids.nil?
+
+    else
+      case deleted_object_type 
+      when "Shout"
+        # response[:deleted_shouts] = deleted_object_ids
+        response.merge!({ deleted_shouts: deleted_object_ids})
+      when "ShoutComment"
+        # response[:deleted_shout_comments] = deleted_object_ids
+        response.merge!({ deleted_shout_comments: deleted_object_ids})
+      end
+    end
+    response.as_json
     # if data.present?
     #   response.merge!({ data: data})
     # end
