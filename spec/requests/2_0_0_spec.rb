@@ -1977,6 +1977,7 @@ describe 'V2.0.0' do
       	VenueNetwork.delete_all
 	    UserAvatar.delete_all
 	    User.delete_all
+	    DeletedObject.delete_all
 	end
 
 	it "Chatting" do
