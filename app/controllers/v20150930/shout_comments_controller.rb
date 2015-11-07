@@ -40,18 +40,30 @@ module V20150930
 
     # retrieve comments with comment filter and order
     def index
+      shout = Shout.find_by_id(params[:shout_id])
+      if !shout.nil?
+        page = nil
+        per_page = nil
+        page = params[:page].to_i + 1 if !params[:page].blank?
+        per_page = params[:per_page].to_i if !params[:per_page].blank?
 
-      page = nil
-      per_page = nil
-      page = params[:page].to_i + 1 if !params[:page].blank?
-      per_page = params[:per_page].to_i if !params[:per_page].blank?
-
-      result = ShoutComment.list(current_user, params[:shout_id], page, per_page)
-      response = {
-        shout_comments: result['shout_comments']
-      }
-      deleted_ids = ShoutComment.deleted_ids
-      render json: success(response, "data", result['pagination'],deleted_ids, "Shout")
+        result = ShoutComment.list(current_user, params[:shout_id], page, per_page)
+        response = {
+          shout_comments: result['shout_comments']
+        }
+        deleted_ids = ShoutComment.deleted_ids
+        render json: success(response, "data", result['pagination'],deleted_ids, "ShoutComment")
+      else
+        if !DeletedObject.where(deleted_object_id: params[:id].to_i).where(deleted_object_type: "Shout").empty?
+          # :nocov:
+          error_obj = {
+            code: 409,
+            message: "Shout was deleted."
+          }
+          render json: error(error_obj, 'error')
+          # :nocov:
+        end
+      end
     end
 
     # upvote or downvote
