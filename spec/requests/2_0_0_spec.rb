@@ -513,6 +513,7 @@ describe 'V2.0.0' do
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 1
 
+		# Venue.collect_network_types(user_2, user_2.latitude, user_2.longitude, 60)
 		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 5

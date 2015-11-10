@@ -29,86 +29,9 @@ module V20150930
         user.longitude = longitude
         user.save
       end
-      result = Array.new
 
-      # favourite venues
-      favourite_venues = Venue.favourite_networks(current_user)
-      if !favourite_venues.blank?
-        favourite_obj = {
-          title: "FAVOURITE",
-          total: favourite_venues.length
-        }
-        if !favourite_venues.first.venue_avatars.blank? and !favourite_venues.first.venue_avatars.first.avatar.nil?  and !favourite_venues.first.venue_avatars.first.avatar.url.nil?
-          favourite_obj[:image] = favourite_venues.first.venue_avatars.first.avatar.url
-        end
-        result << favourite_obj
-      end
-
-      # venues nearby
-      nearby_venues = Venue.nearby_networks(latitude, longitude, distance)
-      if !nearby_venues.blank?
-        nearby_obj = {
-          title: "NEARBY",
-          total: nearby_venues.length
-        }
-        if !nearby_venues.first.venue_avatars.blank? and !nearby_venues.first.venue_avatars.first.avatar.nil?  and !nearby_venues.first.venue_avatars.first.avatar.url.nil?
-          nearby_obj[:image] = nearby_venues.first.venue_avatars.first.avatar.url
-        end
-        result << nearby_obj
-      end
-
-      # Colleges
-      colleges = Venue.colleges(latitude, longitude)
-      if !colleges.blank?
-        college_obj = {
-          title: "COLLEGES",
-          total: colleges.length
-        }
-        if  !colleges.first.venue_avatars.blank? and !colleges.first.venue_avatars.first.avatar.nil?  and !colleges.first.venue_avatars.first.avatar.url.nil?
-          college_obj[:image] = colleges.first.venue_avatars.first.avatar.url
-        end
-        result << college_obj
-      end
-
-      # Stadiums
-      stadiums = Venue.stadiums(latitude, longitude)
-      if !stadiums.blank?
-        stadium_obj = {
-          title: "STADIUMS",
-          total: stadiums.length
-        }
-        if  !stadiums.first.venue_avatars.blank? and !stadiums.first.venue_avatars.first.avatar.nil?  and !stadiums.first.venue_avatars.first.avatar.url.nil?
-          stadium_obj[:image] = stadiums.first.venue_avatars.first.avatar.url
-        end
-        result << stadium_obj
-      end
-
-      # Festivals
-      festivals = Venue.festivals(latitude, longitude)
-      if !festivals.blank?
-        festival_obj = {
-          title: "FESTIVALS",
-          total: festivals.length
-        }
-        if  !festivals.first.venue_avatars.blank? and !festivals.first.venue_avatars.first.avatar.nil?  and !festivals.first.venue_avatars.first.avatar.url.nil?
-          festival_obj[:image] = festivals.first.venue_avatars.first.avatar.url
-        end
-        result << festival_obj
-      end
-
-      # Nightlife
-      nightlifes = Venue.nightlifes(latitude, longitude)
-      if !nightlifes.blank?
-        nightlife_obj = {
-          title: "NIGHTLIFE",
-          total: nightlifes.length
-        }
-        if  !nightlifes.first.venue_avatars.blank? and !nightlifes.first.venue_avatars.first.avatar.nil?  and !nightlifes.first.venue_avatars.first.avatar.url.nil?
-          nightlife_obj[:image] = nightlifes.first.venue_avatars.first.avatar.url
-        end
-        result << nightlife_obj
-      end
-
+      result = Venue.collect_network_types(current_user, latitude, longitude, distance)
+      
       render json: success(result)
     end
 
