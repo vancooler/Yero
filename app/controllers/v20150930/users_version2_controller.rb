@@ -185,8 +185,16 @@ module V20150930
         render json: error(error_obj, 'error')
       else
         user = current_user
-        # user.join_network
-        # puts user
+        if !params[:latitude].blank? and !params[:longitude].blank?
+          user.update(latitude: params[:latitude].to_f, longitude: params[:longitude].to_f)
+        end
+
+        if !params[:gimbal_name].blank?
+          beacon = Beacon.find_by_key(params[:gimbal_name])
+          ActiveInVenue.enter_venue(beacon.venue, user, beacon)
+        else
+          ActiveInVenue.leave_venue(nil, current_user)
+        end
         gender = params[:gender] if !params[:gender].blank?
         min_age = params[:min_age].to_i if !params[:min_age].blank?
         max_age = params[:max_age].to_i if !params[:max_age].blank?

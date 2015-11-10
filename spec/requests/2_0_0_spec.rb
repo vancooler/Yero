@@ -101,7 +101,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['id']).to eql 2
 
       	expect(User.find_user_by_unique("test2@yero.co").id).to eql 2
-      	get 'api/users/test2@yero.co?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users/test2@yero.co?token='+token, {:latitude => user_2.latitude, :longitude => user_2.longitude}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['id']).to eql 2
@@ -1459,13 +1459,13 @@ describe 'V2.0.0' do
 
       	token = user_2.generate_token
       	# user_2 enter venue 
-      	post 'api/venues/Vancouver_TestVenue_test', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users', {:token => token, :gimbal_name => "Vancouver_TestVenue_test"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
       	expect(ActiveInVenue.count).to eql 1
       	expect(ActiveInVenueNetwork.count).to eql 1
-      	expect(Venue.find(1).venue_entries.length).to eql 1
+
 
       	# user_2 post shout
       	expect(ActiveInVenueNetwork.count).to eql 1
