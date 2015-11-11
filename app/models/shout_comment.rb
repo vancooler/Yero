@@ -305,7 +305,7 @@ class ShoutComment < ActiveRecord::Base
   	time_0 = Time.now
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'ShoutComment').map(&:reportable_id)
-  	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at ASC")
+  	shout_comments = ShoutComment.where(shout_id: shout_id).where.not(id: content_black_list).where.not(user_id: black_list).order("created_at ASC").includes(:venue, :user)
   	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
         pagination = Hash.new
         pagination['page'] = page - 1
@@ -372,7 +372,7 @@ class ShoutComment < ActiveRecord::Base
         shout_id:        shout_comment.shout_id,
         venue_id:        ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
         author_id:       shout_comment.user_id,
-        author_username: (User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username),
+        author_username: (shout_comment.user.nil? ? "" : shout_comment.user.username),
         network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
       }
       return_shout_comments << shout_comment_json

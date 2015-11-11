@@ -284,24 +284,24 @@ class Shout < ActiveRecord::Base
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and my_comments
   		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
-  		shouts = Shout.where(id: comments)
+  		shouts = Shout.where(id: comments).includes(:venue)
   		
   	elsif !my_shouts.nil? and my_shouts
-  		shouts = Shout.where(user_id: current_user.id)
+  		shouts = Shout.where(user_id: current_user.id).includes(:venue)
   	else
 	  	if venue.nil?
 	  		current_venue = current_user.current_venue
 	  		if !current_venue.nil?
-	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago)
+	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue)
 	  		else
 	  			same_venue_shouts = []
 	  		end
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 10, units: :km)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 10, units: :km).includes(:venue)
 	  		shouts = shouts | same_venue_shouts
 	  		
 	  	else
 	  		venue_id = venue
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue)
 	  	end
 	end
   	return shouts

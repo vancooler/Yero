@@ -78,7 +78,7 @@ class Venue < ActiveRecord::Base
     if venue_ids.empty?
       return []
     else
-      venues = Venue.where(id: venue_ids)
+      venues = Venue.where(id: venue_ids).includes(:active_in_venues).includes(:beacons)
       if !types_array_string.blank?
         venues = venues.where(venue_type_id: types_array_string)
       end
@@ -101,10 +101,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -127,10 +127,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -149,10 +149,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -171,10 +171,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -193,10 +193,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -503,6 +503,7 @@ class Venue < ActiveRecord::Base
     favourite_venues = Venue.favourite_networks(current_user)
     if !favourite_venues.blank?
       if favourite_venues.length > 5
+        # :nocov:
         data = Venue.venues_object(current_user, favourite_venues[0..4])
         favourite_obj = {
           title: "FAVOURITE",
@@ -512,6 +513,7 @@ class Venue < ActiveRecord::Base
         if !favourite_venues[5].venue_avatars.blank? and !favourite_venues[5].venue_avatars.first.avatar.nil?  and !favourite_venues[5].venue_avatars.first.avatar.url.nil?
           favourite_obj[:image] = favourite_venues[5].venue_avatars.first.avatar.url
         end
+        # :nocov:
       else
         data = Venue.venues_object(current_user, favourite_venues)
         favourite_obj = {
@@ -537,12 +539,14 @@ class Venue < ActiveRecord::Base
           nearby_obj[:image] = nearby_venues[5].venue_avatars.first.avatar.url
         end
       else
+        # :nocov:
         data = Venue.venues_object(current_user, nearby_venues)
         nearby_obj = {
           title: "NEARBY",
           total: nearby_venues.length,
           preview: data
         }
+        # :nocov:
       end
       result << nearby_obj
     end
@@ -551,6 +555,7 @@ class Venue < ActiveRecord::Base
     colleges = Venue.colleges(latitude, longitude)
     if !colleges.blank?
       if colleges.length > 5
+        # :nocov:
         data = Venue.venues_object(current_user, colleges[0..4])
         college_obj = {
           title: "COLLEGES",
@@ -560,6 +565,7 @@ class Venue < ActiveRecord::Base
         if !colleges[5].venue_avatars.blank? and !colleges[5].venue_avatars.first.avatar.nil?  and !colleges[5].venue_avatars.first.avatar.url.nil?
           college_obj[:image] = colleges[5].venue_avatars.first.avatar.url
         end
+        # :nocov:
       else
         data = Venue.venues_object(current_user, colleges)
         college_obj = {
@@ -575,6 +581,7 @@ class Venue < ActiveRecord::Base
     stadiums = Venue.stadiums(latitude, longitude)
     if !stadiums.blank?
       if stadiums.length > 5
+        # :nocov:
         data = Venue.venues_object(current_user, stadiums[0..4])
         stadium_obj = {
           title: "STADIUMS",
@@ -584,6 +591,7 @@ class Venue < ActiveRecord::Base
         if !stadiums[5].venue_avatars.blank? and !stadiums[5].venue_avatars.first.avatar.nil?  and !stadiums[5].venue_avatars.first.avatar.url.nil?
           stadium_obj[:image] = stadiums[5].venue_avatars.first.avatar.url
         end
+        # :nocov:
       else
         data = Venue.venues_object(current_user, stadiums)
         stadium_obj = {
@@ -599,6 +607,7 @@ class Venue < ActiveRecord::Base
     festivals = Venue.festivals(latitude, longitude)
     if !festivals.blank?
       if festivals.length > 5
+        # :nocov:
         data = Venue.venues_object(current_user, festivals[0..4])
         festival_obj = {
           title: "FESTIVALS",
@@ -608,6 +617,7 @@ class Venue < ActiveRecord::Base
         if !festivals[5].venue_avatars.blank? and !festivals[5].venue_avatars.first.avatar.nil?  and !festivals[5].venue_avatars.first.avatar.url.nil?
           festival_obj[:image] = festivals[5].venue_avatars.first.avatar.url
         end
+        # :nocov:
       else
         data = Venue.venues_object(current_user, festivals)
         festival_obj = {
@@ -623,6 +633,7 @@ class Venue < ActiveRecord::Base
     nightlifes = Venue.nightlifes(latitude, longitude)
     if !nightlifes.blank?
       if nightlifes.length > 5
+        # :nocov:
         data = Venue.venues_object(current_user, nightlifes[0..4])
         nightlife_obj = {
           title: "NIGHTLIFE",
@@ -632,6 +643,7 @@ class Venue < ActiveRecord::Base
         if !nightlifes[5].venue_avatars.blank? and !nightlifes[5].venue_avatars.first.avatar.nil?  and !nightlifes[5].venue_avatars.first.avatar.url.nil?
           nightlife_obj[:image] = nightlifes[5].venue_avatars.first.avatar.url
         end
+        # :nocov:
       else
         data = Venue.venues_object(current_user, nightlifes)
         nightlife_obj = {

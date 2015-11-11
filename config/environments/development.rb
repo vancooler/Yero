@@ -41,4 +41,14 @@ Rails.application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.default :charset => "utf-8"
   # ENV["REDISTOGO_URL"] = 'redis://redistogo:7fdc01450101bbb8fdc6b69aa5e50c81@hoki.redistogo.com:9604/'
+
+  config.after_initialize do
+    Bullet.enable = true
+    Bullet.alert = true
+    Bullet.bullet_logger = true
+    Bullet.console = true
+  #  Bullet.growl = true
+    Bullet.rails_logger = true
+    Bullet.add_footer = true
+  end
 end

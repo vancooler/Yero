@@ -63,6 +63,7 @@ gem 'aws-sdk', '< 2.0'
 gem 'geocoder'
 # gem 'sidekiq'
 gem 'kaminari'
+gem "bullet"
 gem 'newrelic_rpm'
 gem 'oink', '~> 0.10'
 gem 'mixpanel-ruby'

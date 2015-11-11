@@ -495,7 +495,7 @@ class WhisperNotification < AWS::Record::HashModel
     origin_id = current_user.id.to_s
     final_result = Hash.new
     # only users with active avatar can send whispers
-    if current_user.user_avatars.where(:is_active => true).count <= 0 
+    if current_user.user_avatars.where(:is_active => true).count <= 0
       final_result['message'] = "Please upload a profile photo first"
     elsif BlockUser.check_block(origin_id.to_i, target_id.to_i)
       final_result['message'] = "User blocked"

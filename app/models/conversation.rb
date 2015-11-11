@@ -41,8 +41,8 @@ class Conversation < ActiveRecord::Base
 
 	def self.conversations_related(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
-		whispers_1 = Conversation.where(:origin_user_id => user_id).where(origin_user_archieve: false).where.not(target_user_id: black_list).order("created_at DESC")
-		whispers_2 = Conversation.where(:target_user_id => user_id).where(target_user_archieve: false).where.not(origin_user_id: black_list).order("created_at DESC")
+		whispers_1 = Conversation.where(:origin_user_id => user_id).where(origin_user_archieve: false).where.not(target_user_id: black_list).order("created_at DESC").includes(:chatting_messages)
+		whispers_2 = Conversation.where(:target_user_id => user_id).where(target_user_archieve: false).where.not(origin_user_id: black_list).order("created_at DESC").includes(:chatting_messages)
 		return (whispers_1 | whispers_2).sort_by { |hsh| hsh.updated_at }.reverse
 	end
 
@@ -191,7 +191,7 @@ class Conversation < ActiveRecord::Base
 		if read_messages
 	        ChattingMessage.where(whisper_id: self.id).where.not(speaker_id: current_user.id).update_all(read: true)
 	    end
-		replies = ChattingMessage.where(whisper_id: self.id).order("created_at DESC")
+		replies = ChattingMessage.where(whisper_id: self.id).order("created_at DESC").includes(:whisper)
 
 		result = Hash.new
 		if !page_number.nil? and !per_page.nil? and per_page > 0 and page_number >= 0

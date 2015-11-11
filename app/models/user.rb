@@ -1308,7 +1308,7 @@ class User < ActiveRecord::Base
     time_1 = Time.now
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
-    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false)
+    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).includes(:active_in_venue)
     all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_2 = Time.now
     # campus_id = VenueType.find_by_name("Campus")
@@ -1327,10 +1327,10 @@ class User < ActiveRecord::Base
 
     end
     time_3 = Time.now
-    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days)
+    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
     same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
 
-    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0})
+    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
     different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_4  = Time.now
     if everyone
