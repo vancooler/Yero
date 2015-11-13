@@ -42,7 +42,7 @@ module V20150930
           attachments << audio
         end
         replied = false
-        if shout.user_id != current_user.id and !shout.shout_comments.where(user_id: current_user.id).empty?
+        if !shout.shout_comments.where(user_id: current_user.id).empty?
           replied = true
         end
         shout_json = {

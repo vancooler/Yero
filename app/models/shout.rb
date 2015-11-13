@@ -398,7 +398,7 @@ class Shout < ActiveRecord::Base
         latitude:            shout.latitude,
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
-        replied:             ((replied_shouts_ids.include? shout.id) and shout.user_id != current_user.id),
+        replied:             (replied_shouts_ids.include? shout.id),
         attachments:         attachments,
         subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
         timestamp:           shout.created_at.to_i,
