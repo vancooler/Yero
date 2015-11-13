@@ -41,6 +41,10 @@ module V20150930
           }
           attachments << audio
         end
+        replied = false
+        if shout.user_id != current_user.id and !shout.shout_comments.where(user_id: current_user.id).empty?
+          replied = true
+        end
         shout_json = {
           id:                   shout.id,
           body:                 shout.body,
@@ -49,6 +53,7 @@ module V20150930
           latitude:             shout.latitude,
           longitude:            shout.longitude,
           locality:             shout.city.nil? ? '' : shout.city,
+          replied:              replied,
           # content_type:         shout.content_type.nil? ? 'text' : shout.content_type,
           # audio_url:            shout.audio_url.nil? ? '' : shout.audio_url,
           # image_url:            shout.image_url.nil? ? '' : shout.image_url,

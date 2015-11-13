@@ -241,6 +241,7 @@ class Shout < ActiveRecord::Base
         latitude: 		       shout.latitude,
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
+        replied:             false,
         # content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
         # audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
         # image_url:           shout.image_url.nil? ? '' : shout.image_url,
@@ -284,7 +285,7 @@ class Shout < ActiveRecord::Base
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and my_comments
   		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
-  		shouts = Shout.where(id: comments).includes(:venue)
+  		shouts = Shout.where(id: comments).where.not(user_id: current_user.id).includes(:venue)
   		
   	elsif !my_shouts.nil? and my_shouts
   		shouts = Shout.where(user_id: current_user.id).includes(:venue)
@@ -360,6 +361,7 @@ class Shout < ActiveRecord::Base
   def self.shouts_json(current_user, shouts)
   	shout_upvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: true).map(&:shout_id)
   	shout_downvoted_ids = ShoutVote.where(user_id: current_user.id).where(upvote: false).map(&:shout_id)
+    replied_shouts_ids = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
 
     # # not using Jbuilder
     result = Array.new
@@ -396,6 +398,7 @@ class Shout < ActiveRecord::Base
         latitude:            shout.latitude,
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
+        replied:             ((replied_shouts_ids.include? shout.id) and shout.user_id != current_user.id),
         attachments:         attachments,
         subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
         timestamp:           shout.created_at.to_i,
