@@ -516,17 +516,19 @@ describe 'V2.0.0' do
 		# Venue.collect_network_types(user_2, user_2.latitude, user_2.longitude, 60)
 		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
-		expect(JSON.parse(response.body)['data'].count).to eql 5
-		expect(JSON.parse(response.body)['data'][0]['title']).to eql "NEARBY"
-		expect(JSON.parse(response.body)['data'][1]['title']).to eql "COLLEGES"
-		expect(JSON.parse(response.body)['data'][2]['title']).to eql "STADIUMS"
-		expect(JSON.parse(response.body)['data'][3]['title']).to eql "FESTIVALS"
-		expect(JSON.parse(response.body)['data'][4]['title']).to eql "NIGHTLIFE"
-		expect(JSON.parse(response.body)['data'][0]['total']).to eql 7
-		expect(JSON.parse(response.body)['data'][1]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'].count).to eql 6
+		expect(JSON.parse(response.body)['data'][0]['title']).to eql "Favourite"
+		expect(JSON.parse(response.body)['data'][1]['title']).to eql "Nearby"
+		expect(JSON.parse(response.body)['data'][2]['title']).to eql "Campus"
+		expect(JSON.parse(response.body)['data'][3]['title']).to eql "Stadium"
+		expect(JSON.parse(response.body)['data'][4]['title']).to eql "Festival"
+		expect(JSON.parse(response.body)['data'][5]['title']).to eql "Nightlife"
+		expect(JSON.parse(response.body)['data'][0]['total']).to eql 0
+		expect(JSON.parse(response.body)['data'][1]['total']).to eql 7
 		expect(JSON.parse(response.body)['data'][2]['total']).to eql 1
-		expect(JSON.parse(response.body)['data'][3]['total']).to eql 4
-		expect(JSON.parse(response.body)['data'][4]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][3]['total']).to eql 1
+		expect(JSON.parse(response.body)['data'][4]['total']).to eql 4
+		expect(JSON.parse(response.body)['data'][5]['total']).to eql 1
 
 
 		post 'api/venues/134/users', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -546,12 +548,12 @@ describe 'V2.0.0' do
 		get 'api/venue_types?latitude=49.4563&longitude=-122.8787&distance=1000&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 6
-		expect(JSON.parse(response.body)['data'][0]['title']).to eql "FAVOURITE"
-		expect(JSON.parse(response.body)['data'][1]['title']).to eql "NEARBY"
-		expect(JSON.parse(response.body)['data'][2]['title']).to eql "COLLEGES"
-		expect(JSON.parse(response.body)['data'][3]['title']).to eql "STADIUMS"
-		expect(JSON.parse(response.body)['data'][4]['title']).to eql "FESTIVALS"
-		expect(JSON.parse(response.body)['data'][5]['title']).to eql "NIGHTLIFE"
+		expect(JSON.parse(response.body)['data'][0]['title']).to eql "Favourite"
+		expect(JSON.parse(response.body)['data'][1]['title']).to eql "Nearby"
+		expect(JSON.parse(response.body)['data'][2]['title']).to eql "Campus"
+		expect(JSON.parse(response.body)['data'][3]['title']).to eql "Stadium"
+		expect(JSON.parse(response.body)['data'][4]['title']).to eql "Festival"
+		expect(JSON.parse(response.body)['data'][5]['title']).to eql "Nightlife"
 		expect(JSON.parse(response.body)['data'][0]['total']).to eql 1
 		expect(JSON.parse(response.body)['data'][1]['total']).to eql 7
 		expect(JSON.parse(response.body)['data'][2]['total']).to eql 1

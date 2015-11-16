@@ -502,158 +502,101 @@ class Venue < ActiveRecord::Base
     # favourite venues
     favourite_venues = Venue.favourite_networks(current_user)
     if !favourite_venues.blank?
-      if favourite_venues.length > 5
-        # :nocov:
-        data = Venue.venues_object(current_user, favourite_venues[0..4])
-        favourite_obj = {
-          title: "FAVOURITE",
-          total: favourite_venues.length,
-          preview: data
-        }
-        if !favourite_venues[5].venue_avatars.blank? and !favourite_venues[5].venue_avatars.first.avatar.nil?  and !favourite_venues[5].venue_avatars.first.avatar.url.nil?
-          favourite_obj[:image] = favourite_venues[5].venue_avatars.first.avatar.url
-        end
-        # :nocov:
-      else
-        data = Venue.venues_object(current_user, favourite_venues)
-        favourite_obj = {
-          title: "FAVOURITE",
-          total: favourite_venues.length,
-          preview: data
-        }
-      end
-      result << favourite_obj
+      data = Venue.venues_object(current_user, favourite_venues[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    favourite_obj = {
+      title: "Favourite",
+      total: favourite_venues.length,
+      preview: data
+    }
+    result << favourite_obj
 
     # venues nearby
     nearby_venues = Venue.nearby_networks(latitude, longitude, distance)
     if !nearby_venues.blank?
-      if nearby_venues.length > 5
-        data = Venue.venues_object(current_user, nearby_venues[0..4])
-        nearby_obj = {
-          title: "NEARBY",
-          total: nearby_venues.length,
-          preview: data
-        }
-        if !nearby_venues[5].venue_avatars.blank? and !nearby_venues[5].venue_avatars.first.avatar.nil?  and !nearby_venues[5].venue_avatars.first.avatar.url.nil?
-          nearby_obj[:image] = nearby_venues[5].venue_avatars.first.avatar.url
-        end
-      else
-        # :nocov:
-        data = Venue.venues_object(current_user, nearby_venues)
-        nearby_obj = {
-          title: "NEARBY",
-          total: nearby_venues.length,
-          preview: data
-        }
-        # :nocov:
-      end
-      result << nearby_obj
+      data = Venue.venues_object(current_user, nearby_venues[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    nearby_obj = {
+      title: "Nearby",
+      total: nearby_venues.length,
+      preview: data
+    }
+    result << nearby_obj
 
     # Colleges
     colleges = Venue.colleges(latitude, longitude)
     if !colleges.blank?
-      if colleges.length > 5
-        # :nocov:
-        data = Venue.venues_object(current_user, colleges[0..4])
-        college_obj = {
-          title: "COLLEGES",
-          total: colleges.length,
-          preview: data
-        }
-        if !colleges[5].venue_avatars.blank? and !colleges[5].venue_avatars.first.avatar.nil?  and !colleges[5].venue_avatars.first.avatar.url.nil?
-          college_obj[:image] = colleges[5].venue_avatars.first.avatar.url
-        end
-        # :nocov:
-      else
-        data = Venue.venues_object(current_user, colleges)
-        college_obj = {
-          title: "COLLEGES",
-          total: colleges.length,
-          preview: data
-        }
-      end
-      result << college_obj
+      data = Venue.venues_object(current_user, colleges[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    college_obj = {
+      title: "Campus",
+      total: colleges.length,
+      preview: data
+    }
+    
+    result << college_obj
 
     # Stadiums
     stadiums = Venue.stadiums(latitude, longitude)
     if !stadiums.blank?
-      if stadiums.length > 5
-        # :nocov:
-        data = Venue.venues_object(current_user, stadiums[0..4])
-        stadium_obj = {
-          title: "STADIUMS",
-          total: stadiums.length,
-          preview: data
-        }
-        if !stadiums[5].venue_avatars.blank? and !stadiums[5].venue_avatars.first.avatar.nil?  and !stadiums[5].venue_avatars.first.avatar.url.nil?
-          stadium_obj[:image] = stadiums[5].venue_avatars.first.avatar.url
-        end
-        # :nocov:
-      else
-        data = Venue.venues_object(current_user, stadiums)
-        stadium_obj = {
-          title: "STADIUMS",
-          total: stadiums.length,
-          preview: data
-        }
-      end
-      result << stadium_obj
+      data = Venue.venues_object(current_user, stadiums[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    stadium_obj = {
+      title: "Stadium",
+      total: stadiums.length,
+      preview: data
+    }
+    
+    result << stadium_obj
 
     # Festivals
     festivals = Venue.festivals(latitude, longitude)
     if !festivals.blank?
-      if festivals.length > 5
-        # :nocov:
-        data = Venue.venues_object(current_user, festivals[0..4])
-        festival_obj = {
-          title: "FESTIVALS",
-          total: festivals.length,
-          preview: data
-        }
-        if !festivals[5].venue_avatars.blank? and !festivals[5].venue_avatars.first.avatar.nil?  and !festivals[5].venue_avatars.first.avatar.url.nil?
-          festival_obj[:image] = festivals[5].venue_avatars.first.avatar.url
-        end
-        # :nocov:
-      else
-        data = Venue.venues_object(current_user, festivals)
-        festival_obj = {
-          title: "FESTIVALS",
-          total: festivals.length,
-          preview: data
-        }
-      end
-      result << festival_obj
+      data = Venue.venues_object(current_user, festivals[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    festival_obj = {
+      title: "Festival",
+      total: festivals.length,
+      preview: data
+    }
+    result << festival_obj
 
     # Nightlife
     nightlifes = Venue.nightlifes(latitude, longitude)
     if !nightlifes.blank?
-      if nightlifes.length > 5
-        # :nocov:
-        data = Venue.venues_object(current_user, nightlifes[0..4])
-        nightlife_obj = {
-          title: "NIGHTLIFE",
-          total: nightlifes.length,
-          preview: data
-        }
-        if !nightlifes[5].venue_avatars.blank? and !nightlifes[5].venue_avatars.first.avatar.nil?  and !nightlifes[5].venue_avatars.first.avatar.url.nil?
-          nightlife_obj[:image] = nightlifes[5].venue_avatars.first.avatar.url
-        end
-        # :nocov:
-      else
-        data = Venue.venues_object(current_user, nightlifes)
-        nightlife_obj = {
-          title: "NIGHTLIFE",
-          total: nightlifes.length,
-          preview: data
-        }
-      end
-      result << nightlife_obj
+      data = Venue.venues_object(current_user, nightlifes[0..0])
+    else
+      # :nocov:
+      data = Array.new
+      # :nocov:
     end
+    nightlife_obj = {
+      title: "Nightlife",
+      total: nightlifes.length,
+      preview: data
+    }
+    
+    result << nightlife_obj
 
     return result
   end
