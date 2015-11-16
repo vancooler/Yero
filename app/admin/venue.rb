@@ -11,7 +11,7 @@ ActiveAdmin.register Venue do
   permit_params :email, :name, :venue_type, :venue_type_id, :venue_network_id, :venue_network, 
                 :address_line_one, :address_line_two, :city, :state, :country, :zipcode, :phone, 
                 :age_requirement, :latitude, :longitude, :web_user, :web_user_id, :draft_pending,
-                :featured, :timezone, :start_time, :end_time,
+                :featured, :timezone, :start_time, :end_time, :unlock_number,
                 beacons_attributes: [:id, :key, :venue_id, :_destroy],
                 venue_avatars_attributes: [:id, :avatar, :venue_id, :default, :_destroy]
                 
@@ -79,7 +79,8 @@ ActiveAdmin.register Venue do
     column "Name", :name
     column "Type", :venue_type
     column "Owner", :web_user
-    column "City Network", :venue_network
+    # column "City Network", :venue_network
+    column :unlock_number
     column "Address" do |venue|
       (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.city.nil? ? '' : ', ' + venue.city)
     end
@@ -136,6 +137,7 @@ ActiveAdmin.register Venue do
       f.input :venue_type
       f.input :web_user, :label => "Owner"
       f.input :venue_network, :label => "City Network"
+      f.input :unlock_number
       f.input :address_line_one
       f.input :address_line_two
       f.input :city

@@ -47,6 +47,9 @@ class ActiveInVenue < ActiveRecord::Base
     #enter network
     ActiveInVenueNetwork.enter_venue_network(venue.venue_network, user)
 
+    if result
+      VenueEntry.unique_enter(venue, user)
+    end
     return result
   end
 

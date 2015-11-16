@@ -352,7 +352,7 @@ class Venue < ActiveRecord::Base
         type:           (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : '',
         latitude:       v.latitude,
         longitude:      v.longitude,
-        users_number:   v.active_in_venues.length,
+        users_number:   v.venue_entries.length,
         unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
         shouts_number:  Shout.shouts_in_venue(current_user, v.id).length,
         gimbal_name:    (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))

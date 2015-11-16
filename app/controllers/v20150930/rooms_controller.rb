@@ -19,9 +19,9 @@ module V20150930
         result = true
         beacons.each do |beacon|
           result_tmp = ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
-          if result_tmp
-            VenueEntry.unique_enter(beacon.venue, current_user)
-          end
+          # if result_tmp
+          #   VenueEntry.unique_enter(beacon.venue, current_user)
+          # end
           result = result && result_tmp
           first_entry_flag = 0
           n2 = true
