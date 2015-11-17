@@ -332,13 +332,25 @@ class User < ActiveRecord::Base
         end
       end
 
-      json.notification_preferences do
-        preferences = NotificationPreference.all
-        json.array! preferences do |p|
-          json.type p.name
-          if p.name == "Leave venue network"
-            json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
-          else
+      if !(!self.version.nil? and self.version.to_f >= 2)
+        json.notification_preferences do
+          names = ["Network online", "Enter venue network", "Leave venue network"]
+          preferences = NotificationPreference.where(name: names)
+          json.array! preferences do |p|
+            json.type p.name
+            if p.name == "Leave venue network"
+              json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? false : true)
+            else
+              json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? true : false)
+            end
+          end
+        end
+      else
+        json.notification_preferences do
+          names = ["Replying to the same shout", "Replying to my shout", "Whispers"]
+          preferences = NotificationPreference.where(name: names)
+          json.array! preferences do |p|
+            json.type p.name
             json.enabled (p.user_notification_preference.where(:user_id => self.id).blank? ? true : false)
           end
         end
@@ -1452,7 +1464,7 @@ class User < ActiveRecord::Base
             status:                   user.introduction_2.blank? ? '' : user.introduction_2,
             exclusive:                user.exclusive
           }
-          if !(!user.version.nil? and user.version.to_f >= 2)
+          if !(!self.version.nil? and self.version.to_f >= 2)
               user_json[:line_id] = (user.line_id.blank? ? '' : user.line_id)
               user_json[:wechat_id] = (user.wechat_id.blank? ? '' : user.wechat_id)
               user_json[:snapchat_id] = (user.snapchat_id.blank? ? '' : user.snapchat_id)
