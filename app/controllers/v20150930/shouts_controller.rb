@@ -138,11 +138,15 @@ module V20150930
       my_comments = (!params['my_comments'].nil? ? (params['my_comments'].to_s == '1' or params['my_comments'].to_s == 'true') : false)
       
       result = Shout.list(current_user, params[:order_by], params[:venue], my_shouts, my_comments, page, per_page, latitude, longitude)
-      response = {
-        shouts: result['shouts']
-      }
-      deleted_ids = Shout.deleted_ids
-      render json: success(response, "data", result['pagination'], deleted_ids, "Shout")
+      if result['percentage'].nil?
+        response = {
+          shouts: result['shouts']
+        }
+        deleted_ids = Shout.deleted_ids
+        render json: success(response, "data", result['pagination'], deleted_ids, "Shout")
+      else
+        render json: success(result)
+      end
     end
 
     # upvote or downvote

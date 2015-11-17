@@ -1489,7 +1489,6 @@ describe 'V2.0.0' do
       	expect(shout_2.anonymous).to eql true
       	expect(shout_2.audio_url).to eql "http://b"
 
-      	# expect(Shout.list(user_2, 'hot', 1).count).to eql 2
       	get 'api/shouts', {:token => token, :order_by => "hot", :venue => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true

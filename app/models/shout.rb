@@ -301,10 +301,18 @@ class Shout < ActiveRecord::Base
 	  		shouts = shouts | same_venue_shouts
 	  		
 	  	else
-	  		venue_id = venue
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue)
+	  		# venue_id = venue
+        venue = Venue.find_venue_by_unique(venue)
+        user_number = venue.venue_entries.count
+        unlock_number = (venue.unlock_number.nil? ? 0 : venue.unlock_number)
+        if user_number >= unlock_number
+          venue_id = venue.id
+  	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue)
+        else
+          shouts = (user_number * 100 / unlock_number).to_i
+        end
 	  	end
-	end
+	  end
   	return shouts
   end
 
@@ -328,33 +336,39 @@ class Shout < ActiveRecord::Base
   		venue = query_venue.id
   	end
   	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
-  	case order_by
-  	when 'new'
-  		# shouts order by created_at
-  		shouts = shouts.sort_by{|s| s.created_at}.reverse
-  	when 'hot'
-  		# shouts order by upvote
-  		shouts = shouts.sort_by(&:total_upvotes).reverse
-  	end
-  	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
-        pagination = Hash.new
-        pagination['page'] = page - 1
-        pagination['per_page'] = per_page
-        pagination['total_count'] = shouts.length
-        result['pagination'] = pagination
-        shouts = Kaminari.paginate_array(shouts).page(page).per(per_page) if !shouts.nil?
+
+    if shouts.is_a? Integer
+      result['percentage'] = shouts
+      return result
+    else
+    	case order_by
+    	when 'new'
+    		# shouts order by created_at
+    		shouts = shouts.sort_by{|s| s.created_at}.reverse
+    	when 'hot'
+    		# shouts order by upvote
+    		shouts = shouts.sort_by(&:total_upvotes).reverse
+    	end
+    	if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
+          pagination = Hash.new
+          pagination['page'] = page - 1
+          pagination['per_page'] = per_page
+          pagination['total_count'] = shouts.length
+          result['pagination'] = pagination
+          shouts = Kaminari.paginate_array(shouts).page(page).per(per_page) if !shouts.nil?
+      end
+
+    	time_1 = Time.now
+    	final_result = Shout.shouts_json(current_user, shouts)
+    	time_2 = Time.now
+
+    	puts "TOTAL: " + final_result.count.to_s
+    	puts "TIME: "
+    	puts (time_1-time_0).inspect
+    	puts (time_2-time_1).inspect
+    	result['shouts'] = final_result
+    	return result
     end
-
-  	time_1 = Time.now
-  	final_result = Shout.shouts_json(current_user, shouts)
-  	time_2 = Time.now
-
-  	puts "TOTAL: " + final_result.count.to_s
-  	puts "TIME: "
-  	puts (time_1-time_0).inspect
-  	puts (time_2-time_1).inspect
-  	result['shouts'] = final_result
-  	return result
   end
 
   # convert to json structure
