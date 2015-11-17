@@ -8,7 +8,7 @@ class ShoutComment < ActiveRecord::Base
 
 
   def total_votes
-  	self.shout_comment_votes.length
+  	self.shout_comment_votes.count
   end
 
   def total_upvotes

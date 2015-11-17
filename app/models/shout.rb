@@ -21,7 +21,7 @@ class Shout < ActiveRecord::Base
 
   # total vote of a shout
   def total_votes
-  	self.shout_votes.length
+  	self.shout_votes.count
   end
 
   # total upvote of a shout

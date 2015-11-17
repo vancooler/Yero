@@ -238,7 +238,7 @@ class Conversation < ActiveRecord::Base
 		whispers.each do |whisper|
 			if Rails.env == 'production'
 				# :nocov:
-				RecentActivity.delay.add_activity(whisper.target_user_id, '4', whisper.origin_user_id, nil, whisper.dynamo_id, "User", whisper.id, '@username sent you a whispere that expired.')
+				RecentActivity.delay.add_activity(whisper.target_user_id, '4', whisper.origin_user_id, nil, whisper.dynamo_id, "User", whisper.id, '@username sent you a whisper that expired')
 				# :nocov:
 			end	
 		end
