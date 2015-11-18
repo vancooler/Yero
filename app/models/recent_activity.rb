@@ -33,9 +33,11 @@ class RecentActivity < ActiveRecord::Base
 				message:     (a.message.nil? ? '' : a.message)
 			}
 			case a.activity_type.to_s
+			
 			# :nocov:
 			when '200'
 				activity_json[:activity_type] = 'Joined Network'
+				activity_json[:message] = "You joined your city's network until 5AM"
 			when '301'
 				activity_json[:activity_type] = 'Replied Your Shout'
 			when '302'
@@ -44,17 +46,21 @@ class RecentActivity < ActiveRecord::Base
 				activity_json[:activity_type] = 'Shout Votes'
 			when '330', '331', '332', '333', '334', '335', '336', '337', '338'
 				activity_json[:activity_type] = 'Shout Comment Votes'
-		
 			when '201'
 				activity_json[:activity_type] = 'Offline'
+				activity_json[:message] = "Your city's network is now offline. All users have been disconnected"
 			when '101'
 				activity_json[:activity_type] = 'Profile Avatar Disabled'
+				activity_json[:message] = "One of your photos has been flagged as inappropriate and removed"
 			when '3'
 				activity_json[:activity_type] = 'Became Friends'
+				activity_json[:message] = "@username is now your friend"
 			when '2-sent'
 				activity_json[:activity_type] = 'Sent Whisper'
+				activity_json[:message] = "You sent a whisper"
 			when '2-received'
 				activity_json[:activity_type] = 'Received Whisper'
+				activity_json[:message] = "@username sent you a whisper"
 			when '4'
 				activity_json[:activity_type] = "Whisper Expired"
 			end
@@ -73,6 +79,7 @@ class RecentActivity < ActiveRecord::Base
 				if !op and !origin_user.nil? and !target_user.nil?
 					activity_json[:object_type] =  'User'
 					activity_json[:object] = origin_user.user_object(target_user)
+					activity_json[:message] = (activity_json[:message].sub '@username', (origin_user.username.nil? ? origin_user.first_name : '@'+origin_user.username))
 				end
 				if op
 					activity_json[:message] = (activity_json[:message].sub '@username', 'OP')
