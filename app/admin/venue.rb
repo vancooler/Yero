@@ -147,7 +147,7 @@ ActiveAdmin.register Venue do
       f.input :latitude
       f.input :longitude
       f.input :phone
-      f.input :timezone, :as => :select, :collection => ['America/Vancouver', 'America/Toronto']
+      f.input :timezone, :as => :select, :collection => TimeZonePlace.all.map(&:timezone)
       f.input :start_time
       f.input :end_time
       f.input :age_requirement

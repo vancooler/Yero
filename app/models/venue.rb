@@ -367,10 +367,10 @@ class Venue < ActiveRecord::Base
         venue[:images] = avatars
       end
       if !v.timezone.nil? and !v.start_time.nil?
-        venue[:start] = Venue.to_utc_timestamp(v.start_time, v.timezone)
+        venue[:start_date] = Venue.to_utc_timestamp(v.start_time, v.timezone)
       end
       if !v.timezone.nil? and !v.end_time.nil?
-        venue[:end] = Venue.to_utc_timestamp(v.end_time, v.timezone)
+        venue[:end_date] = Venue.to_utc_timestamp(v.end_time, v.timezone)
       end
       data << venue
     end

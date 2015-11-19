@@ -1124,18 +1124,23 @@
   <span class="ruby-identifier">latitude: </span><span class="ruby-string">optional</span>
   <span class="ruby-identifier">longitude: </span><span class="ruby-string">optional</span>
 <span class="ruby-keyword">Response:</span>
-  <span class="ruby-string">{</span>
-    <span class="ruby-identifier">shouts: </span>
-    <span class="ruby-string">[</span>
-      <span class="ruby-constant">StandardShoutObject</span>
-    <span class="ruby-string">]</span>
-    <span class="ruby-identifier">pagination: </span>
-      <span class="ruby-string">{</span>
-        <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
-        <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
-        <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
-      <span class="ruby-string">}</span>
-  <span class="ruby-string">}</span>
+  <span class="ruby-string">Senario 1: (Below lock number when network is college)</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">percentage: </span><span class="ruby-string">50</span>  
+    <span class="ruby-string">}</span>
+  <span class="ruby-string">Senario 2: (Above lock number or network is NOT college)</span>
+    <span class="ruby-string">{</span>
+      <span class="ruby-identifier">shouts: </span>
+      <span class="ruby-string">[</span>
+        <span class="ruby-constant">StandardShoutObject</span>
+      <span class="ruby-string">]</span>
+      <span class="ruby-identifier">pagination: </span>
+        <span class="ruby-string">{</span>
+          <span class="ruby-identifier">page: </span><span class="ruby-string">0</span>
+          <span class="ruby-identifier">per_page: </span><span class="ruby-string">24</span>
+          <span class="ruby-identifier">total_count: </span><span class="ruby-string">74</span>
+        <span class="ruby-string">}</span>
+    <span class="ruby-string">}</span>
 
             </pre>
           </div>
@@ -1669,11 +1674,10 @@
       <span class="ruby-identifier">latitude: </span><span class="ruby-constant">float</span>
       <span class="ruby-identifier">longitude: </span><span class="ruby-constant">float</span>
       <span class="ruby-identifier">gimbal_name: </span><span class="ruby-string">string</span>
-      <span class="ruby-identifier">users_number: </span><span class="ruby-string">integer</span>
-      <span class="ruby-identifier">unlock_number: </span><span class="ruby-string">integer</span>
+      <span class="ruby-identifier">favourite: </span><span class="ruby-string">TRUE/FALSE</span>
       <span class="ruby-identifier">shouts_number: </span><span class="ruby-string">integer</span>
-      <span class="ruby-identifier">start: </span><span class="ruby-string">timestamp for festivals</span>
-      <span class="ruby-identifier">end: </span><span class="ruby-string">timestamp for festivals</span>
+      <span class="ruby-identifier">start_date: </span><span class="ruby-string">timestamp for festivals</span>
+      <span class="ruby-identifier">end_date: </span><span class="ruby-string">timestamp for festivals</span>
     <span class="ruby-string">}</span>  
   <span class="ruby-string">],</span>
   <span class="ruby-identifier">pagination: </span>
