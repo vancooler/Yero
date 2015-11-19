@@ -46,58 +46,61 @@ class ChattingMessage < ActiveRecord::Base
 
   # :nocov:
   def send_push_notification_to_target_user(message, sender_id, receiver_id, content_path)
-  	conversation = self.whisper
   	receiver = User.find_user_by_unique(receiver_id)
+    result = true
+    if UserNotificationPreference.no_preference_record_found(receiver, "Whispers")
+      conversation = self.whisper
 
-	deep_link = "yero://whispers/" + sender_id.to_s
-    data = { :alert_message => message, :type => 2, :content_path => content_path, :'content-available' => 1, :deep_link => deep_link}
+      deep_link = "yero://whispers/" + sender_id.to_s
+      data = { :alert_message => message, :type => 2, :content_path => content_path, :'content-available' => 1, :deep_link => deep_link}
 
-    if receiver.id == conversation.target_user_id
-    	last_alert_time = conversation.last_target_user_push_time
-    elsif receiver.id == conversation.origin_user_id
-    	last_alert_time = conversation.last_origin_user_push_time
-    end
-  	current_push = Time.now.to_i
-  	# initial or 1 hour later or message has been read
-  	if conversation.chatting_messages.where.not(speaker_id: receiver.id).blank?
-  		data[:alert] = message
-  		data[:badge] = "Increment"
-  	elsif last_alert_time.nil?
-  		data[:alert] = message
-  		data[:badge] = "Increment"
-  	elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i <= last_alert_time)
-  		data[:alert] = message
-  		data[:badge] = "Increment"
-  	elsif last_alert_time + 60*15 < current_push
-  		data[:alert] = message
-  		data[:badge] = "Increment"
-  	end
-
-
-  	# Scenarios getting alert and increment:
-  	# 1. initial whisper
-  	# 2. last alert notification was cleared
-  	# 3. last alert notification was 1 hour ago
+      if receiver.id == conversation.target_user_id
+        last_alert_time = conversation.last_target_user_push_time
+      elsif receiver.id == conversation.origin_user_id
+        last_alert_time = conversation.last_origin_user_push_time
+      end
+      current_push = Time.now.to_i
+      # initial or 1 hour later or message has been read
+      if conversation.chatting_messages.where.not(speaker_id: receiver.id).blank?
+        data[:alert] = message
+        data[:badge] = "Increment"
+      elsif last_alert_time.nil?
+        data[:alert] = message
+        data[:badge] = "Increment"
+      elsif !(!receiver.nil? and !receiver.last_active.nil? and receiver.last_active.to_i <= last_alert_time)
+        data[:alert] = message
+        data[:badge] = "Increment"
+      elsif last_alert_time + 60*15 < current_push
+        data[:alert] = message
+        data[:badge] = "Increment"
+      end
 
 
-    push = Parse::Push.new(data, "User_" + receiver_id.to_s)
-    push.type = "ios"
-    begin  
-      push.save
-      result = true  
-    rescue  
-      p "Push notification error"
-      result = false 
-    end 
+    	# Scenarios getting alert and increment:
+    	# 1. initial whisper
+    	# 2. last alert notification was cleared
+    	# 3. last alert notification was 1 hour ago
 
-    # update last push alert time
-    if result and !data[:badge].nil? and data[:badge] == "Increment"
-    	if receiver.id == conversation.target_user_id
-	    	conversation.last_target_user_push_time = Time.now.to_i
-	    elsif receiver.id == conversation.origin_user_id
-	    	conversation.last_origin_user_push_time = Time.now.to_i
-	    end
-	    conversation.save
+
+      push = Parse::Push.new(data, "User_" + receiver_id.to_s)
+      push.type = "ios"
+      begin  
+        push.save
+        result = true  
+      rescue  
+        p "Push notification error"
+        result = false 
+      end 
+
+      # update last push alert time
+      if result and !data[:badge].nil? and data[:badge] == "Increment"
+      	if receiver.id == conversation.target_user_id
+  	    	conversation.last_target_user_push_time = Time.now.to_i
+  	    elsif receiver.id == conversation.origin_user_id
+  	    	conversation.last_origin_user_push_time = Time.now.to_i
+  	    end
+  	    conversation.save
+      end
     end
     return result 
   end

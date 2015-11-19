@@ -709,45 +709,53 @@ class WhisperNotification < AWS::Record::HashModel
 
   # :nocov:
   def self.send_notification_301(id, username, shout_id)
-    deep_link = deep_link = "yero://shouts/" + shout_id.to_s
-    data = { :alert => "@"+username+" replied to your shout", :type => 301, :deep_link => deep_link}
-    push = Parse::Push.new(data, "User_" + id.to_s)
-    push.type = "ios"
-    begin  
-      push.save
-      result = true  
-    rescue  
-      p "Push notification error"
-      result = false 
-    end 
+    receiver = User.find_user_by_unique(id)
+    result = true
+    if UserNotificationPreference.no_preference_record_found(receiver, "Replying to my shout")
+      deep_link = deep_link = "yero://shouts/" + shout_id.to_s
+      data = { :alert => "@"+username+" replied to your shout", :type => 301, :deep_link => deep_link}
+      push = Parse::Push.new(data, "User_" + id.to_s)
+      push.type = "ios"
+      begin  
+        push.save
+        result = true  
+      rescue  
+        p "Push notification error"
+        result = false 
+      end 
+    end
     return result    
   end
   # :nocov:
 
   # :nocov:
   def self.send_notification_302(ids, username, shout_id)
-    deep_link = deep_link = "yero://shouts/" + shout_id.to_s
-    shout = Shout.find_by_id(shout_id)
-    if !shout.nil? and shout.user.username == username
-      username = "OP"
-    else
-      username = "@"+username
+    receiver = User.find_user_by_unique(id)
+    result = true
+    if UserNotificationPreference.no_preference_record_found(receiver, "Replying to the same shout")
+      deep_link = deep_link = "yero://shouts/" + shout_id.to_s
+      shout = Shout.find_by_id(shout_id)
+      if !shout.nil? and shout.user.username == username
+        username = "OP"
+      else
+        username = "@"+username
+      end
+      data = { :alert => username+" replied to the same shout", :type => 302, :deep_link => deep_link}
+      channel_array = Array.new
+      ids.each do |id|
+        channel_array << "User_" + id.to_s
+      end
+      push = Parse::Push.new(data, channel_array)
+      push.channels = channel_array
+      push.type = "ios"
+      begin  
+        push.save
+        result = true  
+      rescue  
+        p "Push notification error"
+        result = false 
+      end 
     end
-    data = { :alert => username+" replied to the same shout", :type => 302, :deep_link => deep_link}
-    channel_array = Array.new
-    ids.each do |id|
-      channel_array << "User_" + id.to_s
-    end
-    push = Parse::Push.new(data, channel_array)
-    push.channels = channel_array
-    push.type = "ios"
-    begin  
-      push.save
-      result = true  
-    rescue  
-      p "Push notification error"
-      result = false 
-    end 
     return result    
   end
   # :nocov:
