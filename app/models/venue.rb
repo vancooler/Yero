@@ -78,7 +78,7 @@ class Venue < ActiveRecord::Base
     if venue_ids.empty?
       return []
     else
-      venues = Venue.where(id: venue_ids).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.where(id: venue_ids).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       if !types_array_string.blank?
         venues = venues.where(venue_type_id: types_array_string)
       end
@@ -101,10 +101,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -127,10 +127,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -149,10 +149,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -171,10 +171,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -193,10 +193,10 @@ class Venue < ActiveRecord::Base
     end
     if latitude.nil? or longitude.nil?
       # :nocov:
-      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([49, -123], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
       # :nocov:
     else
-      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries).includes(:beacons)
+      venues = Venue.geocoded.near([latitude, longitude], 10000000, units: :km).includes(:venue_avatars).where.not(venue_avatars: { id: nil }).includes(:active_in_venues, :venue_entries, :favourited_users).includes(:beacons)
     end
 
     if !types_array_string.blank?
@@ -352,8 +352,9 @@ class Venue < ActiveRecord::Base
         type:           (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : '',
         latitude:       v.latitude,
         longitude:      v.longitude,
-        users_number:   v.venue_entries.count,
-        unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
+        favourite:      (v.favourited_users.include? current_user),
+        # users_number:   v.venue_entries.count,
+        # unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
         shouts_number:  Shout.shouts_in_venue(current_user, v.id).length,
         gimbal_name:    (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
       }

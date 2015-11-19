@@ -79,7 +79,7 @@ describe User do
 
 	      it "ppl" do
 	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3657234, longitude: -123.0726173, is_connected: true, key:"3")
-	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", username: "asdf", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: true, key:"1")
 	      	venue_network = VenueNetwork.create!(id:1, name: "V")
 	      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
 	      	beacon = Beacon.create!(id:1, key: "Vancouver_TestVenue_test", venue_id: 1)
@@ -195,14 +195,14 @@ describe User do
 	      end
 
 	      it "Join network" do
-	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"2", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"3", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", email: "test4@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"4", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test5@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"5", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", email: "test6@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"6", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_7 = User.create!(id:7, last_active: Time.now, first_name: "SF", email: "test7@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"7", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_8 = User.create!(id:8, last_active: Time.now, first_name: "SF", email: "test8@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"8", fake_user: true, timezone_name: "America/Vancouver")
-	      	user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"9", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_2 = User.create!(id:2, last_active: Time.now, first_name: "SF", username: "a", email: "test2@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"2", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "aa", email: "test3@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"3", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "aaa", email: "test4@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"4", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", username: "aaaa", email: "test5@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"5", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_6 = User.create!(id:6, last_active: Time.now, first_name: "SF", username: "aaaaa", email: "test6@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"6", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_7 = User.create!(id:7, last_active: Time.now, first_name: "SF", username: "aaaaaa", email: "test7@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"7", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_8 = User.create!(id:8, last_active: Time.now, first_name: "SF", username: "aaaaaaa", email: "test8@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'M', latitude: 49.3657234, longitude: -123.0726173, is_connected: false, key:"8", fake_user: true, timezone_name: "America/Vancouver")
+	      	user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", username: "aaaaaaaa", email: "test9@yero.co", password: "123456", birthday: (Time.now - 21.years), gender: 'F', latitude: 49.3857234, longitude: -123.0746173, is_connected: false, key:"9", fake_user: true, timezone_name: "America/Vancouver")
 	      	ua_2 = UserAvatar.create!(id: 2, user: user_2, is_active: true, order: 0)
 	      	ua_3 = UserAvatar.create!(id: 1, user: user_3, is_active: true, order: 0)
 	      	ua_4 = UserAvatar.create!(id: 4, user: user_4, is_active: true, order: 0)

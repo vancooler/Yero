@@ -305,7 +305,7 @@ class Shout < ActiveRecord::Base
         venue = Venue.find_venue_by_unique(venue)
         user_number = venue.venue_entries.count
         unlock_number = (venue.unlock_number.nil? ? 0 : venue.unlock_number)
-        if user_number >= unlock_number
+        if !(!venue.venue_type.nil? and !venue.venue_type.name.nil? and venue.venue_type.name == "Campus") or user_number >= unlock_number
           venue_id = venue.id
   	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue)
         else
