@@ -1201,6 +1201,7 @@ class User < ActiveRecord::Base
     check_user = User.find_by_email(email)
     if check_user.nil?
       first_name = user_obj['Name'].nil? ? '' : user_obj['Name']
+      username = user_obj['Username'].nil? ? '' : user_obj['Username']
       password = user_obj['Password'].nil? ? '' : user_obj['Password']
       key = loop do
         random_token = SecureRandom.urlsafe_base64(nil, false)
@@ -1219,7 +1220,7 @@ class User < ActiveRecord::Base
       fake_user = true
 
       # create user
-      user = User.create!(:email => email, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true, :last_active => Time.now)
+      user = User.create!(:email => email, :username => username, :birthday => birthday, :first_name => first_name, :password => password, :key => key, :snapchat_id => snapchat_id, :gender => gender, :introduction_1 => introduction_1, :timezone_name => timezone_name, :current_city => current_city, :latitude => latitude, :longitude => longitude, :is_connected => false, :exclusive => false, :fake_user => true, :last_active => Time.now)
 
       if !user.nil?
         user.birthday = user.birthday + 1900.years
@@ -1264,7 +1265,8 @@ class User < ActiveRecord::Base
       # create photos
       latitude = user_obj['Latitude'].to_f
       longitude = user_obj['Longtitude'].to_f
-      check_user.update(:latitude => latitude, :longitude => longitude)
+      username = user_obj['Username']
+      check_user.update(:latitude => latitude, :longitude => longitude, :username => username)
       id_array = ['1', '2', '3', '4', '5', '6']
       id_array.each do |avatar_id|
         current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
@@ -1320,7 +1322,7 @@ class User < ActiveRecord::Base
     time_1 = Time.now
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
-    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).includes(:active_in_venue)
+    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).includes(:active_in_venue)
     all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_2 = Time.now
     # campus_id = VenueType.find_by_name("Campus")
@@ -1339,10 +1341,10 @@ class User < ActiveRecord::Base
 
     end
     time_3 = Time.now
-    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
+    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
     same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
 
-    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
+    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where.not(username: nil).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
     different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
     time_4  = Time.now
     if everyone
