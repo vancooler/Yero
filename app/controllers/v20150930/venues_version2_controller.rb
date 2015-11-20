@@ -97,6 +97,22 @@ module V20150930
       render json: success(data, 'data', pagination)
     end
 
+    def show
+      user = current_user
+      venue = Venue.find_venue_by_unique(params[:id])
+      if venue.nil?
+        error_obj = {
+          code: 404,
+          message: "Cannot find the venue"
+        }
+        render json: error(error_obj, 'error')
+      else
+        data = Venue.venues_object(current_user, [venue])
+      
+        render json: success(data.first)
+      end
+    end
+
     # List of venues
     # :nocov:
     def list

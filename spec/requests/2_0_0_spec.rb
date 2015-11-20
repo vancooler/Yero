@@ -477,6 +477,9 @@ describe 'V2.0.0' do
 
 
 	   	token = user_2.generate_token
+	   	get 'api/venues/2?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	   	expect(response.status).to eql 200
+	   	expect(JSON.parse(response.body)['data']['percentage']).to eql 100
 
 	   	get 'api/venues?page=1&per_page=2&latitude=49.4563&longitude=-122.8787&distance=1000&without_featured_venues=1&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200

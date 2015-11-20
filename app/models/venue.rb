@@ -355,6 +355,7 @@ class Venue < ActiveRecord::Base
         favourite:      (v.favourited_users.include? current_user),
         # users_number:   v.venue_entries.count,
         # unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
+        percentage:     (v.unlock_number.nil? ? 100 : ((v.unlock_number <= v.venue_entries.count) ? 100 : (v.venue_entries.count * 100 / v.unlock_number).to_i)),
         shouts_number:  Shout.shouts_in_venue(current_user, v.id).length,
         gimbal_name:    (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
       }

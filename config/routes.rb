@@ -273,6 +273,7 @@ Rails.application.routes.draw do
 
       # venue APIs 1
       get    'api/venues',                               to: 'venues_version2#index'
+      get    'api/venues/:id',                           to: 'venues_version2#show'
       get    'api/venue_types',                          to: 'venues_version2#list_types'
 
       # Enter Venue APIs 2
