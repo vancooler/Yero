@@ -137,6 +137,8 @@ module V20150930
           user.longitude = params[:longitude].to_f
         end
 
+
+
         if !params[:locality].nil?
           user.current_city = params[:locality]
         end
@@ -145,6 +147,31 @@ module V20150930
           user.current_sublocality = params[:subLocality]
         end
 
+        in_network = false
+        if !params[:places].nil?
+          places = params[:places].to_a
+          places.each do |p|
+            FutureCollege.unique_enter(p, user)
+            beacon = Beacon.find_by_key(p)
+            if !beacon.nil? and !beacon.venue.nil?
+              ActiveInVenue.enter_venue(beacon.venue, user, beacon)
+              in_network = true
+            end
+          end
+        end
+
+        if !params[:latitude].nil? or !params[:longitude].nil?
+          # check festival networks
+          venue = Venue.user_inside(user.latitude, user.longitude)
+          if !venue.nil? and !venue.beacons.blank?
+            ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
+            in_network = true
+          end
+        end
+
+        if !in_network
+          ActiveInVenue.leave_venue(nil, user)
+        end
 
         avatar_ids = params[:avatars].blank? ? [] : params[:avatars].to_a
 

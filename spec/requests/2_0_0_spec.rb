@@ -593,7 +593,7 @@ describe 'V2.0.0' do
 	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
       	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA")
       	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
-	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
+	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", latitude: 100, longitude: 100, center_offset: 10)
       	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
 	    
       	token = user_2.generate_token
@@ -618,6 +618,55 @@ describe 'V2.0.0' do
       	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue2_test"
       	expect(ActiveInVenueNetwork.count).to eql 1
 
+      	put 'api/users', {:token => token, :places => ["wedare College", "Vancouver_TestVenue_test"], :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	# expect(JSON.parse(response.body)['data']['wechat_id']).to eql "wedare"
+      	expect(JSON.parse(response.body)['data']['current_network']['id']).to eql 1
+      	expect(FutureCollege.count).to eql 1
+      	expect(FutureCollege.first.name).to eql "wedare College"
+      	expect(FutureCollege.first.unique_count).to eql 1
+      	expect(FutureCollege.first.user_ids).to eql ";2;"
+
+      	put 'api/users', {:token => token, :places => ["wedare College"], :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	# expect(JSON.parse(response.body)['data']['wechat_id']).to eql "wedare"
+      	expect(JSON.parse(response.body)['data']['current_network']).to eql nil
+      	expect(ActiveInVenue.count).to eql 0
+      	expect(ActiveInVenueNetwork.count).to eql 1
+      	expect(FutureCollege.count).to eql 1
+      	expect(FutureCollege.first.name).to eql "wedare College"
+      	expect(FutureCollege.first.unique_count).to eql 1
+      	expect(FutureCollege.first.user_ids).to eql ";2;"
+
+      	put 'api/users', {:token => token, :places => [], :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 99.1, :longitude => 102.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	# expect(JSON.parse(response.body)['data']['wechat_id']).to eql "wedare"
+      	expect(JSON.parse(response.body)['data']['current_network']['id']).to eql 2
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenueNetwork.count).to eql 1
+
+
+      	user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "ASDFas", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3857234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
+	    token = user_3.generate_token
+
+	    put 'api/users', {:token => token, :places => ["wedare College"], :snapchat_id => "saare", :line_id => "liare", :spotify_id => "spsdare", :spotify_token => "ASDF", :instagram_id => "inare", :instagram_token => "SDF", :timezone => "America/Vancouver", :latitude => 49.1, :longitude => -122.9, :introduction_1 => "He Has ...", :introduction_2 => "s?", :discovery => false, :exclusive => false}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+      	# expect(JSON.parse(response.body)['data']['wechat_id']).to eql "wedare"
+      	expect(JSON.parse(response.body)['data']['current_network']).to eql nil
+      	expect(ActiveInVenue.count).to eql 1
+      	expect(ActiveInVenueNetwork.count).to eql 1
+      	expect(FutureCollege.count).to eql 1
+      	expect(FutureCollege.first.name).to eql "wedare College"
+      	expect(FutureCollege.first.unique_count).to eql 2
+      	expect(FutureCollege.first.user_ids).to eql ";2;3;"
+
+
+		token = user_2.generate_token
 
       	delete 'api/venues', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -643,7 +692,7 @@ describe 'V2.0.0' do
       	expect(ActiveInVenue.count).to eql 0
       	expect(ActiveInVenueNetwork.count).to eql 0
 
-
+      	FutureCollege.delete_all
       	VenueEntry.delete_all
       	ActiveInVenue.delete_all
       	ActiveInVenueNetwork.delete_all

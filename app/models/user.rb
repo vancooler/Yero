@@ -313,7 +313,7 @@ class User < ActiveRecord::Base
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
       # json.joined_today is_connected
       # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
-      # json.current_venue (self.current_venue.blank? or self.current_venue.beacons.blank? or self.current_venue.beacons.first.key.blank? ) ? '' : self.current_venue.beacons.first.key.split('_').second
+      json.current_network (self.current_venue.blank?) ? nil : Venue.venues_object(self, [self.current_venue]).first
       json.locality current_city.blank? ? '' : current_city
       json.subLocality current_sublocality.blank? ? '' : current_sublocality
       json.last_status_active_time (self.last_status_active_time.nil? ? 0 : self.last_status_active_time.to_i)
