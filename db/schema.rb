@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151106140154) do
+ActiveRecord::Schema.define(version: 20151120124324) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -225,6 +225,14 @@ ActiveRecord::Schema.define(version: 20151106140154) do
     t.integer  "origin_user_id",                                 null: false
     t.datetime "friend_time",    default: '2015-07-24 20:45:56', null: false
     t.boolean  "viewed"
+  end
+
+  create_table "future_colleges", force: true do |t|
+    t.integer  "unique_count"
+    t.string   "name"
+    t.text     "user_ids"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "global_variables", force: true do |t|
