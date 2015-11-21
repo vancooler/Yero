@@ -78,14 +78,20 @@ ActiveAdmin.register Venue do
     # column :email
     column "Name", :name
     column "Type", :venue_type
-    column "Owner", :web_user
+    # column "Owner", :web_user
     # column "City Network", :venue_network
-    column :unlock_number
+    # column :unlock_number
     column "Address" do |venue|
       (venue.address_line_one.nil? ? '' : venue.address_line_one) + (venue.address_line_two.nil? ? '' : ' ' + venue.address_line_two) + (venue.city.nil? ? '' : ', ' + venue.city)
     end
+
+    column "Location" do |venue|
+      '(' + (venue.latitude.nil? ? '' : venue.latitude) + ', ' +  (venue.longitude.nil? ? '' : ' ' + venue.longitude) + ')'
+    end
+
+    column :center_offset
     
-    column :phone
+    # column :phone
 
     # column :age_requirement
     # column :longitude
