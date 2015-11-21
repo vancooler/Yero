@@ -352,7 +352,7 @@ class Venue < ActiveRecord::Base
         type:           (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : '',
         latitude:       v.latitude,
         longitude:      v.longitude,
-        favourite:      (v.favourited_users.include? current_user),
+        favourite:      (v.favourited_users.map(&:user_id).include? current_user.id),
         # users_number:   v.venue_entries.count,
         # unlock_number:  (v.unlock_number.nil? ? 0 : v.unlock_number),
         city:           (v.city.nil? ? '' : v.city),
