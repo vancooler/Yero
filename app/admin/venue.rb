@@ -86,7 +86,7 @@ ActiveAdmin.register Venue do
     end
 
     column "Location" do |venue|
-      '(' + (venue.latitude.nil? ? '' : venue.latitude) + ', ' +  (venue.longitude.nil? ? '' : ' ' + venue.longitude) + ')'
+      '(' + (venue.latitude.nil? ? '' : venue.latitude.to_s) + ', ' +  (venue.longitude.nil? ? '' : venue.longitude.to_s) + ')'
     end
 
     column :center_offset
