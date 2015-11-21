@@ -137,7 +137,6 @@ ActiveAdmin.register Venue do
       f.input :venue_type
       f.input :web_user, :label => "Owner"
       f.input :venue_network, :label => "City Network"
-      f.input :unlock_number
       f.input :address_line_one
       f.input :address_line_two
       f.input :city
@@ -146,6 +145,7 @@ ActiveAdmin.register Venue do
       f.input :zipcode
       f.input :latitude
       f.input :longitude
+      f.input :center_offset
       f.input :phone
       f.input :timezone, :as => :select, :collection => TimeZonePlace.all.map(&:timezone)
       f.input :start_time
