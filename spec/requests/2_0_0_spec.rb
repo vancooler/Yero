@@ -139,12 +139,12 @@ describe 'V2.0.0' do
 	    user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", username: "ASadfadfDF", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3957234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua = UserAvatar.create!(id: 9, user: user_9, is_active: true, order: 0)
 	    
-	    get 'api/users?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	    get 'api/users?token='+token, {:max_distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 7
 
-      	get 'api/users?token='+token + '&page=0&per_page=4', {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users?token='+token + '&page=0&per_page=4', {:max_distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 4
@@ -463,11 +463,11 @@ describe 'V2.0.0' do
         venue_type_3 = VenueType.create!(id:3, name:"Campus")
         venue_type_4 = VenueType.create!(id:4, name:"Stadium")
         TimeZonePlace.create(timezone: "America/Vancouver")
-        venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.153, longitude: -123.436, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+13.hours)
-        venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type, latitude: 49.423, longitude: -123.532, featured: false)
-        venue_3 = Venue.create!(id:3, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.463, longitude: -123.312, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+3.hours)
-        venue_4 = Venue.create!(id:4, venue_network: venue_network, name: "DDD", venue_type:venue_type_2, latitude: 49.353, longitude: -123.424, featured: true)
-        venue_5 = Venue.create!(id:5, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.423, longitude: -123.532, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+13.hours)
+        venue_1 = Venue.create!(id:1, venue_network: venue_network, name: "AAA", venue_type:venue_type, latitude: 49.383, longitude: -123.076, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+13.hours)
+        venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB", venue_type:venue_type, latitude: 49.387, longitude: -123.072, featured: false)
+        venue_3 = Venue.create!(id:3, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.382, longitude: -123.0732, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+3.hours)
+        venue_4 = Venue.create!(id:4, venue_network: venue_network, name: "DDD", venue_type:venue_type_2, latitude: 49.384, longitude: -123.0734, featured: true)
+        venue_5 = Venue.create!(id:5, venue_network: venue_network, name: "CCC", venue_type:venue_type, latitude: 49.3819, longitude: -123.0753, featured: false, timezone: "America/Vancouver", start_time: Time.now-13.hours, end_time: Time.now+13.hours)
         VenueAvatar.create!(id: 2, venue_id: 1, default: true)
         VenueAvatar.create!(id: 3, venue_id: 2, default: true)
         VenueAvatar.create!(id: 4, venue_id: 3, default: true)
@@ -491,7 +491,7 @@ describe 'V2.0.0' do
 		get 'api/venues?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 5
-		expect(JSON.parse(response.body)['data'][0]['id']).to eql 3
+		expect(JSON.parse(response.body)['data'][0]['id']).to eql 2
 
 		get 'api/venues?type=nightlife&token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
@@ -517,7 +517,7 @@ describe 'V2.0.0' do
 		expect(JSON.parse(response.body)['data'].count).to eql 1
 
 		# Venue.collect_network_types(user_2, user_2.latitude, user_2.longitude, 60)
-		get 'api/venue_types?token='+token, {}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		get 'api/venue_types?token='+token, {:distance => 100000}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 	   	expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['data'].count).to eql 6
 		expect(JSON.parse(response.body)['data'][0]['title']).to eql "Favourite"

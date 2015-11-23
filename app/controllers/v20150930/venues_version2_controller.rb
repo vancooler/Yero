@@ -11,7 +11,7 @@ module V20150930
       if !params[:distance].nil? and params[:distance].to_i > 0
         distance = params[:distance].to_i
       else
-        distance = 60
+        distance = 30
       end
       if !params[:latitude].blank? 
         latitude = params[:latitude].to_f
@@ -46,7 +46,7 @@ module V20150930
       if !params[:distance].nil? and params[:distance].to_i > 0
         distance = params[:distance].to_i
       else
-        distance = 10000
+        distance = 30
       end
       if !params[:latitude].blank? 
         latitude = params[:latitude].to_f

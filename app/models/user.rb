@@ -239,8 +239,8 @@ class User < ActiveRecord::Base
       users = users.where("birthday <= ?", (min_age).years.ago) # Filter by min age
     end
     min_distance = 0 if min_distance.nil? 
-    max_distance = 60 if max_distance.nil?
-    max_distance = max_distance.blank? ? 60 : max_distance
+    max_distance = 30 if max_distance.nil?
+    max_distance = max_distance.blank? ? 30 : max_distance
     self.user_sort(users, min_distance, max_distance) #Returns the users filtered
 
   end
@@ -1446,7 +1446,8 @@ class User < ActiveRecord::Base
           user_json = {
             whisper_sent:             (whispers_sent.include? user.id),
             same_venue_badge:         (same_venue_user_ids.include? user.id),
-            different_venue_badge:    (different_venue_user_ids.include? user.id),
+            current_network:          (user.current_venue.nil? ? '' : user.current_venue.id),
+            # different_venue_badge:    (different_venue_user_ids.include? user.id),
             venue_type:               (user.current_venue.nil? or user.current_venue.venue_type.nil? or user.current_venue.venue_type.name.nil?) ? '' : user.current_venue.venue_type.name,
             id:                       user.id,
             first_name:               user.first_name,
