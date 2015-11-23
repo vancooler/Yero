@@ -201,7 +201,7 @@ class Shout < ActiveRecord::Base
     shout.image_url = image_url
     shout.image_thumb_url = image_thumb_url
     shout.audio_url = audio_url
-  	shout.body = body
+  	shout.body = (body.nil? ? '' : body.rstrip)
   	shout.user_id = current_user.id
   	shout.anonymous = anonymous
   	result = shout.save

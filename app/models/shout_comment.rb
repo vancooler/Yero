@@ -160,7 +160,7 @@ class ShoutComment < ActiveRecord::Base
     shout_comment.image_thumb_url = image_thumb_url
     shout_comment.audio_url = audio_url
     shout_comment.neighbourhood = current_user.current_sublocality
-    shout_comment.body = body
+    shout_comment.body = (body.nil? ? '' : body.rstrip)
   	shout_comment.shout_id = shout_id.to_i
   	shout_comment.user_id = current_user.id
   	if !current_user.current_venue.nil?
