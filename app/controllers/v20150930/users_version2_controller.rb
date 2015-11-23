@@ -151,11 +151,17 @@ module V20150930
         if !params[:places].nil?
           places = params[:places].to_a
           places.each do |p|
-            FutureCollege.unique_enter(p, user)
+            if p == 'The University Of British Columbia (Ubc)'
+              p = 'Vancouver_UBC_test'
+            elsif p == 'Simon Fraser University (Sfu)'
+              p = 'Vancouver_SFU_test'
+            end
             beacon = Beacon.find_by_key(p)
             if !beacon.nil? and !beacon.venue.nil?
               ActiveInVenue.enter_venue(beacon.venue, user, beacon)
               in_network = true
+            else
+              FutureCollege.unique_enter(p, user)
             end
           end
         end

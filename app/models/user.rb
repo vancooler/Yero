@@ -1212,7 +1212,7 @@ class User < ActiveRecord::Base
       gender = user_obj['Gender']
       introduction_1 = user_obj['Bio']
       timezone_name = "America/Vancouver"
-      current_city = "Vancovuer"
+      current_city = "Vancouver"
       latitude = user_obj['Latitude'].to_f
       longitude = user_obj['Longtitude'].to_f
       is_connected = false

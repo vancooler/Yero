@@ -209,7 +209,7 @@ class ShoutComment < ActiveRecord::Base
         venue_id:        ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
         author_id: 	     shout_comment.user_id,
         author_username: (User.find_by_id(shout_comment.user_id).nil? ? "" : User.find_by_id(shout_comment.user_id).username),
-        network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
+        network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.gimbal_name.empty?) ? '' : shout_comment.venue.gimbal_name)
 		  }
   		if Rails.env == "production"
   			# :nocov:	
@@ -373,7 +373,7 @@ class ShoutComment < ActiveRecord::Base
         venue_id:        ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key),
         author_id:       shout_comment.user_id,
         author_username: (shout_comment.user.nil? ? "" : shout_comment.user.username),
-        network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.beacons.empty?) ? '' : shout_comment.venue.beacons.first.key)
+        network_gimbal_key:  ((shout_comment.venue.nil? or shout_comment.venue.gimbal_name.empty?) ? '' : shout_comment.venue.gimbal_name)
       }
       return_shout_comments << shout_comment_json
     end

@@ -251,7 +251,7 @@ class Shout < ActiveRecord::Base
         expire_timestamp:    shout.created_at.to_i+7*24*3600,
         total_upvotes: 	     1,
         actions:             ["undo_upvote", "downvote"],
-        network_gimbal_key:  ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+        network_gimbal_key:  ((shout.venue.nil? or shout.venue.gimbal_name.empty?) ? '' : shout.venue.gimbal_name),
         count:               0,
         author_id:           shout.user_id,
         author_username: 		 (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)
@@ -419,7 +419,7 @@ class Shout < ActiveRecord::Base
         expire_timestamp:    shout.created_at.to_i+7*24*3600,
         total_upvotes:       shout.total_upvotes,
         actions:             actions,
-        network_gimbal_key:  ((shout.venue.nil? or shout.venue.beacons.empty?) ? '' : shout.venue.beacons.first.key),
+        network_gimbal_key:  ((shout.venue.nil? or shout.venue.gimbal_name.empty?) ? '' : shout.venue.gimbal_name),
         count:               ShoutComment.list(current_user, shout.id, nil, nil)['shout_comments'].length,
         author_id:           shout.user_id,
         author_username:     (User.find_by_id(shout.user_id).nil? ? "" : User.find_by_id(shout.user_id).username)

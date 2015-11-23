@@ -26,10 +26,36 @@ class Venue < ActiveRecord::Base
   accepts_nested_attributes_for :venue_logos, allow_destroy: true
 
 
+
+  def place_key
+    if self.beacons.empty?
+      return ''
+    else
+      if self.beacons.first.key.nil?
+        return ''
+      elsif self.beacons.first.key == "Vancouver_UBC_test"
+        return 'The University Of British Columbia (Ubc)'
+      elsif self.beacons.first.key == 'Vancouver_SFU_test'
+        return 'Simon Fraser University (Sfu)'
+      else
+        return self.beacons.first.key
+      end
+    end
+  end
+
+  def gimbal_name
+    return (self.city.nil? ? 'Vancouver' : self.city.titleize) + '_' + (self.name.nil? ? '' : self.name) + '_test'
+  end
+
   def self.find_venue_by_unique(key)
     venue = nil
     if !key.blank?
       if !/\A\d+\z/.match(key.to_s)
+        if key.to_s == 'Simon Fraser University (Sfu)'
+          key = 'Vancouver_SFU_test'
+        elsif key.to_s == 'The University Of British Columbia (Ubc)'
+          key = 'Vancouver_UBC_test'
+        end
         beacon = Beacon.find_by_key(key.to_s)
         if !beacon.nil?
           venue = beacon.venue
@@ -360,6 +386,11 @@ class Venue < ActiveRecord::Base
         shouts_number:  Shout.shouts_in_venue(current_user, v.id).length,
         gimbal_name:    (v.beacons.blank? ? '' : (v.beacons.first.key.blank? ? '' : v.beacons.first.key))
       }
+
+      if (!current_user.version.nil? and current_user.version.to_f >= 2)
+        venue[:gimbal_name] = v.gimbal_name
+        venue[:place_key] = v.place_key
+      end
       images = VenueAvatar.where(venue_id: v.id).order(default: :desc)
       if !images.empty?
         avatars = Array.new
