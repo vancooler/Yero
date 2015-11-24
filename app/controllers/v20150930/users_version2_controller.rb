@@ -379,6 +379,7 @@ module V20150930
             @user.line_id = params[:line_id].gsub!(/\s+/, "") 
           end
         end
+        @user.version = "2.0"
         @user.nonce = params[:nonce] if params[:nonce].present?
         @user.exclusive = params[:exclusive] if params[:exclusive].present?
         # create user key
@@ -443,6 +444,7 @@ module V20150930
             # Authenticated successfully
             
             user.last_active = Time.now
+            user.version = "2.0"
             user.save!
             ActiveInVenue.leave_venue(nil, user)
             user_info = user.to_json(true)
