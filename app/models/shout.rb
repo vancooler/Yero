@@ -171,7 +171,7 @@ class Shout < ActiveRecord::Base
   # :nocov:
 
   # Create a new shout
-  def self.create_shout(current_user, body, exclusive, anonymous, image_url, image_thumb_url, audio_url, latitude, longitude)
+  def self.create_shout(current_user, body, exclusive, anonymous, image_url, image_thumb_url, audio_url)
   	shout = Shout.new
   	# venue = Venue.find_venue_by_unique(venue_id)
     if !current_user.current_venue.nil?
@@ -179,16 +179,8 @@ class Shout < ActiveRecord::Base
       shout.longitude = current_user.current_venue.longitude
       shout.venue_id = current_user.current_venue.id 
     else
-      if !latitude.nil?
-        shout.latitude = latitude
-      else
-        shout.latitude = current_user.latitude
-      end
-      if !longitude.nil?
-        shout.longitude = longitude
-      else
-        shout.longitude = current_user.longitude
-      end
+      shout.latitude = current_user.latitude
+      shout.longitude = current_user.longitude
     end
     if !exclusive
       shout.allow_nearby = true
@@ -280,7 +272,7 @@ class Shout < ActiveRecord::Base
   end
 
   # collect shouts in a venue or near users
-  def self.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
+  def self.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, latitude, longitude)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and my_comments
@@ -290,7 +282,7 @@ class Shout < ActiveRecord::Base
   	elsif !my_shouts.nil? and my_shouts
   		shouts = Shout.where(user_id: current_user.id).includes(:venue)
   	else
-	  	if venue.nil?
+	  	if venue.nil? and city.nil?
 	  		current_venue = current_user.current_venue
 	  		if !current_venue.nil?
 	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue)
@@ -299,8 +291,16 @@ class Shout < ActiveRecord::Base
 	  		end
 	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 30, units: :km).includes(:venue)
 	  		shouts = shouts | same_venue_shouts
-	  		
-	  	else
+  		elsif venue.nil? and !city.nil?
+        current_venue = current_user.current_venue
+        if !current_venue.nil?
+          same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue)
+        else
+          same_venue_shouts = []
+        end
+        shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).where(city: city).includes(:venue)
+        shouts = shouts | same_venue_shouts
+	  	elsif !venue.nil? and city.nil?
 	  		# venue_id = venue
         venue = Venue.find_venue_by_unique(venue)
         user_number = venue.venue_entries.count
@@ -326,7 +326,7 @@ class Shout < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue, my_shouts, my_comments, page, per_page, latitude, longitude)
+  def self.list(current_user, order_by, venue, city, my_shouts, my_comments, page, per_page)
   	result = Hash.new
   	time_0 = Time.now
   	query_venue = Venue.find_venue_by_unique(venue)
@@ -335,7 +335,7 @@ class Shout < ActiveRecord::Base
   	else
   		venue = query_venue.id
   	end
-  	shouts = Shout.collect_shouts_nearby(current_user, venue, my_shouts, my_comments, latitude, longitude)
+  	shouts = Shout.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, current_user.latitude, current_user.longitude)
 
     if shouts.is_a? Integer
       result['percentage'] = shouts

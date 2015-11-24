@@ -97,15 +97,47 @@ module V20150930
       latitude = nil
       longitude = nil
       if !params[:latitude].blank? 
-        latitude = params[:latitude].to_f
+        current_user.latitude = params[:latitude].to_f
       end
       if !params[:longitude].blank? 
-        longitude = params[:longitude].to_f
+        current_user.longitude = params[:longitude].to_f
       end
+
+      if !params[:locality].blank?
+        current_user.current_city = params[:locality]
+      else
+        current_user.current_city = ""
+      end
+
+      if !params[:subLocality].blank?
+        current_user.current_sublocality = params[:subLocality]
+      else
+        current_user.current_sublocality = ""
+      end
+
+      current_user.save!
+
+      # network status update
+      in_network = false
+      # check colleges
+      if !params[:network_id].nil?
+        network = Venue.find_venue_by_unique(params[:network_id])
+        if !network.nil? and !network.beacons.empty?
+          ActiveInVenue.enter_venue(network, current_user, network.beacons.first)
+          in_network = true
+        else
+          # FutureCollege.unique_enter(p, user)
+        end
+      end
+
+      if !in_network
+        ActiveInVenue.leave_venue(nil, current_user)
+      end
+
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       exclusive = (!params['exclusive'].nil? ? (params['exclusive'].to_s == '1' or params['exclusive'].to_s == 'true') : false)
       
-      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, image_url, image_thumb_url, audio_url, latitude, longitude)
+      shout = Shout.create_shout(current_user, params[:body], exclusive, anonymous, image_url, image_thumb_url, audio_url)
       if shout
         # Pusher later
         render json: success(shout)
@@ -129,15 +161,49 @@ module V20150930
       latitude = current_user.latitude
       longitude = current_user.longitude
       if !params[:latitude].blank? 
-        latitude = params[:latitude].to_f
+        current_user.latitude = params[:latitude].to_f
       end
       if !params[:longitude].blank? 
-        longitude = params[:longitude].to_f
+        current_user.longitude = params[:longitude].to_f
       end
+
+      current_user.save
+
+      # network status update
+      in_network = false
+      # check colleges
+      if !params[:places].nil?
+        places = params[:places].to_a
+        places.each do |p|
+          if p == 'The University Of British Columbia (Ubc)'
+            p = 'Vancouver_UBC_test'
+          elsif p == 'Simon Fraser University (Sfu)'
+            p = 'Vancouver_SFU_test'
+          end
+          beacon = Beacon.find_by_key(p)
+          if !beacon.nil? and !beacon.venue.nil?
+            ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
+            in_network = true
+          else
+            # FutureCollege.unique_enter(p, user)
+          end
+        end
+      end
+
+      # check other networks
+      if !params[:latitude].nil? or !params[:longitude].nil?
+        # check festival networks
+        venue = Venue.user_inside(current_user.latitude, current_user.longitude)
+        if !venue.nil? and !venue.beacons.blank?
+          ActiveInVenue.enter_venue(venue, current_user, venue.beacons.first)
+          in_network = true
+        end
+      end
+
       my_shouts = (!params['my_shouts'].nil? ? (params['my_shouts'].to_s == '1' or params['my_shouts'].to_s == 'true') : false)
       my_comments = (!params['my_comments'].nil? ? (params['my_comments'].to_s == '1' or params['my_comments'].to_s == 'true') : false)
       
-      result = Shout.list(current_user, params[:order_by], params[:venue], my_shouts, my_comments, page, per_page, latitude, longitude)
+      result = Shout.list(current_user, params[:order_by], params[:venue], params[:city], my_shouts, my_comments, page, per_page)
       if result['percentage'].nil?
         response = {
           shouts: result['shouts']

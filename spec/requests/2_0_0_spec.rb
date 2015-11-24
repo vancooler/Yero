@@ -1524,7 +1524,7 @@ describe 'V2.0.0' do
 
       	# user_2 post shout
       	expect(ActiveInVenueNetwork.count).to eql 1
-      	post 'api/shouts', {:token => token, :body => "AAA", :exclusive => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "AAA", :exclusive => 1, :network_id => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 1
@@ -1533,7 +1533,7 @@ describe 'V2.0.0' do
       	shout_1 = Shout.last
       	expect(shout_1.anonymous).to eql true
 
-      	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true, :image_url => "http://bb", :image_thumb_url => "http://bbb", :audio_url => "http://b"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "BBB", :anonymous => true, :network_id => 1, :city => "Vancouver", :image_url => "http://bb", :image_thumb_url => "http://bbb", :audio_url => "http://b"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 2
@@ -1568,6 +1568,14 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_2.id
+
+
+      	get 'api/shouts', {:token => token, :order_by => "hot", :city => "Vancouver"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	expect(response.status).to eql 200
+      	expect(JSON.parse(response.body)['success']).to eql true
+      	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
+
+
 
       	get 'api/shouts', {:token => token, :order_by => "new"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200

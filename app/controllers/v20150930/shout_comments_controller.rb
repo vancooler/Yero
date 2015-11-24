@@ -12,6 +12,37 @@ module V20150930
         image_thumb_url = params[:image_thumb_url].blank? ? "" : params[:image_thumb_url]
         audio_url = params[:audio_url].blank? ? "" : params[:audio_url]
 
+        if !params[:locality].blank?
+          current_user.current_city = params[:locality]
+        else
+          current_user.current_city = ""
+        end
+
+        if !params[:subLocality].blank?
+          current_user.current_sublocality = params[:subLocality]
+        else
+          current_user.current_sublocality = ""
+        end
+
+        current_user.save!
+
+        # network status update
+        in_network = false
+        # check colleges
+        if !params[:network_id].nil?
+          network = Venue.find_venue_by_unique(params[:network_id])
+          if !network.nil? and !network.beacons.empty?
+            ActiveInVenue.enter_venue(network, current_user, network.beacons.first)
+            in_network = true
+          else
+            # FutureCollege.unique_enter(p, user)
+          end
+        end
+
+        if !in_network
+          ActiveInVenue.leave_venue(nil, current_user)
+        end
+
         shout_comment = ShoutComment.create_shout_comment(current_user, params[:body], params[:shout_id], image_url, image_thumb_url, audio_url)
         if shout_comment
           # Pusher later

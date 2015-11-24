@@ -139,12 +139,16 @@ module V20150930
 
 
 
-        if !params[:locality].nil?
+        if !params[:locality].blank?
           user.current_city = params[:locality]
+        else
+          user.current_city = ""
         end
 
-        if !params[:subLocality].nil?
+        if !params[:subLocality].blank?
           user.current_sublocality = params[:subLocality]
+        else
+          user.current_sublocality = ""
         end
 
         in_network = false
