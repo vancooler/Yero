@@ -38,31 +38,88 @@ class RecentActivity < ActiveRecord::Base
 			when '200'
 				activity_json[:activity_type] = 'Joined Network'
 				activity_json[:message] = "You joined your city's network until 5AM"
+				activity_json[:deep_link] = ""
 			when '301'
 				activity_json[:activity_type] = 'Replied Your Shout'
+				if !a.contentable_type.nil? and !a.contentable_id.nil?
+					if a.contentable_type == "Shout"
+						deeplink_shout_id = a.contentable_id
+					elsif a.contentable_type == "ShoutComment"
+						shout_comment = ShoutComment.find_by_id(a.contentable_id)
+						if !shout_comment.nil?
+							deeplink_shout_id = shout_comment.shout_id
+						end
+						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
+					end
+				end
 			when '302'
 				activity_json[:activity_type] = 'Replied Same Shout'
+				if !a.contentable_type.nil? and !a.contentable_id.nil?
+					if a.contentable_type == "Shout"
+						deeplink_shout_id = a.contentable_id
+					elsif a.contentable_type == "ShoutComment"
+						shout_comment = ShoutComment.find_by_id(a.contentable_id)
+						if !shout_comment.nil?
+							deeplink_shout_id = shout_comment.shout_id
+						end
+						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
+					end
+				end
 			when '310', '311', '312', '313', '314', '315', '316', '317', '318'
 				activity_json[:activity_type] = 'Shout Votes'
+				if !a.contentable_type.nil? and !a.contentable_id.nil?
+					if a.contentable_type == "Shout"
+						deeplink_shout_id = a.contentable_id
+					elsif a.contentable_type == "ShoutComment"
+						shout_comment = ShoutComment.find_by_id(a.contentable_id)
+						if !shout_comment.nil?
+							deeplink_shout_id = shout_comment.shout_id
+						end
+						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
+					end
+				end
 			when '330', '331', '332', '333', '334', '335', '336', '337', '338'
 				activity_json[:activity_type] = 'Shout Comment Votes'
+				if !a.contentable_type.nil? and !a.contentable_id.nil?
+					if a.contentable_type == "Shout"
+						deeplink_shout_id = a.contentable_id
+					elsif a.contentable_type == "ShoutComment"
+						shout_comment = ShoutComment.find_by_id(a.contentable_id)
+						if !shout_comment.nil?
+							deeplink_shout_id = shout_comment.shout_id
+						end
+						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
+					end
+				end
 			when '201'
 				activity_json[:activity_type] = 'Offline'
+				activity_json[:deep_link] = ""
 				activity_json[:message] = "Your city's network is now offline. All users have been disconnected"
 			when '101'
 				activity_json[:activity_type] = 'Profile Avatar Disabled'
+				activity_json[:deep_link] = ""
 				activity_json[:message] = "One of your photos has been flagged as inappropriate and removed"
 			when '3'
 				activity_json[:activity_type] = 'Became Friends'
+				activity_json[:deep_link] = ""
 				activity_json[:message] = "@username is now your friend"
 			when '2-sent'
 				activity_json[:activity_type] = 'Sent Whisper'
+				activity_json[:deep_link] = ""
 				activity_json[:message] = "You sent a whisper"
 			when '2-received'
 				activity_json[:activity_type] = 'Received Whisper'
 				activity_json[:message] = "@username sent you a whisper"
+				activity_json[:deep_link] = ""
 			when '4'
 				activity_json[:activity_type] = "Whisper Expired"
+				if !a.origin_user_id.nil? and !a.target_user_id.nil?
+					origin_user = User.find_user_by_unique(a.origin_user_id)
+					target_user = User.find_user_by_unique(a.target_user_id)
+					if !origin_user.nil? and !target_user.nil?
+						activity_json[:deep_link] = "yero://users/"+origin_user.id.to_s
+					end
+				end
 			end
 			# :nocov:
 			if !a.origin_user_id.nil? and !a.target_user_id.nil?
