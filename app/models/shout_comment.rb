@@ -99,11 +99,11 @@ class ShoutComment < ActiveRecord::Base
       # :nocov:
       if current_user.pusher_private_online
         channel = 'private-user-' + current_user.id.to_s
-        Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.point+100})
       end
       if self.user.pusher_private_online
         channel = 'private-user-' + self.user.id.to_s
-        Pusher.trigger(channel, 'update_point_event', {point: self.user.point})
+        Pusher.trigger(channel, 'update_point_event', {point: self.user.point+100})
       end
       # :nocov:
     end
@@ -267,11 +267,11 @@ class ShoutComment < ActiveRecord::Base
         # :nocov:
         if current_user.pusher_private_online
           channel = 'private-user-' + current_user.id.to_s
-          Pusher.trigger(channel, 'update_point_event', {point: current_user.point})
+          Pusher.trigger(channel, 'update_point_event', {point: current_user.point+100})
         end
         if shout_comment.shout.user.pusher_private_online
           channel = 'private-user-' + shout_comment.shout.user.id.to_s
-          Pusher.trigger(channel, 'update_point_event', {point: shout_comment.shout.user.point})
+          Pusher.trigger(channel, 'update_point_event', {point: shout_comment.shout.user.point+100})
         end
         # :nocov:
       end
