@@ -226,9 +226,11 @@ module V20150930
           user.update(latitude: params[:latitude].to_f, longitude: params[:longitude].to_f)
         end
 
-        if !params[:gimbal_name].blank?
-          beacon = Beacon.find_by_key(params[:gimbal_name])
-          ActiveInVenue.enter_venue(beacon.venue, user, beacon)
+        if !params[:network_id].blank?
+          venue = Venue.find_venue_by_unique(params[:network_id])
+          if !venue.nil? and !venue.beacons.empty?
+            ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
+          end
         else
           ActiveInVenue.leave_venue(nil, current_user)
         end
