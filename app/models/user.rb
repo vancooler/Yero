@@ -311,6 +311,9 @@ class User < ActiveRecord::Base
       json.exclusive exclusive
       json.point self.points_to_display
       json.last_active (last_active.nil? ? 0 : last_active.to_i)
+      json.got_25_upvotes self.badge_count(25, 50)
+      json.got_100_upvotes self.badge_count(100, 250)
+      json.got_250_upvotes self.badge_count(250, 1.0/0.0)
       # json.joined_today is_connected
       # json.last_status_active_time (last_status_active_time.nil? ? 0 : last_status_active_time.to_i)
       json.current_network (self.current_venue.blank?) ? nil : Venue.venues_object(self, [self.current_venue]).first
@@ -1703,4 +1706,11 @@ class User < ActiveRecord::Base
   end
   # :nocov:
 
+
+  def badge_count(from, to)
+    shout_count = self.shouts.select{|s| s.total_upvotes >= from and s.total_upvotes < to}.count
+    shout_comment_count = self.shout_comments.select{|s| s.total_upvotes >= from and s.total_upvotes < to}.count
+
+    return (shout_count+shout_comment_count)
+  end
 end
