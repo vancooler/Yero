@@ -110,8 +110,11 @@ module V20150930
 
         # status
         if !params[:status].nil? 
-          user.introduction_2 = params[:status]
-          user.last_status_active_time = Time.now
+          if user.introduction_2 != params[:status]
+            user.introduction_2 = params[:status]
+            user.last_status_active_time = Time.now
+            user.point += 4
+          end
         end
 
         if !params[:exclusive].nil?

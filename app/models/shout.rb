@@ -122,11 +122,11 @@ class Shout < ActiveRecord::Base
       # :nocov:
       if current_user.pusher_private_online
         channel = 'private-user-' + current_user.id.to_s
-        Pusher.trigger(channel, 'update_point_event', {point: current_user.point+100})
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.points_to_display})
       end
       if self.user.pusher_private_online
         channel = 'private-user-' + self.user.id.to_s
-        Pusher.trigger(channel, 'update_point_event', {point: self.user.point+100})
+        Pusher.trigger(channel, 'update_point_event', {point: self.user.points_to_display})
       end
       # :nocov:
     end
@@ -204,11 +204,11 @@ class Shout < ActiveRecord::Base
     end
   	result = shout.save
   	if result
-  		current_user.update(point: current_user.point+2)
+  		current_user.update(point: current_user.point+4)
       channel = 'private-user-' + current_user.id.to_s
       if Rails.env == 'production' and current_user.pusher_private_online
         # :nocov:
-        Pusher.trigger(channel, 'update_point_event', {point: current_user.point+100})
+        Pusher.trigger(channel, 'update_point_event', {point: current_user.points_to_display})
         # :nocov:
       end
   		# pusher

@@ -1529,7 +1529,7 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 1
       	expect(ShoutVote.count).to eql 1
-      	expect(User.find(2).point).to eql 3
+      	expect(User.find(2).point).to eql 5
       	shout_1 = Shout.last
       	expect(shout_1.anonymous).to eql true
 
@@ -1602,8 +1602,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 2
       	expect(JSON.parse(response.body)['data']['shouts'][0]['id']).to eql shout_3.id
 
-      	expect(User.find(2).point).to eql 6
-      	expect(User.find(3).point).to eql 3
+      	expect(User.find(2).point).to eql 10
+      	expect(User.find(3).point).to eql 5
       	expect(User.find(4).point).to eql 0
 
 
@@ -1613,8 +1613,8 @@ describe 'V2.0.0' do
       	expect(ShoutVote.count).to eql 4
       	expect(shout_2.total_upvotes).to eql 0
 
-      	expect(User.find(2).point).to eql 6
-      	expect(User.find(3).point).to eql 4
+      	expect(User.find(2).point).to eql 10
+      	expect(User.find(3).point).to eql 6
       	expect(User.find(4).point).to eql 0
 
       	put 'api/shouts/'+shout_2.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1623,8 +1623,8 @@ describe 'V2.0.0' do
       	expect(ShoutVote.count).to eql 4
       	expect(shout_2.total_upvotes).to eql 2
 
-      	expect(User.find(2).point).to eql 8
-      	expect(User.find(3).point).to eql 4
+      	expect(User.find(2).point).to eql 12
+      	expect(User.find(3).point).to eql 6
       	expect(User.find(4).point).to eql 0
 
 
@@ -1648,8 +1648,8 @@ describe 'V2.0.0' do
       	expect(JSON.parse(response.body)['data']['shouts'].count).to eql 1
 
 
-      	expect(User.find(2).point).to eql 8
-      	expect(User.find(3).point).to eql 7
+      	expect(User.find(2).point).to eql 12
+      	expect(User.find(3).point).to eql 11
       	expect(User.find(4).point).to eql 0
 
 
@@ -1662,8 +1662,8 @@ describe 'V2.0.0' do
       	expect(ShoutVote.count).to eql 5
       	expect(shout_2.total_upvotes).to eql 3
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
       	expect(User.find(4).point).to eql 1
 
 
@@ -1690,8 +1690,8 @@ describe 'V2.0.0' do
       	expect(shout_2.total_upvotes).to eql 1
       	expect(User.find(4).point).to eql 1
 
-      	expect(User.find(2).point).to eql 8
-      	expect(User.find(3).point).to eql 7
+      	expect(User.find(2).point).to eql 12
+      	expect(User.find(3).point).to eql 11
       	expect(User.find(4).point).to eql 1
 
 
@@ -1701,8 +1701,8 @@ describe 'V2.0.0' do
       	expect(ShoutVote.count).to eql 5
       	expect(shout_2.total_upvotes).to eql 3
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
       	expect(User.find(4).point).to eql 1
 
       	expect((shout_2.id - shout_1.id)).to eql 1
@@ -1796,9 +1796,9 @@ describe 'V2.0.0' do
       	token = user_4.generate_token
       	ShoutReportHistory.delete_all
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 4
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 6
 
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1807,9 +1807,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 2
       	expect(shout_comment_2.total_upvotes).to eql 1
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 4
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 6
 
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1824,9 +1824,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 2
       	expect(shout_comment_2.total_upvotes).to eql 1
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 4
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 6
 
       	token = user_2.generate_token
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
@@ -1835,9 +1835,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 3
       	expect(shout_comment_2.total_upvotes).to eql 2
 
-      	expect(User.find(2).point).to eql 11
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 8
+      	expect(User.find(2).point).to eql 15
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 10
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => 0}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1845,9 +1845,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 3
       	expect(shout_comment_2.total_upvotes).to eql 1
 
-      	expect(User.find(2).point).to eql 10
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 4
+      	expect(User.find(2).point).to eql 14
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 6
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1855,9 +1855,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 3
       	expect(shout_comment_2.total_upvotes).to eql 2
 
-      	expect(User.find(2).point).to eql 11
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 8
+      	expect(User.find(2).point).to eql 15
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 10
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => -1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1865,9 +1865,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 3
       	expect(shout_comment_2.total_upvotes).to eql 0
 
-      	expect(User.find(2).point).to eql 11
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 4
+      	expect(User.find(2).point).to eql 15
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 6
 
       	put 'api/shout_comments/'+shout_comment_2.id.to_s, {:token => token, :upvote => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
@@ -1875,9 +1875,9 @@ describe 'V2.0.0' do
       	expect(ShoutCommentVote.count).to eql 3
       	expect(shout_comment_2.total_upvotes).to eql 2
 
-      	expect(User.find(2).point).to eql 11
-      	expect(User.find(3).point).to eql 7
-      	expect(User.find(4).point).to eql 8
+      	expect(User.find(2).point).to eql 15
+      	expect(User.find(3).point).to eql 11
+      	expect(User.find(4).point).to eql 10
 
       	token = user_4.generate_token
 
