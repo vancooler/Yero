@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151120134201) do
+ActiveRecord::Schema.define(version: 20151124162412) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -430,6 +430,14 @@ ActiveRecord::Schema.define(version: 20151120134201) do
     t.datetime "updated_at"
   end
 
+  create_table "shout_banner_images", force: true do |t|
+    t.string   "avatar"
+    t.string   "image_url"
+    t.boolean  "is_active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "shout_comment_votes", force: true do |t|
     t.integer  "shout_comment_id"
     t.integer  "user_id"
@@ -497,13 +505,14 @@ ActiveRecord::Schema.define(version: 20151120134201) do
     t.float    "latitude"
     t.float    "longitude"
     t.integer  "venue_id"
-    t.boolean  "anonymous",       default: true
+    t.boolean  "anonymous",             default: true
     t.string   "city"
     t.string   "neighbourhood"
     t.string   "content_type"
     t.text     "image_url"
     t.text     "audio_url"
     t.text     "image_thumb_url"
+    t.integer  "shout_banner_image_id"
   end
 
   add_index "shouts", ["user_id"], name: "index_shouts_on_user_id", using: :btree
