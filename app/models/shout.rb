@@ -3,6 +3,7 @@ class Shout < ActiveRecord::Base
   has_many :shout_votes, dependent: :destroy
   has_many :shout_report_histories, as: :reportable, dependent: :destroy
   has_many :recent_activities, as: :contentable, dependent: :destroy
+  belongs_to :shout_banner_image
   belongs_to :user
   belongs_to :venue
   reverse_geocoded_by :latitude, :longitude
