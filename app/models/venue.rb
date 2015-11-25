@@ -635,7 +635,7 @@ class Venue < ActiveRecord::Base
     return result
   end
 
-  def self.user_inside(latitude, longitude)
+  def self.user_inside(latitude, longitude, horizontal_accuracy)
     network = nil
     types_array = VenueType.all.where("lower(name) not like ?", "%test%").map(&:id)
     types_array_string = [nil]
@@ -645,7 +645,7 @@ class Venue < ActiveRecord::Base
     if !types_array_string.blank?
       networks = Venue.where(venue_type_id: types_array_string)
     end
-    networks = networks.where.not(latitude: nil).where.not(longitude: nil).where.not(center_offset: nil).where("latitude - center_offset <= ? AND latitude + center_offset >= ? AND longitude - center_offset <= ? AND longitude + center_offset >= ?", latitude, latitude, longitude, longitude)
+    networks = networks.where.not(latitude: nil).where.not(longitude: nil).where.not(center_offset: nil).where("latitude - center_offset <= ? AND latitude + center_offset >= ? AND longitude - center_offset <= ? AND longitude + center_offset >= ?", latitude+horizontal_accuracy, latitude-horizontal_accuracy, longitude+horizontal_accuracy, longitude-horizontal_accuracy)
     if !networks.empty?
       network = networks.sample
     end
