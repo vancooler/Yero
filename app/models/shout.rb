@@ -197,6 +197,11 @@ class Shout < ActiveRecord::Base
   	shout.body = (body.nil? ? '' : body.rstrip)
   	shout.user_id = current_user.id
   	shout.anonymous = anonymous
+
+    # banner image link
+    if ShoutBannerImage.all.count > 0
+      shout.shout_banner_image_id = ShoutBannerImage.all.sample.id
+    end
   	result = shout.save
   	if result
   		current_user.update(point: current_user.point+2)
@@ -235,6 +240,7 @@ class Shout < ActiveRecord::Base
         longitude:           shout.longitude,
         locality:            shout.city.nil? ? '' : shout.city,
         replied:             false,
+        shout_banner_image_url: ((shout.shout_banner_image.nil? or shout.shout_banner_image.avatar.nil? or shout.shout_banner_image.avatar.url.nil?) ? '' : shout.shout_banner_image.avatar.url), 
         # content_type:        shout.content_type.nil? ? 'text' : shout.content_type,
         # audio_url:           shout.audio_url.nil? ? '' : shout.audio_url,
         # image_url:           shout.image_url.nil? ? '' : shout.image_url,
@@ -278,28 +284,28 @@ class Shout < ActiveRecord::Base
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and my_comments
   		comments = ShoutComment.where(user_id: current_user.id).map(&:shout_id)
-  		shouts = Shout.where(id: comments).where.not(user_id: current_user.id).includes(:venue)
+  		shouts = Shout.where(id: comments).where.not(user_id: current_user.id).includes(:venue, :shout_banner_image)
   		
   	elsif !my_shouts.nil? and my_shouts
-  		shouts = Shout.where(user_id: current_user.id).includes(:venue)
+  		shouts = Shout.where(user_id: current_user.id).includes(:venue, :shout_banner_image)
   	else
 	  	if venue.nil? and city.nil?
 	  		current_venue = current_user.current_venue
 	  		if !current_venue.nil?
-	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue)
+	  			same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue, :shout_banner_image)
 	  		else
 	  			same_venue_shouts = []
 	  		end
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 30, units: :km).includes(:venue)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 30, units: :km).includes(:venue, :shout_banner_image)
 	  		shouts = shouts | same_venue_shouts
   		elsif venue.nil? and !city.nil?
         current_venue = current_user.current_venue
         if !current_venue.nil?
-          same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue)
+          same_venue_shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: current_venue.id).where("created_at >= ?", 7.days.ago).includes(:venue, :shout_banner_image)
         else
           same_venue_shouts = []
         end
-        shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).where(city: city).includes(:venue)
+        shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).where(city: city).includes(:venue, :shout_banner_image)
         shouts = shouts | same_venue_shouts
 	  	elsif !venue.nil? and city.nil?
 	  		# venue_id = venue
@@ -308,7 +314,7 @@ class Shout < ActiveRecord::Base
         unlock_number = (venue.unlock_number.nil? ? 0 : venue.unlock_number)
         if !(!venue.venue_type.nil? and !venue.venue_type.name.nil? and venue.venue_type.name == "Campus") or user_number >= unlock_number
           venue_id = venue.id
-  	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue)
+  	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(venue_id: venue_id).where("created_at >= ?", 7.days.ago).includes(:venue, :shout_banner_image)
         else
           shouts = (user_number * 100 / unlock_number).to_i
         end
@@ -416,6 +422,7 @@ class Shout < ActiveRecord::Base
         replied:             (replied_shouts_ids.include? shout.id),
         attachments:         attachments,
         subLocality:         shout.neighbourhood.nil? ? '' : shout.neighbourhood,
+        shout_banner_image_url: ((shout.shout_banner_image.nil? or shout.shout_banner_image.avatar.nil? or shout.shout_banner_image.avatar.url.nil?) ? '' : shout.shout_banner_image.avatar.url),
         timestamp:           shout.created_at.to_i,
         expire_timestamp:    shout.created_at.to_i+7*24*3600,
         total_upvotes:       shout.total_upvotes,
@@ -572,6 +579,7 @@ class Shout < ActiveRecord::Base
     Shout.delete_all
     RecentActivity.delete_all
   end
+
   # :nocov:
 
 end

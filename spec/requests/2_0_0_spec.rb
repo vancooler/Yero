@@ -1514,7 +1514,7 @@ describe 'V2.0.0' do
 
       	token = user_2.generate_token
       	# user_2 enter venue 
-      	get 'api/users', {:token => token, :gimbal_name => "Vancouver_TestVenue_test"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users', {:token => token, :network_id => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"

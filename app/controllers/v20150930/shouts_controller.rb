@@ -54,6 +54,7 @@ module V20150930
           longitude:            shout.longitude,
           locality:             shout.city.nil? ? '' : shout.city,
           replied:              replied,
+          shout_banner_image_url: ((shout.shout_banner_image.nil? or shout.shout_banner_image.avatar.nil? or shout.shout_banner_image.avatar.url.nil?) ? '' : shout.shout_banner_image.avatar.url), 
           # content_type:         shout.content_type.nil? ? 'text' : shout.content_type,
           # audio_url:            shout.audio_url.nil? ? '' : shout.audio_url,
           # image_url:            shout.image_url.nil? ? '' : shout.image_url,
