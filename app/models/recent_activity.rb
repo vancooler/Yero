@@ -48,6 +48,8 @@ class RecentActivity < ActiveRecord::Base
 						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
 							deeplink_shout_id = shout_comment.shout_id
+						else
+							deeplink_shout_id = 0
 						end
 						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
@@ -61,12 +63,34 @@ class RecentActivity < ActiveRecord::Base
 						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
 							deeplink_shout_id = shout_comment.shout_id
+						else
+							deeplink_shout_id = 0
 						end
 						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
 				end
 			when '310', '311', '312', '313', '314', '315', '316', '317', '318'
-				activity_json[:activity_type] = 'Shout Votes'
+				case a.activity_type.to_s
+				when '310'
+					vote_number = 10
+				when '311'
+					vote_number = 25
+				when '312'
+					vote_number = 50
+				when '313'
+					vote_number = 100
+				when '314'
+					vote_number = 250
+				when '315'
+					vote_number = 500
+				when '316'
+					vote_number = 1000
+				when '317'
+					vote_number = 2500
+				when '318'
+					vote_number = 5000
+				end
+				activity_json[:activity_type] = vote_number.to_s + 'Shout Votes'
 				if !a.contentable_type.nil? and !a.contentable_id.nil?
 					if a.contentable_type == "Shout"
 						deeplink_shout_id = a.contentable_id
@@ -74,12 +98,34 @@ class RecentActivity < ActiveRecord::Base
 						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
 							deeplink_shout_id = shout_comment.shout_id
+						else
+							deeplink_shout_id = 0
 						end
 						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
 				end
 			when '330', '331', '332', '333', '334', '335', '336', '337', '338'
-				activity_json[:activity_type] = 'Shout Comment Votes'
+				case a.activity_type.to_s
+				when '330'
+					vote_number = 10
+				when '331'
+					vote_number = 25
+				when '332'
+					vote_number = 50
+				when '333'
+					vote_number = 100
+				when '334'
+					vote_number = 250
+				when '335'
+					vote_number = 500
+				when '336'
+					vote_number = 1000
+				when '337'
+					vote_number = 2500
+				when '338'
+					vote_number = 5000
+				end
+				activity_json[:activity_type] = vote_number.to_s + 'Shout Comment Votes'
 				if !a.contentable_type.nil? and !a.contentable_id.nil?
 					if a.contentable_type == "Shout"
 						deeplink_shout_id = a.contentable_id
@@ -87,6 +133,8 @@ class RecentActivity < ActiveRecord::Base
 						shout_comment = ShoutComment.find_by_id(a.contentable_id)
 						if !shout_comment.nil?
 							deeplink_shout_id = shout_comment.shout_id
+						else
+							deeplink_shout_id = 0
 						end
 						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
@@ -117,7 +165,7 @@ class RecentActivity < ActiveRecord::Base
 					origin_user = User.find_user_by_unique(a.origin_user_id)
 					target_user = User.find_user_by_unique(a.target_user_id)
 					if !origin_user.nil? and !target_user.nil?
-						activity_json[:deep_link] = "yero://users/"+origin_user.id.to_s
+						activity_json[:deep_link] = "yero://people/"+origin_user.id.to_s
 					end
 				end
 			end
