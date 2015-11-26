@@ -179,13 +179,15 @@ module V20150930
           # check festival networks
           venue = Venue.user_inside(user.latitude, user.longitude, horizontal_accuracy)
           if !venue.nil? and !venue.beacons.blank?
-            puts "~~~~~Leave from update user"
+            
+            puts "~~~~~Enter from update user"
             ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
             in_network = true
           end
         end
 
         if !in_network
+          puts "~~~~~Leave from update user"
           ActiveInVenue.leave_venue(nil, user)
         end
 
@@ -229,7 +231,10 @@ module V20150930
       else
         user = current_user
         if !params[:latitude].blank? and !params[:longitude].blank?
-          user.update(latitude: params[:latitude].to_f, longitude: params[:longitude].to_f)
+          # user.update(latitude: params[:latitude].to_f, longitude: params[:longitude].to_f)
+          user.latitude = params[:latitude].to_f
+          user.longitude = params[:longitude].to_f
+          user.save
         end
 
         # network status update
@@ -245,6 +250,7 @@ module V20150930
             end
             beacon = Beacon.find_by_key(p)
             if !beacon.nil? and !beacon.venue.nil?
+              puts "~~~~~Enter from ppl"
               ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
               in_network = true
             else

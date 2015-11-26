@@ -202,13 +202,14 @@ module V20150930
         # check festival networks
         venue = Venue.user_inside(current_user.latitude, current_user.longitude, horizontal_accuracy)
         if !venue.nil? and !venue.beacons.blank?
-          puts "~~~~~Leave from shout"
+          puts "~~~~~Enter from shout"
           ActiveInVenue.enter_venue(venue, current_user, venue.beacons.first)
           in_network = true
         end
       end
 
       if !in_network
+        puts "~~~~~Leave from shout"
         ActiveInVenue.leave_venue(nil, current_user)
       end
 
