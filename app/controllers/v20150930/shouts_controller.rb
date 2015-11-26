@@ -194,16 +194,20 @@ module V20150930
       if params[:horizontal_accuracy].nil?
         horizontal_accuracy = 0
       else
-        horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000)
+        horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000.0)
       end
       # check other networks
-      if !params[:latitude].nil? or !params[:longitude].nil?
+      if current_user.latitude.nil? or current_user.longitude.nil?
         # check festival networks
         venue = Venue.user_inside(current_user.latitude, current_user.longitude, horizontal_accuracy)
         if !venue.nil? and !venue.beacons.blank?
           ActiveInVenue.enter_venue(venue, current_user, venue.beacons.first)
           in_network = true
         end
+      end
+
+      if !in_network
+        ActiveInVenue.leave_venue(nil, current_user)
       end
 
       my_shouts = (!params['my_shouts'].nil? ? (params['my_shouts'].to_s == '1' or params['my_shouts'].to_s == 'true') : false)
