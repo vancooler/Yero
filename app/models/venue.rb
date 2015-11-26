@@ -374,7 +374,7 @@ class Venue < ActiveRecord::Base
     venues.each do |v|
       venue = {
         id:             v.id,
-        name:           (v.name.blank? ? '' : v.name.upcase),
+        name:           (v.name.blank? ? '' : v.name),
         type:           (!v.venue_type.nil? and !v.venue_type.name.nil?) ? v.venue_type.name : '',
         latitude:       v.latitude,
         longitude:      v.longitude,
