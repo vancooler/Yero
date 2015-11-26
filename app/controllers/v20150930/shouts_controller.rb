@@ -198,7 +198,7 @@ module V20150930
         horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000.0)
       end
       # check other networks
-      if current_user.latitude.nil? or current_user.longitude.nil?
+      if !current_user.latitude.nil? and !current_user.longitude.nil?
         # check festival networks
         venue = Venue.user_inside(current_user.latitude, current_user.longitude, horizontal_accuracy)
         if !venue.nil? and !venue.beacons.blank?
