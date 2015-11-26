@@ -230,13 +230,44 @@ module V20150930
           user.update(latitude: params[:latitude].to_f, longitude: params[:longitude].to_f)
         end
 
-        if !params[:network_id].blank?
-          venue = Venue.find_venue_by_unique(params[:network_id])
-          if !venue.nil? and !venue.beacons.empty?
-            ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
+        # network status update
+        in_network = false
+        # check colleges
+        if !params[:places].nil?
+          places = params[:places].to_a
+          places.each do |p|
+            if p == 'The University Of British Columbia (Ubc)'
+              p = 'Vancouver_UBC_test'
+            elsif p == 'Simon Fraser University (Sfu)'
+              p = 'Vancouver_SFU_test'
+            end
+            beacon = Beacon.find_by_key(p)
+            if !beacon.nil? and !beacon.venue.nil?
+              ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
+              in_network = true
+            else
+              # FutureCollege.unique_enter(p, user)
+            end
           end
+        end
+
+        if params[:horizontal_accuracy].nil?
+          horizontal_accuracy = 0
         else
-          ActiveInVenue.leave_venue(nil, current_user)
+          horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000.0)
+        end
+        # check other networks
+        if user.latitude.nil? or user.longitude.nil?
+          # check festival networks
+          venue = Venue.user_inside(user.latitude, user.longitude, horizontal_accuracy)
+          if !venue.nil? and !venue.beacons.blank?
+            ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
+            in_network = true
+          end
+        end
+
+        if !in_network
+          ActiveInVenue.leave_venue(nil, user)
         end
         gender = params[:gender] if !params[:gender].blank?
         min_age = params[:min_age].to_i if !params[:min_age].blank?
