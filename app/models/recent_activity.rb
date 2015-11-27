@@ -182,7 +182,11 @@ class RecentActivity < ActiveRecord::Base
 				end
 
 				if !op and !origin_user.nil? and !target_user.nil?
-					activity_json[:object_type] =  'User'
+					if origin_user.version.nil? or origin_user.version.to_f < 2
+						activity_json[:object_type] =  'user'
+					else
+						activity_json[:object_type] =  'User'
+					end
 					activity_json[:object] = origin_user.user_object(target_user)
 					activity_json[:message] = (activity_json[:message].sub '@username', (origin_user.username.nil? ? origin_user.first_name : '@'+origin_user.username))
 				end
