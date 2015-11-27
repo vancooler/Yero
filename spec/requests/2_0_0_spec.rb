@@ -1505,7 +1505,7 @@ describe 'V2.0.0' do
 	    ua_6 = UserAvatar.create!(id: 5, user: user_6, is_active: true, order: 0)
 
 	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
-      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA", latitude: 49.534235, longitude: -123.063472)
+      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA", latitude: 49.534235, longitude: -123.063472, center_offset: 0.01)
       	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
 	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
       	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
@@ -1514,7 +1514,7 @@ describe 'V2.0.0' do
 
       	token = user_2.generate_token
       	# user_2 enter venue 
-      	get 'api/users', {:token => token, :network_id => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users', {:token => token, :latitude => 49.534235, :longitude => -123.0634}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(ActiveInVenue.first.beacon.key).to eql "Vancouver_TestVenue_test"
@@ -1523,8 +1523,7 @@ describe 'V2.0.0' do
 
 
       	# user_2 post shout
-      	expect(ActiveInVenueNetwork.count).to eql 1
-      	post 'api/shouts', {:token => token, :body => "AAA", :exclusive => 1, :network_id => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	post 'api/shouts', {:token => token, :body => "AAA", :exclusive => true, :network_id => 1}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
       	expect(JSON.parse(response.body)['success']).to eql true
       	expect(Shout.count).to eql 1
@@ -2442,33 +2441,7 @@ describe 'V2.0.0' do
 end
 
 
-# chatting message with group id  -> done
-# ***Shout-venue link & exclusive in params -> done
-# neighbourhood and city in shouts -> done
-# type and url for shouts and chatting messages -> done
-
-# new endpoint for single message -> done
-# Notification with new sturcture -> done
-
-# last active time compare to alert -> done
-# alert -> increment -> done
-# alert time update -> done
-# admin actions tracking
-
-# shout latitude and longitude
-
-
-# has = 0
-# ChattingMessage.all.each do |c|
-# id = c.client_side_id
-# sames = ChattingMessage.where(client_side_id: id).where.not(id: c.id)
-# if !sames.empty?
-# has = 1
-# puts sames.length.to_s + ":"
-# puts "Main " + c.id.to_s
-# sames.each do |s|
-# puts s.id.to_s
-# end
-# end
-# end
-# puts has.to_s
+# exclusive -> solved
+# shout banner -> solved
+# report type -> solved
+# city filter
