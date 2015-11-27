@@ -281,7 +281,7 @@ class User < ActiveRecord::Base
 
   # first_name (id) -> convenient for admins reading
   def name
-    first_name + ' (' + id.to_s + ')'
+    (username.nil? ? first_name : username) + ' (' + id.to_s + ')'
   end
 
   # CORE function of serializing user to json structure
