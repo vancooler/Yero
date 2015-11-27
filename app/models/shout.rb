@@ -357,6 +357,8 @@ class Shout < ActiveRecord::Base
         return result
       else
         venue = current_user.current_venue.id
+        puts "~~~~~~~~2" + (venue.nil? ? 'nil-venue' : venue.to_s)
+        puts "~~~~~~~~2" + (city.nil? ? 'nil' : city.to_s)
       end
     end
     puts "~~~~~~~~2"
