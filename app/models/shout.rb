@@ -343,8 +343,8 @@ class Shout < ActiveRecord::Base
   		venue = query_venue.id
   	end
     puts "~~~~~~~~1"
+    puts "~~~~~~~~2" + nearby.to_s
     if !nearby
-      puts "~~~~~~~~2" + nearby.to_s
       if current_user.current_venue.nil?
         puts "~~~~~~~~2 non-current"
         if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
