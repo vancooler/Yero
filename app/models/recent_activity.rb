@@ -51,8 +51,8 @@ class RecentActivity < ActiveRecord::Base
 						else
 							deeplink_shout_id = 0
 						end
-						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
+					activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 				end
 			when '302'
 				activity_json[:activity_type] = 'Replied Same Shout'
@@ -66,8 +66,8 @@ class RecentActivity < ActiveRecord::Base
 						else
 							deeplink_shout_id = 0
 						end
-						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
+					activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 				end
 			when '310', '311', '312', '313', '314', '315', '316', '317', '318'
 				case a.activity_type.to_s
@@ -101,8 +101,8 @@ class RecentActivity < ActiveRecord::Base
 						else
 							deeplink_shout_id = 0
 						end
-						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
+					activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 				end
 			when '330', '331', '332', '333', '334', '335', '336', '337', '338'
 				case a.activity_type.to_s
@@ -136,8 +136,8 @@ class RecentActivity < ActiveRecord::Base
 						else
 							deeplink_shout_id = 0
 						end
-						activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 					end
+					activity_json[:deep_link] = "yero://shouts/"+deeplink_shout_id.to_s
 				end
 			when '201'
 				activity_json[:activity_type] = 'Offline'
