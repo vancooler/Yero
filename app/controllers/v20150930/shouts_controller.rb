@@ -167,10 +167,11 @@ module V20150930
         current_user.longitude = params[:longitude].to_f
       end
 
-      if !params['nearby'].blank? 
+      puts "~~~~~~~~0" + params[:nearby]
+      if !params[:nearby].blank? 
         nearby = true
       else
-        nearby = (!params['nearby'].nil? ? (params['nearby'].to_s == '1' or params['nearby'].to_s == 'true') : true)
+        nearby = (!params[:nearby].nil? ? (params[:nearby].to_s == '1' or params[:nearby].to_s == 'true') : true)
       
       end
 
