@@ -333,7 +333,7 @@ class Shout < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue, city, my_shouts, my_comments, page, per_page)
+  def self.list(current_user, order_by, venue, city, my_shouts, my_comments, page, per_page, nearby)
   	result = Hash.new
   	time_0 = Time.now
   	query_venue = Venue.find_venue_by_unique(venue)
@@ -342,6 +342,23 @@ class Shout < ActiveRecord::Base
   	else
   		venue = query_venue.id
   	end
+
+    if !nearby
+      if current_user.current_venue.nil?
+        if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
+          pagination = Hash.new
+          pagination['page'] = page - 1
+          pagination['per_page'] = per_page
+          pagination['total_count'] = 0
+          result['pagination'] = pagination
+        end
+        shouts = []
+        result['shouts'] = final_result
+        return result
+      else
+        venue = current_user.current_venue.id
+      end
+    end
   	shouts = Shout.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, current_user.latitude, current_user.longitude)
 
     if shouts.is_a? Integer

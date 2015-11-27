@@ -90,6 +90,7 @@ module V20150930
 
     # create a shout
     def create
+      puts "~~~~~0 "
       venue = (params[:venue].blank? ? nil : params[:venue])
       # content_type = params[:content_type].blank? ? "text" : params[:content_type]
       image_url = params[:image_url].blank? ? "" : params[:image_url]
@@ -117,6 +118,7 @@ module V20150930
       end
 
       current_user.save!
+      puts "~~~~~1 "
 
       # network status update
       in_network = false
@@ -134,7 +136,7 @@ module V20150930
       if !in_network
         ActiveInVenue.leave_venue(nil, current_user)
       end
-
+      puts "~~~~~2 "
       anonymous = (!params['anonymous'].nil? ? (params['anonymous'].to_s == '1' or params['anonymous'].to_s == 'true') : true)
       exclusive = (!params['exclusive'].nil? ? (params['exclusive'].to_s == '1' or params['exclusive'].to_s == 'true') : false)
       
@@ -168,6 +170,13 @@ module V20150930
         current_user.longitude = params[:longitude].to_f
       end
 
+      if !params['nearby'].blank? 
+        nearby = true
+      else
+        nearby = (!params['nearby'].nil? ? (params['nearby'].to_s == '1' or params['nearby'].to_s == 'true') : false)
+      
+      end
+
       current_user.save
 
       # network status update
@@ -197,7 +206,7 @@ module V20150930
         horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000.0)
       end
       # check other networks
-      if !:+current_user.latitude.nil? and !current_user.longitude.nil?
+      if !current_user.latitude.nil? and !current_user.longitude.nil?
         # check festival networks
         venue = Venue.user_inside(current_user.latitude, current_user.longitude, horizontal_accuracy)
         if !venue.nil? and !venue.beacons.blank?
@@ -217,7 +226,7 @@ module V20150930
       else
         order_by = params[:order_by]
       end
-      result = Shout.list(current_user, order_by, params[:venue], params[:city], my_shouts, my_comments, page, per_page)
+      result = Shout.list(current_user, order_by, params[:venue], params[:city], my_shouts, my_comments, page, per_page, nearby)
       if result['percentage'].nil?
         response = {
           shouts: result['shouts']
