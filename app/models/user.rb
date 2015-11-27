@@ -350,7 +350,7 @@ class User < ActiveRecord::Base
         end
       else
         json.notification_preferences do
-          names = ["Replying to the same shout", "Replying to my shout", "New Whispers"]
+          names = ["Replying to Same Shouts", "Replying to My Shouts", "New Whispers"]
           preferences = NotificationPreference.where(name: names)
           json.array! preferences do |p|
             json.type p.name
