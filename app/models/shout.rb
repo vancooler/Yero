@@ -344,7 +344,9 @@ class Shout < ActiveRecord::Base
   	end
     puts "~~~~~~~~1"
     if !nearby
+      puts "~~~~~~~~2" + nearby.to_s
       if current_user.current_venue.nil?
+        puts "~~~~~~~~2 non-current"
         if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
           pagination = Hash.new
           pagination['page'] = page - 1
