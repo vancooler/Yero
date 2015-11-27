@@ -711,7 +711,7 @@ class WhisperNotification < AWS::Record::HashModel
   def self.send_notification_301(id, username, shout_id)
     receiver = User.find_user_by_unique(id)
     result = true
-    if UserNotificationPreference.no_preference_record_found(receiver, "Replying to My Shouts")
+    if UserNotificationPreference.no_preference_record_found(receiver, "Replying to my shout")
       deep_link = deep_link = "yero://shouts/" + shout_id.to_s
       data = { :alert => "@"+username+" replied to your shout", :type => 301, :deep_link => deep_link}
       push = Parse::Push.new(data, "User_" + id.to_s)
@@ -737,7 +737,7 @@ class WhisperNotification < AWS::Record::HashModel
     else
       username = "@"+username
     end
-    data = { :alert => username+" replied to Same Shouts", :type => 302, :deep_link => deep_link}
+    data = { :alert => username+" replied to same shout", :type => 302, :deep_link => deep_link}
     channel_array = Array.new
     ids.each do |id|
       receiver = User.find_user_by_unique(id)

@@ -48,7 +48,7 @@ class ChattingMessage < ActiveRecord::Base
   def send_push_notification_to_target_user(message, sender_id, receiver_id, content_path)
   	receiver = User.find_user_by_unique(receiver_id)
     result = true
-    if UserNotificationPreference.no_preference_record_found(receiver, "New Whispers")
+    if UserNotificationPreference.no_preference_record_found(receiver, "Whispers")
       conversation = self.whisper
 
       deep_link = "yero://whispers/" + sender_id.to_s
