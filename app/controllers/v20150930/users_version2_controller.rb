@@ -161,7 +161,6 @@ module V20150930
             end
             beacon = Beacon.find_by_key(p)
             if !beacon.nil? and !beacon.venue.nil?
-              puts "~~~~~Enter from update user"
               ActiveInVenue.enter_venue(beacon.venue, user, beacon)
               in_network = true
             else
@@ -180,14 +179,12 @@ module V20150930
           venue = Venue.user_inside(user.latitude, user.longitude, horizontal_accuracy)
           if !venue.nil? and !venue.beacons.blank?
             
-            puts "~~~~~Enter from update user"
             ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
             in_network = true
           end
         end
 
         if !in_network
-          puts "~~~~~Leave from update user"
           ActiveInVenue.leave_venue(nil, user)
         end
 
@@ -250,7 +247,6 @@ module V20150930
             end
             beacon = Beacon.find_by_key(p)
             if !beacon.nil? and !beacon.venue.nil?
-              puts "~~~~~Enter from ppl"
               ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
               in_network = true
             else
@@ -269,14 +265,12 @@ module V20150930
           # check festival networks
           venue = Venue.user_inside(user.latitude, user.longitude, horizontal_accuracy)
           if !venue.nil? and !venue.beacons.blank?
-            puts "~~~~~Enter from ppl"
             ActiveInVenue.enter_venue(venue, user, venue.beacons.first)
             in_network = true
           end
         end
 
         if !in_network
-          puts "~~~~~Leave from ppl"
           ActiveInVenue.leave_venue(nil, user)
         end
         gender = params[:gender] if !params[:gender].blank?

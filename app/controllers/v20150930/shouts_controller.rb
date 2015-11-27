@@ -183,7 +183,6 @@ module V20150930
           end
           beacon = Beacon.find_by_key(p)
           if !beacon.nil? and !beacon.venue.nil?
-            puts "~~~~~Enter from Shout"
             ActiveInVenue.enter_venue(beacon.venue, current_user, beacon)
             in_network = true
           else
@@ -198,18 +197,16 @@ module V20150930
         horizontal_accuracy = (params[:horizontal_accuracy].to_f / 110000.0)
       end
       # check other networks
-      if !current_user.latitude.nil? and !current_user.longitude.nil?
+      if !:+current_user.latitude.nil? and !current_user.longitude.nil?
         # check festival networks
         venue = Venue.user_inside(current_user.latitude, current_user.longitude, horizontal_accuracy)
         if !venue.nil? and !venue.beacons.blank?
-          puts "~~~~~Enter from shout"
           ActiveInVenue.enter_venue(venue, current_user, venue.beacons.first)
           in_network = true
         end
       end
 
       if !in_network
-        puts "~~~~~Leave from shout"
         ActiveInVenue.leave_venue(nil, current_user)
       end
 

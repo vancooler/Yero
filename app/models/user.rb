@@ -1347,13 +1347,18 @@ class User < ActiveRecord::Base
     same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
     same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
 
-    different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where.not(username: nil).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
-    different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+    # different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where.not(username: nil).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
+    # different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+
     time_4  = Time.now
     if everyone
-      all_users = same_venue_users + (all_users - same_venue_users)
+      # all_users = same_venue_users + (all_users - same_venue_users)
     else
-      all_users = same_venue_users + different_venue_users
+      all_users = same_venue_users #+ different_venue_users
+    end
+    if false
+    same_city_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).where(current_city: self.current_city).includes(:active_in_venue)
+      all_users = same_venue_users# + same_city_users
     end
     time_5 = Time.now
 
