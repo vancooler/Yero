@@ -342,11 +342,8 @@ class Shout < ActiveRecord::Base
   	else
   		venue = query_venue.id
   	end
-    puts "~~~~~~~~1"
-    puts "~~~~~~~~2" + nearby.to_s
     if !nearby
       if current_user.current_venue.nil?
-        puts "~~~~~~~~2 non-current"
         if !page.nil? and !per_page.nil? and per_page > 0 and page >= 0
           pagination = Hash.new
           pagination['page'] = page - 1
@@ -359,13 +356,9 @@ class Shout < ActiveRecord::Base
         return result
       else
         venue = current_user.current_venue.id
-        puts "~~~~~~~~2" + (venue.nil? ? 'nil-venue' : venue.to_s)
-        puts "~~~~~~~~2" + (city.nil? ? 'nil' : city.to_s)
       end
     end
-    puts "~~~~~~~~2"
   	shouts = Shout.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, current_user.latitude, current_user.longitude)
-    puts "~~~~~~~~3"
 
     if shouts.is_a? Integer
       result['percentage'] = shouts
@@ -392,7 +385,6 @@ class Shout < ActiveRecord::Base
     	final_result = Shout.shouts_json(current_user, shouts)
     	time_2 = Time.now
 
-    	puts "TOTAL: " + final_result.count.to_s
     	puts "TIME: "
     	puts (time_1-time_0).inspect
     	puts (time_2-time_1).inspect
