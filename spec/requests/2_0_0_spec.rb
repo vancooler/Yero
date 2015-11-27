@@ -1495,7 +1495,7 @@ describe 'V2.0.0' do
 	    user_3 = User.create!(id:3, last_active: Time.now, first_name: "SF", username: "user_3", email: "test3@yero.co", password: "123456", birthday: birthday, gender: 'F', latitude: 49.5257234, longitude: -123.0746133, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_2 = UserAvatar.create!(id: 2, user: user_3, is_active: true, order: 0)
 	    
-	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.5247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
+	    user_4 = User.create!(id:4, last_active: Time.now, first_name: "SF", username: "user_4", email: "test4@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.5247234, longitude: -123.0726173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua_4 = UserAvatar.create!(id: 3, user: user_4, is_active: true, order: 0)
 
 	    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", username: "user_5", email: "test5@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.5247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: false, current_city: "Vancouver", timezone_name: "America/Vancouver")
@@ -1505,7 +1505,7 @@ describe 'V2.0.0' do
 	    ua_6 = UserAvatar.create!(id: 5, user: user_6, is_active: true, order: 0)
 
 	    venue_network = VenueNetwork.create!(id:1, name: "V", timezone: "America/Vancouver")
-      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA", latitude: 49.534235, longitude: -123.063472, center_offset: 0.01)
+      	venue = Venue.create!(id:1, venue_network: venue_network, name: "AAA", latitude: 49.534235, longitude: -123.063472, center_offset: 0.001)
       	beacon = Beacon.create!(key: "Vancouver_TestVenue_test", venue_id: 1)
 	    venue_2 = Venue.create!(id:2, venue_network: venue_network, name: "BBB")
       	beacon_2 = Beacon.create!(key: "Vancouver_TestVenue2_test", venue_id: 2)
