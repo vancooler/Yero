@@ -168,12 +168,9 @@ module V20150930
       end
 
       puts "~~~~~~~~0" + params[:nearby]
-      if !params[:nearby].blank? 
-        nearby = true
-      else
-        nearby = (!params[:nearby].nil? ? (params[:nearby].to_s == '1' or params[:nearby].to_s == 'true') : true)
+
+      nearby = (!params[:nearby].nil? ? (params[:nearby].to_s == '1' or params[:nearby].to_s == 'true') : true)
       
-      end
 
       current_user.save
 
