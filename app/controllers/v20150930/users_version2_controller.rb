@@ -273,11 +273,12 @@ module V20150930
         if !in_network
           ActiveInVenue.leave_venue(nil, user)
         end
+        max_distance = 25
         gender = params[:gender] if !params[:gender].blank?
         min_age = params[:min_age].to_i if !params[:min_age].blank?
         max_age = params[:max_age].to_i if !params[:max_age].blank?
         min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
-        max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
+        max_distance = params[:distance].to_i if !params[:distance].blank?
         venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
         puts "EVERYONE: " + params[:network].to_s
         everyone = true
