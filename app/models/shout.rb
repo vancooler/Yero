@@ -279,7 +279,7 @@ class Shout < ActiveRecord::Base
   end
 
   # collect shouts in a venue or near users
-  def self.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, latitude, longitude)
+  def self.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, latitude, longitude, distance)
   	black_list = BlockUser.blocked_user_ids(current_user.id)
   	content_black_list = ShoutReportHistory.where(reporter_id: current_user.id).where(reportable_type: 'Shout').map(&:reportable_id)
   	if !my_comments.nil? and my_comments
@@ -296,7 +296,7 @@ class Shout < ActiveRecord::Base
 	  		else
 	  			same_venue_shouts = []
 	  		end
-	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], 30, units: :km).includes(:venue, :shout_banner_image)
+	  		shouts = Shout.where.not(id: content_black_list).where.not(user_id: black_list).where(allow_nearby: true).where("created_at >= ?", 7.days.ago).near([latitude, longitude], distance, units: :km).includes(:venue, :shout_banner_image)
 	  		shouts = shouts | same_venue_shouts
   		elsif venue.nil? and !city.nil?
         current_venue = current_user.current_venue
@@ -333,7 +333,7 @@ class Shout < ActiveRecord::Base
 
 
   # return shouts list
-  def self.list(current_user, order_by, venue, city, my_shouts, my_comments, page, per_page, nearby)
+  def self.list(current_user, order_by, venue, city, my_shouts, my_comments, page, per_page, nearby, distance)
   	result = Hash.new
   	time_0 = Time.now
   	query_venue = Venue.find_venue_by_unique(venue)
@@ -358,7 +358,7 @@ class Shout < ActiveRecord::Base
         venue = current_user.current_venue.id
       end
     end
-  	shouts = Shout.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, current_user.latitude, current_user.longitude)
+  	shouts = Shout.collect_shouts_nearby(current_user, venue, city, my_shouts, my_comments, current_user.latitude, current_user.longitude, distance)
 
     if shouts.is_a? Integer
       result['percentage'] = shouts
@@ -475,7 +475,7 @@ class Shout < ActiveRecord::Base
 	  return_user_ids = ActiveInVenue.where(venue_id: self.venue_id).where.not(user_id: self.user_id).map(&:user_id)
     end
 	if self.allow_nearby
-		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 30, units: :km).map(&:id)
+		return_user_ids = return_user_ids | User.where.not(id: self.user_id).near([self.latitude, self.longitude], 25, units: :km).map(&:id)
 	end
 	black_list = BlockUser.blocked_user_ids(self.user_id)
   	content_black_list = ShoutReportHistory.where(reportable_id: self.id).where(reportable_type: 'Shout').map(&:reporter_id)

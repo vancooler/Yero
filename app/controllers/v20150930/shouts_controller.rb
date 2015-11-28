@@ -166,8 +166,13 @@ module V20150930
       if !params[:longitude].blank? 
         current_user.longitude = params[:longitude].to_f
       end
+      if !params[:distance].blank? 
+        distance = params[:distance].to_i
+      else
+        distance = 25
+      end
 
-      nearby = (!params[:nearby].nil? ? (params[:nearby].to_s == '1' or params[:nearby].to_s == 'true') : true)
+      nearby = (!params[:network].nil? ? (params[:network].to_s == '0' or params[:network].to_s == 'false') : true)
       
 
       current_user.save
@@ -219,7 +224,7 @@ module V20150930
       else
         order_by = params[:order_by]
       end
-      result = Shout.list(current_user, order_by, params[:venue], params[:city], my_shouts, my_comments, page, per_page, nearby)
+      result = Shout.list(current_user, order_by, params[:venue], params[:city], my_shouts, my_comments, page, per_page, nearby, distance)
       if result['percentage'].nil?
         response = {
           shouts: result['shouts']

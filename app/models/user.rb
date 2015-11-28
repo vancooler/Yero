@@ -1325,51 +1325,26 @@ class User < ActiveRecord::Base
     time_1 = Time.now
     black_list = BlockUser.blocked_user_ids(self.id)
     black_list << self.id
-    all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).includes(:active_in_venue)
-    all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
-    time_2 = Time.now
-    # campus_id = VenueType.find_by_name("Campus")
-    # if campus_id
-    #   campus_venue_ids = Venue.where(venue_type_id: campus_id.id.to_s).map(&:id)
-    # else
-      campus_venue_ids = [nil]
-    # end
-    if self.current_venue.blank?
-      same_venue_user_ids = Array.new
-      different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
-    else
-      same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
-      campus_venue_ids << self.current_venue.id
-      different_venue_user_ids = ActiveInVenue.where.not(:venue_id => campus_venue_ids).map(&:user_id)
-
-    end
-    time_3 = Time.now
-    same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
-    same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
-
-    # different_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: different_venue_user_ids).where.not(username: nil).where("exclusive is ? OR exclusive = ?", nil, false).where.not(user_avatars: { id: nil }).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).includes(:active_in_venue)
-    # different_venue_users = self.additional_filter(different_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
-
-    time_4  = Time.now
     if everyone
-      # all_users = same_venue_users + (all_users - same_venue_users)
+      all_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).includes(:active_in_venue)
+      all_users = self.additional_filter(all_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+
     else
+      campus_venue_ids = [nil]
+      if self.current_venue.blank?
+        same_venue_user_ids = Array.new
+      else
+        same_venue_user_ids = ActiveInVenue.where(:venue_id => self.current_venue.id).map(&:user_id)
+        campus_venue_ids << self.current_venue.id
+
+      end
+      same_venue_users = User.includes(:user_avatars).where.not(id: black_list).where(id: same_venue_user_ids).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("last_active > ?", Time.now-7.days).includes(:active_in_venue)
+      same_venue_users = self.additional_filter(same_venue_users, gender, min_age, max_age, min_distance, max_distance, everyone).sort_by{ |hsh| hsh.last_active }.reverse
+
       all_users = same_venue_users #+ different_venue_users
     end
-    if false
-    same_city_users = User.includes(:user_avatars).where.not(id: black_list).where.not(user_avatars: { id: nil }).where.not(username: nil).where(user_avatars: { is_active: true}).where(user_avatars: { order: 0}).where("exclusive is ? OR exclusive = ?", nil, false).where(current_city: self.current_city).includes(:active_in_venue)
-      all_users = same_venue_users# + same_city_users
-    end
+    
     time_5 = Time.now
-
-    puts "All TT"
-    puts (time_2-time_1).inspect
-    puts "Venue id TT"
-    puts (time_3-time_2).inspect
-    puts "Venue users TT"
-    puts (time_4-time_3).inspect
-    puts "Everyone TT"
-    puts (time_5-time_4).inspect
 
     puts "Total TT"
     puts (time_5-time_1).inspect

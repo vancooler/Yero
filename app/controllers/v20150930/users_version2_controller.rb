@@ -279,9 +279,9 @@ module V20150930
         min_distance = params[:min_distance].to_i if !params[:min_distance].blank?
         max_distance = params[:max_distance].to_i if !params[:max_distance].blank?
         venue_id = params[:venue_id].to_i if !params[:venue_id].blank?
-        puts "EVERYONE: " + params[:everyone].to_s
+        puts "EVERYONE: " + params[:network].to_s
         everyone = true
-        everyone = ((params[:everyone].to_s == "true" or params[:everyone].to_s == "1") ? true : false) if !params[:everyone].nil?
+        everyone = ((params[:network].to_s == "false" or params[:network].to_s == "0") ? true : false) if !params[:network].nil?
         puts "EVERYONE2: " + everyone.to_s
         page_number = nil
         users_per_page = nil
