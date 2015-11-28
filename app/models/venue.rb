@@ -247,10 +247,13 @@ class Venue < ActiveRecord::Base
       types_array_string << a.to_s
     end
     if latitude.nil? or longitude.nil?
-      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where(pre_version_two: true).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([49, -123], distance, units: :km).includes(:venue_avatars).where("pre_version_two = ? OR name = ? OR name = ?", true, "UBC", "SFU").where.not(venue_avatars: { id: nil })
     else
-      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where(pre_version_two: true).where.not(venue_avatars: { id: nil })
+      venues = Venue.geocoded.near([latitude, longitude], distance, units: :km).includes(:venue_avatars).where("pre_version_two = ? OR name = ? OR name = ?", true, "UBC", "SFU").where.not(venue_avatars: { id: nil })
     end
+
+    
+
     if !types_array_string.blank?
       venues = venues.where(venue_type_id: types_array_string)
     end

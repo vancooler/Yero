@@ -182,7 +182,7 @@ class RecentActivity < ActiveRecord::Base
 				end
 
 				if !op and !origin_user.nil? and !target_user.nil?
-					if origin_user.version.nil? or origin_user.version.to_f < 2
+					if target_user.version.nil? or target_user.version.to_f < 2
 						activity_json[:object_type] =  'user'
 					else
 						activity_json[:object_type] =  'User'
