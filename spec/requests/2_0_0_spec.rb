@@ -139,12 +139,12 @@ describe 'V2.0.0' do
 	    user_9 = User.create!(id:9, last_active: Time.now, first_name: "SF", email: "test9@yero.co", username: "ASadfadfDF", password: "123456", birthday: birthday, gender: 'F', latitude: 49.3957234, longitude: -123.0746173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 	    ua = UserAvatar.create!(id: 9, user: user_9, is_active: true, order: 0)
 	    
-	    get 'api/users?token='+token, {:max_distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+	    get 'api/users?token='+token, {:distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 7
 
-      	get 'api/users?token='+token + '&page=0&per_page=4', {:max_distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+      	get 'api/users?token='+token + '&page=0&per_page=4', {:distance => 60}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
 		expect(response.status).to eql 200
 		expect(JSON.parse(response.body)['success']).to eql true
       	expect(JSON.parse(response.body)['data']['users'].count).to eql 4
