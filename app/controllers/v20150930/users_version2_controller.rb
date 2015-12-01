@@ -527,7 +527,7 @@ module V20150930
         if User.find_by_email(new_email).nil?
           @user.email_reset_token = Base64.urlsafe_encode64(new_email)
           if @user.save
-            UserMailer.delay.email_reset(@user)
+            UserMailer.delay.email_reset(@user, new_email)
             render json: success(true)
           else
             # :nocov:
