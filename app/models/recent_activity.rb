@@ -4,7 +4,12 @@ class RecentActivity < ActiveRecord::Base
 	def self.all_activities(user_id)
 		black_list = BlockUser.blocked_user_ids(user_id)
 		# all_activity = RecentActivity.where(:target_user_id => user_id).order("created_at DESC")
-		all_activity = RecentActivity.where(target_user_id: user_id).where.not(origin_user_id: black_list).order("created_at DESC")
+		if black_list.empty?
+			all_activity = RecentActivity.where(target_user_id: user_id).where.not(origin_user_id: black_list).order("created_at DESC")
+		else
+			all_activity = RecentActivity.where(target_user_id: user_id).where("origin_user_id NOT IN (?) OR origin_user_id is ?", black_list, nil).order("created_at DESC")
+		end
+
 		return all_activity
 	end
 

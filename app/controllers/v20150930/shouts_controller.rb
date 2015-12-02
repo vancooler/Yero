@@ -293,8 +293,13 @@ module V20150930
 
     # report a shout
     def report
+      if !params[:report_type_id].nil?
+        report_type_id = params[:report_type_id].to_i + 1
+      else
+        report_type_id = 0
+      end
       shout = Shout.find_by_id(params[:shout_id])
-      report_type = ShoutReportType.find_by_id(params[:report_type_id])
+      report_type = ShoutReportType.find_by_id(report_type_id)
       if shout and report_type
         shout.report(current_user, report_type.id)
         render json: success
