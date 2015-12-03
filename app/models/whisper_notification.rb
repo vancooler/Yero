@@ -836,8 +836,8 @@ class WhisperNotification < AWS::Record::HashModel
   # :nocov:
 
   # :nocov:
-  # Send notification when the avatar is disabled by admin
-  def self.send_avatar_disabled_notification(id)
+  # Send notification when the status is disabled by admin
+  def self.send_status_disabled_notification(id)
     data = { :alert => "Your status has been flagged as inappropriate and removed", :type => 103, :user_id => id}
     push = Parse::Push.new(data, "User_" + id.to_s)
     push.type = "ios"
