@@ -18,6 +18,16 @@ ActiveAdmin.register AdminAction do
       column "Details", :details do |action|
         raw(action.details)
       end
+      column "Image", :image_url do |action|
+        if !action.image_url.blank?
+          link = link_to action.image_url, :target => "_blank" do 
+            image_tag action.thumb_url, {:style => "height:100px;width:100px;"}
+          end
+        else
+          link = ''
+        end
+        link
+      end
       actions
     end
 
