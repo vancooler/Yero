@@ -2430,7 +2430,7 @@ describe 'V2.0.0' do
 		au = AdminUser.create!(level: 0, email: "admin1@example.com", password: "password", id: 2)
 		expect(au.name).to eql "admin1@example.com (2)"
 
-		au.add_action("Delete shout", "fuck!!!", "Inappropriate content")
+		au.add_action({'action_type' => "Delete shout", 'details' => "fuck!!!", 'image_url' => "a", 'thumb_url' => 'b'})
 		expect(AdminAction.count).to eql 1
 		AdminAction.delete_all
 		au.delete

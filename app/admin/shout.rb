@@ -9,11 +9,13 @@ ActiveAdmin.register Shout do
     def remove_single_shout
       s = Shout.find_by_id(params[:id])
       shout_author_id = s.user_id
+      image_url = s.image_url
+      thumb_url = s.image_thumb_url
       if !s.nil?
         action_type = "Delete shout"
         details = s.body
         if s.destroy_single
-          current_admin_user.add_action(action_type, details, '')
+          current_admin_user.add_action({'action_type' => action_type, 'details' => details, 'image_url' => image_url, 'thumb_url' => thumb_url})
           # notify author
           if Rails.env == "production"
             RecentActivity.delay.add_activity(shout_author_id, '303', nil, nil, "your-shout-deleted-"+shout_author_id.to_s+"-"+current_time.to_i.to_s, nil, nil, 'A shout you posted has been flagged as inappropriate and removed')

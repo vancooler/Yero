@@ -29,7 +29,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
             end
             action_type = "Disable user's photo"
             details = "Photo with id: " + ua.id.to_s
-            current_admin_user.add_action(action_type, details, '')
+            current_admin_user.add_action({'action_type' => action_type, 'details' => details})
 
             # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
             RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
@@ -59,7 +59,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
         ua.save!
         action_type = "Enable user's photo"
         details = "Photo with id: " + ua.id.to_s
-        current_admin_user.add_action(action_type, details, '')
+        current_admin_user.add_action({'action_type' => action_type, 'details' => details})
       end
       redirect_to :back, :notice => "Image is enabled"
     end
@@ -109,7 +109,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
         details = user.introduction_2
         if user.update(:introduction_2 => '', :status_disabled_count => user.status_disabled_count+1)
           action_type = "Delete user's status"
-          current_admin_user.add_action(action_type, details, '')
+          current_admin_user.add_action({'action_type' => action_type, 'details' => details})
 
           redirect_to :back, :notice => "Status of user " + user.name + " was successfully removed."
         else
@@ -159,7 +159,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
           end
           action_type = "Disable user's photo"
           details = "Photo with id: " + ua.id.to_s
-          current_admin_user.add_action(action_type, details, '')
+          current_admin_user.add_action({'action_type' => action_type, 'details' => details})
           # WhisperNotification.create_in_aws(u.id, nil, nil, '101', 'No Active Photo Now')
           RecentActivity.add_activity(u.id, '101', nil, nil, "avatar-disabled-"+u.id.to_s+"-"+Time.now.to_i.to_s)
           if u.pusher_private_online
@@ -184,7 +184,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
       ua.save!
       action_type = "Enable user's photo"
       details = "Photo with id: " + ua.id.to_s
-      current_admin_user.add_action(action_type, details, '')
+      current_admin_user.add_action({'action_type' => action_type, 'details' => details})
     end
     redirect_to :back, :notice => "Selected images are enabled"
   end

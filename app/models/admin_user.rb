@@ -10,12 +10,14 @@ class AdminUser < ActiveRecord::Base
   def name
   	email + " (" + id.to_s + ")"
   end
-  def add_action(action_type, details, reason)
+  def add_action(options = {})
   	action = AdminAction.new
-  	action.action_type = action_type
+  	action.action_type = options['action_type']
   	action.admin_user_id = self.id
-  	action.details = details + "<br> Handled by " + self.email
-  	action.reason = reason
+  	action.details = options['details'] + "<br> Handled by " + self.email
+    action.reason = options['reason'] || ''
+    action.image_url = options['image_url'] || nil
+    action.thumb_url = options['thumb_url'] || nil
   	action.save
   end
 end
