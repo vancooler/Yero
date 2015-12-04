@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151127123429) do
+ActiveRecord::Schema.define(version: 20151204120419) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,8 @@ ActiveRecord::Schema.define(version: 20151127123429) do
     t.text     "reason",        default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "image_url"
+    t.string   "thumb_url"
   end
 
   add_index "admin_actions", ["admin_user_id"], name: "index_admin_actions_on_admin_user_id", using: :btree
