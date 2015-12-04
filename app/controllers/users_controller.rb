@@ -797,11 +797,11 @@ class UsersController < ApplicationController
 
   def email_reset
     if params[:email_reset_token].blank?
-      @message = "Oops, something went wrong. Please try again. If this problem continues, contact support@yero.co"
+      @message = 'Oops, something went wrong. Please try again. If this problem continues, contact <a href="mailto:support@yero.co">support@yero.co</a>'
     else
       @user = User.find_by_email_reset_token(params[:email_reset_token])
       if @user.nil?
-        @message = "Oops, something went wrong. Please try again. If this problem continues, contact support@yero.co"
+        @message = 'Oops, something went wrong. Please try again. If this problem continues, contact <a href="mailto:support@yero.co">support@yero.co</a>'
       else
         new_email = Base64.urlsafe_decode64(params[:email_reset_token])
         if User.find_by_email(new_email).nil?
@@ -810,7 +810,7 @@ class UsersController < ApplicationController
           if @user.save
             @message = "Email verification successful"
           else
-            @message = "Oops, something went wrong. Please try again. If this problem continues, contact support@yero.co"
+            @message = 'Oops, something went wrong. Please try again. If this problem continues, contact <a href="mailto:support@yero.co">support@yero.co</a>'
           end
         else
           @message = "An account already exists with this email address"
