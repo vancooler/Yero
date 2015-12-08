@@ -40,13 +40,22 @@ ActiveAdmin.register ShoutComment do
     column "Author (ID)", :user
     
     column "Content", :body
+    column "Image", :image_url do |s|
+      if s.image_thumb_url.nil? 
+        '' 
+      else
+        link_to s.image_url, :target => "_blank" do 
+          image_tag s.image_thumb_url, {:style => "height:100px;width:100px;"}
+        end
+      end
+    end
     column :shout_id
     column :created_at
     column "Location", :user do |s|
       '[' + s.latitude.to_s + ', ' + s.longitude.to_s + ']'
     end
     column "Actions", :actions do |s|
-      link_to("Delete", admin_remove_single_shout_comment_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
+      link_to("View", admin_shout_path(s),  :class => "member_link") + link_to("Delete", admin_remove_single_shout_comment_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
     end
     
   end
@@ -60,6 +69,15 @@ ActiveAdmin.register ShoutComment do
     attributes_table_for shout do
       row :user
       row "Content" do shout.body end
+      row "Image" do 
+        if shout.image_thumb_url.nil? 
+          '' 
+        else
+          link_to shout.image_url, :target => "_blank" do 
+            image_tag shout.image_thumb_url, {:style => "height:100px;width:100px;"}
+          end
+        end
+      end
     end
   end
 end
