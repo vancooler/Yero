@@ -1,4 +1,4 @@
-ActiveAdmin.register ShoutComment do
+ActiveAdmin.register ShoutComment, :as => "Shout Reply Screening" do
   menu :parent => "SHOUT"
   permit_params :user, :user_id
   config.per_page = 100
@@ -6,6 +6,9 @@ ActiveAdmin.register ShoutComment do
   batch_action :destroy, false
 
   controller do
+    def scoped_collection
+      super.includes(:user).includes(:venue) # prevents N+1 queries to your database
+    end
     def remove_single_shout_comment
       sc = ShoutComment.find_by_id(params[:id])
       shout_comment_author_id = sc.user_id
@@ -21,16 +24,16 @@ ActiveAdmin.register ShoutComment do
             RecentActivity.delay.add_activity(shout_comment_author_id, '304', nil, nil, "your-shout-comment-deleted-"+shout_comment_author_id.to_s+"-"+current_time.to_i.to_s, nil, nil, 'A reply you posted has been flagged as inappropriate and removed')
             WhisperNotification.delay.send_notification_shout_remove(shout_comment_author_id, 304)
           end
-          redirect_to :back, :notice => "Comment is deleted"
+          redirect_to admin_shout_reply_screenings_path, :notice => "Comment is deleted"
         else
-          redirect_to :back, :notice => "Sorry, cannot delete this shout comment"
+          redirect_to admin_shout_reply_screenings_path, :notice => "Sorry, cannot delete this shout comment"
         end
       end
     end
   end 
 
   action_item :delete, only: :show do
-    link_to("Delete", admin_remove_single_shout_comment_path(shout_comment), :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
+    link_to("Delete", admin_remove_single_shout_comment_path(shout_reply_screening), :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
   end
   
   index do
@@ -55,7 +58,7 @@ ActiveAdmin.register ShoutComment do
       '[' + s.latitude.to_s + ', ' + s.longitude.to_s + ']'
     end
     column "Actions", :actions do |s|
-      link_to("View", admin_shout_path(s),  :class => "member_link") + link_to("Delete", admin_remove_single_shout_comment_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
+      link_to("View", admin_shout_reply_screening_path(s),  :class => "member_link") + link_to("Delete", admin_remove_single_shout_comment_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this comment?"})
     end
     
   end

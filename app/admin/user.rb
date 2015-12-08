@@ -1,8 +1,8 @@
 ActiveAdmin.register User do
-  menu :parent => "USERS"
+  menu :parent => "USERS", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
   permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id, :introduction_2,
                 user_avatars_attributes: [:id, :avatar, :venue_id, :default, :is_active, :_destroy]
-
+  before_filter :check_super, only: [:index]
   config.per_page = 100
   actions :index, :show, :update, :destroy, :edit
 
@@ -17,6 +17,9 @@ ActiveAdmin.register User do
   end
 
   controller do
+    def check_super
+      redirect_to admin_root_path, :notice => "You do not have access to this page" unless !current_admin_user.level.nil? and current_admin_user.level == 0
+    end
     def join_network
       user = User.find_user_by_unique(params[:id])
       if !user.nil? and !user.is_connected

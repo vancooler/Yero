@@ -8,7 +8,12 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
     # item is an ActiveAdmin::ActionItem
     item.display_on?(:index)
   }
+
+
   controller do
+    def scoped_collection
+      super.includes(:user) # prevents N+1 queries to your database
+    end
     def disable_single_image
       ua = UserAvatar.find_by_id(params[:id])
       avatar_id = ua.id
@@ -265,7 +270,7 @@ ActiveAdmin.register UserAvatar, :as => "User Screening" do
   end
   filter :id
   # filter :user_id, label:      'User', as: :select, collection: User.includes(:user_avatars).where.not(user_avatars: { id: nil }).order(:id).reverse 
-  # filter :user
+  filter :user_id, label:      'User ID'
 
   filter :default
   filter :is_active

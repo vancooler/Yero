@@ -13,7 +13,7 @@ ActiveAdmin.register ReportUserHistory, :as => "User Report History" do
       array.each do |a|
         id_array << a.id
       end
-      ReportUserHistory.where(:id => id_array)
+      ReportUserHistory.where(:id => id_array).includes(:reported_user, :report_type)
     end
   end 
 
@@ -21,7 +21,10 @@ ActiveAdmin.register ReportUserHistory, :as => "User Report History" do
   	column :id
     # column :reporting_user
     column :reported_user, sortable: "reported_user_id"
-    column :report_type
+    # column :report_type
+    column :report_type do |history|
+      history.report_type.name
+    end
     column "Reported Count",:frequency, sortable: "frequency"
     column "Recent Report Time", :updated_at, sortable: "updated_at"
     column "Recent Notify Time", :notified_at, sortable: "notified_at"

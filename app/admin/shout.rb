@@ -1,4 +1,4 @@
-ActiveAdmin.register Shout do
+ActiveAdmin.register Shout, :as => "Shout Screening" do
   menu :parent => "SHOUT"
   permit_params :user, :user_id
   config.per_page = 100
@@ -6,6 +6,9 @@ ActiveAdmin.register Shout do
   batch_action :destroy, false
 
   controller do
+    def scoped_collection
+      super.includes(:user).includes(:venue) # prevents N+1 queries to your database
+    end
     def remove_single_shout
       s = Shout.find_by_id(params[:id])
       shout_author_id = s.user_id
@@ -21,9 +24,9 @@ ActiveAdmin.register Shout do
             RecentActivity.delay.add_activity(shout_author_id, '303', nil, nil, "your-shout-deleted-"+shout_author_id.to_s+"-"+current_time.to_i.to_s, nil, nil, 'A shout you posted has been flagged as inappropriate and removed')
             WhisperNotification.delay.send_notification_shout_remove(shout_author_id, 303)
           end
-          redirect_to :back, :notice => "Shout is deleted"
+          redirect_to admin_shout_screenings_path, :notice => "Shout is deleted"
         else
-          redirect_to :back, :notice => "Sorry, cannot delete this shout"
+          redirect_to admin_shout_screenings_path, :notice => "Sorry, cannot delete this shout"
         end
         
       end
@@ -31,7 +34,7 @@ ActiveAdmin.register Shout do
   end 
 
   action_item :delete, only: :show do
-    link_to("Delete", admin_remove_single_shout_path(shout), :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
+    link_to("Delete", admin_remove_single_shout_path(shout_screening), :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
   end
   
   index do
@@ -61,7 +64,7 @@ ActiveAdmin.register Shout do
     #   '[' + s.latitude.to_s + ', ' + s.longitude.to_s + ']'
     # end
     column "Actions", :actions do |s|
-      link_to("View", admin_shout_path(s),  :class => "member_link") + link_to("Delete", admin_remove_single_shout_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
+      link_to("View", admin_shout_screening_path(s),  :class => "member_link") + link_to("Delete", admin_remove_single_shout_path(s), :class => "member_link button small", :method => "post", :data => {:confirm => "Are you sure you want to delete this shout?"})
     end
     
   end

@@ -558,7 +558,7 @@ describe UsersController do
 	      	user_5.delete
 	      	post :email_reset, :email_reset_token => email_reset_token
 	      	expect(response.status).to eql 200
-	      	expect(assigns(:message)).to eql 'Email verified successfully'
+	      	expect(assigns(:message)).to eql 'Email verification successful'
 	      	expect(User.find(2).email).to eql "test30@yero.co"
 
 

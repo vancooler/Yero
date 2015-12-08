@@ -11,7 +11,14 @@ ActiveAdmin.register ShoutReportHistory, :as => "Shout Report History" do
       array = ShoutReportHistory.all.select("id, reportable_type, reporter_id, frequency, reportable_id, shout_report_type_id, updated_at").group_by { |x| [x.reportable_type, x.reportable_id] }.map {|x,y|y.max_by {|x| x['updated_at']}}
       id_array = Array.new
       array.each do |a|
-        id_array << a.id
+        if a.reportable_type == "shout"
+          report = Shout.find_by_id(a.reportable_id)
+        else
+          report = ShoutComment.find_by_id(a.reportable_id)
+        end
+        if report
+          id_array << a.id
+        end
       end
       ShoutReportHistory.where(:id => id_array).includes(:shout_report_type, :reporter)
     end
@@ -19,18 +26,43 @@ ActiveAdmin.register ShoutReportHistory, :as => "Shout Report History" do
 
   index do
   	column :id
-    column "Report Type", :shout_report_type
+    column "Report Type", :shout_report_type do |history|
+      history.shout_report_type.name
+    end
     column "Reported Item" do |history|
-      link_to history.reportable_id, ((history.reportable_type == "Shout") ? admin_shout_url(history.reportable_id) : admin_shout_comment_path(history.reportable_id))
+      link_to history.reportable_id, ((history.reportable_type == "shout") ? admin_shout_screening_url(history.reportable_id) : admin_shout_reply_screening_url(history.reportable_id))
     end
     column "Content" do |history|
-      (history.reportable_type == "Shout") ? Shout.find_by_id(history.reportable_id).body : ShoutComment.find_by_id(history.reportable_id).body
+      if history.reportable_type == "shout"
+        report = Shout.find_by_id(history.reportable_id)
+      else
+        report = ShoutComment.find_by_id(history.reportable_id)
+      end
+
+      if report.nil?
+        ''
+      else
+        report.body
+      end
     end
     column "Image" do |history|
-      (history.reportable_type == "Shout") ? (image_tag Shout.find_by_id(history.reportable_id).image_url) : (image_tag ShoutComment.find_by_id(history.reportable_id).image_url)
+      if history.reportable_type == "shout"
+        report = Shout.find_by_id(history.reportable_id)
+      else
+        report = ShoutComment.find_by_id(history.reportable_id)
+      end
+
+      if report.nil? or report.image_thumb_url.nil?
+        ''
+      else
+        image_tag report.image_thumb_url
+      end
     end
     column :reporter, sortable: "reporter_id"
     column "Type", :reportable_type
+    column "Type", :reportable_type do |history|
+      (history.reportable_type == "shout") ? "Shout" : "Shout Reply"
+    end
     column "Reported Count",:frequency, sortable: "frequency"
     column "Recent Report Time", :updated_at, sortable: "updated_at"
     column "Recent Solved Time", :solved_at, sortable: "solved_at"

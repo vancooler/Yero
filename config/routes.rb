@@ -65,8 +65,8 @@ Rails.application.routes.draw do
       post 'admin/user-refresh/:id', to: 'admin/users#refresh', as: :admin_user_refresh
       post 'admin/user-send-whisper/:id', to: 'admin/users#send_whisper', as: :admin_user_send_whisper
       # for shouts
-      post 'admin/remove-single-shout/:id', to: 'admin/shouts#remove_single_shout', as: :admin_remove_single_shout
-      post 'admin/remove-single-shout-comment/:id', to: 'admin/shout_comments#remove_single_shout_comment', as: :admin_remove_single_shout_comment
+      post 'admin/remove-single-shout/:id', to: 'admin/shout_screenings#remove_single_shout', as: :admin_remove_single_shout
+      post 'admin/remove-single-shout-comment/:id', to: 'admin/shout_reply_screenings#remove_single_shout_comment', as: :admin_remove_single_shout_comment
 
       # Venue API
       post 'api/nightly/update_guest',     to: 'nightlies#update_guest', as: :update_guest_nightly
@@ -235,6 +235,7 @@ Rails.application.routes.draw do
 ####################################################################################################
 
 
+    
 ####################################################################################################
 # 
 # API V2
