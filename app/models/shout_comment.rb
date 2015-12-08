@@ -383,7 +383,7 @@ class ShoutComment < ActiveRecord::Base
 
   # report a comment
   def report(user, type)
-  	history = ShoutReportHistory.where(reportable_type: 'ShoutComment', reportable_id: self.id, shout_report_type_id: type)
+  	history = ShoutReportHistory.where(reportable_type: 'ShoutComment', reportable_id: self.id)
   	if history.blank?
   		frequency = 1
   	else

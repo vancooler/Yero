@@ -1,4 +1,4 @@
-ActiveAdmin.register ReportUserHistory do
+ActiveAdmin.register ReportUserHistory, :as => "User Report History" do
   menu :parent => "REPORT"
   actions :index, :show
   config.sort_order = 'updated_at_desc'

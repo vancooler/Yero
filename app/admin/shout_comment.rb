@@ -41,7 +41,7 @@ ActiveAdmin.register ShoutComment do
     
     column "Content", :body
     column "Image", :image_url do |s|
-      if s.image_thumb_url.nil? 
+      if s.image_thumb_url.blank? 
         '' 
       else
         link_to s.image_url, :target => "_blank" do 
@@ -70,7 +70,7 @@ ActiveAdmin.register ShoutComment do
       row :user
       row "Content" do shout.body end
       row "Image" do 
-        if shout.image_thumb_url.nil? 
+        if shout.image_thumb_url.blank? 
           '' 
         else
           link_to shout.image_url, :target => "_blank" do 

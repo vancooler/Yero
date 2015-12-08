@@ -203,7 +203,7 @@ class UsersController < ApplicationController
         rep.reported_user_id = reported_user.id
         rep.report_type_id = report_type.id
         # find same report by other users
-        other_user_rep = ReportUserHistory.find_by_reported_user_id_and_report_type_id(reported_user.id, report_type.id)
+        other_user_rep = ReportUserHistory.find_by_reported_user_id(reported_user.id)
         if other_user_rep.blank?
           rep.frequency = 1
         else
@@ -212,7 +212,7 @@ class UsersController < ApplicationController
         rep.reason = params[:reason]
         if rep.save!
           # update other records
-          reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id, :report_type_id => report_type.id)
+          reports_need_update = ReportUserHistory.where(:reported_user_id => reported_user.id)
           reports_need_update.update_all(:frequency => rep.frequency)
           render json: success(true)
         else

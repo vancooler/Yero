@@ -1,4 +1,4 @@
-ActiveAdmin.register ShoutReportHistory do
+ActiveAdmin.register ShoutReportHistory, :as => "Shout Report History" do
   menu :parent => "REPORT"
   actions :index, :show
   config.sort_order = 'updated_at_desc'
@@ -8,12 +8,12 @@ ActiveAdmin.register ShoutReportHistory do
 
   controller do
     def scoped_collection
-      array = ShoutReportHistory.all.select("id, reportable_type, reporter_id, frequency, reportable_id, shout_report_type_id, updated_at").group_by { |x| [x.reportable_type, x.reporter_id, x.shout_report_type_id] }.map {|x,y|y.max_by {|x| x['updated_at']}}
+      array = ShoutReportHistory.all.select("id, reportable_type, reporter_id, frequency, reportable_id, shout_report_type_id, updated_at").group_by { |x| [x.reportable_type, x.reportable_id] }.map {|x,y|y.max_by {|x| x['updated_at']}}
       id_array = Array.new
       array.each do |a|
         id_array << a.id
       end
-      ShoutReportHistory.where(:id => id_array)
+      ShoutReportHistory.where(:id => id_array).includes(:shout_report_type, :reporter)
     end
   end 
 
@@ -22,6 +22,12 @@ ActiveAdmin.register ShoutReportHistory do
     column "Report Type", :shout_report_type
     column "Reported Item" do |history|
       link_to history.reportable_id, ((history.reportable_type == "Shout") ? admin_shout_url(history.reportable_id) : admin_shout_comment_path(history.reportable_id))
+    end
+    column "Content" do |history|
+      (history.reportable_type == "Shout") ? Shout.find_by_id(history.reportable_id).body : ShoutComment.find_by_id(history.reportable_id).body
+    end
+    column "Image" do |history|
+      (history.reportable_type == "Shout") ? (image_tag Shout.find_by_id(history.reportable_id).image_url) : (image_tag ShoutComment.find_by_id(history.reportable_id).image_url)
     end
     column :reporter, sortable: "reporter_id"
     column "Type", :reportable_type

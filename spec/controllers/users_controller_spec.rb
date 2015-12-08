@@ -393,7 +393,7 @@ describe UsersController do
 	      	expect(JSON.parse(response.body)['success']).to eql true
 	      	expect(JSON.parse(response.body)['data']).to eql false
 
-	      	expect(ReportUserHistory.all.map(&:frequency)).to eql [2, 2, 1]
+	      	expect(ReportUserHistory.all.map(&:frequency)).to eql [3, 3, 3]
 
 	      	ReportUserHistory.delete_all
 	      	ReportType.delete_all
@@ -544,16 +544,16 @@ describe UsersController do
 
 	      	post :email_reset, :email_reset_token => ''
 		    expect(response.status).to eql 200
-	      	expect(assigns(:message)).to eql 'Invalid email reset token'
+	      	expect(assigns(:message)).to eql 'Oops, something went wrong. Please try again. If this problem continues, contact <a href="mailto:support@yero.co">support@yero.co</a>'
 
 			post :email_reset, :email_reset_token => email_reset_token+'sadf'
 		    expect(response.status).to eql 200
-	      	expect(assigns(:message)).to eql 'Invalid email reset token'
+	      	expect(assigns(:message)).to eql 'Oops, something went wrong. Please try again. If this problem continues, contact <a href="mailto:support@yero.co">support@yero.co</a>'
 
 		    user_5 = User.create!(id:5, last_active: Time.now, first_name: "SF", email: "test30@yero.co", password: "123456", birthday: (birthday-20.years), gender: 'F', latitude: 49.3247234, longitude: -123.0706173, is_connected: true, key:"1", snapchat_id: "snapchat_id", instagram_id: "instagram_id", wechat_id: nil, line_id: "line_id", introduction_1: "introduction_1", discovery: false, exclusive: false, is_connected: true, current_city: "Vancouver", timezone_name: "America/Vancouver")
 		    post :email_reset, :email_reset_token => email_reset_token
 		    expect(response.status).to eql 200
-	      	expect(assigns(:message)).to eql 'There is already an account with this email address.'
+	      	expect(assigns(:message)).to eql 'An account already exists with this email address'
 
 	      	user_5.delete
 	      	post :email_reset, :email_reset_token => email_reset_token
