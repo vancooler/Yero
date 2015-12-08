@@ -1,7 +1,7 @@
 ActiveAdmin.register ShoutReportHistory do
   menu :parent => "REPORT"
   actions :index, :show
-  config.sort_order = 'frequency_desc'
+  config.sort_order = 'updated_at_desc'
   def scoped_collection
     super.includes :reporter, :reportable # prevents N+1 queries to your database
   end
