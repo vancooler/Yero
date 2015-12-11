@@ -21,7 +21,7 @@ ActiveAdmin.register ShoutComment, :as => "Shout Reply Screening" do
           current_admin_user.add_action({'action_type' => action_type, 'details' => details, 'image_url' => image_url, 'thumb_url' => thumb_url})
           # notify author
           if Rails.env == "production"
-            RecentActivity.delay.add_activity(shout_comment_author_id, '304', nil, nil, "your-shout-comment-deleted-"+shout_comment_author_id.to_s+"-"+current_time.to_i.to_s, nil, nil, 'A reply you posted has been flagged as inappropriate and removed')
+            RecentActivity.delay.add_activity(shout_comment_author_id, '304', nil, nil, "your-shout-comment-deleted-"+shout_comment_author_id.to_s+"-"+Time.now.to_i.to_s, nil, nil, 'A reply you posted has been flagged as inappropriate and removed')
             WhisperNotification.delay.send_notification_shout_remove(shout_comment_author_id, 304)
           end
           redirect_to admin_shout_reply_screenings_path, :notice => "Comment is deleted"
