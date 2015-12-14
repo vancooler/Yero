@@ -318,18 +318,18 @@ class Venue < ActiveRecord::Base
   end
 
 
-  # def happen_now
-  #   if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
-  #     now = Time.now
-  #     if now.to_i >= Venue.to_utc_timestamp(self.start_time, self.timezone) and now.to_i < Venue.to_utc_timestamp(self.end_time, self.timezone)
-  #       return true
-  #     else
-  #       return false
-  #     end
-  #   else
-  #     return false
-  #   end
-  # end
+  def happen_now
+    if !self.start_time.nil? and !self.end_time.nil? and !self.timezone.nil?
+      now = Time.now
+      if now.to_i >= Venue.to_utc_timestamp(self.start_time, self.timezone) and now.to_i < Venue.to_utc_timestamp(self.end_time, self.timezone)
+        return true
+      else
+        return false
+      end
+    else
+      return false
+    end
+  end
 
   def default_avatar
     self.venue_avatars.where(default: true).first
