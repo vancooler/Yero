@@ -1080,7 +1080,155 @@ class User < ActiveRecord::Base
   end
   # :nocov:
 
+
+  # 4am-8am - no user
+  # 8am-11am every 90-120 minutes 1 user
+  # 11am-7pm every 30-60 minutes 1-2 users 
+  # 7pm-11:59pm 10-30 minutes 1-4 users 2/3 chance for female 
+  # 11:59pm-4am 90-120 minutes 1 users
+  # :nocov:
   def self.fake_users_activate
+    
+    timezones = User.where(fake_user: true).map(&:timezone_name).uniq
+
+    times_night_morning = Array.new
+    times_afternoon = Array.new
+    times_evening = Array.new
+
+    timezones.each do |tz|
+      Time.zone = tz # Assign timezone
+      int_time = Time.zone.now.strftime("%H%M").to_i
+      if int_time >= 800 and int_time < 1100 # If time is 8:00 ~ 11:00
+        times_night_morning << tz #Throw into array
+      elsif int_time >= 1100 and int_time < 1700 # If time is 11:00 ~ 19:00
+        times_afternoon << tz #Throw into array
+      elsif int_time >= 1900 and int_time <= 2359 # If time is 19:00 ~ 23:59
+        times_evening << tz #Throw into array
+      elsif int_time >= 0 and int_time < 400 # If time is 0:00 ~ 4:00
+        times_night_morning << tz #Throw into array
+      end
+    end
+
+    User.activate_night_morning(times_night_morning)
+    User.activate_afternoon(times_afternoon)
+    User.activate_evening(times_evening)
+  end
+
+  def self.activate_night_morning(timezones)
+    timezones.each do |tz|
+      time_zone = TimeZonePlace.find_by_timezone(tz)
+      if time_zone.has_attribute?(:time_no_active)
+        case time_zone.time_no_active
+        when nil
+          posibility = [false]
+          next_time = 1
+        when 0, 1, 2, 3, 4, 5, 6, 7
+          posibility = [false]
+          next_time = 1 + time_zone.time_no_active
+        when 8
+          posibility = [false, false, false, true]
+          next_time = 9
+        when 9
+          posibility = [false, false, true]
+          next_time = 10
+        when 10
+          posibility = [false, true]
+          next_time = 11
+        when 11
+          posibility = [true]
+          next_time = 0
+        end
+
+        if posibility.sample
+          fake_user = User.where(timezone_name: tz).where(fake_user: true).sample
+          fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
+          time_zone.update(time_no_active: 0)
+        else
+          time_zone.update(time_no_active: next_time)
+        end
+      end
+    end
+  end
+
+  def self.activate_afternoon(timezones)
+    timezones.each do |tz|
+      time_zone = TimeZonePlace.find_by_timezone(tz)
+      if time_zone.has_attribute?(:time_no_active)
+        case time_zone.time_no_active
+        when nil
+          posibility = [false]
+          next_time = 1
+        when 0, 1
+          posibility = [false]
+          next_time = 1 + time_zone.time_no_active
+        when 2
+          posibility = [false, false, false, true]
+          next_time = 3
+        when 3
+          posibility = [false, false, true]
+          next_time = 4
+        when 4
+          posibility = [false, true]
+          next_time = 5
+        when 5
+          posibility = [true]
+          next_time = 0
+        end
+
+        if posibility.sample
+          users_number = [1, 2].sample
+          users_number.times do |i|
+            fake_user = User.where(timezone_name: tz).where(fake_user: true).where("last_active < ?", Time.now-4.hours).sample
+            if !fake_user.blank?
+              fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
+            end
+          end
+          time_zone.update(time_no_active: 0)
+        else
+          time_zone.update(time_no_active: next_time)
+        end
+      end
+    end
+  end
+
+  def self.activate_evening(timezones)
+    timezones.each do |tz|
+      time_zone = TimeZonePlace.find_by_timezone(tz)
+      if time_zone.has_attribute?(:time_no_active)
+        case time_zone.time_no_active
+        when nil
+          posibility = [false, false, true]
+          next_time = 1
+        when 0
+          posibility = [false, false, true]
+          next_time = 1
+        when 1
+          posibility = [false, true]
+          next_time = 2
+        when 2
+          posibility = [true]
+          next_time = 0
+        end
+
+        if posibility.sample
+          users_number = [1, 2, 3, 4].sample
+          users_number.times do |i|
+            gender = ['F', 'F', 'M'].sample
+            fake_user = User.where(timezone_name: tz).where(fake_user: true).where(gender: gender).where("last_active < ?", Time.now-4.hours).sample
+            if !fake_user.blank?
+              fake_user.update(last_active: Time.now, point: fake_user.point+[0, 1].sample)
+            end
+          end
+          
+          time_zone.update(time_no_active: 0)
+        else
+          time_zone.update(time_no_active: next_time)
+        end
+      end
+    end
+  end
+
+  def self.fake_users_activate_old
     
     timezones = User.where(fake_user: true).map(&:timezone_name).uniq
 
@@ -1089,7 +1237,7 @@ class User < ActiveRecord::Base
     timezones.each do |tz|
       Time.zone = tz # Assign timezone
       int_time = Time.zone.now.strftime("%H%M").to_i
-      if int_time >= 100 and int_time < 1000 # If time is 1:00 ~ 10:00
+      if int_time >= 100 and int_time < 900 # If time is 1:00 ~ 9:00
         times_night << tz #Throw into array
       else
         times_day << tz
@@ -1101,6 +1249,7 @@ class User < ActiveRecord::Base
 
 
   end
+  # :nocov:
 
   # :nocov:
   def self.activate_day(times_day)
