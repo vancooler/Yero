@@ -1418,7 +1418,12 @@ class User < ActiveRecord::Base
       latitude = user_obj['Latitude'].to_f
       longitude = user_obj['Longtitude'].to_f
       username = user_obj['Username']
-      check_user.update(:latitude => latitude, :longitude => longitude, :username => username)
+      if user_obj['Points'].blank?
+        point = 0
+      else
+        point = user_obj['Points'].to_i
+      end
+      check_user.update(:latitude => latitude, :longitude => longitude, :username => username, :point => point)
       id_array = ['1', '2', '3', '4', '5', '6']
       id_array.each do |avatar_id|
         current_order = UserAvatar.where(:user_id => check_user.id).where(:is_active => true).maximum(:order)
