@@ -1,6 +1,7 @@
 ActiveAdmin.register User do
   menu :parent => "USERS", :if => proc { !current_admin_user.level.nil? and current_admin_user.level == 0 }
-  permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id, :introduction_2,
+  permit_params :email, :birthday, :gender, :apn_token, :wechat_id, :snapchat_id, :instagram_id, :introduction_2, :introduction_1, 
+                :latitude, :longitude, :current_city, :timezone_name,
                 user_avatars_attributes: [:id, :avatar, :venue_id, :default, :is_active, :_destroy]
   before_filter :check_super, only: [:index]
   config.per_page = 100
@@ -123,6 +124,9 @@ ActiveAdmin.register User do
       f.input :wechat_id
       f.input :snapchat_id
       f.input :instagram_id
+      f.input :latitude
+      f.input :longitude
+      f.input :current_city
       f.input :introduction_1, :label => "Bio"
       f.input :introduction_2, :label => "Status"
       f.inputs do
