@@ -348,7 +348,7 @@ module V20150930
     # 
     ##########################################
     def signup
-      if params[:email].blank? or params[:username].blank? or params[:password].blank? or params[:birthday].blank? or params[:gender].blank?
+      if params[:email].blank? or params[:username].blank? or params[:password].blank? or params[:birthday].blank?
         error_obj = {
           code: 400,
           message: "Required fields cannot be blank",
@@ -363,7 +363,9 @@ module V20150930
           email = params[:email].gsub!(/\s+/, "") 
         end
       
-        if params[:gender].match(/\s/).blank?
+        if params[:gender].blank?
+          gender = ""
+        elsif params[:gender].match(/\s/).blank?
           gender = params[:gender]
         else
           gender = params[:gender].gsub!(/\s+/, "") 

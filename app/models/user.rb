@@ -29,7 +29,7 @@ class User < ActiveRecord::Base
 
   # mount_uploader :avatar, AvatarUploader
 
-  validates :email, :birthday, :gender, presence: true
+  validates :email, :birthday, presence: true
   validates :email, :email => true
   validates_uniqueness_of :username, :allow_blank => true, :allow_nil => true
 
