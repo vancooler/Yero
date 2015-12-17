@@ -360,6 +360,11 @@ describe 'V2.0.0' do
       	delete 'api/logout', {:token => token}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
       	expect(response.status).to eql 200
 
+      	post 'api/signup', {:email=>'testsd@yero.co', :username => "ss safdf", :first_name => "AAA", :birthday => birthday, :password => "123456", :wechat_id => "wesf", :instagram_id => "SFDd", :snapchat_id => "DSSFD", :line_id => "SDsDF"}, {'API-VERSION' => 'V2_0', 'HTTPS' => 'on'}
+		expect(response.status).to eql 200
+		expect(JSON.parse(response.body)['success']).to eql true
+
+
 		BlockUser.delete_all
 		TimeZonePlace.delete_all
 		ReportUserHistory.delete_all
